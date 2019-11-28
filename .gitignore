@@ -1,0 +1,23 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-error.log
+
+# Dependency directories
+node_modules
+
+# Lock file
+package-lock.json
+
+# Build directories
+dist
+public
+.rpt2_cache
+test-build
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Misc.
+.DS_Store

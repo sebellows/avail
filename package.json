@@ -1,0 +1,39 @@
+{
+    "name": "avail",
+    "version": "0.1.0",
+    "description": "Generate a customized CSS utility library",
+    "main": "build/cjs/index.js",
+    "module": "build/esm/index.js",
+    "types": "build/esm/index.d.ts",
+    "files": [
+        "build"
+    ],
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "clean": "rm -rf build test-build",
+        "build": "rollup -c",
+        "build:dev": "rollup -cw",
+        "start": "node build/cjs/index.js"
+    },
+    "keywords": [
+        "utility css",
+        "oocss"
+    ],
+    "author": "Sean Bellows",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/chai": "^4.2.5",
+        "@types/mocha": "^5.2.7",
+        "chai": "^4.2.0",
+        "chalk": "^3.0.0",
+        "mocha": "^6.2.2",
+        "prettier": "^1.19.1",
+        "rollup": "^1.27.0",
+        "rollup-plugin-commonjs": "^10.1.0",
+        "rollup-plugin-copy": "^3.1.0",
+        "rollup-plugin-node-resolve": "^5.2.0",
+        "rollup-plugin-terser": "^5.1.2",
+        "rollup-plugin-typescript2": "^0.25.2",
+        "typescript": "^3.7.2"
+    }
+}
