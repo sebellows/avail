@@ -9,6 +9,7 @@ node_modules
 
 # Lock file
 package-lock.json
+yarn.lock
 
 # Build directories
 dist

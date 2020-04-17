@@ -1,0 +1,30 @@
+/* Collapse/dropdown */
+[data-collapse] {
+  z-index: 1;
+}
+.is-expanded,
+.is-collapsed {
+  transform-origin: 50% 0;
+}
+.is-expanding {
+  display: block;
+  max-height: 9999px;
+  transform: scaleY(1);
+  animation: show 0.5s ease-in-out;
+  transition: max-height 1s ease-in-out;
+}
+.is-collapsing {
+  max-height: 0;
+  overflow: hidden;
+  transform: scaleY(0);
+  animation: hide 0.4s ease-out;
+  transition: max-height 0.6s ease-out;
+}
+.is-expanded {
+  display: block;
+  max-height: 9999px;
+}
+.is-collapsed {
+  max-height: 0;
+  overflow: hidden;
+}
