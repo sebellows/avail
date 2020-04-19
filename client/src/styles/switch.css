@@ -1,0 +1,70 @@
+.avail-switch {
+  display: inline-flex;
+  align-items: center;
+}
+.avail-switch-label-text {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  text-transform: uppercase;
+  margin: 0 0.5em;
+}
+.avail-switch-label {
+  background-color: var(--body-bg);
+  border-radius: 1em;
+  color: var(--body-color);
+  margin-bottom: 0;
+  position: relative;
+  overflow: hidden;
+}
+.avail-switch-control {
+  position: absolute;
+  opacity: 0;
+}
+.avail-switch-control:checked ~ .avail-switch-toggle-cover {
+  transform: translateX(-100%);
+}
+.avail-switch-toggle {
+  font-size: 0.75rem;
+  line-height: 1.2;
+  text-align: center;
+  text-transform: uppercase;
+  padding: 0.25rem 0.5rem;
+}
+.avail-switch-toggle.on {
+  border-radius: 0.5em 0 0 0.5em;
+}
+.avail-switch-toggle.off {
+  border-radius: 0 0.5em 0.5em 0;
+}
+.avail-switch-toggle-cover {
+  background-color: var(--secondary);
+  border-radius: 0.125em;
+  text-align: center;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 50%;
+  height: 100%;
+  z-index: 10;
+  transition: transform var(--ease-in-out-duration) var(--fast-out-slow-in-timing);
+  pointer-events: none;
+}
+.avail-switch-toggle-cover::before {
+  content: '|||';
+  letter-spacing: 4px;
+  text-shadow: -0.5px -0.5px 0px rgba(255, 255, 255, 0.5), 1px 1px 2px rgba(0, 0, 0, 0.25);
+  color: var(--pink);
+  mix-blend-mode: hard-light;
+}
+.avail-switch-scrim {
+  box-shadow: inset 1px 1px 4px 2px rgba(0, 0, 0, 0.2);
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 11;
+}

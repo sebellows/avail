@@ -41,13 +41,6 @@
   --link-hover-color: hsla(216, 88%, 37%, 1);
   --link-hover-decoration: none;
 
-  /* Grid Breakpoints */
-  --bp-xs: 0;
-  --bp-sm: 576px;
-  --bp-md: 768px;
-  --bp-lg: 992px;
-  --bp-xl: 1200px;
-
   --border-width: 1px;
   --border-color: var(--gray-300);
   --border: var(--border-width) solid var(--border-color);
@@ -73,11 +66,11 @@
   --component-active-focus-bg: hsla(216, 98%, 52%, 0.25);
   --component-active-focus-border: hsla(216, 98%, 77%, 1);
 
-  --font-family-sans-serif: -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
-    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-  --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas,
-    'Liberation Mono', 'Courier New', monospace;
+  --font-family-sans-serif: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+    'Noto Color Emoji';
+  --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+    monospace;
   --font-family-base: var(--font-family-sans-serif);
 
   --font-size-root: 100%;
@@ -124,8 +117,7 @@
   --control-focus-width: 0.2rem;
   --control-focus-color-opacity: 0.25;
   --control-focus-color: rgba(255, 255, 255, 0.25);
-  --control-focus-box-shadow: 0 0 0 var(--control-focus-width)
-    var(--control-focus-color);
+  --control-focus-box-shadow: 0 0 0 var(--control-focus-width) var(--control-focus-color);
 
   --ease-in-duration: 0.3s;
   --ease-out-duration: 0.4s;
@@ -133,6 +125,40 @@
   --fast-out-slow-in-timing: cubic-bezier(0.4, 0, 0.2, 1);
   --linear-out-slow-in-timing: cubic-bezier(0, 0, 0.2, 0.1);
   --fast-out-linear-in-timing: cubic-bezier(0.4, 0, 1, 1);
+
+  --container-max-width: 576px;
+
+  --checklist-item-width: 100%;
+}
+/*
+  Grid Breakpoints
+  xs: 0;
+  sm: 576px;
+  md: 768px;
+  lg: 992px;
+  xl: 1200px;
+*/
+@media (min-width: 576px) {
+  :root {
+    --container-max-width: 576px;
+  }
+}
+@media (min-width: 768px) {
+  :root {
+    --container-max-width: 768px;
+    --checklist-item-width: 50%;
+  }
+}
+@media (min-width: 992px) {
+  :root {
+    --container-max-width: 992px;
+    --checklist-item-width: 33.333%;
+  }
+}
+@media (min-width: 1200px) {
+  :root {
+    --container-max-width: 1200px;
+  }
 }
 
 /* Reboot
@@ -635,4 +661,17 @@ progress {
 
 [hidden] {
   display: none !important;
+}
+
+/* Visually hide */
+.sr-only {
+  border: 0 !important;
+  clip: rect(0 0 0 0) !important;
+  height: 1px !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  position: absolute !important;
+  width: 1px !important;
+  white-space: nowrap !important;
 }

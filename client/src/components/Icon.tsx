@@ -61,6 +61,13 @@ export const ClipboardIcon = ({ ref = null, ...props }) => (
   </Icon>
 );
 
+export const CloseIcon = ({ ref = null, ...props }) => (
+  <Icon ref={ref} name="close" {...props}>
+    <line x1="18" y1="6" x2="6" y2="18"></line>
+    <line x1="6" y1="6" x2="18" y2="18"></line>
+  </Icon>
+);
+
 export const DownloadIcon = ({ ref = null, ...props }) => (
   <Icon ref={ref} name="download" {...props}>
     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />

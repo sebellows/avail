@@ -2,8 +2,8 @@
 import React, { useState, useEffect, Ref, useRef } from 'react';
 import Prism from 'prismjs';
 
-import { CollectionObj, AvailUtility, AvailUtilities } from '../core/contracts';
-import { generateUtility } from '../core/build';
+import { AvailUtility, AvailUtilities } from '../core/contracts';
+import { generateUtility, generateResponsiveUtility } from '../core/build';
 import { CheckboxInput } from './CheckboxInput';
 import { TextInput } from './TextInput';
 import { Repeater } from './Repeater';
@@ -13,7 +13,7 @@ import { Collapse } from './Collapse';
 
 import '../styles/prism.css';
 import '../styles/checklist.css';
-import { hasOwn } from '../core/utils/common';
+import { hasOwn, isNil } from '../core/utils/common';
 import { classNames } from '../core/utils';
 
 export interface ChecklistItemProps {
@@ -52,6 +52,7 @@ export const ChecklistItem: React.FC<ChecklistItemProps> = ({
   ...props
 }) => {
   const [open, setOpen] = useState(expanded);
+  const [responsive, setResponsive] = useState(model.responsive);
   // const [utility, setUtility] = useState(model);
   const [output, setOutput] = useState(initialOutput);
 
@@ -69,10 +70,16 @@ export const ChecklistItem: React.FC<ChecklistItemProps> = ({
 
   useEffect(() => {
     // if (model != null) {
-    const css = generateUtility(model);
+    let css;
+    if (responsive) {
+      css = generateResponsiveUtility(model);
+    } else {
+      css = generateUtility(model);
+    }
+
     setOutput(css);
     // }
-  }, [model]);
+  }, [model, responsive]);
 
   const id = controlId || model.id;
 
@@ -117,7 +124,7 @@ export const ChecklistItem: React.FC<ChecklistItemProps> = ({
                 <fieldset>
                   <TextInput
                     name={`${id}-root-class`}
-                    value={model.class}
+                    value={isNil(model.class) ? '' : model.class}
                     label="Root class prefix:"
                   />
                   <CheckboxInput

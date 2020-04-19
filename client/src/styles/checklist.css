@@ -7,14 +7,10 @@
 .checklist-item {
   background-color: var(--light);
   border: 1px solid var(--black);
-  flex: 0 0 100%;
+  flex: 0 0 var(--checklist-item-width);
+  max-width: var(--checklist-item-width);
   list-style-type: none;
 }
-/* @media (max-width: 990px) {
-  .checklist-item {
-    flex: 0 0 50%;
-  }
-} */
 .checklist-item .avail-form-check-label {
   white-space: normal;
 }

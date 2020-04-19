@@ -1,15 +1,19 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, Ref } from 'react';
 import { CheckboxProps } from '../core/contracts/form';
 import { classNames } from '../core/utils/classNames';
-
-import { CheckIcon } from './Icon';
 import { Feedback } from './Feedback';
+import '../styles/switch.css';
 
-import '../styles/checkbox.css';
+export interface SwitchProps extends CheckboxProps {
+  as?: JSX.IntrinsicElements;
+  onText?: string;
+  offText?: string;
+}
 
-export const CheckboxInput = React.forwardRef<HTMLElement, CheckboxProps>(
+export const Switch = React.forwardRef<{}, SwitchProps>(
   (
     {
+      as: tag = 'div',
       checked: initialChecked = false,
       disabled = false,
       className = null,
@@ -21,24 +25,25 @@ export const CheckboxInput = React.forwardRef<HTMLElement, CheckboxProps>(
       isInvalid = false,
       isValid = false,
       tabIndex = 0,
-      type = 'checkbox',
+      type = 'radio',
       value,
       onChange,
+      onText = 'On',
+      offText = 'Off',
     },
-    ref: any,
+    ref: Ref<any>,
   ) => {
     const [checked, setCheckedState] = useState(initialChecked);
 
     const inputRef = useRef(null);
-
     const id = controlId || name;
+    const Component = tag as 'div';
 
     function handleChange(event: any) {
       event.persist();
-      if (checked !== event.target.checked) {
-        const newChecked = event.target.checked;
 
-        setCheckedState(newChecked);
+      if (checked !== event.target.checked) {
+        setCheckedState(event.target.checked);
       }
 
       if (onChange) {
@@ -47,52 +52,40 @@ export const CheckboxInput = React.forwardRef<HTMLElement, CheckboxProps>(
     }
 
     return (
-      <div
+      <Component
         ref={ref}
         className={classNames(
-          'form-check',
+          'avail-switch',
           className,
           checked ? 'is-checked' : 'is-unchecked',
           isValid && 'is-valid',
           isInvalid && 'is-invalid',
-          inline && 'form-check-inline',
         )}
       >
-        <label className="form-check-label" htmlFor={name}>
+        {labelText && <span className="avail-switch-label-text">{labelText}</span>}
+        <label htmlFor={name} className="avail-switch-label">
           <input
             id={id}
             name={name}
             type={type}
             value={value}
             ref={inputRef}
-            className="form-check-input"
+            className="avail-switch-control"
             autoComplete="off"
             checked={!!checked}
             disabled={!!disabled}
             tabIndex={tabIndex}
             onChange={handleChange}
           />
-          <div className="form-check-container">
-            <div className="form-check-box" />
-            <div className="form-check-bg">
-              <CheckIcon
-                fill={checked ? '#fff' : 'transparent'}
-                strokeDashoffset="22.91026"
-                strokeDasharray="22.91026"
-              />
-            </div>
-          </div>
-          {labelText && (
-            <span className="form-check-label-text">
-              <span style={{ visibility: 'hidden' }}>&nbsp;</span>
-              {labelText}
-            </span>
-          )}
+          <span className="avail-switch-toggle on">{onText}</span>
+          <span className="avail-switch-toggle off">{offText}</span>
+          <span className="avail-switch-toggle-cover" aria-hidden="true"></span>
+          <span className="avail-switch-scrim" aria-hidden="true"></span>
         </label>
         {(isValid || isInvalid) && (
           <Feedback type={isValid ? 'valid' : 'invalid'}>{feedback}</Feedback>
         )}
-      </div>
+      </Component>
     );
   },
 );

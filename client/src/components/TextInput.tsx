@@ -29,7 +29,7 @@ export const TextInput: React.FC<TextInputProps> = ({
         name={name}
         className="form-control"
         placeholder={placeholder}
-        value={value}
+        value={value || ''}
         onChange={handleChange}
         {...props}
       />
