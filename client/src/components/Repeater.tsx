@@ -13,6 +13,7 @@ export const Repeater: React.FC<FormControlGroup> = ({
   legend = null,
   onAdd,
   onRemove,
+  error,
   ...props
 }) => {
   const [options, setOptions] = useState(initialOptions as Option[]);
@@ -59,6 +60,8 @@ export const Repeater: React.FC<FormControlGroup> = ({
               className={classNames(i === 0 && 'first')}
               value={option.name}
               onChange={(event: ChangeEvent) => handleChange('name', i, event)}
+              isValid={!error || !error[id]}
+              isInvalid={error && error[id]}
             />
             <span className="sep" aria-hidden="true">
               :
@@ -69,6 +72,8 @@ export const Repeater: React.FC<FormControlGroup> = ({
               className={classNames(i === 0 && 'first')}
               value={option.value}
               onChange={(event: ChangeEvent) => handleChange('value', i, event)}
+              isValid={!error || !error[id]}
+              isInvalid={error && error[id]}
             />
           </RepeaterItem>
         ))}

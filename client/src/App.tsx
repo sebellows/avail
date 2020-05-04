@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { AnimationEvent, useEffect, useState } from 'react';
 import { generateConfig } from './core/new-config';
-import { Checklist, Modal, Spinner } from './components';
+import { Checklist, Dialog, Modal, Spinner, UtilityTabs } from './components';
 import './App.scss';
+import usePrevious from './hooks/usePrevious';
 
 const classes = generateConfig();
 
@@ -11,12 +12,19 @@ export default function App() {
   // const [formModel, setFormModel] = useState(classes);
   const [loading, setLoading] = useState(false);
   const [addExitClass, setExitClass] = useState(false);
-  const [isModalOpen, setModalOpen] = useState(false);
+  // const [show, setShow] = useState(false);
+  // const prevShow = usePrevious(show);
 
-  const toggleModal = () => {
-    console.log('isModalOpen', isModalOpen);
-    setModalOpen(!isModalOpen);
-  };
+  // const handleClose = () => {
+  //   if (prevShow !== show) {
+  //     setShow(false);
+  //   }
+  // };
+  // const handleShow = () => {
+  //   if (prevShow !== show) {
+  //     setShow(true);
+  //   }
+  // };
 
   useEffect(() => {
     if (loading) {
@@ -43,19 +51,14 @@ export default function App() {
     >
       <h1>Avail</h1>
 
-      <button onClick={toggleModal}>open modal</button>
-
       <h2>CSS Utility Class Generator</h2>
 
       {loading && <Spinner exit={addExitClass} onAnimationEnd={handleLoad} />}
 
       <form noValidate>
-        <Checklist id="avail-modules" items={model} />
+        <UtilityTabs id="avail-modules" items={model} />
+        {/* <Checklist id="avail-modules" items={model} /> */}
       </form>
-
-      <Modal isOpen={isModalOpen}>
-        <button onClick={toggleModal}>close modal</button>
-      </Modal>
     </div>
   );
 }

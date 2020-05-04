@@ -4,7 +4,7 @@ import { Transition } from 'react-transition-group';
 import { TransitionProps } from 'react-transition-group/Transition';
 
 import { classNames } from '../core/utils/classNames';
-import { style, transitionEnd } from '../core/utils/style';
+import { styles, onTransitionEnd } from '../core/utils';
 
 import '../styles/collapse.css';
 
@@ -26,8 +26,8 @@ function getDimensionValue(dimension: 'width' | 'height', elem: HTMLElement) {
 
   return (
     value +
-    parseInt(style(elem, margins[0]) as string, 10) +
-    parseInt(style(elem, margins[1]) as string, 10)
+    parseInt(styles(elem, margins[0]) as string, 10) +
+    parseInt(styles(elem, margins[1]) as string, 10)
   );
 }
 
@@ -121,7 +121,7 @@ export const Collapse = forwardRef<Transition, TransitionProps>(
 
     return (
       <Transition
-        addEndListener={transitionEnd}
+        addEndListener={onTransitionEnd}
         in={inProp}
         timeout={timeout}
         {...props}

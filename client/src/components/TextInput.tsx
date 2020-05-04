@@ -12,6 +12,8 @@ export const TextInput: React.FC<TextInputProps> = ({
   type = 'text',
   value = '',
   error,
+  isValid,
+  isInvalid,
   ...props
 }) => {
   function handleChange(event: any) {
@@ -21,7 +23,7 @@ export const TextInput: React.FC<TextInputProps> = ({
   }
 
   return (
-    <div className={classNames('form-group', className, error && error.length > 0 && 'has-error')}>
+    <div className={classNames('form-group', className, isInvalid && 'has-error')}>
       {label && <label htmlFor={name}>{label}</label>}
       <input
         type={type}
@@ -33,7 +35,7 @@ export const TextInput: React.FC<TextInputProps> = ({
         onChange={handleChange}
         {...props}
       />
-      {error && <div className="alert alert-danger">{error}</div>}
+      {isInvalid && error && <div className="alert alert-danger">{error}</div>}
     </div>
   );
 };

@@ -54,6 +54,18 @@ export const CheckIcon = ({ ref = null, ...props }) => (
   </Icon>
 );
 
+export const ChevronLeftIcon = ({ ref = null, ...props }) => (
+  <Icon ref={ref} name="plus" {...props}>
+    <polyline points="15 18 9 12 15 6" />
+  </Icon>
+);
+
+export const ChevronRightIcon = ({ ref = null, ...props }) => (
+  <Icon ref={ref} name="plus" {...props}>
+    <polyline points="9 18 15 12 9 6" />
+  </Icon>
+);
+
 export const ClipboardIcon = ({ ref = null, ...props }) => (
   <Icon ref={ref} name="copy" {...props}>
     <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />

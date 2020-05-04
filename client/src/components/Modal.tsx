@@ -1,226 +1,210 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, {
-  forwardRef,
-  Ref,
-  useContext,
-  useEffect,
-  useState,
-  useRef,
-  CSSProperties,
-} from 'react';
+import React, { forwardRef, Ref, useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Transition } from 'react-transition-group';
-import { classNames } from '../core/utils';
-import { CloseIcon } from './Icon';
-import { TransitionProps } from '../core/contracts';
+import { classNames, ESCAPE, TAB, listen, noScroll } from '../core/utils';
+// import { useClickOutside } from '../hooks/useClickOutside';
+import { EventHandler, TransitionProps } from '../core/contracts';
+import { useEventCallback } from '../hooks/useEventCallback';
+import { useWillUnmount } from '../hooks/useWillUnmount';
+import { FocusTrap } from './FocusTrap';
+import { ChevronLeftIcon, ChevronRightIcon } from './Icon';
 import '../styles/modal.css';
 
-export const ModalContext = React.createContext({ onHide() {} });
-
-// These two containers are siblings in the DOM
-const modalRoot = document.getElementById('portal');
-
-const transitionState = {
-  exited: 'is-collapsed',
-  exiting: 'is-collapsing',
-  entering: 'is-expanding',
-  entered: 'is-expanded',
-};
-
-interface ModalSharedProps {
-  className?: string;
-  isOpen?: boolean;
+interface ModalTriggerProps {
+  children: any;
+  onOpen?: Function;
+  [key: string]: any;
 }
 
-interface DialogProps {
-  className?: string;
-  children?: any;
-  style?: CSSProperties;
-  title?: string;
-  width?: string;
-  onClose?: (event: React.SyntheticEvent) => void;
-}
+const ModalTrigger = forwardRef<{}, ModalTriggerProps>(({ children, onOpen, ...props }, ref) => {
+  return (
+    <>
+      {React.cloneElement(children, {
+        className: classNames(children.props.className),
+        ref: ref,
+      })}
+    </>
+  );
+});
 
-const noopEvent = (event: React.SyntheticEvent) => {};
-
-export const DialogHeader: React.FC<Omit<DialogProps, 'children' | 'width'>> = ({
-  className = null,
-  title = '',
-  onClose = noopEvent,
-}) => {
-  function handleClick(event: React.SyntheticEvent) {
-    event.preventDefault();
-    onClose(event);
+function ignoreSiblings(siblings: NodeList | string[], fn: (el: HTMLElement) => void) {
+  if (siblings && siblings.length) {
+    siblings.forEach((selector: string | Node) => {
+      if (typeof selector == 'string') {
+        const el = document.querySelector(selector) as HTMLElement;
+        fn(el);
+      } else {
+        fn(selector as HTMLElement);
+      }
+    });
   }
-
-  return (
-    <div className={classNames('dialog-header', className)}>
-      <h5 className="dialog-title">{title}</h5>
-      <button type="button" className="close" aria-label="Close" onClick={handleClick}>
-        <span className="sr-only">Close</span>
-        <CloseIcon aria-hidden="true" />
-      </button>
-    </div>
-  );
-};
-
-// interface ModalContainerProps extends TransitionProps {
-
-// }
-
-// Let's create a Modal component that is an abstraction around
-// the portal API.
-// export const ModalContainer = forwardRef<Transition, TransitionProps>(
-//   (
-//     {
-//       in: inProp = false,
-//       appear = false,
-//       className = '',
-//       children,
-//       timeout = 300,
-//       dimension = 'height',
-//       role = 'dialog',
-//       show: initialShow = false,
-//       onEnter,
-//       onEntering,
-//       onEntered,
-//       onExit,
-//       onExiting,
-//       onExited,
-//       onShow,
-//       onHide,
-//       ...props
-//     },
-//     ref: Ref<Transition>,
-//   ) => {
-//   const [showModal, setShowModal] = useState(initialShow);
-
-//   const container = useRef(null);
-
-//   useEffect(() => {
-//     container.current = document.createElement('div');
-//     // Append the element into the DOM on mount. We'll render
-//     // into the modal container element (see the HTML tab).
-//     modalRoot.appendChild(container.current);
-
-//     return () => {
-//       // Remove the element from the DOM when we unmount
-//       modalRoot.removeChild(container.current);
-//     }
-//   }, []);
-
-//   useEffect(() => {
-//     if (!show || !container) return;
-
-//     handleShow();
-//   }, [show, container, /* should never change: */ handleShow]);
-
-//   // Hide cleanup logic when:
-//   //  - `exited` switches to true
-//   //  - component unmounts;
-//   useEffect(() => {
-//     if (!exited) return;
-
-//     handleHide();
-//   }, [exited, handleHide]);
-
-//   function handleEnter(node, ...args) {
-//     if (node) {
-//       node.style.display = 'block';
-//       // updateDialogStyle(node);
-//     }
-
-//     if (props.onEnter) props.onEnter(node, ...args);
-//   };
-
-//   function handleEntering(node, ...args) {
-//     if (props.onEntering) props.onEntering(node, ...args);
-
-//     // FIXME: This should work even when animation is disabled.
-//     addEventListener(window, 'resize', handleWindowResize);
-//   }
-
-//   function handleExited(node, ...args) {
-//     if (node) node.style.display = ''; // RHL removes it sometimes
-//     if (props.onExited) props.onExited(...args);
-
-//     // FIXME: This should work even when animation is disabled.
-//     removeEventListener(window, 'resize', handleWindowResize);
-//   }
-
-//   function handleWindowResize() {
-//     // updateDialogStyle(_modal.dialog);
-//   }
-
-//   // Use a portal to render the children into the element
-//   return createPortal(
-//     // Any valid React child: JSX, strings, arrays, etc.
-//     children,
-//     // A DOM element
-//     container.current,
-//   );
-// })
-
-export const Dialog: React.FC<DialogProps> = ({ className = '', width = '500px', children }) => {
-  return (
-    <div role="document" className={classNames('dialog', className)} style={{ maxWidth: width }}>
-      {children}
-    </div>
-  );
-};
-
-interface ModalProps extends ModalSharedProps, TransitionProps {
-  ariaLabelledby?: string;
 }
 
-interface ModalContainerProps {
-  style?: CSSProperties;
-}
-export const ModalContainer: React.FC<ModalContainerProps> = ({ style = {} }) => {
-  const modalStyles = { paddingRight: '15px', ...style };
-  return <div className="modal" role="dialog" style={modalStyles}></div>;
-};
+const ModalContent = forwardRef<{}, any>(
+  (
+    {
+      ariaLabel,
+      children,
+      className = '',
+      focalRef,
+      role = 'dialog',
+      onKeyUp = (event: any) => {},
+      onClickPrev = (event: any) => {},
+      onClickNext = (event: any) => {},
+    },
+    ref: Ref<any>,
+  ) => {
+    function handleClickPrev(event: any) {
+      event.preventDefault();
+      if (onClickPrev) {
+        onClickPrev(event);
+      }
+    }
 
-// The Modal component is a normal React component, so we can
-// render it wherever we like without needing to know that it's
-// implemented with portals.
-export const Modal: React.FC<ModalProps> = ({
-  ariaLabelledby = '',
-  className = null,
-  isOpen = false,
-  children,
-}) => {
-  //   const [showModal, setShowModal] = useState(initialShow);
+    function handleClickNext(event: any) {
+      event.preventDefault();
+      if (onClickNext) {
+        onClickNext(event);
+      }
+    }
 
-  // Container element to which the modal will be rendered
-  const el = document.createElement('div');
-  const container = useRef(el);
-  const labelledbyRef = useRef(ariaLabelledby);
+    return createPortal(
+      <div ref={ref} className="modal">
+        <div aria-hidden="true" className="modal-backdrop" />
+        <ul className="modal-navigation">
+          <li className="prev">
+            <a href="#" onClick={handleClickPrev}>
+              <ChevronLeftIcon size="64" />
+            </a>
+          </li>
+          <li className="next">
+            <a href="#" onClick={handleClickNext}>
+              <ChevronRightIcon size="64" />
+            </a>
+          </li>
+        </ul>
+        <FocusTrap
+          tag="aside"
+          ref={focalRef}
+          className={classNames('modal-content', className)}
+          role={role}
+          aria-label={ariaLabel}
+          aria-modal="true"
+          onKeyUp={onKeyUp}
+        >
+          {children}
+        </FocusTrap>
+      </div>,
+      document.body,
+    );
+  },
+);
 
-  useEffect(() => {
-    const { current: currentContainer } = container;
+ModalContent.displayName = 'ModalContent';
 
-    // Append to root when the children of Modal are mounted
-    modalRoot.appendChild(currentContainer);
+const Modal = forwardRef<{}, any>(
+  (
+    {
+      ariaLabel,
+      children,
+      className = '',
+      ignore = ['#root'],
+      role = 'dialog',
+      show = false,
+      trigger,
+      onClose = null,
+      onShow = null,
+    },
+    ref: Ref<any>,
+  ) => {
+    const [exited, setExited] = useState(!show);
 
-    // Do cleanup on componentWillUnmount
-    return () => {
-      modalRoot.removeChild(currentContainer);
+    // const backdropRef = useRef(null);
+    const focalRef = useRef(null);
+    const prevShow = useRef(!show);
+    const removeKeyDownListenerRef = useRef(null);
+
+    const handleShow = useEventCallback(() => {
+      setTimeout(() => {
+        ignoreSiblings(ignore, (el) => el.setAttribute('aria-hidden', 'true'));
+      });
+
+      removeKeyDownListenerRef.current = listen(document.documentElement, 'keydown', handleKeyUp);
+
+      onShow?.();
+
+      noScroll.on();
+
+      setExited(false);
+    });
+
+    const handleClose = useEventCallback(() => {
+      onClose?.();
+
+      noScroll.off();
+
+      setTimeout(() => {
+        ignoreSiblings(ignore, (el) => el.removeAttribute('aria-hidden'));
+      });
+
+      prevShow.current = true;
+    });
+
+    useEffect(() => {
+      if (!show) return;
+
+      handleShow();
+
+      prevShow.current = show;
+    }, [show, handleClose, handleShow]);
+
+    useEffect(() => {
+      const { current: wasShown } = prevShow;
+      if (!exited || (exited && wasShown)) return;
+
+      handleClose();
+    }, [exited, handleClose, prevShow]);
+
+    useWillUnmount(() => {
+      setExited(true);
+      const closeout = setTimeout(() => {
+        if (!prevShow.current) {
+          handleClose();
+        }
+      });
+      clearTimeout(closeout);
+    });
+
+    // useClickOutside(focalRef.current, () => {
+    //   setExited(true);
+    //   handleClose();
+    // });
+
+    const handleKeyUp = (event: any) => {
+      if (event.keyCode === ESCAPE) {
+        onClose?.(event);
+      }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
-  return (
-    isOpen &&
-    createPortal(
-      <div
-        className="modal"
-        role="dialog"
-        style={{ paddingRight: '15px', display: isOpen ? 'block' : 'none' }}
-      >
-        <Dialog>{children}</Dialog>
-      </div>, // child element
-      container.current, // target container
-    )
-  );
-};
+    return (
+      <>
+        <ModalTrigger>{trigger}</ModalTrigger>
+        {show && (
+          <ModalContent
+            ref={ref}
+            focalRef={focalRef}
+            {...{ className, ariaLabel, onKeyUp: handleKeyUp }}
+          >
+            {children}
+          </ModalContent>
+        )}
+      </>
+    );
+  },
+);
+
+Modal.displayName = 'Modal';
+
+export { Modal };

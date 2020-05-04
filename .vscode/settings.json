@@ -1,8 +1,8 @@
 {
-    "prettier.printWidth": 100,
-    "prettier.arrowParens": "always",
-    "prettier.tabWidth": 4,
-    "prettier.trailingComma": "all",
-    "editor.tabSize": 2,
-    "editor.wordWrapColumn": 100
+  "prettier.arrowParens": "always",
+  "prettier.printWidth": 100,
+  "prettier.tabWidth": 2,
+  "prettier.trailingComma": "all",
+  "eslint.packageManager": "yarn",
+  "editor.tabSize": 2,
 }

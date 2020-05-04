@@ -1,4 +1,4 @@
-import { ChangeEvent, CSSProperties, FocusEvent, KeyboardEvent, InputHTMLAttributes } from 'react';
+import { CSSProperties, FocusEvent, KeyboardEvent, InputHTMLAttributes } from 'react';
 
 /**
  * Form Handling
@@ -137,6 +137,7 @@ export interface FormGroup<T> {
 
 export interface FormControlGroup {
   className?: string;
+  error?: Record<string, any>; // TODO: replace with FieldError map?
   legend?: string;
   options?: any;
   id?: string;

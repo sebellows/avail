@@ -11,10 +11,11 @@ import { SelectInput } from './SelectInput';
 import { SettingsIcon } from './Icon';
 import { Collapse } from './Collapse';
 
-import '../styles/prism.css';
-import '../styles/checklist.css';
 import { hasOwn, isNil } from '../core/utils/common';
 import { classNames } from '../core/utils';
+
+import '../styles/prism.css';
+import '../styles/checklist.css';
 
 export interface ChecklistItemProps {
   expanded?: boolean;
