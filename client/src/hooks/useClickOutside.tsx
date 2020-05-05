@@ -1,4 +1,4 @@
-import { RefObject, useEffect } from 'react';
+import { RefObject, useEffect, MutableRefObject } from 'react';
 import { useLatest } from './useLatest';
 
 // const MOUSEDOWN = 'mousedown'
@@ -56,7 +56,7 @@ function getElementFromRef(ref: RefObject<HTMLElement> | HTMLElement): HTMLEleme
 }
 
 export const useClickOutside = (
-  ref: RefObject<HTMLElement>,
+  ref: RefObject<HTMLElement> | MutableRefObject<HTMLElement>,
   onClickOutside: (event: PossibleEvent) => void,
   disabled = false,
 ) => {

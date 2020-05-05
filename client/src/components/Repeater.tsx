@@ -12,6 +12,7 @@ export const Repeater: React.FC<FormControlGroup> = ({
   options: initialOptions = [],
   legend = null,
   onAdd,
+  onChange,
   onRemove,
   error,
   ...props
@@ -40,6 +41,9 @@ export const Repeater: React.FC<FormControlGroup> = ({
     const updateOptions = [...options];
     updateOptions[index][key] = event.target.value;
     setOptions(updateOptions);
+    if (onChange) {
+      onChange(options);
+    }
     console.log(options);
   }
 

@@ -48,27 +48,23 @@
   list-style: none;
   pointer-events: none;
 }
-.modal-navigation li {
+.modal-navigation a {
   position: absolute;
   top: 0;
-  height: 100%;
-  pointer-events: auto;
-}
-.modal-navigation li.prev {
-  left: 0;
-}
-.modal-navigation li.next {
-  right: 0;
-}
-.modal-navigation a {
-  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0;
   width: 60px;
   height: 100%;
+  padding: 0;
   opacity: 0.5;
+  pointer-events: auto;
+}
+.modal-navigation a.prev {
+  left: 0;
+}
+.modal-navigation a.next {
+  right: 0;
 }
 
 .close {

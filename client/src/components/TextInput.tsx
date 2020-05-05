@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TextInputProps } from '../core/contracts';
 import { classNames } from '../core/utils/classNames';
 
@@ -10,13 +10,21 @@ export const TextInput: React.FC<TextInputProps> = ({
   onChange,
   placeholder = '',
   type = 'text',
-  value = '',
+  value: initialValue = '',
   error,
   isValid,
   isInvalid,
   ...props
 }) => {
+  const [value, setValue] = useState(initialValue);
+
   function handleChange(event: any) {
+    event.persist();
+
+    const val = event?.target.value ?? event;
+
+    setValue(val);
+
     if (onChange) {
       onChange(event);
     }
@@ -31,7 +39,7 @@ export const TextInput: React.FC<TextInputProps> = ({
         name={name}
         className="form-control"
         placeholder={placeholder}
-        value={value || ''}
+        value={value}
         onChange={handleChange}
         {...props}
       />

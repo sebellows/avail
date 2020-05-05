@@ -142,6 +142,7 @@ export interface FormControlGroup {
   options?: any;
   id?: string;
   onAdd?: (event: any) => void;
+  onChange?: (...args: any[]) => void;
   onRemove?: (event: any) => void;
   after?: any;
   before?: any;

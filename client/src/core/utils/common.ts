@@ -3,16 +3,12 @@
 import { FieldElement } from '../contracts/form';
 
 export const isNil = (obj: any) => obj === undefined || obj === null;
-export const isDefined = (obj: any): boolean =>
-  obj !== undefined && obj !== null;
+export const isDefined = (obj: any): boolean => obj !== undefined && obj !== null;
 
 export const isObject = (obj: any) => typeof obj === 'object';
 
 export const typeOf = (obj: any, is?: string): string | boolean => {
-  const type = Object.prototype.toString
-    .call(obj)
-    .slice(8, -1)
-    .toLowerCase();
+  const type = Object.prototype.toString.call(obj).slice(8, -1).toLowerCase();
   return is ? type === is : type;
 };
 
@@ -47,12 +43,10 @@ export const isIterable = (obj: any): boolean => {
 export const isHTMLElement = (value: any): value is HTMLElement =>
   isObject(value) && (value as HTMLElement).nodeType === Node.ELEMENT_NODE;
 
-export const isCheckBoxInput = (
-  element: FieldElement,
-): element is HTMLInputElement => element.type === 'checkbox';
-export const isRadioInput = (
-  element: FieldElement,
-): element is HTMLInputElement => element.type === 'radio';
+export const isCheckBoxInput = (element: FieldElement): element is HTMLInputElement =>
+  element.type === 'checkbox';
+export const isRadioInput = (element: FieldElement): element is HTMLInputElement =>
+  element.type === 'radio';
 export const isRadioOrCheckbox = (ref: FieldElement): ref is HTMLInputElement =>
   isRadioInput(ref) || isCheckBoxInput(ref);
 
@@ -68,8 +62,7 @@ export const hasOwn = (obj: any, key: string) => {
 export const toString = (val: unknown): string => {
   return val == null
     ? ''
-    : Array.isArray(val) ||
-      (isPlainObject(val) && val.toString === Object.prototype.toString)
+    : Array.isArray(val) || (isPlainObject(val) && val.toString === Object.prototype.toString)
     ? JSON.stringify(val, null, 2)
     : String(val);
 };
@@ -83,14 +76,22 @@ export const toNumber = (val: unknown): number | unknown => {
   return isNaN(num) ? val : num;
 };
 
-export const toMap = <T>(obj: any): Map<string, T> => {
+export const toMap = <T>(obj: any, keyBy?: string): Map<string, T> => {
+  if (!isObject(obj) || isNil(obj)) {
+    throw new Error(
+      `Parameter passed to "toMap" function must be either an array or a plain object.`,
+    );
+  }
+  if (Array.isArray(obj)) {
+    const map = new Map();
+    return obj.reduce((acc, o, i) => {
+      const key = keyBy && keyBy in o ? o[keyBy] : i;
+      acc.set(key, o);
+      return acc;
+    }, map);
+  }
   if (isPlainObject(obj)) {
     return new Map(Object.entries(obj));
-  } else {
-    console.error(
-      `Parameter passed to "toMap" function must be a plain object.`,
-    );
-    return new Map();
   }
 };
 
@@ -109,8 +110,8 @@ export const memoize = <T>(fn: (str: string) => T) => {
 };
 
 /** Camelize a hyphen-delimited string. */
-export const camelize = memoize(function(str: string) {
-  return str.replace(/-(\w)/g, function(_, c) {
+export const camelize = memoize(function (str: string) {
+  return str.replace(/-(\w)/g, function (_, c) {
     return c ? c.toUpperCase() : '';
   });
 });
@@ -121,13 +122,11 @@ export const capitalize = memoize((str: string) => {
 });
 
 /** Hyphenate a camelCase string. */
-export const hyphenate = memoize(
-  (str: string): string => {
-    return String(str)
-      .replace(/\B([A-Z])/g, '-$1')
-      .toLowerCase();
-  },
-);
+export const hyphenate = memoize((str: string): string => {
+  return String(str)
+    .replace(/\B([A-Z])/g, '-$1')
+    .toLowerCase();
+});
 
 export const stripUnit = (value: string): number =>
   value.match(/\d+/g) ? parseInt(value, 10) : +value;

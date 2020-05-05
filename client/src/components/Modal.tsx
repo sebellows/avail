@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { forwardRef, Ref, useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Transition } from 'react-transition-group';
 import { classNames, ESCAPE, TAB, listen, noScroll } from '../core/utils';
 // import { useClickOutside } from '../hooks/useClickOutside';
@@ -73,18 +74,14 @@ const ModalContent = forwardRef<{}, any>(
     return createPortal(
       <div ref={ref} className="modal">
         <div aria-hidden="true" className="modal-backdrop" />
-        <ul className="modal-navigation">
-          <li className="prev">
-            <a href="#" onClick={handleClickPrev}>
-              <ChevronLeftIcon size="64" />
-            </a>
-          </li>
-          <li className="next">
-            <a href="#" onClick={handleClickNext}>
-              <ChevronRightIcon size="64" />
-            </a>
-          </li>
-        </ul>
+        <nav className="modal-navigation">
+          <a href="#" className="prev" onClick={handleClickPrev}>
+            <ChevronLeftIcon size="64" />
+          </a>
+          <a href="#" className="next" onClick={handleClickNext}>
+            <ChevronRightIcon size="64" />
+          </a>
+        </nav>
         <FocusTrap
           tag="aside"
           ref={focalRef}
@@ -116,6 +113,8 @@ const Modal = forwardRef<{}, any>(
       trigger,
       onClose = null,
       onShow = null,
+      onClickPrev = (event: any) => {},
+      onClickNext = (event: any) => {},
     },
     ref: Ref<any>,
   ) => {
@@ -190,12 +189,12 @@ const Modal = forwardRef<{}, any>(
 
     return (
       <>
-        <ModalTrigger>{trigger}</ModalTrigger>
+        {trigger && <ModalTrigger>{trigger}</ModalTrigger>}
         {show && (
           <ModalContent
             ref={ref}
             focalRef={focalRef}
-            {...{ className, ariaLabel, onKeyUp: handleKeyUp }}
+            {...{ className, ariaLabel, onKeyUp: handleKeyUp, onClickNext, onClickPrev }}
           >
             {children}
           </ModalContent>
