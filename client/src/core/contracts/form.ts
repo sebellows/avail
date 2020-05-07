@@ -102,7 +102,7 @@ export type RadioOrCheckboxOption = {
 
 export type InputType =
   | 'button'
-  // 'checkbox' |
+  | 'checkbox'
   | 'color'
   | 'date'
   | 'datetime-local'
@@ -113,7 +113,7 @@ export type InputType =
   | 'month'
   | 'number'
   | 'password'
-  // 'radio' |
+  | 'radio'
   | 'range'
   | 'reset'
   | 'search'
@@ -140,6 +140,7 @@ export interface FormControlGroup {
   error?: Record<string, any>; // TODO: replace with FieldError map?
   legend?: string;
   options?: any;
+  presets?: string[];
   id?: string;
   onAdd?: (event: any) => void;
   onChange?: (...args: any[]) => void;
@@ -149,45 +150,22 @@ export interface FormControlGroup {
 }
 
 export interface FormControl<T> extends InputHTMLAttributes<T> {
-  //   autoComplete?: string;
-  //   autoFocus?: boolean;
   className?: string;
-  //   disabled?: boolean;
   error?: string;
-  feedback?: string;
   id?: string;
   isInvalid?: boolean;
   isValid?: boolean;
   label?: string;
-  //   name: string;
   onBlur?: (event: FocusEvent<T>) => void;
-  //   onChange?: (event: ChangeEvent<T>) => void;
   onFocus?: (event: FocusEvent<T>) => void;
   onKeyDown?: (event: KeyboardEvent<T>) => void;
   onKeyUp?: (event: KeyboardEvent<T>) => void;
-  //   required?: boolean;
   style?: CSSProperties;
   tabIndex?: number;
-  //   value?: string;
+  [key: string]: any;
 }
 
-// export interface TextFieldProps<T> extends FormControl<T> {
-//   maxLength?: number; // password, search, tel, text, url, TEXTAREA
-//   minLength?: number; // password, search, tel, text, url, TEXTAREA
-//   placeholder?: string; // text/TEXTAREA
-// }
-
 export interface TextInputProps extends FormControl<HTMLInputElement> {}
-// export interface TextInputProps extends TextFieldProps<HTMLInputElement> {
-//   max?: number; // numeric types
-//   min?: number; // numeric types
-//   multiple?: boolean; // email, file, SELECT
-//   pattern?: RegExp; // password, text, tel
-//   size?: number; // email, password, tel, text, SELECT
-//   step?: number; // numeric types
-//   list?: string; // id of a corresponding <datalist>
-//   type?: InputType; // INPUT
-// }
 
 export interface TextAreaProps extends FormControl<HTMLTextAreaElement> {
   cols?: number; // default: 20;
@@ -204,7 +182,7 @@ export interface CheckboxProps extends FormControl<HTMLInputElement> {
 
 export interface OptionProps {
   disabled?: boolean;
-  name?: string;
+  name?: string | number;
   selected?: boolean;
   value: string;
 }
@@ -214,4 +192,24 @@ export interface SelectInputProps extends FormControl<HTMLSelectElement> {
   multiple?: boolean;
   options?: OptionProps[] | string[];
   size?: number;
+}
+
+export type FormControlType = HTMLSelectElement | HTMLTextAreaElement | HTMLInputElement;
+
+export interface FormControlProps extends InputHTMLAttributes<FormControlType> {
+  as?: string | JSX.IntrinsicAttributes;
+  className?: string;
+  error?: string;
+  id?: string;
+  isInvalid?: boolean;
+  isValid?: boolean;
+  onBlur?: (event: FocusEvent<FormControlType>) => void;
+  onFocus?: (event: FocusEvent<FormControlType>) => void;
+  onKeyDown?: (event: KeyboardEvent<FormControlType>) => void;
+  onKeyUp?: (event: KeyboardEvent<FormControlType>) => void;
+  style?: CSSProperties;
+  tabIndex?: number;
+  defaultOption?: OptionProps | string;
+  options?: OptionProps[] | string[];
+  [key: string]: any;
 }

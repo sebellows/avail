@@ -20,7 +20,12 @@
 }
 .modal-backdrop {
   background: rgba(255, 255, 255, 0.9);
+  transition: opacity var(--ease-out-duration) var(--ease-out-timing);
+  opacity: 0;
   /* z-index: calc(var(--modal-zindex) + 1); */
+}
+body[style*='position: fixed'] .modal-backdrop {
+  opacity: 1;
 }
 .modal-content {
   position: relative;
@@ -104,7 +109,7 @@
   width: 100%;
   background-color: var(--body-bg);
   background-clip: padding-box;
-  border: var(--border);
+  /* border: var(--border); */
   border-radius: var(--rounded-lg);
   box-shadow: var(--shadow-2), var(--shadow-3);
   outline: 0;

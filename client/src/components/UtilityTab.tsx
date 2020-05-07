@@ -4,20 +4,19 @@ import Prism from 'prismjs';
 
 import { AvailUtility, AvailUtilities } from '../core/contracts';
 import { generateUtility, generateResponsiveUtility } from '../core/build';
-import { CheckboxInput } from './CheckboxInput';
-import { TextInput } from './TextInput';
 import { Repeater } from './Repeater';
 import { SettingsIcon } from './Icon';
 import { Modal } from './Modal';
 import { Dialog } from './Dialog';
+import { FormGroup } from './FormGroup';
 
 import { useClickOutside } from '../hooks/useClickOutside';
 
-import { hasOwn, isNil } from '../core/utils/common';
-import { classNames, collection } from '../core/utils';
+import { hasOwn } from '../core/utils/common';
+import { classNames, collection, LEFT, RIGHT } from '../core/utils';
 
 import '../styles/prism.css';
-import '../styles/checklist.css';
+import '../styles/utility-tabs.css';
 import usePrevious from '../hooks/usePrevious';
 
 const initialOutput = 'Code goes here.';
@@ -42,92 +41,38 @@ export interface UtilityTabProps {
   error?: Record<string, any>;
   model: AvailUtility;
   onClick?: (event: any) => void;
-  // onClickPrev?: Function;
-  // onClickNext?: Function;
   tag?: JSX.IntrinsicAttributes;
 }
 
 const UtilityTab = forwardRef<{}, UtilityTabProps>(
   ({ expanded = false, model, onClick, tag = 'li', error, ...props }, ref) => {
-    // const [open, setOpen] = useState(expanded);
-    // const [responsive, setResponsive] = useState(model.responsive);
-    // const [utility, setUtility] = useState(model);
-    // const [output, setOutput] = useState(initialOutput);
-
-    // useEffect(() => {
-    //   Prism.highlightAll();
-    // });
-
-    // useEffect(() => {
-    //   if (responsive) {
-    //     setOutput(generateResponsiveUtility(model));
-    //   } else {
-    //     setOutput(generateUtility(model));
-    //   }
-    // }, [model, responsive]);
-
-    // function handleClick(event: any) {
-    //   event.persist();
-    //   setOpen(!open);
-    // }
-
     const Component = tag as 'div';
 
     return (
-      <Component className="checklist-item-header">
+      <Component className="utility-tab">
         <div className="d-flex align-items-end">
-          <CheckboxInput
+          <FormGroup
+            type="checkbox"
             name={`${model.id}-enabled`}
             checked={model.enabled}
+            className="mb-0 mr-2"
             value={model.id}
-            label={model.property as string}
-            className="mr-2"
-          />
-
-          <code>{model.property}</code>
+          >
+            <code className="font-size-base">{model.property}</code>
+          </FormGroup>
         </div>
 
         <button
           type="button"
-          className="btn fab mini-fab checklist-menu-toggle"
+          className="btn fab mini-fab utility-tab-toggle"
           onClick={onClick}
-          aria-controls={`checklist-item-${model.id}`}
+          aria-controls={`utility-tab-${model.id}`}
           aria-expanded={props['expanded']}
         >
           <SettingsIcon />
         </button>
       </Component>
     );
-
-    // return (
-    //   <Modal show={open} trigger={trigger} onClickPrev={onClickPrev} onClickNext={onClickNext}>
-    //     <Dialog ref={dialogRef} title={dialogTitle} onClose={handleClose}>
-    //       <div id={`utility-${model.id}`}>
-    //         {model.description && <p>{model.description}</p>}
-    //         <fieldset ref={fieldsetRef}>
-    //           <TextInput
-    //             name={`${model.id}-root-class`}
-    //             value={isNil(model.class) ? '' : model.class}
-    //             label="Root class prefix:"
-    //             required
-    //           />
-    //           <CheckboxInput
-    //             name={`${model.id}-responsive`}
-    //             value="responsive"
-    //             checked={model.responsive}
-    //             label="Make responsive classes?"
-    //           />
-    //           <Repeater options={model.options} error={error && error[model.id]} />
-    //         </fieldset>
-    //         <output className="output">
-    //           <pre>
-    //             <code className="language-css">{output}</code>
-    //           </pre>
-    //         </output>
-    //       </div>
-    //     </Dialog>
-    //   </Modal>
-    // );
   },
 );
 
@@ -140,13 +85,13 @@ export interface UtilityTabsProps {
 }
 
 const DialogTitle = ({ children }) => (
-  <h3 className="text-lg font-weight-bold mb-0">
+  <h3 className="font-size-lg font-weight-bold mb-0">
     <code>{children}</code>
   </h3>
 );
 
-export const UtilityTabs = React.forwardRef<HTMLUListElement, UtilityTabsProps>(
-  ({ id, items = {}, ...props }, ref: Ref<HTMLUListElement>) => {
+export const UtilityTabs = React.forwardRef<HTMLOListElement, UtilityTabsProps>(
+  ({ id, items = {}, ...props }, ref: Ref<HTMLOListElement>) => {
     const [activeModel, setActiveModel] = useState(null);
     const lastActiveModel = usePrevious(activeModel);
     const [utilities, setUtilities] = useState(collection(items, 'id'));
@@ -189,6 +134,15 @@ export const UtilityTabs = React.forwardRef<HTMLUListElement, UtilityTabsProps>(
       setActiveModel(utilities.current);
     };
 
+    function handleKeyUp(event: any) {
+      if (event.keyCode === LEFT) {
+        handleClickPrev();
+      }
+      if (event.keyCode === RIGHT) {
+        handleClickNext();
+      }
+    }
+
     function handleClose(event: any) {
       setOpen(false);
     }
@@ -207,7 +161,7 @@ export const UtilityTabs = React.forwardRef<HTMLUListElement, UtilityTabsProps>(
 
     return (
       <>
-        <ul ref={ref} id={id} className={classNames('checklist', props.className)}>
+        <ol ref={ref} id={id} className={classNames('utility-tabs', props.className)}>
           {utilities.size > 0 &&
             utilities.map((utility: AvailUtility) => (
               <UtilityTab
@@ -217,10 +171,11 @@ export const UtilityTabs = React.forwardRef<HTMLUListElement, UtilityTabsProps>(
                 onClick={() => handleSelect(utility)}
               />
             ))}
-        </ul>
+        </ol>
 
         <Modal
           show={open && activeModel}
+          onKeyUp={handleKeyUp}
           onClickPrev={handleClickPrev}
           onClickNext={handleClickNext}
         >
@@ -233,21 +188,27 @@ export const UtilityTabs = React.forwardRef<HTMLUListElement, UtilityTabsProps>(
               <div id={`utility-${activeModel.id}`}>
                 {activeModel.description && <p>{activeModel.description}</p>}
                 <fieldset ref={fieldsetRef}>
-                  <TextInput
+                  <FormGroup
                     name={`${activeModel.id}-root-class`}
                     value={activeModel.class}
                     label="Root class prefix:"
                     onChange={handleUtilityChange}
                     required
                   />
-                  <CheckboxInput
+                  <FormGroup
+                    type="checkbox"
                     name={`${activeModel.id}-responsive`}
                     value="responsive"
                     checked={activeModel.responsive}
-                    label="Make responsive classes?"
+                    onChange={handleUtilityChange}
+                  >
+                    <span>Make responsive classes?</span>
+                  </FormGroup>
+                  <Repeater
+                    options={activeModel.options}
+                    presets={activeModel?.presets}
                     onChange={handleUtilityChange}
                   />
-                  <Repeater options={activeModel.options} onChange={handleUtilityChange} />
                 </fieldset>
                 <output className="output">
                   <pre>

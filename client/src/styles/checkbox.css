@@ -55,6 +55,14 @@
   display: inline-flex;
   align-items: baseline;
   vertical-align: middle;
+  display: block;
+  margin-bottom: 0;
+  white-space: nowrap;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 .form-check-input {
   border: 0;
@@ -68,21 +76,10 @@
   height: 100%;
   z-index: 1;
 }
-/* Actual <label> */
-.form-check-label {
-  cursor: pointer;
-  display: block;
-  margin-bottom: 0;
-  position: relative;
-  white-space: nowrap;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
 .form-check-container {
   display: inline-block;
-  height: 1.25rem;
+  height: 1rem;
+  width: 1rem;
   line-height: 0;
   margin: auto;
   margin-right: 0.5rem;
@@ -90,7 +87,6 @@
   position: relative;
   vertical-align: middle;
   white-space: nowrap;
-  width: 1.25rem;
   flex-shrink: 0;
   pointer-events: none;
 }
@@ -102,7 +98,7 @@
 }
 .form-check-bg,
 .form-check-box {
-  border-radius: 0.25rem;
+  border-radius: var(--rounded);
   position: absolute;
   top: 0;
   left: 0;
@@ -113,16 +109,14 @@
   align-items: center;
   display: inline-flex;
   justify-content: center;
-  transition: background-color var(--checkbox-transition-duration)
-      var(--linear-out-slow-in-timing),
+  transition: background-color var(--checkbox-transition-duration) var(--linear-out-slow-in-timing),
     opacity var(--checkbox-transition-duration) var(--linear-out-slow-in-timing);
 }
 .form-check-box {
   background-color: transparent;
   border-width: 2px;
   border-style: solid;
-  transition: border-color var(--checkbox-transition-duration)
-    var(--linear-out-slow-in-timing);
+  transition: border-color var(--checkbox-transition-duration) var(--linear-out-slow-in-timing);
 }
 .form-check-icon {
   fill: var(--white);
@@ -146,28 +140,28 @@
 .form-check.is-checked .form-check-bg,
 .form-check input:checked ~ .form-check-container .form-check-bg {
   animation-name: checkbox-fade-in-bg;
-  animation-duration: 0.3s;
+  animation-duration: var(--ease-in-duration);
   animation-timing-function: linear;
   animation-delay: 0ms;
 }
 .form-check.is-checked .check-icon-path,
 .form-check input:checked .form-check-icon-path {
   animation-name: checkbox-to-checked-icon-path;
-  animation-duration: 0.3s;
+  animation-duration: var(--ease-in-duration);
   animation-timing-function: linear;
   animation-delay: 0ms;
 }
 .form-check.is-unchecked .form-check-bg,
 .form-check input:not(:checked) ~ .form-check-container .form-check-bg {
   animation-name: checkbox-fade-out-bg;
-  animation-duration: 0.3s;
+  animation-duration: var(--ease-in-duration);
   animation-timing-function: linear;
   animation-delay: 0ms;
 }
 .form-check.is-unchecked .form-check-icon-path,
 .form-check input:not(:checked) ~ .form-check-icon-path {
   animation-name: checkbox-to-unchecked-icon-path;
-  animation-duration: 0.3s;
+  animation-duration: var(--ease-in-duration);
   animation-timing-function: linear;
   animation-delay: 0ms;
 }

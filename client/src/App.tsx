@@ -3,28 +3,13 @@ import React, { AnimationEvent, useEffect, useState } from 'react';
 import { generateConfig } from './core/new-config';
 import { Spinner, UtilityTabs } from './components';
 import './App.scss';
-import usePrevious from './hooks/usePrevious';
 
 const classes = generateConfig();
 
 export default function App() {
   const [model, setModel] = useState(classes);
-  // const [formModel, setFormModel] = useState(classes);
   const [loading, setLoading] = useState(false);
   const [addExitClass, setExitClass] = useState(false);
-  // const [show, setShow] = useState(false);
-  // const prevShow = usePrevious(show);
-
-  // const handleClose = () => {
-  //   if (prevShow !== show) {
-  //     setShow(false);
-  //   }
-  // };
-  // const handleShow = () => {
-  //   if (prevShow !== show) {
-  //     setShow(true);
-  //   }
-  // };
 
   useEffect(() => {
     if (loading) {
@@ -56,9 +41,7 @@ export default function App() {
       {loading && <Spinner exit={addExitClass} onAnimationEnd={handleLoad} />}
 
       <form noValidate>
-        {/* <UtilityTabs id="avail-modules" items={model} /> */}
         <UtilityTabs id="avail-modules" items={model} />
-        {/* <Checklist id="avail-modules" items={model} /> */}
       </form>
     </div>
   );

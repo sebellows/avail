@@ -4,7 +4,7 @@ import React, { forwardRef, Ref, useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Transition } from 'react-transition-group';
-import { classNames, ESCAPE, TAB, listen, noScroll } from '../core/utils';
+import { classNames, ESCAPE, listen, noScroll } from '../core/utils';
 // import { useClickOutside } from '../hooks/useClickOutside';
 import { EventHandler, TransitionProps } from '../core/contracts';
 import { useEventCallback } from '../hooks/useEventCallback';
@@ -113,6 +113,7 @@ const Modal = forwardRef<{}, any>(
       trigger,
       onClose = null,
       onShow = null,
+      onKeyUp = (event: any) => {},
       onClickPrev = (event: any) => {},
       onClickNext = (event: any) => {},
     },
@@ -157,6 +158,8 @@ const Modal = forwardRef<{}, any>(
       handleShow();
 
       prevShow.current = show;
+
+      return () => handleClose();
     }, [show, handleClose, handleShow]);
 
     useEffect(() => {
@@ -176,14 +179,12 @@ const Modal = forwardRef<{}, any>(
       clearTimeout(closeout);
     });
 
-    // useClickOutside(focalRef.current, () => {
-    //   setExited(true);
-    //   handleClose();
-    // });
-
     const handleKeyUp = (event: any) => {
       if (event.keyCode === ESCAPE) {
         onClose?.(event);
+      }
+      if (onKeyUp) {
+        onKeyUp(event);
       }
     };
 

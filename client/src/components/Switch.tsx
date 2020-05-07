@@ -1,7 +1,6 @@
 import React, { useState, useRef, Ref } from 'react';
 import { CheckboxProps } from '../core/contracts/form';
 import { classNames } from '../core/utils/classNames';
-import { Feedback } from './Feedback';
 import '../styles/switch.css';
 
 export interface SwitchProps extends CheckboxProps {
@@ -17,7 +16,6 @@ export const Switch = React.forwardRef<{}, SwitchProps>(
       checked: initialChecked = false,
       disabled = false,
       className = null,
-      feedback = null,
       id: controlId = null,
       inline = false,
       label: labelText = null,
@@ -82,9 +80,6 @@ export const Switch = React.forwardRef<{}, SwitchProps>(
           <span className="avail-switch-toggle-cover" aria-hidden="true"></span>
           <span className="avail-switch-scrim" aria-hidden="true"></span>
         </label>
-        {(isValid || isInvalid) && (
-          <Feedback type={isValid ? 'valid' : 'invalid'}>{feedback}</Feedback>
-        )}
       </Component>
     );
   },

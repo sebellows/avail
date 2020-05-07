@@ -5,6 +5,7 @@ export * from './form';
 export * from './keycodes';
 export * from './listen';
 export * from './noScroll';
+export * from './props';
 export * from './range';
 export * from './styles';
 export * from './animation';

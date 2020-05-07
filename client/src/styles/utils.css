@@ -579,25 +579,28 @@
 
 /* Text Size */
 
-.text-xxs {
+.font-size-xxs {
   font-size: 0.625rem !important;
 }
-.text-xs {
+.font-size-xs {
   font-size: 0.75rem !important;
 }
-.text-sm {
+.font-size-sm {
   font-size: 0.875rem !important;
 }
-.text-md {
+.font-size-base {
+  font-size: var(--font-size-base) !important;
+}
+.font-size-md {
   font-size: 1.25rem !important;
 }
-.text-lg {
+.font-size-lg {
   font-size: 1.5rem !important;
 }
-.text-lg {
+.font-size-lg {
   font-size: 1.75rem !important;
 }
-.text-xl {
+.font-size-xl {
   font-size: 2.5rem !important;
 }
 

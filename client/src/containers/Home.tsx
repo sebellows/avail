@@ -42,7 +42,6 @@ export const Home = () => {
 
       <form noValidate>
         <UtilityTabs id="avail-modules" items={model} />
-        {/* <Checklist id="avail-modules" items={model} /> */}
       </form>
     </div>
   );

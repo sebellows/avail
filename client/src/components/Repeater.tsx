@@ -1,6 +1,6 @@
 import React, { useState, ChangeEvent } from 'react';
 import { FormControlGroup, OptionProps as Option } from '../core/contracts';
-import { TextInput } from './TextInput';
+import { FormGroup } from './FormGroup';
 import { RepeaterItem } from './RepeaterItem';
 import { classNames } from '../core/utils/classNames';
 
@@ -10,6 +10,7 @@ export const Repeater: React.FC<FormControlGroup> = ({
   id: initialId,
   className = '',
   options: initialOptions = [],
+  presets,
   legend = null,
   onAdd,
   onChange,
@@ -58,7 +59,7 @@ export const Repeater: React.FC<FormControlGroup> = ({
             onAdd={handleAdd}
             onRemove={(i: number) => handleRemove(i)}
           >
-            <TextInput
+            <FormGroup
               name={`${id}-${i}-name`}
               label="Utility Class Suffix"
               className={classNames(i === 0 && 'first')}
@@ -70,11 +71,12 @@ export const Repeater: React.FC<FormControlGroup> = ({
             <span className="sep" aria-hidden="true">
               :
             </span>
-            <TextInput
+            <FormGroup
               name={`${id}-${i}-value`}
               label="Property Value"
               className={classNames(i === 0 && 'first')}
               value={option.value}
+              options={presets}
               onChange={(event: ChangeEvent) => handleChange('value', i, event)}
               isValid={!error || !error[id]}
               isInvalid={error && error[id]}

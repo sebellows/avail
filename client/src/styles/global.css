@@ -134,8 +134,6 @@
   --linear-out-slow-in-timing: cubic-bezier(0, 0, 0.2, 0.1);
 
   --container-max-width: 576px;
-
-  --checklist-item-width: 100%;
 }
 /*
   Grid Breakpoints
@@ -153,13 +151,11 @@
 @media (min-width: 768px) {
   :root {
     --container-max-width: 768px;
-    --checklist-item-width: 50%;
   }
 }
 @media (min-width: 992px) {
   :root {
     --container-max-width: 992px;
-    --checklist-item-width: 33.333%;
   }
 }
 @media (min-width: 1200px) {

@@ -9,7 +9,7 @@
 .form-group:first-child {
   border-top: 1px solid transparent;
 }
-.form-group label {
+.form-group label:not(.form-check) {
   font-weight: 700;
   margin-bottom: var(--spacer-2);
 }
@@ -56,7 +56,8 @@
 .form-control:focus {
   border-color: var(--control-focus-border-color);
 }
-/* Color Input */
+
+/** Color Input */
 .form-group.form-color {
   position: relative;
 }
@@ -94,225 +95,30 @@
   display: block;
 }
 
-/**
-   * Avail Select Field
-   */
-.avail-select {
-  background-color: var(--white);
-  background-clip: padding-box;
-  border: var(--border);
-  border-radius: 0.125rem;
-  box-shadow: none;
-  color: var(--gray-800);
-  display: block;
-  width: 100%;
-  max-width: 500px;
-  height: calc(1.5em + 0.75rem + 2px);
+/** Select */
+.form-select {
   position: relative;
-  z-index: 100;
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.5;
-  user-select: none;
-}
-.avail-select:focus {
-  outline: none;
-}
-.avail-select.is-active {
-  z-index: 200;
-}
-
-.avail-select .toggle-arrow {
-  pointer-events: none !important;
-}
-
-.avail-select-trigger {
-  display: flex;
-  position: relative;
-  cursor: pointer;
-  height: calc(1.5em + 0.75rem + 2px);
-  max-width: 100%;
-  padding: var(--spacer-2) var(--spacer-4) var(--spacer-2) var(--spacer-2);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.avail-select-value {
-  flex: 1;
-}
-
-/* Selected "option" */
-.avail-select .is-selected {
-  padding-right: var(--spacer-4);
-}
-
-/* Options */
-.avail-select-panel {
-  border-radius: 0.25rem;
-  box-shadow: var(--shadow-1), var(--shadow-2), var(--shadow-3);
-  position: absolute;
-  top: 0;
-  overflow: hidden;
-  width: calc(100% + 32px);
-  max-height: 240px;
-  background: var(--white);
-  visibility: hidden;
-  transform-origin: 50% 24px 0;
-  overflow: hidden;
-  overflow-y: auto;
-}
-.avail-select.is-active .avail-select-panel {
-  transform: translate3d(-15px, -16px, 0);
-  visibility: visible;
-  z-index: 101;
-}
-
-ul.avail-select-menu {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  width: 100%;
-}
-ul.avail-select-menu li {
-  cursor: pointer;
-  line-height: 2.5em;
-  height: 2.5em;
-  padding: 0 var(--spacer-3);
-}
-ul.avail-select-menu li:hover {
-  background-color: var(--light);
-}
-ul.avail-select-menu li.is-focused {
-  background-color: var(--gray-300);
-}
-
-/* The actual <select> field */
-.avail-select-control {
-  display: none;
-}
-
-.avail-select-panel-enter {
-  animation: dropdownEnter 300ms cubic-bezier(0.55, 0, 0.55, 0.2);
-}
-.avail-select-panel-leave {
-  animation: dropdownLeave 400ms cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
-@keyframes dropdownEnter {
-  from {
-    transform: translate3d(-15px, -50px, 0);
-    opacity: 0;
-  }
-
-  to {
-    transform: translate3d(-15px, -16px, 0);
-    opacity: 1;
-  }
-}
-
-@keyframes dropdownLeave {
-  from {
-    transform: translate3d(-15px, -16px, 0);
-    opacity: 1;
-  }
-
-  to {
-    transform: translate3d(-15px, -50px, 0);
-    opacity: 0;
-  }
-}
-
-/* Display the value of an option in `avail-select`. */
-.preview-box {
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-0);
-  display: none;
-  line-height: 1;
-  margin-right: var(--spacer-2);
-  padding: var(--spacer-1);
-  position: relative;
-  top: -3px;
-  vertical-align: middle;
-}
-.preview-box[style] {
   display: inline-block;
+  width: 100%;
 }
-.preview-box[style*='background-color'] {
-  background-clip: content-box;
-  box-shadow: inset 0 0 0 5px var(--white), inset 0 0 0 6px rgba(0, 0, 0, 0.2), var(--shadow-0);
-  box-sizing: content-box;
-  border-radius: 50%;
-  height: 1rem;
-  width: 1rem;
-}
-
-.avail-switch {
-  display: inline-flex;
-  align-items: center;
-}
-.avail-switch-label-text {
-  font-size: 0.875rem;
-  line-height: 1.5;
-  text-transform: uppercase;
-  margin: 0 0.5em;
-}
-.avail-switch-label {
-  background-color: var(--body-bg);
-  border-radius: 1em;
-  color: var(--body-color);
-  margin-bottom: 0;
-  position: relative;
-  overflow: hidden;
-}
-.avail-switch-control {
+.form-select::after {
+  content: '';
   position: absolute;
-  opacity: 0;
-}
-.avail-switch-control:checked ~ .avail-switch-toggle-cover {
-  transform: translateX(-100%);
-}
-.avail-switch-toggle {
-  font-size: 0.75rem;
-  line-height: 1.2;
-  text-align: center;
-  text-transform: uppercase;
-  padding: 0.25rem 0.5rem;
-}
-.avail-switch-toggle.on {
-  border-radius: 0.5em 0 0 0.5em;
-}
-.avail-switch-toggle.off {
-  border-radius: 0 0.5em 0.5em 0;
-}
-.avail-switch-toggle-cover {
-  background-color: var(--secondary);
-  border-radius: 0.125em;
-  text-align: center;
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 50%;
-  height: 100%;
-  z-index: 10;
-  transition: transform var(--ease-in-out-duration) var(--fast-out-slow-in-timing);
+  top: 50%;
+  right: calc(var(--font-size-base) * 1.25);
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-top: -0.15625rem; /* ~2.5px */
+  border: 0.34375rem solid transparent; /* ~3px */
+  border-top-color: var(--control-color);
   pointer-events: none;
 }
-.avail-switch-toggle-cover::before {
-  content: '|||';
-  letter-spacing: 4px;
-  text-shadow: -0.5px -0.5px 0px rgba(255, 255, 255, 0.5), 1px 1px 2px rgba(0, 0, 0, 0.25);
-  color: var(--pink);
-  mix-blend-mode: hard-light;
-}
-.avail-switch-scrim {
-  box-shadow: inset 1px 1px 4px 2px rgba(0, 0, 0, 0.2);
-  display: block;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: 11;
+.form-select select {
+  border: 0;
+  display: inline-block;
+  padding: 0.5rem 2.25rem 0.5rem var(--control-padding-x);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
