@@ -20,12 +20,9 @@
 }
 .modal-backdrop {
   background: rgba(255, 255, 255, 0.9);
-  transition: opacity var(--ease-out-duration) var(--ease-out-timing);
-  opacity: 0;
-  /* z-index: calc(var(--modal-zindex) + 1); */
-}
-body[style*='position: fixed'] .modal-backdrop {
-  opacity: 1;
+  animation: fade-in;
+  animation-duration: var(--ease-out-duration);
+  animation-timing-function: var(--ease-out-timing);
 }
 .modal-content {
   position: relative;
