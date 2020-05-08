@@ -1,0 +1,31 @@
+.tabs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tab {
+  background-color: var(--control-bg-color);
+  border: 0;
+  color: var(--control-color);
+  display: block;
+  flex: 1;
+  text-align: center;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  transition: background-color var(--ease-in-duratin) var(--ease-in-timing);
+}
+.tab:hover,
+.tab[aria-selected='true'] {
+  background-color: var(--control-active-bg-color);
+  color: var(--control-active-color);
+  text-decoration: none;
+}
+
+.tab-panel {
+  display: none;
+  visibility: hidden;
+}
+.tab-panel.active {
+  display: block;
+  visibility: visible;
+}

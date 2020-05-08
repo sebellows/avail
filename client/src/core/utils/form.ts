@@ -9,7 +9,7 @@ import {
 } from '../contracts/form';
 import {
   isCheckBoxInput,
-  isHTMLElement,
+  isNode,
   isNil,
   //   isObject,
   //   isRadioOrCheckbox,
@@ -30,7 +30,7 @@ export function useForm<FormValues>(initialValues = {} as FormValues) {
       const ref = field.ref;
       const options = field.options;
       const { type } = ref;
-      const value = isHTMLElement(ref) && isNil(rawValue) ? '' : rawValue;
+      const value = isNode(ref) && isNil(rawValue) ? '' : rawValue;
 
       //   if (isRadioInput(ref) && options) {
       //     (options as RadioOrCheckboxOption[]).forEach(

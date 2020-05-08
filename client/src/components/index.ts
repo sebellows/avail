@@ -9,4 +9,5 @@ export { Modal } from './Modal';
 export { Repeater } from './Repeater';
 export { RepeaterItem } from './RepeaterItem';
 export { Spinner } from './Spinner';
+export * from './tabs';
 export { UtilityTab, UtilityTabs } from './UtilityTab';

@@ -1,26 +1,20 @@
-import { styles } from "./styles";
-import { Listener } from "../contracts";
-import { listen } from "./listen";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { styles } from './styles';
+import { Listener } from '../contracts';
+import { listen } from './listen';
 
-export const onAnimationEnd = (el: HTMLElement, fn: Function): void => {
-  const events = ['webkitAnimationEnd', 'animationend'];
+// Fade in over 2000 ms = 2 seconds.
+const FADE_DURATION = 1.0 * 1000;
 
-  const handler = (event: any) => {
-    fn();
-    events.forEach((eventName) => {
-      el.removeEventListener(eventName, handler, false);
-    });
-  };
+// Function to render current frame (whatever frame that may be)
+function render(el: HTMLElement, currTime: number, duration: number) {
+  // How opaque should el be? Its fade started at `currTime=0`.
+  // Over FADE_DURATION ms, opacity goes from 0 to 1
+  el.style.opacity = `${currTime / duration}`;
+}
 
-  if (el && el.addEventListener) {
-    events.forEach((eventName) => {
-      el.addEventListener(eventName, handler, false);
-    });
-  }
-};
-
-function parseDuration(node: HTMLElement) {
-  const str = styles(node, 'transitionDuration') || '';
+function parseDuration(el: HTMLElement) {
+  const str = styles(el, 'transitionDuration') || '';
 
   const mult = str.indexOf('ms') === -1 ? 1000 : 1;
   return parseFloat(str) * mult;
@@ -32,11 +26,7 @@ function triggerTransitionEnd(element: HTMLElement) {
   element.dispatchEvent(evt);
 }
 
-function emulateTransitionEnd(
-  element: HTMLElement,
-  duration: number,
-  padding = 5,
-) {
+function emulateTransitionEnd(element: HTMLElement, duration: number, padding = 5) {
   let called = false;
 
   const handle = setTimeout(() => {
@@ -58,19 +48,52 @@ function emulateTransitionEnd(
   };
 }
 
+export const onAnimationEnd = (el: HTMLElement, fn: Function): void => {
+  const events = ['webkitAnimationEnd', 'animationend'];
+
+  const handler = (event: any) => {
+    fn();
+    events.forEach((eventName) => {
+      el.removeEventListener(eventName, handler, false);
+    });
+  };
+
+  if (el && el.addEventListener) {
+    events.forEach((eventName) => {
+      el.addEventListener(eventName, handler, false);
+    });
+  }
+};
+
 export function onTransitionEnd(
-  element: HTMLElement,
+  el: HTMLElement,
   handler: Listener,
   duration?: number | null,
   padding?: number,
 ) {
-  if (duration == null) duration = parseDuration(element) || 0;
-  const removeEmulate = emulateTransitionEnd(element, duration, padding);
+  if (duration == null) duration = parseDuration(el) || 0;
+  const removeEmulate = emulateTransitionEnd(el, duration, padding);
 
-  const remove = listen(element, 'transitionend', handler);
+  const remove = listen(el, 'transitionend', handler);
 
   return () => {
     removeEmulate();
     remove();
   };
+}
+
+async function nextFrame() {
+  return new Promise((resolve) => {
+    requestAnimationFrame(resolve);
+  });
+}
+
+export async function fadeIn(el: HTMLElement, duration = FADE_DURATION) {
+  const startTime = new Date().getTime();
+  let currentTime = () => new Date().getTime() - startTime;
+
+  while (currentTime() < duration) {
+    await nextFrame();
+    el.style.opacity = `${currentTime() / duration}`;
+  }
 }

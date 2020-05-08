@@ -1,4 +1,4 @@
-import { hyphenate, isHTMLElement, isNil, typeOf } from './common';
+import { hyphenate, isNode, isNil, typeOf } from './common';
 
 /**
  * Source: https://github.com/react-bootstrap/dom-helpers
@@ -48,11 +48,14 @@ export type Property = string | PropertyMap;
 export function styles(node: HTMLElement | Property, property?: Property) {
   const transforms: string[] = [];
 
-  if (!isHTMLElement(node) && typeOf(node) === 'object' && !property) {
-    return Object.entries(node as PropertyMap).reduce((css, [prop, value]) => (css += `${prop}: ${value};`), '');
+  if (!isNode(node) && typeOf(node) === 'object' && !property) {
+    return Object.entries(node as PropertyMap).reduce(
+      (css, [prop, value]) => (css += `${prop}: ${value};`),
+      '',
+    );
   }
 
-  if (isHTMLElement(node) && typeof property === 'string') {
+  if (isNode(node) && typeof property === 'string') {
     return (
       node.style.getPropertyValue(hyphenate(property)) ||
       getComputedStyle(node).getPropertyValue(hyphenate(property))
@@ -60,16 +63,16 @@ export function styles(node: HTMLElement | Property, property?: Property) {
   }
 
   const cssText = Object.entries(property).reduce((css, [key, value], i: number) => {
-    const propKey = isTransform(key as string) ? key : hyphenate(key)
+    const propKey = isTransform(key as string) ? key : hyphenate(key);
     if (isNil(value)) {
       (node as HTMLElement).style.removeProperty(propKey);
     } else if (isTransform(key as string)) {
       transforms.push(`${key}(${value})`);
     }
     if (i === Object.entries(property).length - 1 && transforms.length) {
-      return css += `transform: ${transforms.join(' ')};`;
-    } 
-    return css += `${hyphenate(key)}: ${value};`;
+      return (css += `transform: ${transforms.join(' ')};`);
+    }
+    return (css += `${hyphenate(key)}: ${value};`);
   }, '');
 
   (node as HTMLElement).style.cssText += cssText;
