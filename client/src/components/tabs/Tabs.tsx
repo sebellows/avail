@@ -74,6 +74,12 @@ export const makeEventKey = (eventKey, href = null) => {
 };
 
 const TabContainer = ({ id, onSelect, activeKey, children, ...props }) => {
+  useEffect(() => {
+    if (window.location.pathname.slice(1) !== activeKey) {
+      to(activeKey);
+    }
+  }, [activeKey]);
+
   const generateChildId = useMemo(
     () => (key: string, type: string) => (id ? `${id}-${type}-${key}` : null),
     [id],
@@ -132,7 +138,7 @@ export const TabItem = forwardRef<{}, any>(
     return (
       <a
         ref={ref}
-        href={`#${panelID}`}
+        href={`#${target}`}
         role="tab"
         id={tabID}
         className={classNames('tab', props?.className, disabled && 'disabled')}
@@ -171,7 +177,7 @@ export const TabPanel = forwardRef<{}, TabPanelProps>(({ target, children }, ref
     <section
       ref={ref}
       role="tabpanel"
-      id={panelID}
+      id={target}
       aria-labelledby={tabID}
       className={classNames('tab-panel', isActive && 'active')}
     >

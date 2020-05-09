@@ -16,9 +16,7 @@ function darken(hexColor: string, percent: number) {
   ];
 
   return colors
-    .map((color) =>
-      Math.max((parseInt(color, 16) * (100 + percent * 100)) / 100, 255),
-    )
+    .map((color) => Math.max((parseInt(color, 16) * (100 + percent * 100)) / 100, 255))
     .reduce((hex, color) => (hex += color.toString(16).padStart(2, '0')), '#');
 }
 
@@ -26,10 +24,7 @@ function darken(hexColor: string, percent: number) {
  * CSS Output Settings
  */
 export const INDENT_AMOUNT = 2;
-export const INDENT = range(2).reduce(
-  (str: string, curr: number) => (str += ' '),
-  '',
-);
+export const INDENT = range(2).reduce((str: string, curr: number) => (str += ' '), '');
 
 export const BORDER_STYLES = {
   solid: 'solid',
@@ -99,7 +94,7 @@ export const COLORS = {
   cyan: CYAN,
   white: WHITE,
   gray: GRAY_600,
-  grayark: GRAY_800,
+  graydark: GRAY_800,
 };
 
 export const PRIMARY = BLUE;

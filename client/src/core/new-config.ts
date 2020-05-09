@@ -117,6 +117,145 @@ export const toOptions = (...collection: any[]): AvailOption[] => {
 
 const GLOBAL_CSS_VALUES = ['inherit', 'initial', 'unset'];
 
+export const Settings = (settings: Record<string, any> = {}) => {
+  const prefix = { type: 'text', value: '', required: true, placeholder: 'i.e., app-' };
+  const reboot = {
+    type: 'checkbox',
+    value: 'reboot',
+    label: "Include Bootstrap's Reboot?",
+    checked: true,
+  };
+  const breakpoints = {
+    type: 'text',
+    options: [
+      { name: 'xs', value: '0', readonly: true },
+      { name: 'sm', value: '580px' },
+      { name: 'md', value: '768px' },
+      { name: 'lg', value: '990px' },
+      { name: 'xl', value: '1200px' },
+    ],
+  };
+  const colors = {
+    type: 'color',
+    options: toOptions(COLORS),
+  };
+  const grays = {
+    type: 'color',
+    options: toOptions(GRAYS),
+  };
+  // enabled: true,
+  // responsive: false,
+  // property: 'overflow',
+  // class: 'overflow',
+  // presets: ['visible', 'hidden', 'clip', 'auto', 'scroll', ...GLOBAL_CSS_VALUES],
+  // options: [
+  const variants = {
+    type: 'select',
+    presets: { ...COLORS, ...GRAYS },
+    options: [
+      { name: 'primary', value: COLORS.blue },
+      { name: 'secondary', value: GRAYS['600'] },
+      { name: 'success', value: COLORS.green },
+      { name: 'info', value: COLORS.cyan },
+      { name: 'warning', value: COLORS.yellow },
+      { name: 'danger', value: COLORS.red },
+      { name: 'light', value: GRAYS['100'] },
+      { name: 'dark', value: GRAYS['800'] },
+    ],
+  };
+  const body = {
+    type: 'select',
+    presets: { ...THEME_COLORS, ...COLORS, ...GRAYS },
+    options: [
+      { name: 'body-bg', value: WHITE },
+      { name: 'body-color', value: THEME_COLORS.dark },
+    ],
+  };
+  const spacing = {
+    type: 'text',
+    options: [
+      { name: '0', value: '0' },
+      { name: '1', value: '0.25rem' },
+      { name: '2', value: '0.5rem' },
+      { name: '3', value: '1rem' },
+      { name: '4', value: '1.5rem' },
+      { name: '5', value: '3rem' },
+    ],
+    description: `Units used for generating <em>spacing</em> classes (e.g., margins and padding).`,
+  };
+  const borderWidth = {
+    type: 'text',
+    value: '1px',
+    label: 'Border Width:',
+  };
+  const borderStyle = {
+    type: 'select',
+    value: 'solid',
+    label: 'Border Style:',
+    options: [
+      {
+        name: 'solid',
+        value: 'solid',
+      },
+      {
+        name: 'none',
+        value: 'none',
+      },
+      {
+        name: 'dashed',
+        value: 'dashed',
+      },
+      {
+        name: 'dotted',
+        value: 'dotted',
+      },
+    ],
+  };
+  const borderColor = {
+    type: 'select',
+    value: GRAYS['300'],
+    label: 'Border Color:',
+    options: toOptions({ ...COLORS, ...GRAYS }),
+  };
+  const directions = {
+    type: 'text',
+    options: [
+      { name: 't', value: 'top', readonly: true },
+      { name: 'r', value: 'right', readonly: true },
+      { name: 'b', value: 'bottom', readonly: true },
+      { name: 'l', value: 'left', readonly: true },
+      { name: 'y', value: 'top bottom', readonly: true },
+      { name: 'x', value: 'left right', readonly: true },
+    ],
+    description: `Name directions/sides for appending as suffixes to utily classes that effect them (i.e., margins and padding).`,
+  };
+  // const negativeMarginPrefix = { type: 'text', value: 'n', placeholder: 'i.e., ml-n3' };
+
+  return {
+    prefix,
+    reboot,
+    breakpoints,
+    directions,
+    colors,
+    grays,
+    variants,
+    borderColor,
+    borderStyle,
+    borderWidth,
+    body,
+    spacing,
+  };
+};
+
+export function generateSettings(settings: Record<string, any> = {}) {
+  const config = Settings(settings);
+
+  return Object.entries(config).reduce((form, [key, value]) => {
+    form[key] = { id: key, ...value };
+    return form;
+  }, {});
+}
+
 const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
   align: {
     enabled: true,

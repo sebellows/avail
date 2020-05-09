@@ -1,0 +1,180 @@
+/**
+ * Datalist Form Field (i.e., autocomplete, typeahead)
+ */
+.datalist {
+  background-color: var(--white);
+  background-clip: padding-box;
+  border: var(--border);
+  border-radius: 0.125rem;
+  box-shadow: none;
+  color: var(--gray-dark);
+  display: block;
+  width: 100%;
+  max-width: 500px;
+  height: calc(1.5em + 0.75rem + 2px);
+  position: relative;
+  z-index: 100;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  user-select: none;
+}
+.datalist:focus {
+  outline: none;
+}
+.datalist.is-open {
+  z-index: 200;
+}
+
+/** Form group */
+.datalist-form-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+/** Color input */
+.datalist-color-control {
+  position: relative;
+  margin-right: 0.25rem;
+  padding-bottom: calc(1.5em + 0.75rem + 2px);
+  width: 3rem;
+}
+.datalist-color-target {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(1.5em + 0.75rem + 2px);
+  line-height: 1;
+  background-clip: content-box;
+  border: var(--border);
+  box-shadow: inset 0 0 0 5px var(--white), inset 0 0 0 6px rgba(0, 0, 0, 0.2), var(--shadow-0);
+  box-sizing: content-box;
+  z-index: 1;
+  pointer-events: none;
+}
+.datalist-color-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/** Form control */
+.datalist .form-control {
+  flex: 1 1;
+}
+
+/* Selected "option" */
+.datalist .is-selected {
+  background-color: var(--gray-200);
+}
+
+/* Options */
+.datalist-panel {
+  border-radius: 0.25rem;
+  box-shadow: var(--shadow-1), var(--shadow-2), var(--shadow-3);
+  position: absolute;
+  top: calc(1.5em + 0.75rem + 2px);
+  left: 3.25rem;
+  right: 0;
+  overflow: hidden;
+  /* width: calc(100% + 32px); */
+  max-height: 240px;
+  background: var(--white);
+  visibility: hidden;
+  transform-origin: 50% 24px 0;
+  overflow: hidden;
+  overflow-y: auto;
+}
+.datalist-panel.is-active {
+  transform: translate3d(0, 0, 0);
+  visibility: visible;
+  z-index: 101;
+}
+
+.datalist-options {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+.datalist-options li {
+  cursor: pointer;
+  line-height: 2.5em;
+  height: 2.5em;
+  padding: 0 var(--spacer-3);
+}
+.datalist-options li:hover {
+  background-color: var(--light);
+}
+.datalist-options li.is-focused {
+  background-color: var(var(--gray-200));
+}
+
+/* The actual <select> field */
+/* .datalist-control {
+  display: none;
+} */
+
+.datalist-panel-enter {
+  animation: dropdownEnter 300ms cubic-bezier(0.55, 0, 0.55, 0.2);
+}
+.datalist-panel-leave {
+  animation: dropdownLeave 400ms cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+@keyframes dropdownEnter {
+  from {
+    transform: translate3d(0, -50px, 0);
+    opacity: 0;
+  }
+
+  to {
+    transform: translate3d(0, -16px, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes dropdownLeave {
+  from {
+    transform: translate3d(0, -16px, 0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translate3d(0, -50px, 0);
+    opacity: 0;
+  }
+}
+
+/* Display the value of an option in `datalist`. */
+.preview-box {
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-0);
+  display: none;
+  line-height: 1;
+  margin-right: var(--spacer-2);
+  padding: var(--spacer-1);
+  position: relative;
+  top: -3px;
+  vertical-align: middle;
+}
+.preview-box[style] {
+  display: inline-block;
+}
+.preview-box[style*='background-color'] {
+  background-clip: content-box;
+  box-shadow: inset 0 0 0 5px var(--white), inset 0 0 0 6px rgba(0, 0, 0, 0.2), var(--shadow-0);
+  box-sizing: content-box;
+  border-radius: 50%;
+  height: 1rem;
+  width: 1rem;
+}
