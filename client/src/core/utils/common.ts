@@ -143,7 +143,7 @@ export const capitalize = memoize((str: string) => {
 /** Hyphenate a camelCase string. */
 export const hyphenate = memoize((str: string): string => {
   return String(str)
-    .replace(/\B([A-Z])/g, '-$1')
+    .replace(/([a-z])([A-Z])/g, '$1-$2')
     .toLowerCase();
 });
 

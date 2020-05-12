@@ -12,6 +12,7 @@ import { useWillUnmount } from '../hooks/useWillUnmount';
 import { FocusTrap } from './FocusTrap';
 import { ChevronLeftIcon, ChevronRightIcon } from './Icon';
 import '../styles/modal.css';
+import { useLockBodyScroll } from '../hooks/useLockBodyScroll';
 
 interface ModalTriggerProps {
   children: any;
@@ -126,6 +127,8 @@ const Modal = forwardRef<{}, any>(
     const prevShow = useRef(!show);
     const removeKeyDownListenerRef = useRef(null);
 
+    useLockBodyScroll();
+
     const handleShow = useEventCallback(() => {
       setTimeout(() => {
         ignoreSiblings(ignore, (el) => el.setAttribute('aria-hidden', 'true'));
@@ -135,7 +138,7 @@ const Modal = forwardRef<{}, any>(
 
       onShow?.();
 
-      noScroll.on();
+      // noScroll.on();
 
       setExited(false);
     });
@@ -143,7 +146,7 @@ const Modal = forwardRef<{}, any>(
     const handleClose = useEventCallback(() => {
       onClose?.();
 
-      noScroll.off();
+      // noScroll.off();
 
       setTimeout(() => {
         ignoreSiblings(ignore, (el) => el.removeAttribute('aria-hidden'));

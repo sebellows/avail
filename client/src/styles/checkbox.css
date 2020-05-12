@@ -52,10 +52,9 @@
 }
 .form-check {
   position: relative;
-  display: inline-flex;
+  display: block;
   align-items: baseline;
   vertical-align: middle;
-  display: block;
   margin-bottom: 0;
   white-space: nowrap;
   cursor: pointer;
@@ -76,6 +75,48 @@
   height: 100%;
   z-index: 1;
 }
+.form-check-label-text {
+  padding-left: 0.3125em;
+}
+
+/** [type="radio"] */
+.form-radio-container {
+  display: inline-block;
+  position: relative;
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
+.form-radio-outer-circle {
+  border-width: 2px;
+  border-style: solid;
+  border-radius: 50%;
+  width: 1rem;
+  height: 1rem;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: border-color ease 280ms;
+}
+.form-check input:checked ~ .form-radio-container .form-radio-outer-circle {
+  border-color: var(--primary);
+}
+.form-radio-inner-circle {
+  border-radius: 50%;
+  width: 1rem;
+  height: 1rem;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: transform ease 280ms, background-color ease 280ms;
+  transform: scale(0.001);
+}
+.form-check input:checked ~ .form-radio-container .form-radio-inner-circle {
+  background-color: var(--primary);
+  transform: scale(0.5);
+}
+
+/** [type="checkbox"] */
 .form-check-container {
   display: inline-block;
   height: 1rem;

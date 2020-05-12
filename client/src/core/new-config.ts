@@ -35,49 +35,11 @@ import {
   WHITE,
   WHITE_50,
 } from './constants';
-import * as CONST from './constants';
-import { capitalize, hyphenate, isPlainObject, range, typeOf } from './utils';
-import { AvailOption, AvailUtility, AvailUtilities, CollectionObj } from './contracts';
+import { toOptions } from './models/Option';
+import { CSS_VALUE_PRESETS } from './presets';
+import { AvailUtilities } from './contracts';
 
-export class Option {
-  get name() {
-    return this._name;
-  }
-  set name(value: string) {
-    this._name = hyphenate(value);
-  }
-  private _name: string;
-
-  get value() {
-    return this._value;
-  }
-  set value(value: string) {
-    this._value = hyphenate(value);
-  }
-  private _value: string;
-
-  constructor(item: string | [string, string] | Record<string, string>) {
-    if (typeof item == 'string') {
-      this.name = item;
-      this.value = CONST[item] ?? item;
-    } else if (Array.isArray(item)) {
-      const [name, value] = item;
-      this.name = name || '';
-      this.value = value || '';
-    } else {
-      this.name = item.name || '';
-      this.value = item.value || '';
-    }
-  }
-}
-
-export const toOption = (item: any) => new Option(item);
-export const _toOptions = (collection: Record<string, any> | string[]): AvailOption[] => {
-  const items = isPlainObject(collection) ? Object.entries(collection) : collection;
-  return items.map(toOption);
-};
-
-// const arrayToOptions = (collection: string[]): AvailOption[] => {
+// const arrayToOptions = (collection: string[]): OptionProps[] => {
 //   return collection.map((item) => {
 //     if (CONST[item]) {
 //       return { name: hyphenate(item), value: CONST[item] };
@@ -86,36 +48,12 @@ export const _toOptions = (collection: Record<string, any> | string[]): AvailOpt
 //   });
 // };
 
-// const objectToOptions = (collection: Record<string, any>): AvailOption[] => {
-//   return Object.entries(collection).reduce((arr: AvailOption[], [name, value]) => {
+// const objectToOptions = (collection: Record<string, any>): OptionProps[] => {
+//   return Object.entries(collection).reduce((arr: OptionProps[], [name, value]) => {
 //     arr.push({ name: hyphenate(name), value: hyphenate(value) });
 //     return arr;
 //   }, []);
 // };
-
-export const toOptions = (...collection: any[]): AvailOption[] => {
-  return collection.reduce((acc: AvailOption[], item: string | Record<string, any> | string[]) => {
-    const type = typeOf(item);
-
-    switch (type) {
-      case 'string':
-        acc.push({ name: hyphenate(item), value: item });
-        break;
-      case 'array':
-        acc.push(..._toOptions(item as string[]));
-        break;
-      case 'object':
-        acc.push(..._toOptions(item as Record<string, any>));
-        break;
-      default:
-      // do nothing
-    }
-
-    return acc;
-  }, [] as AvailOption[]);
-};
-
-const GLOBAL_CSS_VALUES = ['inherit', 'initial', 'unset'];
 
 export const Settings = (settings: Record<string, any> = {}) => {
   const prefix = { type: 'text', value: '', required: true, placeholder: 'i.e., app-' };
@@ -154,13 +92,13 @@ export const Settings = (settings: Record<string, any> = {}) => {
     presets: { ...COLORS, ...GRAYS },
     options: [
       { name: 'primary', value: COLORS.blue },
-      { name: 'secondary', value: GRAYS['600'] },
+      { name: 'secondary', value: GRAYS['gray-600'] },
       { name: 'success', value: COLORS.green },
       { name: 'info', value: COLORS.cyan },
       { name: 'warning', value: COLORS.yellow },
       { name: 'danger', value: COLORS.red },
-      { name: 'light', value: GRAYS['100'] },
-      { name: 'dark', value: GRAYS['800'] },
+      { name: 'light', value: GRAYS['gray-100'] },
+      { name: 'dark', value: GRAYS['gray-800'] },
     ],
   };
   const body = {
@@ -213,7 +151,7 @@ export const Settings = (settings: Record<string, any> = {}) => {
   };
   const borderColor = {
     type: 'select',
-    value: GRAYS['300'],
+    value: GRAYS,
     label: 'Border Color:',
     options: toOptions({ ...COLORS, ...GRAYS }),
   };
@@ -262,15 +200,7 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     responsive: false,
     property: 'vertical-align',
     class: 'align',
-    presets: [
-      'baseline',
-      'top',
-      'middle',
-      'bottom',
-      'text-bottom',
-      'text-top',
-      ...GLOBAL_CSS_VALUES,
-    ],
+    presets: CSS_VALUE_PRESETS.align,
     options: [
       {
         name: 'baseline',
@@ -303,7 +233,7 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     responsive: true,
     property: 'float',
     class: 'float',
-    presets: ['left', 'right', 'none', ...GLOBAL_CSS_VALUES],
+    presets: CSS_VALUE_PRESETS.float,
     options: [
       {
         name: 'left',
@@ -324,7 +254,7 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     responsive: false,
     property: 'overflow',
     class: 'overflow',
-    presets: ['visible', 'hidden', 'clip', 'auto', 'scroll', ...GLOBAL_CSS_VALUES],
+    presets: CSS_VALUE_PRESETS.overflow,
     options: [
       {
         name: 'auto',
@@ -341,18 +271,7 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     responsive: true,
     property: 'display',
     class: 'd',
-    presets: [
-      'none',
-      'inline',
-      'inline-block',
-      'block',
-      'table',
-      'table-row',
-      'table-cell',
-      'flex',
-      'inline-flex',
-      ...GLOBAL_CSS_VALUES,
-    ],
+    presets: CSS_VALUE_PRESETS.display,
     options: [
       {
         name: 'none',
@@ -421,7 +340,7 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     responsive: false,
     property: 'position',
     class: 'position',
-    presets: ['static', 'relative', 'absolute', 'fixed', 'sticky', ...GLOBAL_CSS_VALUES],
+    presets: CSS_VALUE_PRESETS.position,
     options: [
       {
         name: 'static',
@@ -644,7 +563,7 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     responsive: true,
     property: 'flex-direction',
     class: 'flex',
-    presets: ['row', 'column', 'row-reverse', 'column-reverse', ...GLOBAL_CSS_VALUES],
+    presets: CSS_VALUE_PRESETS.flexDirection,
     options: [
       {
         name: 'row',
@@ -701,7 +620,7 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     responsive: true,
     property: 'flex-wrap',
     class: 'flex',
-    presets: ['wrap', 'nowrap', 'wrap-reverse', ...GLOBAL_CSS_VALUES],
+    presets: CSS_VALUE_PRESETS.flexWrap,
     options: [
       {
         name: 'wrap',
@@ -722,14 +641,7 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     responsive: true,
     property: 'justify-content',
     class: 'justify-content',
-    presets: [
-      'flex-start',
-      'flex-end',
-      'center',
-      'space-between',
-      'space-around',
-      ...GLOBAL_CSS_VALUES,
-    ],
+    presets: CSS_VALUE_PRESETS.justifyContent,
     options: [
       {
         name: 'start',
@@ -758,7 +670,7 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     responsive: true,
     property: 'align-items',
     class: 'align-items',
-    presets: ['flex-start', 'flex-end', 'center', 'baseline', 'stretch', ...GLOBAL_CSS_VALUES],
+    presets: CSS_VALUE_PRESETS.alignItems,
     options: [
       {
         name: 'start',
@@ -787,15 +699,7 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     responsive: true,
     property: 'align-content',
     class: 'align-content',
-    presets: [
-      'flex-start',
-      'flex-end',
-      'center',
-      'space-between',
-      'space-around',
-      'stretch',
-      ...GLOBAL_CSS_VALUES,
-    ],
+    presets: CSS_VALUE_PRESETS.alignContent,
     options: [
       {
         name: 'start',
@@ -828,15 +732,7 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     responsive: true,
     property: 'align-self',
     class: 'align-self',
-    presets: [
-      'auto',
-      'flex-start',
-      'flex-end',
-      'center',
-      'baseline',
-      'stretch',
-      ...GLOBAL_CSS_VALUES,
-    ],
+    presets: CSS_VALUE_PRESETS.alignSelf,
     options: [
       {
         name: 'auto',
@@ -1060,7 +956,7 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     responsive: false,
     property: 'font-style',
     class: 'font',
-    presets: ['italic', 'normal', ...GLOBAL_CSS_VALUES],
+    presets: CSS_VALUE_PRESETS.fontStyle,
     options: [
       {
         name: 'italic',
@@ -1077,22 +973,7 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     responsive: false,
     property: 'font-weight',
     class: 'font-weight',
-    presets: [
-      'normal',
-      'bold',
-      'lighter',
-      'bolder',
-      '100',
-      '200',
-      '300',
-      '400',
-      '500',
-      '600',
-      '700',
-      '800',
-      '900',
-      ...GLOBAL_CSS_VALUES,
-    ],
+    presets: CSS_VALUE_PRESETS.fontWeight,
     options: [
       {
         name: 'light',
@@ -1121,7 +1002,7 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     responsive: false,
     property: 'text-transform',
     class: 'text',
-    presets: ['lowercase', 'uppercase', 'capitalize', 'none', ...GLOBAL_CSS_VALUES],
+    presets: CSS_VALUE_PRESETS.textTransform,
     options: [
       {
         name: 'lowercase',
@@ -1142,7 +1023,7 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     responsive: true,
     property: 'text-align',
     class: 'text',
-    presets: ['left', 'right', 'center', 'justify', ...GLOBAL_CSS_VALUES],
+    presets: CSS_VALUE_PRESETS.textAlign,
     options: [
       {
         name: 'left',
@@ -1225,15 +1106,7 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     responsive: false,
     property: 'white-space',
     class: 'text',
-    presets: [
-      'normal',
-      'nowrap',
-      'pre',
-      'pre-line',
-      'pre-wrap',
-      'break-spaces',
-      ...GLOBAL_CSS_VALUES,
-    ],
+    presets: CSS_VALUE_PRESETS.whiteSpace,
     options: [
       {
         name: 'wrap',
@@ -1283,7 +1156,7 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     responsive: false,
     property: 'user-select',
     class: 'user-select',
-    presets: ['all', 'auto', 'text', 'none'],
+    presets: CSS_VALUE_PRESETS.userSelect,
     options: [
       {
         name: 'all',
@@ -1304,7 +1177,7 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     responsive: false,
     property: 'pointer-events',
     class: 'pe',
-    presets: ['none', 'auto', ...GLOBAL_CSS_VALUES],
+    presets: CSS_VALUE_PRESETS.pointerEvents,
     options: [
       {
         name: 'none',
@@ -1381,7 +1254,7 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     responsive: false,
     property: 'visibility',
     class: '',
-    presets: ['visible', 'hidden', 'collapse', ...GLOBAL_CSS_VALUES],
+    presets: CSS_VALUE_PRESETS.visibility,
     options: [
       {
         name: 'visible',

@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { AnimationEvent, useEffect, useState } from 'react';
-import { generateConfig, generateSettings, toOptions } from './core/new-config';
-import { Spinner, Tabs, Tab, UtilityTabs, FormGroup, Repeater } from './components';
-import './App.scss';
-import { FormDatalist } from './components/form-datalist/FormDatalist';
+import { toOptions } from './core/models/Option';
+import { generateConfig } from './core/new-config';
+import { generateSettings } from './core/settings';
+import { FormColorpicker, Spinner, Tabs, Tab, UtilityTabs } from './components';
 import { COLORS } from './core/constants';
+import { SettingsForm } from './containers/SettingsForm';
+import './App.scss';
 
 const classes = generateConfig();
 const initialSettings = generateSettings();
@@ -47,7 +49,7 @@ export default function App() {
       {loading && <Spinner exit={addExitClass} onAnimationEnd={handleLoad} />}
 
       <div className="d-flex justify-content-center mb-5">
-        <FormDatalist options={toOptions(COLORS)} />
+        <FormColorpicker options={toOptions(COLORS)} />
       </div>
 
       <form noValidate>
@@ -58,7 +60,8 @@ export default function App() {
         >
           <Tab target="settings" title="Global Settings">
             <h1>Configure global settings here!</h1>
-            {Object.entries(settings).map(([key, setting]) => {
+            <SettingsForm settings={settings} />
+            {/* {Object.entries(settings).map(([key, setting]) => {
               const { type, options, label, ...props } = setting as any;
               return (
                 <fieldset key={key}>
@@ -73,7 +76,7 @@ export default function App() {
                   {type === 'checkbox' && <Repeater options={options} {...props} />}
                 </fieldset>
               );
-            })}
+            })} */}
           </Tab>
           <Tab target="utilities" title="Utility Class Configuration">
             <UtilityTabs id="avail-modules" items={model} />

@@ -1,4 +1,4 @@
-import { styles } from "./styles";
+import { styles } from './dom';
 
 const isDOM = typeof document !== 'undefined';
 

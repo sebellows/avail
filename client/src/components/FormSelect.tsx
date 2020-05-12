@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { forwardRef, Ref, useEffect, useMemo, useRef } from 'react';
 import { OptionProps, FormControlProps } from '../core/contracts';
-import { toOptions } from '../core/new-config';
-import { classNames, validFormProps, containerProps } from '../core/utils';
+import { toOptions, Option } from '../core/models/Option';
+import { classNames, validFormProps, containerProps, typeOf } from '../core/utils';
 
 export const FormSelect = forwardRef<{}, FormControlProps>(
   (
@@ -18,7 +18,12 @@ export const FormSelect = forwardRef<{}, FormControlProps>(
     },
     ref: Ref<any>,
   ) => {
-    const options = useMemo(() => toOptions(initialOptions), [initialOptions]);
+    const options = useMemo(() => {
+      if (Array.isArray(initialOptions) && initialOptions.some((opt) => opt instanceof Option)) {
+        return initialOptions;
+      }
+      return toOptions(initialOptions);
+    }, [initialOptions]);
 
     const { controlClass = '' } = props;
     const htmlProps = containerProps(props, { exclude: ['controlClass'] });
@@ -43,9 +48,9 @@ export const FormSelect = forwardRef<{}, FormControlProps>(
           {...formProps}
         >
           {defaultOption && <option value="">{defaultOption}</option>}
-          {options.map((_option: OptionProps) => {
+          {(options as OptionProps[]).map((_option: OptionProps, i: number) => {
             return (
-              <option key={_option.value} value={_option.value}>
+              <option key={`${_option.name}-${i}`} value={_option.value}>
                 {_option.name}
               </option>
             );

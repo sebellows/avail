@@ -4,7 +4,7 @@ export function classNames(...args: any[]): string {
   const classes: any[] = [];
 
   for (const arg of args) {
-    if (isNil(arg)) continue;
+    if (isNil(arg) || arg === '') continue;
 
     if (isString(arg) || isNumber(arg)) {
       classes.push(arg);

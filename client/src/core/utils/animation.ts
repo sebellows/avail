@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { styles } from './styles';
+import { styles } from './dom';
 import { Listener } from '../contracts';
 import { listen } from './listen';
 

@@ -1,7 +1,7 @@
 /**
  * Datalist Form Field (i.e., autocomplete, typeahead)
  */
-.datalist {
+.colorpicker {
   background-color: var(--white);
   background-clip: padding-box;
   border: var(--border);
@@ -19,15 +19,15 @@
   line-height: 1.5;
   user-select: none;
 }
-.datalist:focus {
+.colorpicker:focus {
   outline: none;
 }
-.datalist.is-open {
+.colorpicker.is-open {
   z-index: 200;
 }
 
 /** Form group */
-.datalist-form-group {
+.colorpicker-form-group {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -35,15 +35,14 @@
 }
 
 /** Color input */
-.datalist-color-control {
+.colorpicker-control {
   position: relative;
-  margin-right: 0.25rem;
   padding-bottom: calc(1.5em + 0.75rem + 2px);
   width: 3rem;
 }
-.datalist-color-target {
+.colorpicker-target {
   position: absolute;
-  top: 0;
+  top: -1px;
   left: 0;
   width: 100%;
   height: calc(1.5em + 0.75rem + 2px);
@@ -55,7 +54,7 @@
   z-index: 1;
   pointer-events: none;
 }
-.datalist-color-input {
+.colorpicker-input {
   position: absolute;
   top: 0;
   left: 0;
@@ -68,17 +67,19 @@
 }
 
 /** Form control */
-.datalist .form-control {
+.colorpicker .form-control {
+  border-color: rgba(0, 0, 0, 0.03125);
+  border-radius: 0 calc(var(--rounded) - 1px) calc(var(--rounded) - 1px) 0;
   flex: 1 1;
 }
 
 /* Selected "option" */
-.datalist .is-selected {
+.colorpicker .is-selected {
   background-color: var(--gray-200);
 }
 
 /* Options */
-.datalist-panel {
+.colorpicker-panel {
   border-radius: 0.25rem;
   box-shadow: var(--shadow-1), var(--shadow-2), var(--shadow-3);
   position: absolute;
@@ -94,40 +95,40 @@
   overflow: hidden;
   overflow-y: auto;
 }
-.datalist-panel.is-active {
+.colorpicker-panel.is-active {
   transform: translate3d(0, 0, 0);
   visibility: visible;
   z-index: 101;
 }
 
-.datalist-options {
+.colorpicker-options {
   list-style: none;
   margin: 0;
   padding: 0;
   width: 100%;
 }
-.datalist-options li {
+.colorpicker-options li {
   cursor: pointer;
   line-height: 2.5em;
   height: 2.5em;
   padding: 0 var(--spacer-3);
 }
-.datalist-options li:hover {
+.colorpicker-options li:hover {
   background-color: var(--light);
 }
-.datalist-options li.is-focused {
+.colorpicker-options li.is-focused {
   background-color: var(var(--gray-200));
 }
 
 /* The actual <select> field */
-/* .datalist-control {
+/* .colorpicker-control {
   display: none;
 } */
 
-.datalist-panel-enter {
+.colorpicker-panel-enter {
   animation: dropdownEnter 300ms cubic-bezier(0.55, 0, 0.55, 0.2);
 }
-.datalist-panel-leave {
+.colorpicker-panel-leave {
   animation: dropdownLeave 400ms cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
@@ -155,7 +156,7 @@
   }
 }
 
-/* Display the value of an option in `datalist`. */
+/* Display the value of an option in `colorpicker`. */
 .preview-box {
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-0);

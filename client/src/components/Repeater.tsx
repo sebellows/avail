@@ -1,12 +1,12 @@
 import React, { useState, ChangeEvent } from 'react';
-import { FormControlGroup, OptionProps as Option } from '../core/contracts';
+import { FormGroupProps, OptionProps as Option } from '../core/contracts';
 import { FormGroup } from './FormGroup';
 import { RepeaterItem } from './RepeaterItem';
 import { classNames } from '../core/utils/classNames';
 
 import '../styles/repeater.css';
 
-export const Repeater: React.FC<FormControlGroup> = ({
+export const Repeater: React.FC<FormGroupProps> = ({
   id: initialId,
   className = '',
   options: initialOptions = [],
@@ -16,6 +16,7 @@ export const Repeater: React.FC<FormControlGroup> = ({
   onChange,
   onRemove,
   error,
+  inputType,
   ...props
 }) => {
   const [options, setOptions] = useState(initialOptions as Option[]);
@@ -73,6 +74,7 @@ export const Repeater: React.FC<FormControlGroup> = ({
             </span>
             <FormGroup
               name={`${id}-${i}-value`}
+              type={inputType}
               label="Property Value"
               className={classNames(i === 0 && 'first')}
               value={option.value}
@@ -83,6 +85,8 @@ export const Repeater: React.FC<FormControlGroup> = ({
             />
           </RepeaterItem>
         ))}
+      {props?.description && <small className="form-text text-muted">{props?.description}</small>}
+      {props?.isInvalid && error && <small className="form-text text-danger">{error}</small>}
     </fieldset>
   );
 };

@@ -1,23 +1,9 @@
 import * as CONST from './constants';
 import { capitalize, hyphenate } from './utils/common';
-import { AvailOption, AvailUtility, AvailUtilities } from './contracts/avail';
+import { toOptions } from './models/Option';
+import { AvailUtility, AvailUtilities } from './contracts';
 
 const { BORDER_STYLES, COLORS, DIRECTIONS, GRAYS, GRID_BREAKPOINTS, SPACERS, THEME_COLORS } = CONST;
-
-export const toOptions = (collection: Record<string, any> | string[]): AvailOption[] => {
-  if (Array.isArray(collection)) {
-    return collection.map((item) => {
-      if (CONST[item]) {
-        return { name: hyphenate(item), value: CONST[item] };
-      }
-      return { name: hyphenate(item), value: hyphenate(item) };
-    });
-  }
-  return Object.entries(collection).reduce((arr: AvailOption[], [name, value]) => {
-    arr.push({ name: hyphenate(name), value: hyphenate(value) });
-    return arr;
-  }, []);
-};
 
 // export const getColor = (color: string, colors: Collection) => {
 //   if (Array.isArray(colors)) {

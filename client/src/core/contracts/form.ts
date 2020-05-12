@@ -137,10 +137,13 @@ export interface FormGroup<T> {
 
 export interface FormControlGroup {
   className?: string;
+  description?: string;
   error?: Record<string, any>; // TODO: replace with FieldError map?
+  isInvalid?: boolean;
+  isValid?: boolean;
   legend?: string;
   options?: any;
-  presets?: string[];
+  presets?: string[] | Record<string, any>;
   id?: string;
   onAdd?: (event: any) => void;
   onChange?: (...args: any[]) => void;
@@ -184,7 +187,7 @@ export interface OptionProps {
   disabled?: boolean;
   name?: string | number;
   selected?: boolean;
-  value: string;
+  value: string | number;
 }
 
 export interface SelectInputProps extends FormControl<HTMLSelectElement> {
@@ -211,5 +214,31 @@ export interface FormControlProps extends InputHTMLAttributes<FormControlType> {
   tabIndex?: number;
   defaultOption?: OptionProps | string;
   options?: OptionProps[] | string[];
+  [key: string]: any;
+}
+
+export interface ClassMap {
+  control?: string;
+  description?: string;
+  label?: string;
+  legend?: string;
+}
+
+export interface FormGroupProps extends Omit<FormControlProps, 'error'> {
+  className?: string;
+  classMap?: ClassMap;
+  description?: string;
+  error?: Record<string, any>; // TODO: replace with FieldError map?
+  // id?: string;
+  // isInvalid?: boolean;
+  // isValid?: boolean;
+  legend?: string;
+  // options?: any;
+  presets?: string[] | Record<string, any>;
+  onAdd?: (event: any) => void;
+  onChange?: (...args: any[]) => void;
+  onRemove?: (event: any) => void;
+  after?: any;
+  before?: any;
   [key: string]: any;
 }

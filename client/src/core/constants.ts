@@ -32,7 +32,9 @@ export const BORDER_STYLES = {
   dotted: 'dotted',
   none: 'none',
 };
+
 export const DIRECTIONS = {
+  default: 'top right bottom left',
   top: 'top',
   bottom: 'bottom',
   left: 'left',
@@ -44,7 +46,7 @@ export const DIRECTIONS = {
 /**
  * Default Style Values
  */
-export const WHITE = '#fff';
+export const WHITE = '#ffffff';
 export const GRAY_100 = '#f8f9fa';
 export const GRAY_200 = '#e9ecef';
 export const GRAY_300 = '#dee2e6';
@@ -54,26 +56,27 @@ export const GRAY_600 = '#6c757d';
 export const GRAY_700 = '#495057';
 export const GRAY_800 = '#343a40';
 export const GRAY_900 = '#212529';
-export const BLACK = '#000';
+export const BLACK = '#000000';
 export const BLACK_50 = `rgba(${BLACK}, .5)`;
 export const WHITE_50 = `rgba(${WHITE}, .5)`;
 
 export const GRAYS = {
-  100: GRAY_100,
-  200: GRAY_200,
-  300: GRAY_300,
-  400: GRAY_400,
-  500: GRAY_500,
-  600: GRAY_600,
-  700: GRAY_700,
-  800: GRAY_800,
-  900: GRAY_900,
+  'gray-100': GRAY_100,
+  'gray-200': GRAY_200,
+  'gray-300': GRAY_300,
+  'gray-400': GRAY_400,
+  'gray-500': GRAY_500,
+  'gray-600': GRAY_600,
+  'gray-700': GRAY_700,
+  'gray-800': GRAY_800,
+  'gray-900': GRAY_900,
 };
 
 export const BLUE = '#0d6efd';
 export const INDIGO = '#6610f2';
+export const MAGENTA = '#d63384';
 export const PURPLE = '#6f42c1';
-export const PINK = '#d63384';
+export const PINK = '#f92672';
 export const RED = '#dc3545';
 export const ORANGE = '#fd7e14';
 export const YELLOW = '#ffc107';
@@ -82,8 +85,11 @@ export const TEAL = '#20c997';
 export const CYAN = '#17a2b8';
 
 export const COLORS = {
+  black: BLACK,
+  white: WHITE,
   blue: BLUE,
   indigo: INDIGO,
+  magenta: MAGENTA,
   purple: PURPLE,
   pink: PINK,
   red: RED,
@@ -92,9 +98,6 @@ export const COLORS = {
   green: GREEN,
   teal: TEAL,
   cyan: CYAN,
-  white: WHITE,
-  gray: GRAY_600,
-  graydark: GRAY_800,
 };
 
 export const PRIMARY = BLUE;
@@ -104,9 +107,9 @@ export const INFO = CYAN;
 export const WARNING = YELLOW;
 export const DANGER = RED;
 export const LIGHT = GRAY_100;
-export const DARK = GRAY_800;
+export const DARK = GRAY_900;
 
-export const THEME_COLORS = {
+export const VARIANTS = {
   primary: PRIMARY,
   secondary: SECONDARY,
   success: SUCCESS,
@@ -116,6 +119,8 @@ export const THEME_COLORS = {
   light: LIGHT,
   dark: DARK,
 };
+
+export const THEME_COLORS = VARIANTS;
 
 export const SPACER = '1rem';
 

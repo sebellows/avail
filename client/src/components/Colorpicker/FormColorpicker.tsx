@@ -18,10 +18,9 @@ import './style.css';
 import usePrevious from '../../hooks/usePrevious';
 import { useClickOutside } from '../../hooks/useClickOutside';
 
-export const FormDatalist = forwardRef<{}, FormControlProps>(
+const FormColorpicker = forwardRef<{}, FormControlProps>(
   ({ className, isValid, isInvalid, options, value: initialValue = '', ...props }, ref: any) => {
     const [isOpen, setOpen] = useState(false);
-    // const [selected, setSelected] = useState(null);
     const [value, setValue] = useState(initialValue);
     const [color, setColor] = useState('#ffffff');
     const [focusedIndex, setFocusedIndex] = useState(0);
@@ -38,17 +37,17 @@ export const FormDatalist = forwardRef<{}, FormControlProps>(
       const { current: currentPanelRef } = panelRef;
 
       if (isOpen) {
-        currentPanelRef.classList.add('is-active', 'datalist-panel-enter');
+        currentPanelRef.classList.add('is-active', 'colorpicker-panel-enter');
 
         onAnimationEnd(currentPanelRef, () => {
           console.log('animationend');
-          currentPanelRef.classList.remove('datalist-panel-enter');
+          currentPanelRef.classList.remove('colorpicker-panel-enter');
         });
       } else if (!isOpen && prevOpenState != null) {
-        currentPanelRef.classList.add('datalist-panel-leave');
+        currentPanelRef.classList.add('colorpicker-panel-leave');
 
         onAnimationEnd(currentPanelRef, () => {
-          currentPanelRef.classList.remove('datalist-panel-leave');
+          currentPanelRef.classList.remove('colorpicker-panel-leave');
           currentPanelRef.classList.remove('is-active');
         });
       }
@@ -141,15 +140,15 @@ export const FormDatalist = forwardRef<{}, FormControlProps>(
     return (
       <div
         ref={ref}
-        className={classNames('datalist', props.className, isOpen && 'is-open')}
+        className={classNames('colorpicker', props.className, isOpen && 'is-open')}
         {...htmlProps}
       >
-        <div className="datalist-form-group">
-          <div className="datalist-color-control">
-            <div className="datalist-color-target" style={{ backgroundColor: color }}></div>
+        <div className="colorpicker-form-group">
+          <div className="colorpicker-control">
+            <div className="colorpicker-target" style={{ backgroundColor: color }}></div>
             <input
               type="color"
-              className="datalist-color-input"
+              className="colorpicker-input"
               value={color}
               onChange={handleColorChange}
             />
@@ -165,18 +164,21 @@ export const FormDatalist = forwardRef<{}, FormControlProps>(
             aria-expanded={isOpen}
           />
         </div>
-        <div ref={panelRef} className={classNames('datalist-panel')}>
-          <ul className="datalist-options">
+        <div ref={panelRef} className={classNames('colorpicker-panel')}>
+          <ul className="colorpicker-options">
             {options?.length &&
               (options as OptionProps[]).map(({ name, value: colorValue }) => (
                 <li
                   key={name}
-                  className={classNames('datalist-option', value === colorValue && 'is-selected')}
+                  className={classNames(
+                    'colorpicker-option',
+                    value === colorValue && 'is-selected',
+                  )}
                   data-value={colorValue}
                   onClick={(event) => handleSelect(event, colorValue)}
                 >
-                  <span className="preview-box" style={{ backgroundColor: colorValue }} />
-                  <span className="datalist-option-name">{name}</span>
+                  <span className="preview-box" style={{ backgroundColor: colorValue as string }} />
+                  <span className="colorpicker-option-name">{name}</span>
                 </li>
               ))}
           </ul>
@@ -185,3 +187,7 @@ export const FormDatalist = forwardRef<{}, FormControlProps>(
     );
   },
 );
+
+FormColorpicker.displayName = 'FormColorpicker';
+
+export { FormColorpicker };

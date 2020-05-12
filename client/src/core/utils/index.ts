@@ -1,5 +1,6 @@
 export * from './classNames';
 export * from './collection';
+export * from './color';
 export * from './common';
 export * from './form';
 export * from './keycodes';
@@ -7,5 +8,6 @@ export * from './listen';
 export * from './noScroll';
 export * from './props';
 export * from './range';
-export * from './styles';
+export * from './dom';
 export * from './animation';
+export * from './style';
