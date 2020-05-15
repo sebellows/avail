@@ -1,16 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { Ref, useRef } from 'react';
-import { validFormProps, containerProps, color } from '../../core/utils';
+import { control } from '../../core/style';
+import { validFormProps, containerProps } from '../../core/utils';
 import { CheckIcon } from '../Icon';
-import {
-  StyledToggleControl,
-  ToggleWrapper,
-  ToggleContainer,
-  ToggleOuter,
-  ToggleInner,
-  ToggleLabelText,
-  // ToggleIcon,
-} from './styles';
+import { Styled } from './styles';
 import { ToggleControlProps } from './props';
 
 const ToggleControl = React.forwardRef<{}, ToggleControlProps>(
@@ -24,8 +16,6 @@ const ToggleControl = React.forwardRef<{}, ToggleControlProps>(
       htmlProps['htmlForm'] = formProps?.name || formProps?.id;
     }
 
-    // const child = React.Children.only(children);
-
     function handleChange(event: any) {
       if (props.onChange) {
         props.onChange(event);
@@ -33,29 +23,26 @@ const ToggleControl = React.forwardRef<{}, ToggleControlProps>(
     }
 
     return (
-      <ToggleWrapper ref={ref} {...htmlProps} as={Component}>
-        <StyledToggleControl
-          ref={inputRef}
-          type={inputType}
-          {...formProps}
-          onChange={handleChange}
-        />
-        <ToggleContainer className="toggle-container">
-          <ToggleOuter className="toggle-outer" />
-          <ToggleInner className="toggle-inner">
+      <Styled.Wrapper ref={ref} {...htmlProps} as={Component}>
+        <Styled.Control ref={inputRef} type={inputType} {...formProps} onChange={handleChange} />
+        <Styled.Container className="toggle-container">
+          <Styled.Outer className="toggle-outer" />
+          <Styled.Inner className="toggle-inner">
             {type === 'checkbox' && (
               <CheckIcon
-                fill={formProps?.checked ? color.control.active.bg : color.control.bg}
+                fill={formProps?.checked ? control.active.bg : control.bg}
                 strokeDashoffset="22.91026"
                 strokeDasharray="22.91026"
               />
             )}
-          </ToggleInner>
-        </ToggleContainer>
+          </Styled.Inner>
+        </Styled.Container>
         {children && (
-          <ToggleLabelText {...(children as React.ReactElement)?.props}>{children}</ToggleLabelText>
+          <Styled.LabelText {...(children as React.ReactElement)?.props}>
+            {children}
+          </Styled.LabelText>
         )}
-      </ToggleWrapper>
+      </Styled.Wrapper>
     );
   },
 );

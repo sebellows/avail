@@ -1,6 +1,6 @@
 import React, { Ref } from 'react';
 import styled from 'styled-components';
-import { color } from '../core/utils';
+import { color } from '../core/style';
 import { ComponentProps } from '../core/contracts';
 
 interface FeedbackProps extends ComponentProps {

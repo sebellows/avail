@@ -1,23 +1,24 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { forwardRef, useState, useEffect, Ref, useRef } from 'react';
+import styled from 'styled-components';
 import Prism from 'prismjs';
 
+import usePrevious from '../hooks/usePrevious';
+import { useClickOutside } from '../hooks/useClickOutside';
 import { AvailUtility, AvailUtilities } from '../core/contracts';
+import { color, mixin, radius, transition } from '../core/style';
 import { generateUtility, generateResponsiveUtility } from '../core/build';
-import { Repeater } from './Repeater';
-import { SettingsIcon } from './Icon';
+import { hasOwn, classNames, collection, LEFT, RIGHT } from '../core/utils';
+
+import { Field } from './Field';
 import { Modal } from './Modal';
 import { Dialog } from './Dialog';
-import { FormGroup } from './FormGroup';
-
-import { useClickOutside } from '../hooks/useClickOutside';
-
-import { hasOwn } from '../core/utils/common';
-import { classNames, collection, LEFT, RIGHT } from '../core/utils';
+import { Control } from './Control';
+import { SettingsIcon } from './Icon';
+import { Repeater } from './Repeater';
+import { ToggleControl } from './ToggleControl';
 
 import '../styles/prism.css';
-import '../styles/utility-tabs.css';
-import usePrevious from '../hooks/usePrevious';
 
 const initialOutput = 'Code goes here.';
 
@@ -25,7 +26,7 @@ function updateUtility(model: AvailUtility) {
   const util = {
     class: '',
     responsive: false,
-    options: [],
+    items: [],
   };
   for (const key in util) {
     if (hasOwn(model, key) && util[key] !== model[key]) {
@@ -44,25 +45,59 @@ export interface UtilityTabProps {
   tag?: JSX.IntrinsicAttributes;
 }
 
+// console.log('test', mixin.truncateText, mixin.padding(3));
+
+/** Utility Tabs */
+export const Styled = {
+  Tabs: styled.ol`
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    grid-gap: 1rem;
+    list-style: none;
+    ${mixin.padding(3)}
+  `,
+  Tab: styled.li`
+    background-color: ${color.bg.body};
+    border-radius: ${radius.lg};
+    ${mixin.shadow(0, 1)}
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    ${mixin.padding([1, 2])}
+    width: 100%;
+    transition: box-shadow ${transition.duration.easeIn} ${transition.timing.fastOutSlowIn};
+
+    &:hover {
+      background-color: ${color.bg.light};
+      ${mixin.shadow(2, 3)}
+    }
+  `,
+  Toggle: styled.button`
+    ${mixin.padding(2)}
+    ${mixin.inlineFlexCenter}
+    flex-direction: column;
+    flex: none;
+  `,
+};
+
 const UtilityTab = forwardRef<{}, UtilityTabProps>(
   ({ expanded = false, model, onClick, tag = 'li', error, ...props }, ref) => {
     const Component = tag as 'div';
 
     return (
-      <Component className="utility-tab">
+      <Styled.Tab className="utility-tab">
         <div className="d-flex align-items-end">
-          <FormGroup
-            type="checkbox"
+          <ToggleControl
             name={`${model.id}-enabled`}
             checked={model.enabled}
             className="mb-0 mr-2"
             value={model.id}
           >
             <code className="font-size-base">{model.property}</code>
-          </FormGroup>
+          </ToggleControl>
         </div>
 
-        <button
+        <Styled.Toggle
           type="button"
           className="btn fab mini-fab utility-tab-toggle"
           onClick={onClick}
@@ -70,8 +105,8 @@ const UtilityTab = forwardRef<{}, UtilityTabProps>(
           aria-expanded={props['expanded']}
         >
           <SettingsIcon />
-        </button>
-      </Component>
+        </Styled.Toggle>
+      </Styled.Tab>
     );
   },
 );
@@ -90,7 +125,7 @@ const DialogTitle = ({ children }) => (
   </h3>
 );
 
-export const UtilityTabs = React.forwardRef<HTMLOListElement, UtilityTabsProps>(
+const UtilityTabs = React.forwardRef<HTMLOListElement, UtilityTabsProps>(
   ({ id, items = {}, ...props }, ref: Ref<HTMLOListElement>) => {
     const [activeModel, setActiveModel] = useState(null);
     const lastActiveModel = usePrevious(activeModel);
@@ -155,13 +190,13 @@ export const UtilityTabs = React.forwardRef<HTMLOListElement, UtilityTabsProps>(
           setActiveModel({ ...activeModel, class: event.target.value });
         }
       } else if (Array.isArray(event)) {
-        setActiveModel({ ...activeModel, options: event });
+        setActiveModel({ ...activeModel, items: event });
       }
     }
 
     return (
       <>
-        <ol ref={ref} id={id} className={classNames('utility-tabs', props.className)}>
+        <Styled.Tabs ref={ref} id={id} className={classNames('utility-tabs', props.className)}>
           {utilities.size > 0 &&
             utilities.map((utility: AvailUtility) => (
               <UtilityTab
@@ -171,7 +206,7 @@ export const UtilityTabs = React.forwardRef<HTMLOListElement, UtilityTabsProps>(
                 onClick={() => handleSelect(utility)}
               />
             ))}
-        </ol>
+        </Styled.Tabs>
 
         <Modal
           show={open && activeModel}
@@ -188,25 +223,27 @@ export const UtilityTabs = React.forwardRef<HTMLOListElement, UtilityTabsProps>(
               <div id={`utility-${activeModel.id}`}>
                 {activeModel.description && <p>{activeModel.description}</p>}
                 <fieldset ref={fieldsetRef}>
-                  <FormGroup
-                    name={`${activeModel.id}-root-class`}
-                    value={activeModel.class}
-                    label="Root class prefix:"
-                    onChange={handleUtilityChange}
-                    required
-                  />
-                  <FormGroup
-                    type="checkbox"
+                  <Field>
+                    <label htmlFor={`${activeModel.id}-root-class`}>Root class prefix:</label>
+                    <Control
+                      name={`${activeModel.id}-root-class`}
+                      value={activeModel.class}
+                      aria-label="Root class prefix"
+                      onChange={handleUtilityChange}
+                      required
+                    />
+                  </Field>
+                  <ToggleControl
                     name={`${activeModel.id}-responsive`}
                     value="responsive"
                     checked={activeModel.responsive}
                     onChange={handleUtilityChange}
                   >
                     <span>Make responsive classes?</span>
-                  </FormGroup>
+                  </ToggleControl>
                   <Repeater
-                    options={activeModel.options}
-                    presets={activeModel?.presets}
+                    {...activeModel}
+                    id={`${activeModel.id}-items`}
                     onChange={handleUtilityChange}
                   />
                 </fieldset>
@@ -224,4 +261,7 @@ export const UtilityTabs = React.forwardRef<HTMLOListElement, UtilityTabsProps>(
   },
 );
 
-export { UtilityTab };
+UtilityTab.displayName = 'UtilityTab';
+UtilityTabs.displayName = 'UtilityTabs';
+
+export { UtilityTab, UtilityTabs };

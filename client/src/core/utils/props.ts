@@ -5,6 +5,7 @@ const FORM_CONTROL_PROPS = [
   'cols',
   'disabled',
   'height',
+  'id',
   'list',
   'max',
   'maxLength',

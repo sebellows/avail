@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { AnimationEvent, useEffect, useState } from 'react';
-import { toOptions } from './core/models/Option';
-import { generateConfig } from './core/new-config';
+// import { toOptions } from './core/models/Option';
+import { generateConfig } from './core/config';
 import { generateSettings } from './core/settings';
-import { FormColorpicker, Spinner, Tabs, Tab, UtilityTabs } from './components';
-import { COLORS } from './core/constants';
+import { Spinner, Tabs, Tab, UtilityTabs } from './components';
+// import { COLORS } from './core/constants';
 import { SettingsForm } from './containers/SettingsForm';
 import './App.scss';
 
@@ -19,7 +19,6 @@ export default function App() {
   const [addExitClass, setExitClass] = useState(false);
 
   useEffect(() => {
-    console.log('settings', settings);
     if (loading) {
       const fadeSpinner = setTimeout(() => {
         setExitClass(true);
@@ -36,7 +35,7 @@ export default function App() {
 
   return (
     <div
-      className="App"
+      className="App container"
       style={{
         position: 'relative',
         overflow: 'hidden',
@@ -48,10 +47,6 @@ export default function App() {
 
       {loading && <Spinner exit={addExitClass} onAnimationEnd={handleLoad} />}
 
-      <div className="d-flex justify-content-center mb-5">
-        <FormColorpicker options={toOptions(COLORS)} />
-      </div>
-
       <form noValidate>
         <Tabs
           id="avail-config"
@@ -59,37 +54,11 @@ export default function App() {
           onSelect={(target: string) => setActiveTab(target)}
         >
           <Tab target="settings" title="Global Settings">
-            <h1>Configure global settings here!</h1>
             <SettingsForm settings={settings} />
-            {/* {Object.entries(settings).map(([key, setting]) => {
-              const { type, options, label, ...props } = setting as any;
-              return (
-                <fieldset key={key}>
-                  {type === 'text' && (
-                    <FormGroup name={`${key}-setting`} label={label} {...props} />
-                  )}
-                  {type === 'checkbox' && (
-                    <FormGroup type="checkbox" name={`${key}-setting`} {...props}>
-                      <span>{label}</span>
-                    </FormGroup>
-                  )}
-                  {type === 'checkbox' && <Repeater options={options} {...props} />}
-                </fieldset>
-              );
-            })} */}
           </Tab>
           <Tab target="utilities" title="Utility Class Configuration">
             <UtilityTabs id="avail-modules" items={model} />
           </Tab>
-          {/* <ol>
-            <Tab>Global Settings</Tab>
-            <Tab>Utility Class Configuration</Tab>
-          </ol>
-
-          <Panel>Settings</Panel>
-          <Panel>
-            <UtilityTabs id="avail-modules" items={model} />
-          </Panel> */}
         </Tabs>
       </form>
     </div>

@@ -8,16 +8,16 @@ export const StyledField = styled.div`
   padding-bottom: var(--spacer-1);
 `;
 
-export const Field = forwardRef<{}, ComponentProps>(
-  ({ className, children, ...props }, ref: Ref<any>) => {
-    const formGroupClasses = classNames('field', className);
+const Field = forwardRef<{}, ComponentProps>(({ className, children, ...props }, ref: Ref<any>) => {
+  const formGroupClasses = classNames('field', className);
 
-    return (
-      <StyledField {...props} ref={ref} className={formGroupClasses}>
-        {children}
-      </StyledField>
-    );
-  },
-);
+  return (
+    <StyledField {...props} ref={ref} className={formGroupClasses}>
+      {children}
+    </StyledField>
+  );
+});
 
-export default Field;
+Field.displayName = 'Field';
+
+export { Field };

@@ -10,4 +10,3 @@ export * from './props';
 export * from './range';
 export * from './dom';
 export * from './animation';
-export * from './style';

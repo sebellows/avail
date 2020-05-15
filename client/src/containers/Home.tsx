@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { AnimationEvent, useEffect, useState } from 'react';
-import { generateConfig } from '../core/new-config';
+import { generateConfig } from '../core/config';
 import { Spinner, UtilityTabs } from '../components';
 
 const classes = generateConfig();

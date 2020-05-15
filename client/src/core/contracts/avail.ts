@@ -11,11 +11,12 @@ export interface AvailUtility {
   class?: string;
   description?: string;
   enabled?: boolean;
+  inputType?: string;
   property: string | string[];
   responsive: boolean;
-  presets?: string[];
+  options?: string[] | OptionProps[];
   values?: Record<string, any> | string[]; // TODO: remove, part of old build.ts
-  options?: OptionProps[];
+  items?: OptionProps[];
 }
 
 export interface AvailUtilities {

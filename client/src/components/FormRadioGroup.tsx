@@ -1,10 +1,10 @@
 import React, { forwardRef, Ref } from 'react';
 import { classNames } from '../core/utils';
 import { FormGroupProps, OptionProps } from '../core/contracts';
-import { FormCheck } from './FormCheck';
+import { ToggleControl } from './ToggleControl';
 import { FieldFeedback } from './FieldFeedback';
 import { FieldDescription } from './FieldDescription';
-import Field from './Field';
+import { Field } from './Field';
 
 const FormRadioGroup = forwardRef<{}, FormGroupProps>(
   (
@@ -30,7 +30,7 @@ const FormRadioGroup = forwardRef<{}, FormGroupProps>(
         <legend className={classNames(classMap?.legend)}>{legend}</legend>
         <div className="radio-group">
           {options.map((option: OptionProps, i: number) => (
-            <FormCheck
+            <ToggleControl
               key={`${option.name}-${i}`}
               type="radio"
               name={id}
@@ -41,7 +41,7 @@ const FormRadioGroup = forwardRef<{}, FormGroupProps>(
               className={classNames(classMap?.control)}
             >
               <span>{option.name}</span>
-            </FormCheck>
+            </ToggleControl>
           ))}
         </div>
         {description && <FieldDescription>{description}</FieldDescription>}

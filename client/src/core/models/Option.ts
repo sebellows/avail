@@ -15,7 +15,11 @@ export class Option implements OptionProps {
     return this._value;
   }
   set value(value: string) {
-    this._value = hyphenate(value);
+    if (value.endsWith('px')) {
+      this._value = parseInt(value, 10).toString();
+    } else {
+      this._value = hyphenate(value);
+    }
   }
   private _value: string;
 

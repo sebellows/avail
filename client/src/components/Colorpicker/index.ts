@@ -1,1 +1,0 @@
-export { FormColorpicker } from './FormColorpicker';

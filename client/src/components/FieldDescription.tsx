@@ -2,7 +2,7 @@ import React, { Ref } from 'react';
 
 import { ComponentProps } from '../core/contracts';
 import styled from 'styled-components';
-import { color } from '../core/utils';
+import { color } from '../core/style';
 
 interface FieldDescriptionProps extends ComponentProps {
   /** Add `text-muted` class */

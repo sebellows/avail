@@ -33,10 +33,7 @@ import { range } from './utils/range';
 import { CollectionObj } from './contracts';
 import { isPlainObject } from './utils/common';
 
-export function generateUtilities(
-  utilities: CollectionObj,
-  indentAmt = INDENT_AMOUNT,
-): string {
+export function generateUtilities(utilities: CollectionObj, indentAmt = INDENT_AMOUNT): string {
   return Object.entries(utilities).reduce((css: string, [key, utility]) => {
     if (utility.responsive) {
       return (css += generateResponsiveUtility(utility, indentAmt));
@@ -50,22 +47,14 @@ export function generateResponsiveUtility(
   utility: CollectionObj,
   indentAmt = INDENT_AMOUNT,
 ): string {
-  return Object.entries(GRID_BREAKPOINTS).reduce(
-    (css: string, [breakpoint, screenSize]) => {
-      const infix = screenSize === '0' ? '' : `-${breakpoint}`;
-      const mqOpen =
-        screenSize !== '0' ? `@media (min-width: ${screenSize}) {\n` : '';
-      const mqClose = screenSize !== '0' ? `}\n\n` : '\n';
-      const _indentAmt = screenSize === '0' ? indentAmt : indentAmt * 2;
+  return Object.entries(GRID_BREAKPOINTS).reduce((css: string, [breakpoint, screenSize]) => {
+    const infix = screenSize === '0' ? '' : `-${breakpoint}`;
+    const mqOpen = screenSize !== '0' ? `@media (min-width: ${screenSize}) {\n` : '';
+    const mqClose = screenSize !== '0' ? `}\n\n` : '\n';
+    const _indentAmt = screenSize === '0' ? indentAmt : indentAmt * 2;
 
-      return (css += `${mqOpen}${generateUtility(
-        utility,
-        _indentAmt,
-        infix,
-      )}${mqClose}`);
-    },
-    '',
-  );
+    return (css += `${mqOpen}${generateUtility(utility, _indentAmt, infix)}${mqClose}`);
+  }, '');
 }
 
 function getIndentAmount(indent: number): string {
@@ -81,9 +70,9 @@ export function generateDeclaration(
   indentAmt: number,
 ): string {
   return properties.reduce((css: string, prop: string, i: number) => {
-    const indent =
-      properties.length > 1 ? `\n${getIndentAmount(indentAmt)}` : ' ';
+    const indent = properties.length > 1 ? `\n${getIndentAmount(indentAmt)}` : ' ';
     const nl = properties.length > 1 && i > 0 ? '\n' : ' ';
+
     return (css += `${indent}${prop}: ${value} !important;${nl}`);
   }, '');
 }
@@ -97,22 +86,18 @@ export function generateUtility(
   infix = '',
 ): string {
   let { class: className, property: properties } = utility;
-  let values = utility.values || utility.options;
+  let values = utility.values || utility.items;
 
   if (values == null || properties == null) return '';
 
-  const indentBy =
-    properties.length > 1 && indentAmt > INDENT_AMOUNT
-      ? indentAmt / 2
-      : indentAmt;
-  const openingSelectorIndent =
-    indentAmt === INDENT_AMOUNT ? '' : getIndentAmount(indentBy);
+  const indentBy = properties.length > 1 && indentAmt > INDENT_AMOUNT ? indentAmt / 2 : indentAmt;
+  const openingSelectorIndent = indentAmt === INDENT_AMOUNT ? '' : getIndentAmount(indentBy);
 
   // If the values are an array or string, convert it into a object
   if (Array.isArray(values)) {
     values = values.reduce((o, val) => {
       if (isPlainObject(val)) {
-        // Comes from `options`
+        // Comes from `items`
         o[val.name] = val.value;
       } else {
         // Comes from original `utilities` values
@@ -133,11 +118,9 @@ export function generateUtility(
 
     // Use custom class if present
     const propertyClass = className || properties[0] || '';
-    infix =
-      propertyClass === '' && infix.startsWith('-') ? infix.slice(1) : infix;
-    const modifier = propertyClass.length && key !== 'null' ? `-${key}` : '';
-    const closingSelectorIndent =
-      properties.length > 1 ? openingSelectorIndent : '';
+    infix = propertyClass === '' && infix.startsWith('-') ? infix.slice(1) : infix;
+    const modifier = propertyClass.length && key !== '' ? `-${key}` : '';
+    const closingSelectorIndent = properties.length > 1 ? openingSelectorIndent : '';
 
     return (css +=
       value != null

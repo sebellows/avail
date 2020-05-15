@@ -125,7 +125,7 @@ export const THEME_COLORS = VARIANTS;
 export const SPACER = '1rem';
 
 export const SPACERS = {
-  0: 0,
+  0: '0',
   1: calcUnitSize(0.25, SPACER),
   2: calcUnitSize(0.5, SPACER),
   3: SPACER,

@@ -1,18 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { forwardRef, Ref, useEffect, useMemo, useRef } from 'react';
-import { OptionProps, FormControlProps } from '../core/contracts';
-import { toOptions, Option } from '../core/models/Option';
-import { classNames, validFormProps, containerProps, typeOf } from '../core/utils';
+import { OptionProps } from '../../core/contracts';
+import { toOptions, Option } from '../../core/models/Option';
+import { classNames, validFormProps, containerProps, typeOf } from '../../core/utils';
+import { Styled } from './styles';
+import { ControlProps } from '../Control';
 
-export const FormSelect = forwardRef<{}, FormControlProps>(
+const SelectControl = forwardRef<{}, ControlProps>(
   (
     {
-      as: Tag = 'div',
+      as: Component = 'div',
       className,
       defaultOption,
       isValid,
       isInvalid,
-      label,
+      arialabel,
       options: initialOptions,
       ...props
     },
@@ -25,27 +27,33 @@ export const FormSelect = forwardRef<{}, FormControlProps>(
       return toOptions(initialOptions);
     }, [initialOptions]);
 
+    function handleChange(event: any) {
+      if (props.onChange) {
+        props.onChange(event);
+      }
+    }
+
     const { controlClass = '' } = props;
     const htmlProps = containerProps(props, { exclude: ['controlClass'] });
     const formProps = validFormProps(props);
 
-    const Component = Tag as 'div';
-
     return (
-      <Component
+      <Styled.Wrapper
         {...htmlProps}
+        as={Component}
         className={classNames(
-          'form-select',
+          'avail-select',
           isValid && `is-valid`,
           isInvalid && `is-invalid`,
           className,
         )}
       >
-        <select
+        <Styled.Select
           ref={ref}
-          className={classNames('form-control', controlClass)}
-          aria-label={label}
           {...formProps}
+          className={classNames('control', 'select', controlClass)}
+          aria-label={arialabel}
+          onChange={handleChange}
         >
           {defaultOption && <option value="">{defaultOption}</option>}
           {(options as OptionProps[]).map((_option: OptionProps, i: number) => {
@@ -55,10 +63,12 @@ export const FormSelect = forwardRef<{}, FormControlProps>(
               </option>
             );
           })}
-        </select>
-      </Component>
+        </Styled.Select>
+      </Styled.Wrapper>
     );
   },
 );
 
-export default FormSelect;
+SelectControl.displayName = 'SelectControl';
+
+export { SelectControl };

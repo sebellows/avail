@@ -1,5 +1,5 @@
-import React, { forwardRef, useState, useRef, useEffect } from 'react';
-import { FormControlProps, OptionProps } from '../../core/contracts';
+import React, { forwardRef, Ref, useState, useRef, useEffect } from 'react';
+import { OptionProps } from '../../core/contracts';
 import {
   classNames,
   containerProps,
@@ -12,14 +12,17 @@ import {
   onAnimationEnd,
   TAB,
 } from '../../core/utils';
-import { FormControl } from '../FormControl';
 
-import './style.css';
 import usePrevious from '../../hooks/usePrevious';
 import { useClickOutside } from '../../hooks/useClickOutside';
+import { ControlProps } from '../Control';
+import { Styled } from './styles';
 
-const FormColorpicker = forwardRef<{}, FormControlProps>(
-  ({ className, isValid, isInvalid, options, value: initialValue = '', ...props }, ref: any) => {
+const Colorpicker = forwardRef<{}, ControlProps>(
+  (
+    { className, isValid, isInvalid, options, value: initialValue = '', ...props },
+    ref: Ref<any>,
+  ) => {
     const [isOpen, setOpen] = useState(false);
     const [value, setValue] = useState(initialValue);
     const [color, setColor] = useState('#ffffff');
@@ -27,11 +30,17 @@ const FormColorpicker = forwardRef<{}, FormControlProps>(
 
     const prevOpenState = usePrevious(isOpen);
 
-    if (!ref || !ref.current) {
+    if (!ref || !('current' in ref)) {
       ref = React.createRef();
     }
     const inputRef = useRef(null);
     const panelRef = useRef(null);
+
+    useEffect(() => {
+      if (value !== color) {
+        setColor(value as string);
+      }
+    }, [color, setColor, value]);
 
     useEffect(() => {
       const { current: currentPanelRef } = panelRef;
@@ -90,7 +99,6 @@ const FormColorpicker = forwardRef<{}, FormControlProps>(
     }
 
     function handleSelect(event: any, val: any) {
-      // event.preventDefault();
       console.log('handleSelect', val);
       setValue(val);
       setColor(val);
@@ -101,7 +109,6 @@ const FormColorpicker = forwardRef<{}, FormControlProps>(
       console.log('handleKeyUp->keyCode', event.keyCode);
       switch (event.keyCode) {
         case ESCAPE:
-          // setSelected(null);
           handleClose();
           break;
         case DOWN:
@@ -112,10 +119,8 @@ const FormColorpicker = forwardRef<{}, FormControlProps>(
           break;
         case TAB:
           handleClose();
-          // handleBlur(event);
           break;
         case ENTER:
-          // setSelected(options[focusedIndex]);
           setValue(event.target.value);
           handleClose();
           break;
@@ -138,22 +143,25 @@ const FormColorpicker = forwardRef<{}, FormControlProps>(
     });
 
     return (
-      <div
+      <Styled.Wrapper
         ref={ref}
-        className={classNames('colorpicker', props.className, isOpen && 'is-open')}
+        className={classNames('colorpicker', className, isOpen && 'is-open')}
         {...htmlProps}
       >
-        <div className="colorpicker-form-group">
-          <div className="colorpicker-control">
-            <div className="colorpicker-target" style={{ backgroundColor: color }}></div>
-            <input
+        <Styled.Field className="colorpicker-form-group">
+          <Styled.ColorControl className="colorpicker-control">
+            <Styled.Target
+              className="colorpicker-target"
+              style={{ backgroundColor: color }}
+            ></Styled.Target>
+            <Styled.Input
               type="color"
               className="colorpicker-input"
               value={color}
               onChange={handleColorChange}
             />
-          </div>
-          <FormControl
+          </Styled.ColorControl>
+          <Styled.Control
             ref={inputRef}
             {...formProps}
             value={value}
@@ -163,12 +171,16 @@ const FormColorpicker = forwardRef<{}, FormControlProps>(
             onKeyDown={handleKeyUp}
             aria-expanded={isOpen}
           />
-        </div>
-        <div ref={panelRef} className={classNames('colorpicker-panel')}>
-          <ul className="colorpicker-options">
+        </Styled.Field>
+        <Styled.Panel
+          ref={panelRef}
+          {...{ open: isOpen }}
+          className={classNames('colorpicker-panel')}
+        >
+          <Styled.Options className="colorpicker-options">
             {options?.length &&
               (options as OptionProps[]).map(({ name, value: colorValue }) => (
-                <li
+                <Styled.Option
                   key={name}
                   className={classNames(
                     'colorpicker-option',
@@ -177,17 +189,20 @@ const FormColorpicker = forwardRef<{}, FormControlProps>(
                   data-value={colorValue}
                   onClick={(event) => handleSelect(event, colorValue)}
                 >
-                  <span className="preview-box" style={{ backgroundColor: colorValue as string }} />
+                  <Styled.PreviewBox
+                    className="preview-box"
+                    style={{ backgroundColor: colorValue as string }}
+                  />
                   <span className="colorpicker-option-name">{name}</span>
-                </li>
+                </Styled.Option>
               ))}
-          </ul>
-        </div>
-      </div>
+          </Styled.Options>
+        </Styled.Panel>
+      </Styled.Wrapper>
     );
   },
 );
 
-FormColorpicker.displayName = 'FormColorpicker';
+Colorpicker.displayName = 'Colorpicker';
 
-export { FormColorpicker };
+export { Colorpicker };
