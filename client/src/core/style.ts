@@ -322,7 +322,9 @@ export function generateSpacer(prop: string) {
     let spacing = '0';
     let rule = '';
 
-    spacing = sizes.map((sz) => (isNumber(sz) ? spacers[sz] : sz)).join(' ');
+    spacing = sizes
+      .map((sz) => (isNumber(sz) && spacers[sz] ? toREM(spacers[sz]) : isUnit(sz) ? sz : toREM(sz)))
+      .join(' ');
 
     if (!dir) {
       rule = `${prop}: ${spacing};`;

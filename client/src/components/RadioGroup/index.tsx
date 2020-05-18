@@ -1,12 +1,12 @@
 import React, { forwardRef, Ref } from 'react';
-import { classNames } from '../core/utils';
-import { FormGroupProps, OptionProps } from '../core/contracts';
-import { ToggleControl } from './ToggleControl';
-import { FieldFeedback } from './FieldFeedback';
-import { FieldDescription } from './FieldDescription';
-import { Field } from './Field';
+import { classNames } from '../../core/utils';
+import { FormGroupProps, OptionProps } from '../../core/contracts';
+import { ToggleControl } from '../ToggleControl';
+import { FieldFeedback } from '../FieldFeedback';
+import { FieldDescription } from '../FieldDescription';
+import { Styled } from './styles';
 
-const FormRadioGroup = forwardRef<{}, FormGroupProps>(
+const RadioGroup = forwardRef<{}, FormGroupProps>(
   (
     {
       className,
@@ -26,9 +26,9 @@ const FormRadioGroup = forwardRef<{}, FormGroupProps>(
     ref: Ref<any>,
   ) => {
     return (
-      <Field as="fieldset" ref={ref} className={className}>
+      <Styled.Wrapper ref={ref} className={className}>
         <legend className={classNames(classMap?.legend)}>{legend}</legend>
-        <div className="radio-group">
+        <Styled.FormGroup className="radio-group">
           {options.map((option: OptionProps, i: number) => (
             <ToggleControl
               key={`${option.name}-${i}`}
@@ -43,14 +43,14 @@ const FormRadioGroup = forwardRef<{}, FormGroupProps>(
               <span>{option.name}</span>
             </ToggleControl>
           ))}
-        </div>
+        </Styled.FormGroup>
         {description && <FieldDescription>{description}</FieldDescription>}
         {props?.isInvalid && error && <FieldFeedback type="invalid">{error[id]}</FieldFeedback>}
-      </Field>
+      </Styled.Wrapper>
     );
   },
 );
 
-FormRadioGroup.displayName = 'FormRadioGroup';
+RadioGroup.displayName = 'RadioGroup';
 
-export { FormRadioGroup };
+export { RadioGroup };

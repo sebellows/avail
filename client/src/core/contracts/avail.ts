@@ -21,6 +21,7 @@ export interface AvailSettingField {
   legend?: string;
   options?: OptionProps[];
   presets?: string[] | Record<string, any>;
+  attrs?: Record<string, any>;
   readonly?: boolean;
   validators?: Record<string, any>;
   value?: string | number;

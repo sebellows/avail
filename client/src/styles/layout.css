@@ -49,11 +49,3 @@
   flex: 0 0 50%;
   max-width: 50%;
 }
-/* @media (min-width: 640px) {
-      .col.size-1of3 {
-          flex: 0 0 33.33%;
-      }
-      .col.size-2of3 {
-          flex: 0 0 66.66%;
-      }
-  } */

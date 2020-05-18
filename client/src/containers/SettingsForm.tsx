@@ -44,6 +44,10 @@ export function renderSettings(settings: AvailConfig<AvailSetting>) {
         <FieldGrid className="fields">
           {fields.map(([key, field]) => {
             const fieldID = `${fieldsetID}-${hyphenate(key)}`;
+            if (field.attrs) {
+              field = { ...field, ...field.attrs };
+              delete field.attrs;
+            }
             return (
               <Field
                 key={fieldID}

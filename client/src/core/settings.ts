@@ -33,6 +33,7 @@ export const Settings = (settings: Record<string, any> = {}) => {
           type: 'text',
           id: 'avail-prefix',
           label: 'Prefix',
+          attrs: { placeholder: 'app-' },
           value: '',
           description: 'Prepend a custom prefix to all generated utility classes?',
         },

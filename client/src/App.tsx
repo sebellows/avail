@@ -1,19 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { AnimationEvent, useEffect, useState } from 'react';
-// import { toOptions } from './core/models/Option';
 import { generateConfig } from './core/config';
 import { generateSettings } from './core/settings';
 import { Spinner, Tabs, Tab, UtilityTabs } from './components';
-// import { COLORS } from './core/constants';
 import { SettingsForm } from './containers/SettingsForm';
 import './App.scss';
 
-const classes = generateConfig();
+const initialUtilities = generateConfig();
 const initialSettings = generateSettings();
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('settings');
-  const [model, setModel] = useState(classes);
+  const [utilities, setUtilities] = useState(initialUtilities);
   const [settings, setSettings] = useState(initialSettings);
   const [loading, setLoading] = useState(false);
   const [addExitClass, setExitClass] = useState(false);
@@ -57,7 +55,7 @@ export default function App() {
             <SettingsForm settings={settings} />
           </Tab>
           <Tab target="utilities" title="Utility Class Configuration">
-            <UtilityTabs id="avail-modules" items={model} />
+            <UtilityTabs id="avail-utilities" items={utilities} />
           </Tab>
         </Tabs>
       </form>
