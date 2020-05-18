@@ -26,8 +26,8 @@ const ToggleControl = React.forwardRef<{}, ToggleControlProps>(
       <Styled.Wrapper ref={ref} {...htmlProps} as={Component}>
         <Styled.Control ref={inputRef} type={inputType} {...formProps} onChange={handleChange} />
         <Styled.Container className="toggle-container">
-          <Styled.Outer className="toggle-outer" />
-          <Styled.Inner className="toggle-inner">
+          <Styled.Outer className="toggle-outer" inputType={inputType} />
+          <Styled.Inner className="toggle-inner" inputType={inputType}>
             {type === 'checkbox' && (
               <CheckIcon
                 fill={formProps?.checked ? control.active.bg : control.bg}

@@ -25,103 +25,18 @@ export const Settings = (settings: Record<string, any> = {}) => {
   const variants = toOptions(colorSchemes.variants);
   const allColors = [...colors, ...grays, ...variants];
 
-  return [
-    {
-      legend: 'Prefix',
-      fields: [
-        {
+  return {
+    export: {
+      legend: 'Export configuration',
+      fields: {
+        prefix: {
           type: 'text',
           id: 'avail-prefix',
           label: 'Prefix',
           value: '',
           description: 'Prepend a custom prefix to all generated utility classes?',
-          classMap: {
-            label: 'sr-only',
-          },
         },
-      ],
-    },
-    {
-      legend: 'Exported file type',
-      fields: [
-        {
-          type: 'radiogroup',
-          id: 'avail-export-type',
-          options: toOptions(['CSS', 'SCSS']),
-          value: 'css',
-          description: 'Select file type to export utility classes as.',
-        },
-      ],
-    },
-    {
-      legend: 'Color Schemes',
-      fields: [
-        {
-          type: 'repeater',
-          id: 'avail-colors',
-          inputType: 'color',
-          legend: 'Colors',
-          items: colors,
-        },
-        {
-          type: 'repeater',
-          id: 'avail-grays',
-          inputType: 'color',
-          legend: 'Grays',
-          items: grays,
-        },
-        {
-          type: 'repeater',
-          id: 'avail-variants',
-          inputType: 'colorpicker',
-          legend: 'Theme Variant Colors',
-          options: [...colors, ...grays],
-          items: variants,
-        },
-      ],
-    },
-    {
-      legend: 'Base/Body Settings',
-      fields: [
-        {
-          type: 'colorpicker',
-          id: 'avail-body-color',
-          label: 'Body color',
-          value: THEME_COLORS.dark,
-          options: allColors,
-          description: 'Default body text color.',
-        },
-        {
-          type: 'colorpicker',
-          id: 'avail-bg-colors',
-          label: 'Body background color',
-          value: COLORS.white,
-          options: allColors,
-          description: 'Default body background color.',
-        },
-        {
-          type: 'text',
-          id: 'avail-font-family',
-          label: 'Default font-family',
-          value: `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"`,
-          description: 'Default global font-family.',
-        },
-        {
-          type: 'text',
-          id: 'avail-headings-font-family',
-          label: 'Headings font-family',
-          value: 'inherit',
-          description: 'By default inherits from global font-family.',
-        },
-        {
-          type: 'text',
-          id: 'avail-monospace-font-family',
-          label: 'Monospace font-family',
-          value: `SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
-          monospace`,
-          description: 'Used on <pre>, <code>, and <kbd> tags.',
-        },
-        {
+        sizingUnit: {
           type: 'radiogroup',
           id: 'avail-sizing-unit',
           legend: 'Default sizing unit',
@@ -129,27 +44,105 @@ export const Settings = (settings: Record<string, any> = {}) => {
           value: 'rem',
           description: 'Converts all size values to specified unit.',
         },
-        {
+        fileType: {
+          type: 'radiogroup',
+          id: 'avail-export-type',
+          legend: 'Exported file type',
+          options: toOptions(['CSS', 'SCSS']),
+          value: 'css',
+          description: 'Select file type to export utility classes as.',
+        },
+      },
+    },
+    colorSchemes: {
+      legend: 'Color Schemes',
+      fields: {
+        colors: {
+          type: 'repeater',
+          id: 'avail-colors',
+          inputType: 'color',
+          legend: 'Colors',
+          items: colors,
+        },
+        grays: {
+          type: 'repeater',
+          id: 'avail-grays',
+          inputType: 'color',
+          legend: 'Grays',
+          items: grays,
+        },
+        variants: {
+          type: 'repeater',
+          id: 'avail-variants',
+          inputType: 'colorpicker',
+          legend: 'Theme Variant Colors',
+          options: [...colors, ...grays],
+          items: variants,
+        },
+      },
+    },
+    global: {
+      legend: 'Base/Body Settings',
+      fields: {
+        bodyColor: {
+          type: 'colorpicker',
+          id: 'avail-body-color',
+          label: 'Body color',
+          value: THEME_COLORS.dark,
+          options: allColors,
+          description: 'Default body text color.',
+        },
+        bodyBgColor: {
+          type: 'colorpicker',
+          id: 'avail-bg-colors',
+          label: 'Body background color',
+          value: COLORS.white,
+          options: allColors,
+          description: 'Default body background color.',
+        },
+        fontFamily: {
+          type: 'text',
+          id: 'avail-font-family',
+          label: 'Default font-family',
+          value: `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"`,
+          description: 'Default global font-family.',
+        },
+        headingsFontFamily: {
+          type: 'text',
+          id: 'avail-headings-font-family',
+          label: 'Headings font-family',
+          value: 'inherit',
+          description: 'By default inherits from global font-family.',
+        },
+        monospaceFontFamily: {
+          type: 'text',
+          id: 'avail-monospace-font-family',
+          label: 'Monospace font-family',
+          value: `SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+          monospace`,
+          description: 'Used on <pre>, <code>, and <kbd> tags.',
+        },
+        fontSize: {
           type: 'number',
           id: 'avail-font-size',
           label: 'Base font size',
           value: '16',
           description: 'Set in `px` (will be converted if default unit configured).',
         },
-        {
+        lineHeight: {
           type: 'text',
           id: 'avail-line-height',
           label: 'Default line-height',
           value: '1.5',
         },
-        {
+        fontWeight: {
           type: 'select',
           id: 'avail-font-weight',
           label: 'Default font-weight',
           value: 'normal',
           options: toOptions(CSS_VALUE_PRESETS.fontWeight),
         },
-        {
+        paragraphMargin: {
           type: 'number',
           id: 'avail-paragraph-margin',
           label: 'Paragraph margin',
@@ -157,7 +150,7 @@ export const Settings = (settings: Record<string, any> = {}) => {
           description:
             'Set in `px` (will be converted if default unit configured). NOTE: Applies to bottom margin only.',
         },
-        {
+        headingsMargin: {
           type: 'number',
           id: 'avail-headings-margin',
           label: 'Headings margin',
@@ -165,12 +158,12 @@ export const Settings = (settings: Record<string, any> = {}) => {
           description:
             'Set in `px` (will be converted if default unit configured). NOTE: Applies to bottom margin only.',
         },
-      ],
+      },
     },
-    {
+    border: {
       legend: 'Border',
-      fields: [
-        {
+      fields: {
+        width: {
           type: 'number',
           id: 'avail-border-width',
           label: 'Border width',
@@ -178,7 +171,7 @@ export const Settings = (settings: Record<string, any> = {}) => {
           description: 'Default border width applied to border-related utility classes.',
           validators: { min: 0 },
         },
-        {
+        style: {
           type: 'select',
           id: 'avail-border-style',
           label: 'Border style',
@@ -186,7 +179,7 @@ export const Settings = (settings: Record<string, any> = {}) => {
           options: toOptions(CSS_VALUE_PRESETS.borderStyle),
           description: 'Default border width applied to border-related utility classes.',
         },
-        {
+        color: {
           type: 'colorpicker',
           id: 'avail-border-color',
           label: 'Border color',
@@ -194,12 +187,12 @@ export const Settings = (settings: Record<string, any> = {}) => {
           value: GRAYS['gray-100'],
           description: 'Default border color applied to border-related utility classes.',
         },
-      ],
+      },
     },
-    {
+    mediaQuery: {
       legend: 'Media-Query Breakpoints',
-      fields: [
-        {
+      fields: {
+        breakpoints: {
           type: 'repeater',
           id: 'avail-breakpoints',
           inputType: 'number',
@@ -207,25 +200,30 @@ export const Settings = (settings: Record<string, any> = {}) => {
           description: 'Used to generate responsive utility classes.',
           validators: { min: 0 },
         },
-      ],
+      },
     },
-    {
+    spacing: {
       legend: 'Spacing class direction suffixes',
-      fields: [
-        {
+      fields: {
+        suffixes: {
           type: 'repeater',
           id: 'avail-spacing-suffixes',
           inputType: 'number',
           items: toOptions(DIRECTIONS),
-          readonly: true,
+          readOnly: true,
           description:
             'Used to generate spacing classes for all directions (e.g., `margin-top: 1rem;`).',
         },
-      ],
+      },
     },
-  ];
+  };
 };
 
 export function generateSettings(config: Record<string, any> = {}) {
-  return Settings(config);
+  const settings = Settings(config);
+
+  return Object.entries(settings).reduce((acc, [key, value]) => {
+    acc[key] = { id: key, ...value };
+    return acc;
+  }, {});
 }

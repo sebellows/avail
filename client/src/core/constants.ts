@@ -1,10 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { range } from './utils/range';
-
-function calcUnitSize(num: number, baseUnit = FONT_SIZE_BASE, unit = 'rem') {
-  return parseInt(baseUnit, 10) * num + unit;
-}
+import Color from 'color';
 
 function darken(hexColor: string, percent: number) {
   const [hash, ...values] = hexColor.split('');
@@ -34,7 +31,7 @@ export const BORDER_STYLES = {
 };
 
 export const DIRECTIONS = {
-  default: 'top right bottom left',
+  default: '',
   top: 'top',
   bottom: 'bottom',
   left: 'left',
@@ -57,8 +54,12 @@ export const GRAY_700 = '#495057';
 export const GRAY_800 = '#343a40';
 export const GRAY_900 = '#212529';
 export const BLACK = '#000000';
-export const BLACK_50 = `rgba(${BLACK}, .5)`;
-export const WHITE_50 = `rgba(${WHITE}, .5)`;
+export const BLACK_06 = Color(BLACK).alpha(0.06).string();
+export const BLACK_12 = Color(BLACK).alpha(0.12).string();
+export const BLACK_20 = Color(BLACK).alpha(0.2).string();
+export const BLACK_40 = Color(BLACK).alpha(0.4).string();
+export const BLACK_50 = Color(BLACK).alpha(0.5).string();
+export const WHITE_50 = Color(WHITE).alpha(0.5).string();
 
 export const GRAYS = {
   'gray-100': GRAY_100,
@@ -122,21 +123,16 @@ export const VARIANTS = {
 
 export const THEME_COLORS = VARIANTS;
 
-export const SPACER = '1rem';
+export const SPACER = 16;
 
 export const SPACERS = {
-  0: '0',
-  1: calcUnitSize(0.25, SPACER),
-  2: calcUnitSize(0.5, SPACER),
+  0: 0,
+  1: 4,
+  2: 8,
   3: SPACER,
-  4: calcUnitSize(1.5, SPACER),
-  5: calcUnitSize(3, SPACER),
+  4: 24,
+  5: 40,
 };
-
-export const NEGATIVE_SPACERS = Object.entries(SPACERS).reduce((o, [k, v]) => {
-  o[`n${k}`] = v;
-  return o;
-}, {});
 
 // Body
 //
@@ -152,7 +148,7 @@ export const BODY_TEXT_ALIGN = null;
 
 export const LINK_COLOR = PRIMARY;
 export const LINK_DECORATION = 'underline';
-export const LINK_HOVER_COLOR = darken(LINK_COLOR, 0.15);
+export const LINK_HOVER_COLOR = Color(LINK_COLOR).darken(0.15).string();
 export const LINK_HOVER_DECORATION = null;
 // Darken percentage for links with `.text-*` class (e.g. `.text-success`)
 export const EMPHASIZED_LINK_HOVER_DARKEN_PERCENTAGE = 0.15;
@@ -163,11 +159,11 @@ export const EMPHASIZED_LINK_HOVER_DARKEN_PERCENTAGE = 0.15;
 // adapting to different screen sizes, for use in media queries.
 
 export const GRID_BREAKPOINTS = {
-  xs: '0',
-  sm: '576px',
-  md: '768px',
-  lg: '992px',
-  xl: '1200px',
+  xs: { value: 0, readOnly: true },
+  sm: 576,
+  md: 768,
+  lg: 992,
+  xl: 1200,
 };
 
 // Grid containers
@@ -175,10 +171,10 @@ export const GRID_BREAKPOINTS = {
 // Define the maximum width of `.container` for different screen sizes.
 
 export const CONTAINER_MAX_WIDTHS = {
-  sm: '540px',
-  md: '720px',
-  lg: '960px',
-  xl: '1140px',
+  sm: 540,
+  md: 720,
+  lg: 960,
+  xl: 1140,
 };
 
 // Grid columns
@@ -186,25 +182,25 @@ export const CONTAINER_MAX_WIDTHS = {
 // Set the number of columns and specify the width of the gutters.
 
 export const GRID_COLUMNS = 12;
-export const GRID_GUTTER_WIDTH = '1.5rem';
+export const GRID_GUTTER_WIDTH = 24;
 export const GRID_ROW_COLUMNS = 6;
 
 export const GUTTERS = SPACERS;
 
 // Container padding
 
-export const CONTAINER_PADDING_X = '1rem';
+export const CONTAINER_PADDING_X = SPACER;
 
 // Components
 //
 // Define common padding and border radius sizes and more.
 
-export const BORDER_WIDTH = '1px';
+export const BORDER_WIDTH = 1;
 export const BORDER_COLOR = GRAY_300;
 
-export const BORDER_RADIUS = '.25rem';
-export const BORDER_RADIUS_SM = '.2rem';
-export const BORDER_RADIUS_LG = '.3rem';
+export const BORDER_RADIUS = 4;
+export const BORDER_RADIUS_SM = 3;
+export const BORDER_RADIUS_LG = 5;
 
 export const ROUNDED_PILL = '50rem';
 
@@ -216,9 +212,7 @@ export const BOX_SHADOW_INSET = `inset 0 1px 2px rgba(BLACK, .075)`;
 export const COMPONENT_ACTIVE_COLOR = WHITE;
 export const COMPONENT_ACTIVE_BG = PRIMARY;
 
-export const CARET_WIDTH = '.3em';
-export const CARET_VERTICAL_ALIGN = calcUnitSize(0.85, CARET_WIDTH, 'em');
-export const CARET_SPACING = calcUnitSize(0.85, CARET_WIDTH, 'em');
+export const CARET_WIDTH = 5;
 
 export const TRANSITION_BASE = 'all .2s ease-in-out';
 export const TRANSITION_FADE = 'opacity .15s linear';
@@ -257,10 +251,10 @@ export const FONT_FAMILY_BASE = FONT_FAMILY_SANS_SERIF;
 
 // FONT_SIZE_ROOT effects the value of `rem`, which is used for as well font sizes, paddings and margins
 // FONT_SIZE_BASE effects the font size of the body text
-export const FONT_SIZE_ROOT = null;
-export const FONT_SIZE_BASE = '1rem'; // Assumes the browser default, typically `16px`
-export const FONT_SIZE_SM = calcUnitSize(0.875);
-export const FONT_SIZE_LG = calcUnitSize(1.25);
+export const FONT_SIZE_ROOT = 16;
+export const FONT_SIZE_BASE = 16; // Assumes the browser default, typically `16px`
+export const FONT_SIZE_SM = 14;
+export const FONT_SIZE_LG = 20;
 
 export const FONT_WEIGHT_LIGHTER = 'lighter';
 export const FONT_WEIGHT_LIGHT = 300;
@@ -270,28 +264,28 @@ export const FONT_WEIGHT_BOLDER = 'bolder';
 
 export const FONT_WEIGHT_BASE = FONT_WEIGHT_NORMAL;
 
-export const LINE_HEIGHT_BASE = '1.5';
-export const LINE_HEIGHT_SM = '1.25';
-export const LINE_HEIGHT_LG = '2';
+export const LINE_HEIGHT_BASE = 1.5;
+export const LINE_HEIGHT_SM = 1.25;
+export const LINE_HEIGHT_LG = 2;
 
-export const H1_FONT_SIZE = calcUnitSize(2.5);
-export const H2_FONT_SIZE = calcUnitSize(2);
-export const H3_FONT_SIZE = calcUnitSize(1.75);
-export const H4_FONT_SIZE = calcUnitSize(1.5);
-export const H5_FONT_SIZE = calcUnitSize(1.25);
+export const H1_FONT_SIZE = 40;
+export const H2_FONT_SIZE = 32;
+export const H3_FONT_SIZE = 28;
+export const H4_FONT_SIZE = 24;
+export const H5_FONT_SIZE = 20;
 export const H6_FONT_SIZE = FONT_SIZE_BASE;
 
-export const HEADINGS_MARGIN_BOTTOM = `${parseInt(SPACER, 10) / 2}rem`;
+export const HEADINGS_MARGIN_BOTTOM = 8;
 export const HEADINGS_FONT_FAMILY = null;
 export const HEADINGS_FONT_STYLE = null;
 export const HEADINGS_FONT_WEIGHT = 500;
-export const HEADINGS_LINE_HEIGHT = '1.2';
+export const HEADINGS_LINE_HEIGHT = 1.2;
 export const HEADINGS_COLOR = null;
 
-export const DISPLAY1_SIZE = '6rem';
-export const DISPLAY2_SIZE = '5.5rem';
-export const DISPLAY3_SIZE = '4.5rem';
-export const DISPLAY4_SIZE = '3.5rem';
+export const DISPLAY1_SIZE = 96;
+export const DISPLAY2_SIZE = 80;
+export const DISPLAY3_SIZE = 64;
+export const DISPLAY4_SIZE = 48;
 
 export const DISPLAY1_WEIGHT = 300;
 export const DISPLAY2_WEIGHT = 300;
@@ -299,12 +293,9 @@ export const DISPLAY3_WEIGHT = 300;
 export const DISPLAY4_WEIGHT = 300;
 export const DISPLAY_LINE_HEIGHT = HEADINGS_LINE_HEIGHT;
 
-export const LEAD_FONT_SIZE = calcUnitSize(1.25);
-export const LEAD_FONT_WEIGHT = 300;
+export const SMALL_FONT_SIZE = '80%';
 
-export const SMALL_FONT_SIZE = '.875em';
-
-export const SUB_SUP_FONT_SIZE = '.75em';
+export const SUB_SUP_FONT_SIZE = 0.75;
 
 export const TEXT_MUTED = GRAY_600;
 
@@ -312,24 +303,24 @@ export const INITIALISM_FONT_SIZE = SMALL_FONT_SIZE;
 
 export const BLOCKQUOTE_SMALL_COLOR = GRAY_600;
 export const BLOCKQUOTE_SMALL_FONT_SIZE = SMALL_FONT_SIZE;
-export const BLOCKQUOTE_FONT_SIZE = calcUnitSize(1.25);
+export const BLOCKQUOTE_FONT_SIZE = 20;
 
 export const HR_MARGIN_Y = SPACER;
 export const HR_COLOR = 'inherit';
 export const HR_HEIGHT = BORDER_WIDTH;
-export const HR_OPACITY = '.25';
+export const HR_OPACITY = 0.25;
 
-export const LEGEND_MARGIN_BOTTOM = '.5rem';
-export const LEGEND_FONT_SIZE = '1.5rem';
+export const LEGEND_MARGIN_BOTTOM = 8;
+export const LEGEND_FONT_SIZE = 24;
 export const LEGEND_FONT_WEIGHT = null;
 
-export const MARK_PADDING = '.2em';
+export const MARK_PADDING = 3;
 
 export const DT_FONT_WEIGHT = FONT_WEIGHT_BOLD;
 
 export const NESTED_KBD_FONT_WEIGHT = FONT_WEIGHT_BOLD;
 
-export const LIST_INLINE_PADDING = '.5rem';
+export const LIST_INLINE_PADDING = 8;
 
 export const MARK_BG = '#fcf8e3';
 

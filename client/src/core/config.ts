@@ -1,33 +1,25 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
-  BLACK,
   BLACK_50,
-  BODY_BG,
   BODY_COLOR,
   BORDER_COLOR,
   BORDER_WIDTH,
   BORDER_RADIUS,
   BORDER_RADIUS_SM,
   BORDER_RADIUS_LG,
-  BORDER_STYLES,
   BOX_SHADOW,
   BOX_SHADOW_SM,
   BOX_SHADOW_LG,
-  COLORS,
-  DIRECTIONS,
   FONT_FAMILY_MONOSPACE,
   FONT_WEIGHT_BOLD,
   FONT_WEIGHT_BOLDER,
   FONT_WEIGHT_LIGHT,
   FONT_WEIGHT_LIGHTER,
   FONT_WEIGHT_NORMAL,
-  GRAYS,
-  GRID_BREAKPOINTS,
-  INDENT_AMOUNT,
   LINE_HEIGHT_BASE,
   LINE_HEIGHT_SM,
   LINE_HEIGHT_LG,
-  NEGATIVE_SPACERS,
+  // NEGATIVE_SPACERS,
   ROUNDED_PILL,
   SPACERS,
   TEXT_MUTED,
@@ -38,8 +30,21 @@ import {
 import { toOptions } from './models/Option';
 import { CSS_VALUE_PRESETS } from './presets';
 import { AvailUtilities } from './contracts';
+import { toREM, toPX } from './style';
 
-const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
+const createSpacers = (prefix = '') =>
+  Object.entries(SPACERS).reduce((acc, [k, v]) => {
+    acc[`${prefix}${k}`] = toREM(v);
+    return acc;
+  }, {});
+
+const REM_SPACERS = createSpacers();
+const NEGATIVE_SPACERS = createSpacers('n');
+
+const Config = (
+  settings: Record<string, any> = {},
+  utils: AvailUtilities = {},
+): AvailUtilities => ({
   align: {
     enabled: true,
     responsive: false,
@@ -682,7 +687,7 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     property: 'margin',
     class: 'm',
     inputType: 'text',
-    items: [...toOptions(SPACERS, 'auto')],
+    items: [...toOptions(REM_SPACERS, 'auto')],
   },
   marginX: {
     enabled: true,
@@ -690,7 +695,7 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     property: 'margin-right margin-left',
     class: 'mx',
     inputType: 'text',
-    items: [...toOptions(SPACERS, 'auto')],
+    items: [...toOptions(REM_SPACERS, 'auto')],
   },
   marginY: {
     enabled: true,
@@ -698,7 +703,7 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     property: 'margin-top margin-bottom',
     class: 'my',
     inputType: 'text',
-    items: [...toOptions(SPACERS, 'auto')],
+    items: [...toOptions(REM_SPACERS, 'auto')],
   },
   marginTop: {
     enabled: true,
@@ -706,7 +711,7 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     property: 'margin-top',
     class: 'mt',
     inputType: 'text',
-    items: [...toOptions(SPACERS, 'auto')],
+    items: [...toOptions(REM_SPACERS, 'auto')],
   },
   marginRight: {
     enabled: true,
@@ -714,7 +719,7 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     property: 'margin-right',
     class: 'mr',
     inputType: 'text',
-    items: [...toOptions(SPACERS, 'auto')],
+    items: [...toOptions(REM_SPACERS, 'auto')],
   },
   marginBottom: {
     enabled: true,
@@ -722,7 +727,7 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     property: 'margin-bottom',
     class: 'mb',
     inputType: 'text',
-    items: [...toOptions(SPACERS, 'auto')],
+    items: [...toOptions(REM_SPACERS, 'auto')],
   },
   marginLeft: {
     enabled: true,
@@ -730,7 +735,7 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     property: 'margin-left',
     class: 'ml',
     inputType: 'text',
-    items: [...toOptions(SPACERS, 'auto')],
+    items: [...toOptions(REM_SPACERS, 'auto')],
   },
   // Negative margin utilities
   negativeMargin: {
@@ -972,15 +977,15 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
       },
       {
         name: 'sm',
-        value: LINE_HEIGHT_SM,
+        value: `${LINE_HEIGHT_SM}`,
       },
       {
         name: 'base',
-        value: LINE_HEIGHT_BASE,
+        value: `${LINE_HEIGHT_BASE}`,
       },
       {
         name: 'lg',
-        value: LINE_HEIGHT_LG,
+        value: `${LINE_HEIGHT_LG}`,
       },
     ],
   },
@@ -1107,15 +1112,15 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     items: [
       {
         name: '',
-        value: BORDER_RADIUS,
+        value: toREM(BORDER_RADIUS),
       },
       {
         name: 'sm',
-        value: BORDER_RADIUS_SM,
+        value: toREM(BORDER_RADIUS_SM),
       },
       {
         name: 'lg',
-        value: BORDER_RADIUS_LG,
+        value: toREM(BORDER_RADIUS_LG),
       },
       {
         name: 'circle',
@@ -1137,7 +1142,7 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     property: 'border-top-left-radius border-top-right-radius',
     class: 'rounded-top',
     inputType: 'text',
-    items: [{ name: '', value: BORDER_RADIUS }],
+    items: [{ name: '', value: toREM(BORDER_RADIUS) }],
   },
   roundedRight: {
     enabled: true,
@@ -1145,7 +1150,7 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     property: 'border-top-right-radius border-bottom-right-radius',
     class: 'rounded-right',
     inputType: 'text',
-    items: [{ name: '', value: BORDER_RADIUS }],
+    items: [{ name: '', value: toREM(BORDER_RADIUS) }],
   },
   roundedBottom: {
     enabled: true,
@@ -1153,7 +1158,7 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     property: 'border-bottom-right-radius border-bottom-left-radius',
     class: 'rounded-bottom',
     inputType: 'text',
-    items: [{ name: '', value: BORDER_RADIUS }],
+    items: [{ name: '', value: toREM(BORDER_RADIUS) }],
   },
   roundedLeft: {
     enabled: true,
@@ -1161,7 +1166,7 @@ const Config = (utils: AvailUtilities = {}): AvailUtilities => ({
     property: 'border-bottom-left-radius border-top-left-radius',
     class: 'rounded-left',
     inputType: 'text',
-    items: [{ name: '', value: BORDER_RADIUS }],
+    items: [{ name: '', value: toREM(BORDER_RADIUS) }],
   },
   visibility: {
     enabled: true,

@@ -9,6 +9,7 @@ export { FocusTrap } from './FocusTrap';
 export { Repeater } from './Repeater';
 export { FormRadioGroup } from './FormRadioGroup';
 export { Modal } from './Modal';
+export { NumericControl } from './NumericControl';
 export { SelectControl } from './SelectControl';
 export { Spinner } from './Spinner';
 export * from './TabNavigation';

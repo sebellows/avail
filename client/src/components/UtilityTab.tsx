@@ -5,7 +5,7 @@ import Prism from 'prismjs';
 
 import usePrevious from '../hooks/usePrevious';
 import { useClickOutside } from '../hooks/useClickOutside';
-import { AvailUtility, AvailUtilities } from '../core/contracts';
+import { AvailUtility, AvailUtilities, ComponentProps } from '../core/contracts';
 import { color, mixin, radius, transition } from '../core/style';
 import { generateUtility, generateResponsiveUtility } from '../core/build';
 import { hasOwn, classNames, collection, LEFT, RIGHT } from '../core/utils';
@@ -37,7 +37,7 @@ function updateUtility(model: AvailUtility) {
   return util;
 }
 
-export interface UtilityTabProps {
+export interface UtilityTabProps extends ComponentProps {
   expanded?: boolean;
   error?: Record<string, any>;
   model: AvailUtility;
@@ -54,7 +54,7 @@ export const Styled = {
     grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
     grid-gap: 1rem;
     list-style: none;
-    ${mixin.padding(3)}
+    ${mixin.padding.all(3)}
   `,
   Tab: styled.li`
     background-color: ${color.bg.body};
@@ -63,7 +63,7 @@ export const Styled = {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    ${mixin.padding([1, 2])}
+    ${mixin.padding.all(1, 2)}
     width: 100%;
     transition: box-shadow ${transition.duration.easeIn} ${transition.timing.fastOutSlowIn};
 
@@ -73,7 +73,7 @@ export const Styled = {
     }
   `,
   Toggle: styled.button`
-    ${mixin.padding(2)}
+    ${mixin.padding.all(2)}
     ${mixin.inlineFlexCenter}
     flex-direction: column;
     flex: none;
@@ -81,11 +81,9 @@ export const Styled = {
 };
 
 const UtilityTab = forwardRef<{}, UtilityTabProps>(
-  ({ expanded = false, model, onClick, tag = 'li', error, ...props }, ref) => {
-    const Component = tag as 'div';
-
+  ({ expanded = false, model, onClick, as = 'li', error, ...props }, ref) => {
     return (
-      <Styled.Tab className="utility-tab">
+      <Styled.Tab as={as} className={classNames('utility-tab', props.className)}>
         <div className="d-flex align-items-end">
           <ToggleControl
             name={`${model.id}-enabled`}

@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { OptionProps, ComponentProps } from '../core/contracts';
 import { validFormProps } from '../core/utils';
-import { color, control, font, transition, radius } from '../core/style';
+import { color, control, font, transition, radius, mixin } from '../core/style';
 import Color from 'color';
 
 export type ControlType = HTMLSelectElement | HTMLTextAreaElement | HTMLInputElement;
@@ -29,7 +29,7 @@ interface StyledProps {
   colorValue?: string;
 }
 
-const Styled = {
+export const Styled = {
   Control: styled.input<ControlProps>`
     background-color: ${({ isInvalid }) => (isInvalid ? control.invalid.bg : control.bg)};
     background-clip: padding-box;
@@ -43,12 +43,12 @@ const Styled = {
     color: ${({ isInvalid }: ControlProps) => (isInvalid ? control.invalid.color : control.color)};
     display: block;
     width: 100%;
-    height: ${({ type }) => (isToggle(type) ? '100%' : 'var(--control-height)')};
-    padding: var(--control-padding-y) var(--control-padding-x);
-    font-family: ${font.family.base};
-    font-size: 1rem;
+    height: ${({ type }) => (isToggle(type) ? '100%' : control.height)};
+    padding: ${control.paddingY} ${control.paddingX};
+    font-family: ${control.fontFamily};
+    font-size: ${control.fontSize};
     font-weight: 400;
-    line-height: 1.5;
+    line-height: ${control.lineHeight};
     outline: none;
     transition: background-color ${transition.duration.easeIn} ${transition.timing.easeIn},
       outline ${transition.duration.easeIn} ${transition.timing.easeIn},
@@ -63,7 +63,7 @@ const Styled = {
     &:focus {
       color: ${control.active.color};
       background-color: ${control.active.bg};
-      box-shadow: 0 0 0 0.25rem ${control.active.boxShadow};
+      box-shadow: ${control.active.boxShadow};
     }
     &:hover {
       border-color: ${control.active.borderColor};
@@ -73,14 +73,12 @@ const Styled = {
     }
   `,
   ColorLabel: styled.div<StyledProps>`
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    ${mixin.flexCenter}
     position: absolute;
-    top: var(--spacer-1);
+    top: 0.25rem;
     left: 0;
     width: 100%;
-    height: calc(1.5em + 0.75rem + 2px);
+    height: ${control.height};
     z-index: 1;
     color: ${({ colorValue }) => (Color(colorValue).isDark() ? color.text.light : color.text.dark)};
     pointer-events: none;
@@ -89,16 +87,28 @@ const Styled = {
 
 const Control = forwardRef<{}, ControlProps>(
   (
-    { className, type = 'text', isValid, isInvalid, value: initialValue, ...props },
+    {
+      className,
+      disabled: initialDisabled,
+      type = 'text',
+      isValid,
+      isInvalid,
+      value: initialValue,
+      ...props
+    },
     ref: Ref<any>,
   ) => {
     const [value, setValue] = useState(initialValue);
+    const [disabled, setDisabled] = useState(initialDisabled);
 
     const formProps = validFormProps(props, { exclude: ['onChange'] });
 
     React.useEffect(() => {
       if (!formProps.name && formProps.id) {
         formProps.name = formProps.id;
+      }
+      if (formProps.readOnly) {
+        setDisabled(true);
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -119,12 +129,13 @@ const Control = forwardRef<{}, ControlProps>(
           ref={ref}
           type={type}
           value={value}
+          disabled={disabled}
           className={className}
           onChange={handleChange}
         />
         {type === 'color' && (
-          <Styled.ColorLabel colorValue={formProps.value} aria-hidden="true">
-            {formProps.value}
+          <Styled.ColorLabel colorValue={value as string} aria-hidden="true">
+            {value}
           </Styled.ColorLabel>
         )}
       </>

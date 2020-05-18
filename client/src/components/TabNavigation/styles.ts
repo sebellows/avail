@@ -13,7 +13,7 @@ export const Styled = {
     flex: 1;
     text-align: center;
     text-decoration: none;
-    ${mixin.padding([2, 3])}
+    ${mixin.padding.all(2, 3)}
     transition: background-color var(--ease-in-duratin) var(--ease-in-timing);
 
     &:hover,

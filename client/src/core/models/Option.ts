@@ -15,6 +15,8 @@ export class Option implements OptionProps {
     return this._value;
   }
   set value(value: string) {
+    value = typeof value == 'string' ? value : `${value}`;
+
     if (value.endsWith('px')) {
       this._value = parseInt(value, 10).toString();
     } else {
@@ -23,17 +25,30 @@ export class Option implements OptionProps {
   }
   private _value: string;
 
-  constructor(item: string | [string, string] | Record<string, string>) {
+  readOnly = false;
+
+  constructor(item: string | [string, string] | Record<string, any>) {
     if (typeof item == 'string') {
       this.name = item;
       this.value = CONST[item] ?? item;
     } else if (Array.isArray(item)) {
       const [name, value] = item;
-      this.name = name || '';
-      this.value = value || '';
+      this.name = name;
+      this.value = this._getValue(value);
     } else {
-      this.name = item.name || '';
-      this.value = item.value || '';
+      const { name, value } = item;
+      this.name = name;
+      this.value = this._getValue(value);
+    }
+  }
+
+  private _getValue(value: any) {
+    if (isPlainObject(value)) {
+      // side-effect
+      this.readOnly = value.readOnly ?? false;
+      return value.value;
+    } else {
+      return value;
     }
   }
 }

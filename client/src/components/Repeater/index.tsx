@@ -67,7 +67,6 @@ const Repeater = forwardRef<{}, FormArrayProps>(
       if (onChange) {
         onChange(items);
       }
-      console.log(items);
     }
 
     return (
@@ -103,6 +102,7 @@ const Repeater = forwardRef<{}, FormArrayProps>(
                   name: `${id}-${i}-value`,
                   arialabel: `${id}-${i}-value`,
                   value: item.value,
+                  readOnly: item.readOnly,
                   options,
                   onChange: (event: ChangeEvent) => handleChange('value', i, event),
                   isValid: !error || !error[id],

@@ -150,11 +150,11 @@ const Colorpicker = forwardRef<{}, ControlProps>(
       >
         <Styled.Field className="colorpicker-form-group">
           <Styled.ColorControl className="colorpicker-control">
-            <Styled.Target
+            <Styled.ColorTarget
               className="colorpicker-target"
               style={{ backgroundColor: color }}
-            ></Styled.Target>
-            <Styled.Input
+            ></Styled.ColorTarget>
+            <Styled.ColorInput
               type="color"
               className="colorpicker-input"
               value={color}

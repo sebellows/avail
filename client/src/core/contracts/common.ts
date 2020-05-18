@@ -21,4 +21,5 @@ export interface ComponentProps {
   as?: keyof JSX.IntrinsicElements | React.ComponentType<any>;
   className?: string;
   children?: React.ReactNode;
+  id?: string;
 }

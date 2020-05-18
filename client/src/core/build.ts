@@ -32,6 +32,7 @@ import { range } from './utils/range';
 // import { AvailUtilities } from './contracts/avail';
 import { CollectionObj } from './contracts';
 import { isPlainObject } from './utils/common';
+import { toEM } from './style';
 
 export function generateUtilities(utilities: CollectionObj, indentAmt = INDENT_AMOUNT): string {
   return Object.entries(utilities).reduce((css: string, [key, utility]) => {
@@ -48,10 +49,14 @@ export function generateResponsiveUtility(
   indentAmt = INDENT_AMOUNT,
 ): string {
   return Object.entries(GRID_BREAKPOINTS).reduce((css: string, [breakpoint, screenSize]) => {
-    const infix = screenSize === '0' ? '' : `-${breakpoint}`;
-    const mqOpen = screenSize !== '0' ? `@media (min-width: ${screenSize}) {\n` : '';
-    const mqClose = screenSize !== '0' ? `}\n\n` : '\n';
-    const _indentAmt = screenSize === '0' ? indentAmt : indentAmt * 2;
+    const bpSize = (isPlainObject(screenSize)
+      ? (screenSize as { value: number; readOnly: boolean }).value
+      : screenSize) as number;
+
+    const infix = bpSize === 0 ? '' : `-${breakpoint}`;
+    const mqOpen = bpSize !== 0 ? `@media (min-width: ${toEM(bpSize)}) {\n` : '';
+    const mqClose = bpSize !== 0 ? `}\n\n` : '\n';
+    const _indentAmt = bpSize === 0 ? indentAmt : indentAmt * 2;
 
     return (css += `${mqOpen}${generateUtility(utility, _indentAmt, infix)}${mqClose}`);
   }, '');

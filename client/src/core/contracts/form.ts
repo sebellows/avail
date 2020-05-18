@@ -186,6 +186,7 @@ export interface CheckboxProps extends FormControl<HTMLInputElement> {
 export interface OptionProps {
   disabled?: boolean;
   name?: string | number;
+  readOnly?: boolean;
   selected?: boolean;
   value: string | number;
 }

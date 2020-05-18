@@ -73,7 +73,7 @@ export const Styled = {
   /** Form group */
   Field: styled.div`
     display: flex;
-    align-items: center;
+    align-items: stretch;
     justify-content: space-between;
     position: relative;
   `,
@@ -81,24 +81,24 @@ export const Styled = {
   /** Color input */
   ColorControl: styled.div`
     position: relative;
-    // padding-bottom: calc(1.5em + 0.75rem + 2px);
     width: 3rem;
   `,
-  Target: styled.div`
+  ColorTarget: styled.div`
     position: absolute;
-    top: -1px;
+    top: 0;
     left: 0;
     width: 100%;
     height: calc(1.5em + 0.75rem);
     line-height: 1;
     background-clip: content-box;
     border: 1px solid ${control.borderColor};
-    box-shadow: inset 0 0 0 5px var(--white), inset 0 0 0 6px rgba(0, 0, 0, 0.2), ${shadow[0]};
+    box-shadow: inset 0 0 0 5px ${color.bg.body}, inset 0 0 0 6px ${mixin.rgba(color.black, 0.2)},
+      1px 0 1px 0 ${mixin.rgba(color.black, 0.12)};
     box-sizing: content-box;
     z-index: 1;
     pointer-events: none;
   `,
-  Input: styled.input`
+  ColorInput: styled.input`
     ${mixin.cover}
     opacity: 0;
     -webkit-appearance: none;
@@ -108,7 +108,7 @@ export const Styled = {
 
   /** Form control */
   Control: styled(Control)` {
-    border-color: rgba(0, 0, 0, 0.03125);
+    // border-color: rgba(0, 0, 0, 0.03125);
     border-radius: 0 calc(${radius.base} - 1px) calc(${radius.base} - 1px) 0;
     flex: 1 1;
   `,
