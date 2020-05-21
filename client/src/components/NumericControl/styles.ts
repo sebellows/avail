@@ -1,21 +1,16 @@
 import styled from 'styled-components';
 import { Styled as StyledControl } from '../Control';
 import { color, control, font, mixin, normalizeUnit, toRatio, toREM } from '../../core/style';
-// import Color from 'color';
 
 const controlBorderWidth = normalizeUnit(control.borderWidth);
-//const controlBordersSize = controlBorderWidth * 2;
 const controlInnerHeight = normalizeUnit(control.height) - controlBorderWidth;
-// const numberInputPadding = toREM(controlInnerHeight + normalizeUnit(control.paddingX) / 2);
-const numberSpinnerHeight = toREM(controlInnerHeight);
+const numberSpinnerHeight = toREM(normalizeUnit(control.height));
 const buttonBorderRadius = toREM(normalizeUnit(control.borderRadius) - 1);
-console.log('control', control.borderWidth, controlBorderWidth);
 
 const StyledButton = styled.button`
   position: relative;
-  top: ${control.borderWidth};
   ${mixin.inlineFlexCenter}
-  ${mixin.square(numberSpinnerHeight)}
+  ${mixin.size(numberSpinnerHeight)}
   ${mixin.buttonVariant(color.primary)}
   padding: 0;
   border-radius: 0;
@@ -51,7 +46,7 @@ export const Styled = {
     border-radius: ${control.borderRadius};
     outline: none;
   `,
-  Control: styled(StyledControl.Control)`
+  Control: styled(StyledControl.Input)`
     order: 2;
     flex: 1;
     border-left-width: 0 !important;
@@ -62,8 +57,7 @@ export const Styled = {
 
     &::-webkit-inner-spin-button,
     &::-webkit-outer-spin-button {
-      -webkit-appearance: none;
-      appearance: none;
+      ${mixin.appearanceNone}
       margin: 0;
     }
   `,

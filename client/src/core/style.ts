@@ -1,5 +1,5 @@
 import { css } from 'styled-components';
-import Color from 'color';
+import { Color } from './utils';
 import { CSS_VALUE_PRESETS } from './presets';
 import {
   BODY_BG,
@@ -119,7 +119,7 @@ export const color = {
     medium: VARIANTS.secondary,
     light: VARIANTS.light,
     hovered: VARIANTS.light,
-    focused: Color(VARIANTS.light).darken(0.2).string(),
+    focused: Color(VARIANTS.light).darken(0.1).string(),
     muted: GRAYS['gray-500'],
     active: VARIANTS.primary,
     activeLight: Color(VARIANTS.primary).lighten(0.2).string(),
@@ -409,9 +409,14 @@ export const mixin = {
     bottom: 0;
     left: 0;
   `,
-  square: (size: string) => css`
-    width: ${size};
-    height: ${size};
+  size: (width: string, height: string = width) => css`
+    width: ${width};
+    height: ${height};
+  `,
+  appearanceNone: css`
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
   `,
   scrollableY: css`
     overflow-x: hidden;

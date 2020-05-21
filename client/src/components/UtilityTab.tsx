@@ -3,7 +3,7 @@ import React, { forwardRef, useState, useEffect, Ref, useRef } from 'react';
 import styled from 'styled-components';
 import Prism from 'prismjs';
 
-import usePrevious from '../hooks/usePrevious';
+import { usePrevious } from '../hooks/usePrevious';
 import { useClickOutside } from '../hooks/useClickOutside';
 import { AvailUtility, AvailUtilities, ComponentProps } from '../core/contracts';
 import { color, mixin, radius, transition } from '../core/style';
@@ -44,8 +44,6 @@ export interface UtilityTabProps extends ComponentProps {
   onClick?: (event: any) => void;
   tag?: JSX.IntrinsicAttributes;
 }
-
-// console.log('test', mixin.truncateText, mixin.padding(3));
 
 /** Utility Tabs */
 export const Styled = {

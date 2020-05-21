@@ -15,6 +15,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "noImplicitAny": false,
+    "noImplicitThis": false,
     "strictNullChecks": false,
     "jsx": "react"
   },

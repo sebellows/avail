@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { control } from '../../core/style';
+import { control, mixin } from '../../core/style';
 
 export const Styled = {
   Wrapper: styled.div`
@@ -26,8 +26,6 @@ export const Styled = {
     display: inline-block;
     width: 100%;
     padding: 0.5rem 2.25rem 0.5rem 1rem;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
+    ${mixin.appearanceNone}
   `,
 };

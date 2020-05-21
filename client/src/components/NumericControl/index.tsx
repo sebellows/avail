@@ -1,4 +1,4 @@
-import React, { forwardRef, Ref, useEffect, useState } from 'react';
+import React, { forwardRef, Ref, useEffect, useState, useRef } from 'react';
 import { ControlProps } from '../Control';
 import { MinusIcon, PlusIcon } from '../Icon';
 import { DOWN, UP, containerProps, validFormProps, classNames } from '../../core/utils';
@@ -24,6 +24,8 @@ const NumericControl = forwardRef<{}, NumericControlProps>(
     const [value, setValue] = useState(initialValue);
     const [disabled, setDisabled] = useState(initialDisabled);
 
+    const inputRef = useRef(null);
+
     useEffect(() => {
       if (readOnly) {
         setDisabled(true);
@@ -41,15 +43,17 @@ const NumericControl = forwardRef<{}, NumericControlProps>(
 
     function increment(event: any) {
       event.preventDefault();
+      event.stopPropagation();
+
       if (disabled || +value >= max) return;
 
       setValue(`${+value + 1 * step}`);
-
-      console.log('increment', JSON.stringify(value));
     }
 
     function decrement(event: any) {
       event.preventDefault();
+      event.stopPropagation();
+
       if (disabled || +value <= min) return;
 
       setValue(`${+value + -1 * step}`);
@@ -67,7 +71,7 @@ const NumericControl = forwardRef<{}, NumericControlProps>(
     }
 
     function handleChange(event: any) {
-      console.log('handleChange', event);
+      if (props.onChange) props.onChange(event);
     }
 
     const _containerProps = containerProps(props, { exclude: ['type'] });
@@ -77,9 +81,10 @@ const NumericControl = forwardRef<{}, NumericControlProps>(
       <Styled.Wrapper
         {..._containerProps}
         ref={ref}
-        className={classNames('control-group', 'numeric', props.className)}
+        className={classNames('numeric', props.className)}
       >
         <Styled.Control
+          ref={inputRef}
           {..._controlProps}
           type="number"
           disabled={disabled}
@@ -91,6 +96,7 @@ const NumericControl = forwardRef<{}, NumericControlProps>(
           onKeyUp={handleKeyUp}
         />
         <Styled.IncrementButton
+          type="button"
           className="decrement-btn"
           disabled={disabled || value >= max}
           onClick={increment}
@@ -98,6 +104,7 @@ const NumericControl = forwardRef<{}, NumericControlProps>(
           <PlusIcon size={20} />
         </Styled.IncrementButton>
         <Styled.DecrementButton
+          type="button"
           className="decrement-btn"
           disabled={disabled || value <= min}
           onClick={decrement}

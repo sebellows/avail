@@ -1,6 +1,6 @@
 import React, { Ref } from 'react';
 import styled from 'styled-components';
-import { color } from '../core/style';
+import { color, toREM, font } from '../core/style';
 import { ComponentProps } from '../core/contracts';
 
 interface FeedbackProps extends ComponentProps {
@@ -8,7 +8,10 @@ interface FeedbackProps extends ComponentProps {
 }
 
 const StyledFieldFeedback = styled.small`
+  display: block;
   color: ${(props: FeedbackProps) => (props.type === 'invalid' ? color.danger : color.success)};
+  font-size: ${toREM(font.sizes.sm)};
+  line-height: 1.3;
 `;
 
 const FieldFeedback = React.forwardRef<{}, FeedbackProps>(

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { range } from './utils/range';
-import Color from 'color';
+import { Color } from './utils/color';
 
 function darken(hexColor: string, percent: number) {
   const [hash, ...values] = hexColor.split('');

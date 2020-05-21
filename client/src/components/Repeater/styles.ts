@@ -1,27 +1,57 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+import { font, mixin, color, control, toREM } from '../../core/style';
+import { Field } from '../Field';
 
-export const Wrapper = styled.fieldset`
-  padding-top: 2rem;
+interface StyledLabelProps {
+  first?: boolean;
+}
 
-  legend {
+export const Styled = {
+  Wrapper: styled.fieldset`
+    padding-top: 2rem;
+
+    legend {
+      position: relative;
+      top: -1rem;
+    }
+  `,
+  Legend: styled.legend`
+    font-size: ${toREM(font.sizes.lg)};
+  `,
+  Label: styled.label<StyledLabelProps>`
+    display: ${({ first }) => (first ? 'block' : 'none')};
+    ${({ first }) => {
+      if (first) {
+        return css`
+          margin: 0;
+          position: absolute;
+          top: -2rem;
+        `;
+      }
+    }}
+  `,
+  Field: styled(Field)`
+    flex: 1;
+    width: auto;
     position: relative;
-    top: -1rem;
-  }
-`;
+  `,
+  Separator: styled.span`
+    ${mixin.inlineFlexCenter}
+    ${mixin.margin.x(1)}
+  `,
+};
 
 const StyledItemAddon = styled.span`
-  background-color: var(--light);
-  display: inline-flex;
+  ${mixin.inlineFlexCenter}
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 0.25rem 0.25rem;
+  ${mixin.padding.all(1)}
   min-width: 2rem;
+  background-color: ${color.bg.light};
 `;
 
 export const StyledItem = {
   Wrapper: styled.div`
-    border: solid var(--border-color);
+    border: solid ${color.border.base};
     border-width: 1px 1px 0 1px;
     display: flex;
     align-items: stretch;
@@ -32,34 +62,13 @@ export const StyledItem = {
     }
   `,
   Group: styled.div`
-    background-color: var(--white);
-    border: solid var(--border-color);
-    border: 0 var(--border-width);
+    background-color: ${color.bg.body};
+    border: solid ${color.border.base};
+    border-width: 0 ${control.borderWidth};
     display: flex;
     flex: 1;
     align-items: center;
-    padding: 0.25rem 0.5rem;
-
-    label {
-      display: none;
-    }
-
-    .field {
-      flex: 1;
-      width: auto;
-      position: relative;
-
-      &.first label {
-        display: block;
-        margin: 0;
-        position: absolute;
-        top: -2rem;
-      }
-    }
-  `,
-  Separator: styled.span`
-    display: inline-flex;
-    margin: 0 0.25rem;
+    ${mixin.padding.all(1, 2)}
   `,
   Prepend: StyledItemAddon,
   Append: styled(StyledItemAddon)`

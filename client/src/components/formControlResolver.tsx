@@ -2,6 +2,7 @@ import React from 'react';
 import { Repeater } from './Repeater';
 import { RadioGroup } from './RadioGroup';
 import { Colorpicker } from './Colorpicker';
+import { ColorControl } from './ColorControl';
 import { SelectControl } from './SelectControl';
 import { ToggleControl } from './ToggleControl';
 import { Control, ControlProps } from './Control';
@@ -21,6 +22,8 @@ export function formControlResolver(type: string, props: ControlProps = {}, key?
       return <Repeater {...props} key={key} />;
     case 'number':
       return <NumericControl {...props} type={type} key={key} />;
+    case 'color':
+      return <ColorControl {...props} type={type} key={key} />;
     // text, color, etc.[...]
     default:
       return <Control {...props} type={type} key={key} />;

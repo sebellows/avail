@@ -19,14 +19,14 @@ const RepeaterItem = forwardRef<{}, FormArrayProps>(
     ref: Ref<any>,
   ) => {
     return (
-      <StyledItem.Wrapper ref={ref} className={classNames('form-array-item', className)}>
+      <StyledItem.Wrapper ref={ref} className={classNames('repeater-item', className)}>
         {!isNil(before) && (
-          <StyledItem.Prepend className="form-array-item-prepend">{before}</StyledItem.Prepend>
+          <StyledItem.Prepend className="repeater-item-prepend">{before}</StyledItem.Prepend>
         )}
 
-        <StyledItem.Group className="form-array-item-group">{children}</StyledItem.Group>
+        <StyledItem.Group className="repeater-item-group">{children}</StyledItem.Group>
 
-        <StyledItem.Append className="form-array-item-append">
+        <StyledItem.Append className="repeater-item-append">
           <button type="button" className="btn fab mini-fab btn-default add" onClick={onAdd}>
             <PlusIcon size="12" />
           </button>

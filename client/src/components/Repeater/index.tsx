@@ -1,17 +1,15 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { ChangeEvent, forwardRef, Ref, useState } from 'react';
 
 import { classNames } from '../../core/utils/classNames';
 import { OptionProps as Option } from '../../core/contracts';
 
-import { Field } from '../Field';
 import { Control } from '../Control';
 import { FieldFeedback } from '../FieldFeedback';
 import { FieldDescription } from '../FieldDescription';
 import { formControlResolver } from '../formControlResolver';
 
 import { RepeaterItem } from './RepeaterItem';
-import { Wrapper } from './styles';
+import { Styled } from './styles';
 import { FormArrayProps } from './props';
 
 const Repeater = forwardRef<{}, FormArrayProps>(
@@ -70,8 +68,8 @@ const Repeater = forwardRef<{}, FormArrayProps>(
     }
 
     return (
-      <Wrapper ref={ref} id={id} className={classNames('form-array', className)}>
-        {legend && <legend>{legend}</legend>}
+      <Styled.Wrapper ref={ref} id={id} className={classNames('repeater', className)}>
+        {legend && <Styled.Legend>{legend}</Styled.Legend>}
         {items.length &&
           items.map((item: Option, i: number) => (
             <RepeaterItem
@@ -80,8 +78,10 @@ const Repeater = forwardRef<{}, FormArrayProps>(
               onAdd={handleAdd}
               onRemove={(i: number) => handleRemove(i)}
             >
-              <Field className={classNames(i === 0 && 'first')}>
-                <label htmlFor={`${id}-${i}-key`}>{keyLabel}</label>
+              <Styled.Field>
+                <Styled.Label first={i === 0} htmlFor={`${id}-${i}-key`}>
+                  {keyLabel}
+                </Styled.Label>
                 <Control
                   name={`${id}-${i}-key`}
                   className={classNames(i === 0 && 'first')}
@@ -90,14 +90,16 @@ const Repeater = forwardRef<{}, FormArrayProps>(
                   isValid={!error || !error[id]}
                   isInvalid={error && error[id]}
                 />
-              </Field>
+              </Styled.Field>
 
-              <span className="sep" aria-hidden="true">
+              <Styled.Separator className="sep" aria-hidden="true">
                 :
-              </span>
+              </Styled.Separator>
 
-              <Field className={classNames(i === 0 && 'first')}>
-                <label htmlFor={`${id}-${i}-value`}>{valueLabel}</label>
+              <Styled.Field>
+                <Styled.Label first={i === 0} htmlFor={`${id}-${i}-value`}>
+                  {valueLabel}
+                </Styled.Label>
                 {formControlResolver(inputType, {
                   name: `${id}-${i}-value`,
                   arialabel: `${id}-${i}-value`,
@@ -108,12 +110,12 @@ const Repeater = forwardRef<{}, FormArrayProps>(
                   isValid: !error || !error[id],
                   isInvalid: error && error[id],
                 })}
-              </Field>
+              </Styled.Field>
             </RepeaterItem>
           ))}
         {props?.description && <FieldDescription>{props?.description}</FieldDescription>}
         {props?.isInvalid && error && <FieldFeedback type="invalid">{error[id]}</FieldFeedback>}
-      </Wrapper>
+      </Styled.Wrapper>
     );
   },
 );

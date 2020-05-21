@@ -4,8 +4,7 @@ import styled from 'styled-components';
 
 import { OptionProps, ComponentProps } from '../core/contracts';
 import { validFormProps } from '../core/utils';
-import { color, control, font, transition, radius, mixin } from '../core/style';
-import Color from 'color';
+import { control, transition, radius } from '../core/style';
 
 export type ControlType = HTMLSelectElement | HTMLTextAreaElement | HTMLInputElement;
 
@@ -25,19 +24,14 @@ function isToggle(type: string) {
   return type === 'checkbox' || type === 'radio';
 }
 
-interface StyledProps {
-  colorValue?: string;
-}
-
 export const Styled = {
-  Control: styled.input<ControlProps>`
+  Input: styled.input<ControlProps>`
     background-color: ${({ isInvalid }) => (isInvalid ? control.invalid.bg : control.bg)};
     background-clip: padding-box;
     border-width: ${control.borderWidth};
     border-style: solid;
-    border-color: ${({ isInvalid }) => {
-      return isInvalid ? control.invalid.borderColor : control.borderColor;
-    }};
+    border-color: ${({ isInvalid }) =>
+      isInvalid ? control.invalid.borderColor : control.borderColor};
     border-radius: ${radius.base};
     box-shadow: none;
     color: ${({ isInvalid }: ControlProps) => (isInvalid ? control.invalid.color : control.color)};
@@ -55,10 +49,6 @@ export const Styled = {
       color ${transition.duration.easeIn} ${transition.timing.easeIn},
       box-shadow ${transition.duration.easeIn} ${transition.timing.easeIn};
 
-    &[type='color'] {
-      padding: 0.3125rem;
-    }
-
     &:hover,
     &:focus {
       color: ${control.active.color};
@@ -71,17 +61,6 @@ export const Styled = {
     &:focus {
       border-color: ${control.focus.borderColor};
     }
-  `,
-  ColorLabel: styled.div<StyledProps>`
-    ${mixin.flexCenter}
-    position: absolute;
-    top: 0.25rem;
-    left: 0;
-    width: 100%;
-    height: ${control.height};
-    z-index: 1;
-    color: ${({ colorValue }) => (Color(colorValue).isDark() ? color.text.light : color.text.dark)};
-    pointer-events: none;
   `,
 };
 
@@ -124,7 +103,7 @@ const Control = forwardRef<{}, ControlProps>(
 
     return (
       <>
-        <Styled.Control
+        <Styled.Input
           {...formProps}
           ref={ref}
           type={type}
@@ -133,11 +112,6 @@ const Control = forwardRef<{}, ControlProps>(
           className={className}
           onChange={handleChange}
         />
-        {type === 'color' && (
-          <Styled.ColorLabel colorValue={value as string} aria-hidden="true">
-            {value}
-          </Styled.ColorLabel>
-        )}
       </>
     );
   },

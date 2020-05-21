@@ -1,15 +1,6 @@
-import styled, { keyframes } from 'styled-components';
-import {
-  color,
-  control,
-  mixin,
-  radius,
-  shadow,
-  spacers,
-  zIndexes,
-  transition,
-} from '../../core/style';
-import { Control } from '../Control';
+import styled, { keyframes, css } from 'styled-components';
+import { color, control, mixin, radius, shadow, zIndexes, transition } from '../../core/style';
+import { ControlProps, Styled as StyledControl } from '../Control';
 
 const dropdownEnter = keyframes`
   from {
@@ -38,6 +29,9 @@ const dropdownLeave = keyframes`
 interface WrapperProps {
   open?: boolean;
 }
+// interface TargetProps {
+//   color?: string;
+// }
 
 export const Styled = {
   /**
@@ -54,7 +48,12 @@ export const Styled = {
     max-width: 500px;
     height: calc(1.5em + 0.75rem + 2px);
     position: relative;
-    z-index: ${(props) => (props.open ? 200 : 100)};
+    ${(props) =>
+      props &&
+      props.open &&
+      css`
+        z-index: 100;
+      `};
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.5;
@@ -62,11 +61,6 @@ export const Styled = {
 
     &:focus {
       outline: none;
-    }
-
-    /* Selected "option" */
-    .is-selected {
-      background-color: ${color.bg.hovered};
     }
   `,
 
@@ -82,8 +76,18 @@ export const Styled = {
   ColorControl: styled.div`
     position: relative;
     width: 3rem;
+
+    &::before {
+      content: '';
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='0' y1='0' x2='100%25' y2='100%25' stroke='%23FF0000' stroke-width='3'%3E%3C/line%3E%3C/svg%3E");
+      position: absolute;
+      top: 7px;
+      left: 7px;
+      right: 5px;
+      bottom: 6px;
+    }
   `,
-  ColorTarget: styled.div`
+  ColorTarget: styled.div<ControlProps>`
     position: absolute;
     top: 0;
     left: 0;
@@ -91,6 +95,7 @@ export const Styled = {
     height: calc(1.5em + 0.75rem);
     line-height: 1;
     background-clip: content-box;
+    background-color: ${({ value }) => value};
     border: 1px solid ${control.borderColor};
     box-shadow: inset 0 0 0 5px ${color.bg.body}, inset 0 0 0 6px ${mixin.rgba(color.black, 0.2)},
       1px 0 1px 0 ${mixin.rgba(color.black, 0.12)};
@@ -100,15 +105,14 @@ export const Styled = {
   `,
   ColorInput: styled.input`
     ${mixin.cover}
+    ${mixin.size('100%')}
     opacity: 0;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
+    ${mixin.appearanceNone}
   `,
 
   /** Form control */
-  Control: styled(Control)` {
-    // border-color: rgba(0, 0, 0, 0.03125);
+  Control: styled(StyledControl.Input)` {
+    border-color: rgba(0, 0, 0, 0.03125);
     border-radius: 0 calc(${radius.base} - 1px) calc(${radius.base} - 1px) 0;
     flex: 1 1;
   `,
@@ -130,7 +134,7 @@ export const Styled = {
     overflow-y: auto;
 
     &.is-active {
-      transform: ${mixin.hardwareAccelerate};
+      ${mixin.hardwareAccelerate};
       visibility: visible;
       z-index: ${zIndexes.dropdown};
     }
@@ -153,14 +157,17 @@ export const Styled = {
     cursor: pointer;
     line-height: 2.5em;
     height: 2.5em;
-    padding: 0 ${spacers[3]};
+    ${mixin.padding.all(0, 3)}
 
-    &:hover {
+    &:hover,
+    &.is-focused {
       background-color: ${color.bg.hovered};
     }
 
-    &.is-focused {
-      background-color: ${color.bg.focused};
+    /* Selected "option" */
+    &.is-selected {
+      background-color: ${color.bg.hovered};
+      color: ${color.text.medium};
     }
   `,
 
@@ -170,8 +177,8 @@ export const Styled = {
     box-shadow: ${shadow[0]};
     display: none;
     line-height: 1;
-    margin-right: ${spacers[2]};
-    padding: ${spacers[1]};
+    ${mixin.margin.right(2)}
+    ${mixin.padding.all(1)}
     position: relative;
     top: -3px;
     vertical-align: middle;

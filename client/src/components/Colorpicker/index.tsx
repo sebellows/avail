@@ -1,5 +1,4 @@
-import React, { forwardRef, Ref, useState, useRef, useEffect } from 'react';
-import { OptionProps } from '../../core/contracts';
+import React, { forwardRef, Ref, useState, useRef, useEffect, useCallback } from 'react';
 import {
   classNames,
   containerProps,
@@ -11,48 +10,91 @@ import {
   SPACE,
   onAnimationEnd,
   TAB,
+  Color,
 } from '../../core/utils';
-
-import usePrevious from '../../hooks/usePrevious';
-import { useClickOutside } from '../../hooks/useClickOutside';
 import { ControlProps } from '../Control';
+import { OptionProps } from '../../core/contracts';
+import { useClickOutside } from '../../hooks/useClickOutside';
 import { Styled } from './styles';
 
-const Colorpicker = forwardRef<{}, ControlProps>(
+function coerceToHexColor(value: string) {
+  if (Color.isHexColor(value)) {
+    return value;
+  } else if (Color.isColor(value)) {
+    return Color(value).hex().toString();
+  }
+  return '#000000';
+}
+
+const Colorpicker = forwardRef<HTMLDivElement, ControlProps>(
   (
-    { className, isValid, isInvalid, options, value: initialValue = '', ...props },
-    ref: Ref<any>,
+    { className, isValid, isInvalid: initialInvalid, options, value: initialValue, ...props },
+    ref: Ref<HTMLDivElement>,
   ) => {
     const [isOpen, setOpen] = useState(false);
     const [value, setValue] = useState(initialValue);
-    const [color, setColor] = useState('#ffffff');
-    const [focusedIndex, setFocusedIndex] = useState(0);
+    const [color, setColor] = useState(initialValue);
+    const [modelValue, setModelValue] = useState(initialValue);
+    const [isInvalid, setInvalid] = useState(initialInvalid);
+    const [focusedIndex, setFocusedIndex] = useState(-1);
 
-    const prevOpenState = usePrevious(isOpen);
+    // const prevValue = usePrevious(value);
 
+    // Need to enforce existence of `ref` for `useClickOutside` hook to work.
     if (!ref || !('current' in ref)) {
-      ref = React.createRef();
+      ref = React.createRef<HTMLDivElement>();
     }
+
     const inputRef = useRef(null);
     const panelRef = useRef(null);
 
-    useEffect(() => {
-      if (value !== color) {
-        setColor(value as string);
+    /**
+     * Check that the color value is valid since there are a number of ways to set
+     * it within this component (color input, text input, & auto-suggest list options).
+     */
+    const checkValidity = useCallback(() => {
+      if (!isInvalid && !Color.isColor(value as string)) {
+        inputRef.current.setCustomValidity(`${value} is not a valid CSS color!`);
+        setInvalid(true);
+      } else if (isInvalid && Color.isColor(value as string)) {
+        inputRef.current.setCustomValidity('');
+        setInvalid(false);
       }
-    }, [color, setColor, value]);
+    }, [value, isInvalid, setInvalid]);
+
+    /**
+     * We need to format the value in order to reflect whether it comes
+     * from a preconfigured list of colors.
+     */
+    const updateViewModel = useCallback(
+      (_value: string) => {
+        setValue(_value);
+
+        setColor(coerceToHexColor(_value).toLowerCase());
+
+        const currentModel = Object.values(options).find((option) => option.value === _value);
+        const formattedValue = currentModel
+          ? `${currentModel.name} (${currentModel.value})`
+          : _value;
+        setModelValue(formattedValue);
+      },
+      [options],
+    );
+
+    useEffect(() => {
+      checkValidity();
+    }, [checkValidity]);
 
     useEffect(() => {
       const { current: currentPanelRef } = panelRef;
 
-      if (isOpen) {
+      if (isOpen && !currentPanelRef.classList.contains('is-active')) {
         currentPanelRef.classList.add('is-active', 'colorpicker-panel-enter');
 
         onAnimationEnd(currentPanelRef, () => {
-          console.log('animationend');
           currentPanelRef.classList.remove('colorpicker-panel-enter');
         });
-      } else if (!isOpen && prevOpenState != null) {
+      } else if (!isOpen && currentPanelRef.classList.contains('is-active')) {
         currentPanelRef.classList.add('colorpicker-panel-leave');
 
         onAnimationEnd(currentPanelRef, () => {
@@ -60,58 +102,58 @@ const Colorpicker = forwardRef<{}, ControlProps>(
           currentPanelRef.classList.remove('is-active');
         });
       }
-    }, [panelRef, prevOpenState, isOpen, ref]);
+    }, [panelRef, isOpen, ref]);
 
     useClickOutside(ref, handleClose);
 
     function handleChange(event: any) {
-      setValue(event.target.value);
-      if (props.onChange) props.onChange(event);
-    }
+      updateViewModel(event.target.value);
 
-    function handleColorChange(event: any) {
-      console.log(event.target.value);
-      const colorValue = event.target.value;
-      if (colorValue.length) {
-        setValue(event.target.value);
-      }
       if (props.onChange) props.onChange(event);
     }
 
     function handleFocus(event: any) {
-      console.log(event);
-      setOpen(true);
+      if (!isOpen) setOpen(true);
+
       if (props.onFocus) props.onFocus(event);
     }
 
     function handleBlur(event: any) {
       event.persist();
-      console.log('handleBlur', event.keyCode);
+
       if (props.onBlur) props.onBlur(event);
     }
 
     function handleClose() {
-      setOpen(false);
-      setFocusedIndex(0);
+      setFocusedIndex(-1);
+
       if (panelRef.current.classList.contains('is-active')) {
+        setOpen(false);
+
         panelRef.current.classList.remove('is-active');
+
+        checkValidity();
       }
     }
 
     function handleSelect(event: any, val: any) {
-      console.log('handleSelect', val);
-      setValue(val);
-      setColor(val);
+      updateViewModel(val);
+
       handleClose();
     }
 
-    function handleKeyUp(event: any) {
-      console.log('handleKeyUp->keyCode', event.keyCode);
+    function handleKeyDown(event: any) {
+      event.stopPropagation();
+
       switch (event.keyCode) {
         case ESCAPE:
           handleClose();
           break;
         case DOWN:
+          if (!isOpen) {
+            event.preventDefault();
+            setOpen(true);
+          }
           setFocusedIndex(focusedIndex === options.length - 1 ? 0 : focusedIndex + 1);
           break;
         case UP:
@@ -121,7 +163,10 @@ const Colorpicker = forwardRef<{}, ControlProps>(
           handleClose();
           break;
         case ENTER:
-          setValue(event.target.value);
+          const targetValue = event.target.value;
+          const colorValue =
+            focusedIndex > -1 ? (options[focusedIndex] as OptionProps).value : targetValue;
+          updateViewModel(colorValue);
           handleClose();
           break;
         case SPACE:
@@ -134,12 +179,12 @@ const Colorpicker = forwardRef<{}, ControlProps>(
         // do nothing
       }
 
-      if (props.onKeyDown) props.onKeyDown(event);
+      if (props.onKeyUp) props.onKeyUp(event);
     }
 
     const htmlProps = containerProps(props);
     const formProps = validFormProps(props, {
-      exclude: ['value', 'onChange', 'onFocus', 'onBlur', 'onKeyUp'],
+      exclude: ['onChange', 'onFocus', 'onBlur', 'onKeyUp'],
     });
 
     return (
@@ -151,24 +196,29 @@ const Colorpicker = forwardRef<{}, ControlProps>(
         <Styled.Field className="colorpicker-form-group">
           <Styled.ColorControl className="colorpicker-control">
             <Styled.ColorTarget
+              value={Color.isColor(value as string) ? color : 'transparent'}
               className="colorpicker-target"
-              style={{ backgroundColor: color }}
-            ></Styled.ColorTarget>
+            />
             <Styled.ColorInput
               type="color"
               className="colorpicker-input"
               value={color}
-              onChange={handleColorChange}
+              onChange={handleChange}
             />
           </Styled.ColorControl>
           <Styled.Control
             ref={inputRef}
             {...formProps}
-            value={value}
+            value={modelValue}
+            data-value={value}
+            isInvalid={isInvalid}
             onBlur={handleBlur}
             onChange={handleChange}
             onFocus={handleFocus}
-            onKeyDown={handleKeyUp}
+            onKeyDown={handleKeyDown}
+            autoComplete="off"
+            autoCorrect="off"
+            spellCheck="false"
             aria-expanded={isOpen}
           />
         </Styled.Field>
@@ -179,11 +229,12 @@ const Colorpicker = forwardRef<{}, ControlProps>(
         >
           <Styled.Options className="colorpicker-options">
             {options?.length &&
-              (options as OptionProps[]).map(({ name, value: colorValue }) => (
+              (options as OptionProps[]).map(({ name, value: colorValue }, i: number) => (
                 <Styled.Option
                   key={name}
                   className={classNames(
                     'colorpicker-option',
+                    focusedIndex === i && 'is-focused',
                     value === colorValue && 'is-selected',
                   )}
                   data-value={colorValue}
