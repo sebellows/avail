@@ -3,20 +3,6 @@
 import { range } from './utils/range';
 import { Color } from './utils/color';
 
-function darken(hexColor: string, percent: number) {
-  const [hash, ...values] = hexColor.split('');
-
-  const colors = [
-    values.slice(0, 2).join(''),
-    values.slice(2, 4).join(''),
-    values.slice(4).join(''),
-  ];
-
-  return colors
-    .map((color) => Math.max((parseInt(color, 16) * (100 + percent * 100)) / 100, 255))
-    .reduce((hex, color) => (hex += color.toString(16).padStart(2, '0')), '#');
-}
-
 /**
  * CSS Output Settings
  */

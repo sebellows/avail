@@ -1,119 +1,40 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { forwardRef, useState, useEffect, Ref, useRef } from 'react';
-import styled from 'styled-components';
 import Prism from 'prismjs';
 
 import { usePrevious } from '../hooks/usePrevious';
 import { useClickOutside } from '../hooks/useClickOutside';
 import { AvailUtility, AvailUtilities, ComponentProps } from '../core/contracts';
-import { color, mixin, radius, transition } from '../core/style';
 import { generateUtility, generateResponsiveUtility } from '../core/build';
-import { hasOwn, classNames, collection, LEFT, RIGHT } from '../core/utils';
+import { classNames, collection, LEFT, RIGHT } from '../core/utils';
 
-import { Field } from './Field';
-import { Modal } from './Modal';
-import { Dialog } from './Dialog';
-import { Control } from './Control';
-import { SettingsIcon } from './Icon';
-import { Repeater } from './Repeater';
-import { ToggleControl } from './ToggleControl';
+import {
+  Control,
+  Dialog,
+  Field,
+  Modal,
+  PillTab,
+  PillTabs,
+  Repeater,
+  ToggleControl,
+} from '../components';
 
 import '../styles/prism.css';
 
-const initialOutput = 'Code goes here.';
-
-function updateUtility(model: AvailUtility) {
-  const util = {
-    class: '',
-    responsive: false,
-    items: [],
-  };
-  for (const key in util) {
-    if (hasOwn(model, key) && util[key] !== model[key]) {
-      util[key] = model[key];
-      break;
-    }
-  }
-  return util;
-}
-
-export interface UtilityTabProps extends ComponentProps {
-  expanded?: boolean;
-  error?: Record<string, any>;
-  model: AvailUtility;
-  onClick?: (event: any) => void;
-  tag?: JSX.IntrinsicAttributes;
-}
-
-/** Utility Tabs */
-export const Styled = {
-  Tabs: styled.ol`
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-    grid-gap: 1rem;
-    list-style: none;
-    ${mixin.padding.all(3)}
-  `,
-  Tab: styled.li`
-    background-color: ${color.bg.body};
-    border-radius: ${radius.lg};
-    ${mixin.shadow(0, 1)}
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    ${mixin.padding.all(1, 2)}
-    width: 100%;
-    transition: box-shadow ${transition.duration.easeIn} ${transition.timing.fastOutSlowIn};
-
-    &:hover {
-      background-color: ${color.bg.light};
-      ${mixin.shadow(2, 3)}
-    }
-  `,
-  Toggle: styled.button`
-    ${mixin.padding.all(2)}
-    ${mixin.inlineFlexCenter}
-    flex-direction: column;
-    flex: none;
-  `,
-};
-
-const UtilityTab = forwardRef<{}, UtilityTabProps>(
-  ({ expanded = false, model, onClick, as = 'li', error, ...props }, ref) => {
-    return (
-      <Styled.Tab as={as} className={classNames('utility-tab', props.className)}>
-        <div className="d-flex align-items-end">
-          <ToggleControl
-            name={`${model.id}-enabled`}
-            checked={model.enabled}
-            className="mb-0 mr-2"
-            value={model.id}
-          >
-            <code className="font-size-base">{model.property}</code>
-          </ToggleControl>
-        </div>
-
-        <Styled.Toggle
-          type="button"
-          className="btn fab mini-fab utility-tab-toggle"
-          onClick={onClick}
-          aria-controls={`utility-tab-${model.id}`}
-          aria-expanded={props['expanded']}
-        >
-          <SettingsIcon />
-        </Styled.Toggle>
-      </Styled.Tab>
-    );
-  },
-);
-
-UtilityTab.displayName = 'UtilityTab';
-
-export interface UtilityTabsProps {
-  id?: string;
-  items: AvailUtilities;
-  className?: string;
-}
+// function updateUtility(model: AvailUtility) {
+//   const util = {
+//     class: '',
+//     responsive: false,
+//     items: [],
+//   };
+//   for (const key in util) {
+//     if (hasOwn(model, key) && util[key] !== model[key]) {
+//       util[key] = model[key];
+//       break;
+//     }
+//   }
+//   return util;
+// }
 
 const DialogTitle = ({ children }) => (
   <h3 className="font-size-lg font-weight-bold mb-0">
@@ -121,13 +42,17 @@ const DialogTitle = ({ children }) => (
   </h3>
 );
 
-const UtilityTabs = React.forwardRef<HTMLOListElement, UtilityTabsProps>(
-  ({ id, items = {}, ...props }, ref: Ref<HTMLOListElement>) => {
+export interface UtilitiesFormProps extends ComponentProps {
+  utilities: AvailUtilities;
+}
+
+const UtilitiesForm = React.forwardRef<HTMLOListElement, UtilitiesFormProps>(
+  ({ id, utilities: initialUtilities = {}, ...props }, ref: Ref<HTMLOListElement>) => {
     const [activeModel, setActiveModel] = useState(null);
     const lastActiveModel = usePrevious(activeModel);
-    const [utilities, setUtilities] = useState(collection(items, 'id'));
+    const [utilities, setUtilities] = useState(collection(initialUtilities, 'id'));
     const [open, setOpen] = useState(false);
-    const [output, setOutput] = useState(initialOutput);
+    const [output, setOutput] = useState('Code goes here'); // TODO: remove default here
 
     const dialogRef = useRef(null);
     const fieldsetRef = useRef(null);
@@ -137,6 +62,10 @@ const UtilityTabs = React.forwardRef<HTMLOListElement, UtilityTabsProps>(
     });
 
     useEffect(() => {
+      console.log(
+        'utilities',
+        utilities.map((utility: AvailUtility) => utility),
+      );
       if (activeModel && lastActiveModel !== activeModel) {
         if (activeModel.responsive) {
           setOutput(generateResponsiveUtility(activeModel));
@@ -144,13 +73,12 @@ const UtilityTabs = React.forwardRef<HTMLOListElement, UtilityTabsProps>(
           setOutput(generateUtility(activeModel));
         }
       }
-    }, [activeModel, lastActiveModel]);
+    }, [activeModel, lastActiveModel, utilities]);
 
     useClickOutside(dialogRef, handleClose);
 
-    function handleSelect(model: any) {
-      // event.persist();
-      utilities.current = model;
+    function handleSelect(utility: any) {
+      utilities.current = utility;
       setOpen(!open);
       setActiveModel(utilities.current);
     }
@@ -174,7 +102,7 @@ const UtilityTabs = React.forwardRef<HTMLOListElement, UtilityTabsProps>(
       }
     }
 
-    function handleClose(event: any) {
+    function handleClose() {
       setOpen(false);
     }
 
@@ -192,17 +120,21 @@ const UtilityTabs = React.forwardRef<HTMLOListElement, UtilityTabsProps>(
 
     return (
       <>
-        <Styled.Tabs ref={ref} id={id} className={classNames('utility-tabs', props.className)}>
+        <PillTabs id={id} className={classNames('utility-tabs', props.className)}>
           {utilities.size > 0 &&
             utilities.map((utility: AvailUtility) => (
-              <UtilityTab
+              <PillTab
                 key={utility.id}
-                expanded={activeModel?.id === utility.id}
-                model={utility}
-                onClick={() => handleSelect(utility)}
-              />
+                id={`pill-tab${id}`}
+                checked={utility.enabled}
+                selected={activeModel?.id === utility.id}
+                value={utility}
+                onSelect={() => handleSelect(utility)}
+              >
+                <code className="font-size-base">{utility.property}</code>
+              </PillTab>
             ))}
-        </Styled.Tabs>
+        </PillTabs>
 
         <Modal
           show={open && activeModel}
@@ -257,7 +189,6 @@ const UtilityTabs = React.forwardRef<HTMLOListElement, UtilityTabsProps>(
   },
 );
 
-UtilityTab.displayName = 'UtilityTab';
-UtilityTabs.displayName = 'UtilityTabs';
+UtilitiesForm.displayName = 'UtilitiesForm';
 
-export { UtilityTab, UtilityTabs };
+export { UtilitiesForm };

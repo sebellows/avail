@@ -19,7 +19,6 @@ import {
   LINE_HEIGHT_BASE,
   LINE_HEIGHT_SM,
   LINE_HEIGHT_LG,
-  // NEGATIVE_SPACERS,
   ROUNDED_PILL,
   SPACERS,
   TEXT_MUTED,
@@ -28,9 +27,9 @@ import {
   WHITE_50,
 } from './constants';
 import { toOptions } from './models/Option';
-import { CSS_VALUE_PRESETS } from './presets';
+import { toREM } from './style';
 import { AvailUtilities } from './contracts';
-import { toREM, toPX } from './style';
+import { CSS_VALUE_PRESETS } from './presets';
 
 const createSpacers = (prefix = '') =>
   Object.entries(SPACERS).reduce((acc, [k, v]) => {

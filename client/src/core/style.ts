@@ -26,11 +26,10 @@ import {
   LINK_HOVER_DECORATION,
   BLACK_06,
   BLACK_12,
-  BLACK_20,
-  BLACK_40,
   LINE_HEIGHT_SM,
   LINE_HEIGHT_BASE,
   LINE_HEIGHT_LG,
+  BLACK,
 } from './constants';
 import { isNumber } from './utils';
 // set in px units
@@ -194,18 +193,37 @@ export const radius = {
   circle: '50%',
 };
 
+const SHADOW_UMBRA = Color(BLACK).alpha(0.2).string();
+const SHADOW_PENUMBRA = Color(BLACK).alpha(0.14).string();
+const SHADOW_AMBIENCE = Color(BLACK).alpha(0.12).string();
+
+const FOCUS_SHADOW_UMBRA = Color(VARIANTS.primary).alpha(0.5).string();
+const FOCUS_SHADOW_PENUMBRA = Color(VARIANTS.primary).alpha(0.3).string();
+const FOCUS_SHADOW_AMBIENCE = Color(VARIANTS.primary).alpha(0.18).string();
+
 export const shadow = {
-  0: `0 1px 2px 0px ${BLACK_12}`,
-  1: `0 2px 4px -1px ${BLACK_20}`,
-  2: `0 4px 5px 0 ${BLACK_40}`,
-  3: `0 1px 10px 0 ${BLACK_12}`,
+  0: `0 1px 2px 0px ${SHADOW_AMBIENCE}`,
+  1: `0 2px 4px -1px ${SHADOW_UMBRA}`,
+  2: `0 4px 5px 0 ${SHADOW_PENUMBRA}`,
+  3: `0 1px 10px 0 ${SHADOW_AMBIENCE}`,
+  depth1: `0 2px 1px -1px ${SHADOW_UMBRA}, 0 1px 1px 0 ${SHADOW_PENUMBRA}, 0 1px 3px 0 ${SHADOW_AMBIENCE}`,
+  depth2: `0 1px 5px 0 ${SHADOW_UMBRA}, 0 2px 2px 0 ${SHADOW_PENUMBRA}, 0 3px 1px -2px ${SHADOW_AMBIENCE}`,
+  depth3: `0 1px 8px 0 ${SHADOW_UMBRA}, 0 3px 4px 0 ${SHADOW_PENUMBRA}, 0 3px 3px -2px ${SHADOW_AMBIENCE}`,
+  depth4: `0 2px 4px -1px ${SHADOW_UMBRA}, 0 4px 5px 0 ${SHADOW_PENUMBRA}, 0 1px 10px 0 ${SHADOW_AMBIENCE}`,
+  depth5: `0 3px 5px -1px ${SHADOW_UMBRA}, 0 5px 8px 0 ${SHADOW_PENUMBRA}, 0 1px 14px 0 ${SHADOW_AMBIENCE}`,
+  depth6: `0 3px 5px -1px ${SHADOW_UMBRA}, 0 6px 10px 0 ${SHADOW_PENUMBRA}, 0 1px 18px 0 ${SHADOW_AMBIENCE}`,
 };
 
 export const focusShadow = {
-  0: '0 0px 2px hsla(216, 98%, 52%, 0.3)',
-  1: '0 0px 4px hsla(216, 98%, 52%, 0.5)',
-  2: '0 0px 5px hsla(216, 98%, 52%, 0.3)',
-  3: '0 0px 10px hsla(216, 98%, 52%, 0.5)',
+  0: `0 0px 2px ${FOCUS_SHADOW_PENUMBRA}`,
+  1: `0 0px 4px ${FOCUS_SHADOW_UMBRA}`,
+  2: `0 0px 5px ${FOCUS_SHADOW_PENUMBRA}`,
+  3: `0 0px 10px ${FOCUS_SHADOW_UMBRA}`,
+  depth1: `0 0px 2px ${FOCUS_SHADOW_AMBIENCE}`,
+  depth2: `0 0px 2px ${FOCUS_SHADOW_PENUMBRA}`,
+  depth3: `0 0px 4px ${FOCUS_SHADOW_UMBRA}`,
+  depth4: `0 0px 5px ${FOCUS_SHADOW_PENUMBRA}`,
+  depth5: `0 0px 10px ${FOCUS_SHADOW_UMBRA}`,
 };
 
 export const link = {
@@ -250,16 +268,23 @@ export const sizes = {
 
 export const zIndexes = {
   modal: 1000,
+  tooltip: 100,
   dropdown: 101,
+  toast: 105,
 };
 
 export const transition = {
   duration: {
+    linear: '80ms',
+    enter: '300ms',
+    leave: '300ms',
     easeIn: '300ms',
     easeOut: '400ms',
     easeInOut: '500ms',
   },
   timing: {
+    enter: 'cubic-bezier(0, 0, 0.2, 0.1)', // linearOutSlowIn
+    leave: 'cubic-bezier(0.4, 0, 1, 1)', // fastOutLinearIn
     easeIn: 'cubic-bezier(0.55, 0, 0.55, 0.2)',
     easeOut: 'cubic-bezier(0.25, 0.8, 0.25, 1)',
     easeInOut: 'cubic-bezier(0.35, 0, 0.25, 1)',
@@ -331,7 +356,7 @@ export function generateSpacer(prop: string) {
     } else {
       if (dir === 'x' || dir === 'y') {
         const [start, end] = directions[dir].split(' ');
-        rule = `${prop}-${start}: ${spacing}; ${prop}-${end}: ${spacing}`;
+        rule = `${prop}-${start}: ${spacing}; ${prop}-${end}: ${spacing};`;
       } else {
         rule = `${prop}-${directions[dir]}: ${spacing};`;
       }
@@ -353,16 +378,44 @@ export function generateSpacer(prop: string) {
   };
 }
 
+interface TransitionParams {
+  dur?: string;
+  timing?: string;
+  delay?: string;
+}
+
 export const mixin = {
   darken: (colorValue: string, amount: number) => Color(colorValue).darken(amount).string(),
   lighten: (colorValue: string, amount: number) => Color(colorValue).lighten(amount).string(),
   rgba: (colorValue: string, opacity: number) => Color(colorValue).alpha(opacity).string(),
   buttonVariant,
-  shadow: (...levels: number[]) => css`
+  transition: (params: string | TransitionParams, ...props: string[]) => {
+    let dur,
+      timing,
+      delay = '0ms';
+    if (typeof params == 'string') {
+      dur = params;
+      timing = params;
+    } else {
+      dur = params.dur;
+      timing = params?.timing ?? params.dur;
+      if (params?.delay) delay = params.delay;
+    }
+    const transValue = `${transition[dur] ?? dur} ${transition[timing] ?? timing} ${delay}`;
+    if (props?.length) {
+      return css`
+        transition: ${props.map((prop) => prop + ' ' + transValue).join(', ')};
+      `;
+    }
+    return css`
+      transition: all ${transValue};
+    `;
+  },
+  invert: (hue: string) => (Color(hue).isDark() ? color.white : color.dark),
+  shadow: (...levels: (number | string)[]) => css`
     box-shadow: ${levels
-      .reduce((acc, level) => {
-        const normalizeLevel = level < 0 ? 0 : level > 4 ? 4 : level;
-        acc.push(shadow[normalizeLevel]);
+      .reduce((acc, depth) => {
+        acc.push(shadow[depth]);
         return acc;
       }, [])
       .join(', ')};
@@ -380,6 +433,14 @@ export const mixin = {
   `,
   margin: generateSpacer('margin'),
   padding: generateSpacer('padding'),
+  borderRadius: (...keys: string[]) => css`
+    border-radius: ${keys
+      .reduce((acc, key) => {
+        acc.push(radius[key]);
+        return acc;
+      }, [])
+      .join(' ')};
+  `,
   truncateText: css`
     overflow: hidden;
     white-space: nowrap;

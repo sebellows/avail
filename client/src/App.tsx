@@ -2,8 +2,10 @@
 import React, { AnimationEvent, useEffect, useState } from 'react';
 import { generateConfig } from './core/config';
 import { generateSettings } from './core/settings';
-import { Spinner, Tabs, Tab, UtilityTabs } from './components';
+import { Spinner, Tabs, Tab } from './components';
 import { SettingsForm } from './containers/SettingsForm';
+import { UtilitiesForm } from './containers/UtilitiesForm';
+
 import './App.scss';
 
 const initialUtilities = generateConfig();
@@ -55,7 +57,7 @@ export default function App() {
             <SettingsForm settings={settings} />
           </Tab>
           <Tab target="utilities" title="Utility Class Configuration">
-            <UtilityTabs id="avail-utilities" items={utilities} />
+            <UtilitiesForm id="avail-utilities" utilities={utilities} />
           </Tab>
         </Tabs>
       </form>
