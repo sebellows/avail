@@ -1,35 +1,9 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { forwardRef, Ref, useEffect, useState, useRef } from 'react';
-import { createPortal } from 'react-dom';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Transition } from 'react-transition-group';
-import { classNames, ESCAPE, listen, noScroll } from '../core/utils';
-// import { useClickOutside } from '../hooks/useClickOutside';
-import { EventHandler, TransitionProps } from '../core/contracts';
-import { useEventCallback } from '../hooks/useEventCallback';
-import { useWillUnmount } from '../hooks/useWillUnmount';
-import { FocusTrap } from './FocusTrap';
-import { ChevronLeftIcon, ChevronRightIcon } from './Icon';
-import '../styles/modal.css';
-// import { useLockBodyScroll } from '../hooks/useLockBodyScroll';
-
-interface ModalTriggerProps {
-  children: any;
-  onOpen?: Function;
-  [key: string]: any;
-}
-
-const ModalTrigger = forwardRef<{}, ModalTriggerProps>(({ children, onOpen, ...props }, ref) => {
-  return (
-    <>
-      {React.cloneElement(children, {
-        className: classNames(children.props.className),
-        ref: ref,
-      })}
-    </>
-  );
-});
+import { ESCAPE, listen, noScroll } from '../../core/utils';
+import { useEventCallback } from '../../hooks/useEventCallback';
+import { useWillUnmount } from '../../hooks/useWillUnmount';
+import { ModalTrigger } from './ModalTrigger';
+import { ModalContent } from './ModalContent';
 
 function ignoreSiblings(siblings: NodeList | string[], fn: (el: HTMLElement) => void) {
   if (siblings && siblings.length) {
@@ -43,64 +17,6 @@ function ignoreSiblings(siblings: NodeList | string[], fn: (el: HTMLElement) => 
     });
   }
 }
-
-const ModalContent = forwardRef<{}, any>(
-  (
-    {
-      ariaLabel,
-      children,
-      className = '',
-      focalRef,
-      role = 'dialog',
-      onKeyUp = (event: any) => {},
-      onClickPrev = (event: any) => {},
-      onClickNext = (event: any) => {},
-    },
-    ref: Ref<any>,
-  ) => {
-    function handleClickPrev(event: any) {
-      event.preventDefault();
-      if (onClickPrev) {
-        onClickPrev(event);
-      }
-    }
-
-    function handleClickNext(event: any) {
-      event.preventDefault();
-      if (onClickNext) {
-        onClickNext(event);
-      }
-    }
-
-    return createPortal(
-      <div ref={ref} className="modal">
-        <div aria-hidden="true" className="modal-backdrop" />
-        <nav className="modal-navigation">
-          <a href="#" className="prev" onClick={handleClickPrev}>
-            <ChevronLeftIcon size="64" />
-          </a>
-          <a href="#" className="next" onClick={handleClickNext}>
-            <ChevronRightIcon size="64" />
-          </a>
-        </nav>
-        <FocusTrap
-          tag="aside"
-          ref={focalRef}
-          className={classNames('modal-content', className)}
-          role={role}
-          aria-label={ariaLabel}
-          aria-modal="true"
-          onKeyUp={onKeyUp}
-        >
-          {children}
-        </FocusTrap>
-      </div>,
-      document.body,
-    );
-  },
-);
-
-ModalContent.displayName = 'ModalContent';
 
 const Modal = forwardRef<{}, any>(
   (
@@ -122,12 +38,9 @@ const Modal = forwardRef<{}, any>(
   ) => {
     const [exited, setExited] = useState(!show);
 
-    // const backdropRef = useRef(null);
     const focalRef = useRef(null);
     const prevShow = useRef(!show);
     const removeKeyDownListenerRef = useRef(null);
-
-    // useLockBodyScroll();
 
     const handleShow = useEventCallback(() => {
       setTimeout(() => {

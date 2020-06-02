@@ -13,7 +13,7 @@ const ToggleControl = React.forwardRef<{}, ToggleControlProps>(
     const inputType = type === 'radio' ? type : 'checkbox';
 
     if (Component === 'label') {
-      htmlProps['htmlForm'] = formProps?.name || formProps?.id;
+      htmlProps['htmlFor'] = formProps?.name || formProps?.id;
     }
 
     function handleChange(event: any) {
@@ -38,9 +38,7 @@ const ToggleControl = React.forwardRef<{}, ToggleControlProps>(
           </Styled.Inner>
         </Styled.Container>
         {children && (
-          <Styled.LabelText {...(children as React.ReactElement)?.props}>
-            {children}
-          </Styled.LabelText>
+          <Styled.Content {...(children as React.ReactElement)?.props}>{children}</Styled.Content>
         )}
       </Styled.Wrapper>
     );

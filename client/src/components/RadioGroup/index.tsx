@@ -1,4 +1,4 @@
-import React, { forwardRef, Ref } from 'react';
+import React, { forwardRef, Ref, SyntheticEvent } from 'react';
 import { classNames } from '../../core/utils';
 import { FormGroupProps, OptionProps } from '../../core/contracts';
 import { ToggleControl } from '../ToggleControl';
@@ -25,9 +25,13 @@ const RadioGroup = forwardRef<{}, FormGroupProps>(
     },
     ref: Ref<any>,
   ) => {
+    function handleChange(event: SyntheticEvent) {
+      onChange?.(event);
+    }
+
     return (
       <Styled.Wrapper ref={ref} className={className}>
-        <legend className={classNames(classMap?.legend)}>{legend}</legend>
+        <Styled.Legend className={classNames(classMap?.legend)}>{legend}</Styled.Legend>
         <Styled.FormGroup className="radio-group">
           {options.map((option: OptionProps, i: number) => (
             <ToggleControl
@@ -39,6 +43,7 @@ const RadioGroup = forwardRef<{}, FormGroupProps>(
               label={option.name}
               inline={inline ? 1 : 0}
               className={classNames(classMap?.control)}
+              onChange={handleChange}
             >
               <span>{option.name}</span>
             </ToggleControl>

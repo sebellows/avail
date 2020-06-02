@@ -2,6 +2,7 @@
 import { COLORS, DIRECTIONS, GRAYS, GRID_BREAKPOINTS, THEME_COLORS } from './constants';
 import { toOptions } from './models/Option';
 import { CSS_VALUE_PRESETS } from './presets';
+import { AvailSettings, AvailSetting } from './contracts';
 
 const AVAIL_COLOR_SCHEMES = {
   colors: COLORS,
@@ -18,7 +19,7 @@ function updateColorScheme(settings: Record<string, any>) {
   return AVAIL_COLOR_SCHEMES;
 }
 
-export const Settings = (settings: Record<string, any> = {}) => {
+export const Settings = (settings: AvailSettings): AvailSettings => {
   const colorSchemes = updateColorScheme(settings);
   const colors = toOptions(colorSchemes.colors);
   const grays = toOptions(colorSchemes.grays);
@@ -31,7 +32,7 @@ export const Settings = (settings: Record<string, any> = {}) => {
       fields: {
         prefix: {
           type: 'text',
-          id: 'avail-prefix',
+          id: 'settings_export_fields_prefix',
           label: 'Prefix',
           attrs: { placeholder: 'app-' },
           value: '',
@@ -39,7 +40,7 @@ export const Settings = (settings: Record<string, any> = {}) => {
         },
         sizingUnit: {
           type: 'radiogroup',
-          id: 'avail-sizing-unit',
+          id: 'settings_export_fields_sizingUnit',
           legend: 'Default sizing unit',
           options: toOptions(['px', 'em', 'rem']),
           value: 'rem',
@@ -47,7 +48,7 @@ export const Settings = (settings: Record<string, any> = {}) => {
         },
         fileType: {
           type: 'radiogroup',
-          id: 'avail-export-type',
+          id: 'settings_export_fields_fileType',
           legend: 'Exported file type',
           options: toOptions(['CSS', 'SCSS']),
           value: 'css',
@@ -60,21 +61,21 @@ export const Settings = (settings: Record<string, any> = {}) => {
       fields: {
         colors: {
           type: 'repeater',
-          id: 'avail-colors',
+          id: 'settings_colorSchemes_fields_colors',
           inputType: 'color',
           legend: 'Colors',
           items: colors,
         },
         grays: {
           type: 'repeater',
-          id: 'avail-grays',
+          id: 'settings_colorSchemes_fields_grays',
           inputType: 'color',
           legend: 'Grays',
           items: grays,
         },
         variants: {
           type: 'repeater',
-          id: 'avail-variants',
+          id: 'settings_colorSchemes_fields_variants',
           inputType: 'colorpicker',
           legend: 'Theme Variant Colors',
           options: [...colors, ...grays],
@@ -87,7 +88,7 @@ export const Settings = (settings: Record<string, any> = {}) => {
       fields: {
         bodyColor: {
           type: 'colorpicker',
-          id: 'avail-body-color',
+          id: 'settings_global_fields_bodyColor',
           label: 'Body color',
           value: THEME_COLORS.dark,
           options: allColors,
@@ -95,7 +96,7 @@ export const Settings = (settings: Record<string, any> = {}) => {
         },
         bodyBgColor: {
           type: 'colorpicker',
-          id: 'avail-bg-colors',
+          id: 'settings_global_fields_bodyBgColor',
           label: 'Body background color',
           value: COLORS.white,
           options: allColors,
@@ -103,21 +104,21 @@ export const Settings = (settings: Record<string, any> = {}) => {
         },
         fontFamily: {
           type: 'text',
-          id: 'avail-font-family',
+          id: 'settings_global_fields_fontFamily',
           label: 'Default font-family',
           value: `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"`,
           description: 'Default global font-family.',
         },
         headingsFontFamily: {
           type: 'text',
-          id: 'avail-headings-font-family',
+          id: 'settings_global_fields_headingsFontFamily',
           label: 'Headings font-family',
           value: 'inherit',
           description: 'By default inherits from global font-family.',
         },
         monospaceFontFamily: {
           type: 'text',
-          id: 'avail-monospace-font-family',
+          id: 'settings_global_fields_monospaceFontFamily',
           label: 'Monospace font-family',
           value: `SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
           monospace`,
@@ -125,27 +126,27 @@ export const Settings = (settings: Record<string, any> = {}) => {
         },
         fontSize: {
           type: 'number',
-          id: 'avail-font-size',
+          id: 'settings_global_fields_fontSize',
           label: 'Base font size',
           value: '16',
           description: 'Set in `px` (will be converted if default unit configured).',
         },
         lineHeight: {
           type: 'text',
-          id: 'avail-line-height',
+          id: 'settings_global_fields_lineHeight',
           label: 'Default line-height',
           value: '1.5',
         },
         fontWeight: {
           type: 'select',
-          id: 'avail-font-weight',
+          id: 'settings_global_fields_fontWeight',
           label: 'Default font-weight',
           value: 'normal',
           options: toOptions(CSS_VALUE_PRESETS.fontWeight),
         },
         paragraphMargin: {
           type: 'number',
-          id: 'avail-paragraph-margin',
+          id: 'settings_global_fields_paragraphMargin',
           label: 'Paragraph margin',
           value: '12',
           description:
@@ -153,7 +154,7 @@ export const Settings = (settings: Record<string, any> = {}) => {
         },
         headingsMargin: {
           type: 'number',
-          id: 'avail-headings-margin',
+          id: 'settings_global_fields_headingsMargin',
           label: 'Headings margin',
           value: '12',
           description:
@@ -166,7 +167,7 @@ export const Settings = (settings: Record<string, any> = {}) => {
       fields: {
         width: {
           type: 'number',
-          id: 'avail-border-width',
+          id: 'settings_border_fields_width',
           label: 'Border width',
           value: '1',
           description: 'Default border width applied to border-related utility classes.',
@@ -174,7 +175,7 @@ export const Settings = (settings: Record<string, any> = {}) => {
         },
         style: {
           type: 'select',
-          id: 'avail-border-style',
+          id: 'settings_border_fields_style',
           label: 'Border style',
           value: 'solid',
           options: toOptions(CSS_VALUE_PRESETS.borderStyle),
@@ -182,7 +183,7 @@ export const Settings = (settings: Record<string, any> = {}) => {
         },
         color: {
           type: 'colorpicker',
-          id: 'avail-border-color',
+          id: 'settings_border_fields_color',
           label: 'Border color',
           options: toOptions(allColors),
           value: GRAYS['gray-100'],
@@ -195,7 +196,7 @@ export const Settings = (settings: Record<string, any> = {}) => {
       fields: {
         breakpoints: {
           type: 'repeater',
-          id: 'avail-breakpoints',
+          id: 'settings_mediaQuery_fields_breakpoints',
           inputType: 'number',
           items: toOptions(GRID_BREAKPOINTS),
           description: 'Used to generate responsive utility classes.',
@@ -208,8 +209,8 @@ export const Settings = (settings: Record<string, any> = {}) => {
       fields: {
         suffixes: {
           type: 'repeater',
-          id: 'avail-spacing-suffixes',
-          inputType: 'number',
+          id: 'settings_spacing_fields_suffixes',
+          inputType: 'text',
           items: toOptions(DIRECTIONS),
           readOnly: true,
           description:
@@ -220,11 +221,11 @@ export const Settings = (settings: Record<string, any> = {}) => {
   };
 };
 
-export function generateSettings(config: Record<string, any> = {}) {
+export function generateSettings(config: AvailSettings = {}): AvailSettings {
   const settings = Settings(config);
 
   return Object.entries(settings).reduce((acc, [key, value]) => {
-    acc[key] = { id: key, ...value };
+    acc[key] = { id: `settings_${key}`, ...value } as AvailSetting;
     return acc;
   }, {});
 }

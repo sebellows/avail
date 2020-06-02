@@ -7,8 +7,9 @@
 import { OptionProps } from './form';
 
 export interface AvailSetting {
+  id?: string;
   legend?: string;
-  fields?: AvailSettingField[];
+  fields?: Record<string, AvailSettingField>;
 }
 
 export interface AvailSettingField {
@@ -19,12 +20,17 @@ export interface AvailSettingField {
   inputType?: string;
   label?: string;
   legend?: string;
+  items?: OptionProps[];
   options?: OptionProps[];
-  presets?: string[] | Record<string, any>;
+  // presets?: string[] | Record<string, any>;
   attrs?: Record<string, any>;
-  readonly?: boolean;
+  readOnly?: boolean;
   validators?: Record<string, any>;
   value?: string | number;
+}
+
+export interface AvailSettings {
+  [key: string]: AvailSetting;
 }
 
 export interface AvailUtility {

@@ -2,7 +2,7 @@ import React, { Ref } from 'react';
 
 import { ComponentProps } from '../core/contracts';
 import styled from 'styled-components';
-import { color, font, toREM } from '../core/style';
+import { color, font, toREM, mixin } from '../core/style';
 
 interface FieldDescriptionProps extends ComponentProps {
   /** Add `text-muted` class */
@@ -11,6 +11,7 @@ interface FieldDescriptionProps extends ComponentProps {
 
 const StyledFieldDescription = styled.small`
   display: inline-block;
+  ${mixin.margin.top('xs')}
   color: ${(props: FieldDescriptionProps) => (props.muted ? color.text.muted : color.text.body)};
   font-size: ${toREM(font.sizes.sm)};
   line-height: 1.3;

@@ -17,7 +17,7 @@ export const BORDER_STYLES = {
 };
 
 export const DIRECTIONS = {
-  default: '',
+  // default: '',
   top: 'top',
   bottom: 'bottom',
   left: 'left',

@@ -46,7 +46,7 @@ export interface UtilitiesFormProps extends ComponentProps {
   utilities: AvailUtilities;
 }
 
-const UtilitiesForm = React.forwardRef<HTMLOListElement, UtilitiesFormProps>(
+const UtilitiesForm = forwardRef<HTMLOListElement, UtilitiesFormProps>(
   ({ id, utilities: initialUtilities = {}, ...props }, ref: Ref<HTMLOListElement>) => {
     const [activeModel, setActiveModel] = useState(null);
     const lastActiveModel = usePrevious(activeModel);
@@ -62,10 +62,6 @@ const UtilitiesForm = React.forwardRef<HTMLOListElement, UtilitiesFormProps>(
     });
 
     useEffect(() => {
-      console.log(
-        'utilities',
-        utilities.map((utility: AvailUtility) => utility),
-      );
       if (activeModel && lastActiveModel !== activeModel) {
         if (activeModel.responsive) {
           setOutput(generateResponsiveUtility(activeModel));
@@ -125,7 +121,7 @@ const UtilitiesForm = React.forwardRef<HTMLOListElement, UtilitiesFormProps>(
             utilities.map((utility: AvailUtility) => (
               <PillTab
                 key={utility.id}
-                id={`pill-tab${id}`}
+                id={`pill-tab-${id}`}
                 checked={utility.enabled}
                 selected={activeModel?.id === utility.id}
                 value={utility}

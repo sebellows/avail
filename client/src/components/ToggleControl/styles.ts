@@ -150,7 +150,7 @@ export const Styled = {
         : `background-color 150ms cubic-bezier(0, 0, 0.2, 0.1), opacity 150ms ${transition.timing.linearOutSlowIn}`};
     transform: ${({ inputType }) => (inputType === 'radio' ? 'scale(0.001)' : 'none')};
   `,
-  LabelText: styled.div`
+  Content: styled.div`
     font-weight: normal;
     position: relative;
     user-select: auto;

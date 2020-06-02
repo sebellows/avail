@@ -42,16 +42,17 @@ const SelectControl = forwardRef<{}, ControlProps>(
         {...htmlProps}
         as={Component}
         className={classNames(
-          'avail-select',
+          'select',
           isValid && `is-valid`,
           isInvalid && `is-invalid`,
           className,
         )}
       >
         <Styled.Select
+          as="select"
           ref={ref}
           {...formProps}
-          className={classNames('control', 'select', controlClass)}
+          className={classNames('control', controlClass)}
           aria-label={arialabel}
           onChange={handleChange}
         >

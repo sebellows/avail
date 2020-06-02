@@ -3,8 +3,8 @@ import React, { forwardRef, InputHTMLAttributes, Ref, useState } from 'react';
 import styled from 'styled-components';
 
 import { OptionProps, ComponentProps } from '../core/contracts';
-import { validFormProps } from '../core/utils';
-import { control, transition, radius } from '../core/style';
+import { validFormProps, classNames } from '../core/utils';
+import { control, transition, radius, mixin } from '../core/style';
 
 export type ControlType = HTMLSelectElement | HTMLTextAreaElement | HTMLInputElement;
 
@@ -38,7 +38,7 @@ export const Styled = {
     display: block;
     width: 100%;
     height: ${({ type }) => (isToggle(type) ? '100%' : control.height)};
-    padding: ${control.paddingY} ${control.paddingX};
+    ${mixin.padding.all('controlY', 'controlX')}
     font-family: ${control.fontFamily};
     font-size: ${control.fontSize};
     font-weight: 400;
@@ -109,7 +109,7 @@ const Control = forwardRef<{}, ControlProps>(
           type={type}
           value={value}
           disabled={disabled}
-          className={className}
+          className={classNames('control', className)}
           onChange={handleChange}
         />
       </>

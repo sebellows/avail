@@ -1,5 +1,5 @@
 import { css } from 'styled-components';
-import { Color } from './utils';
+import { Color, isNil, isString } from './utils';
 import { CSS_VALUE_PRESETS } from './presets';
 import {
   BODY_BG,
@@ -60,6 +60,8 @@ export const CONTROL_SETTINGS: ControlSettings = {
 export const isUnit = (value: number | string): boolean =>
   /[-+]{0,1}\d(.?)+(em|ex|%|px|cm|mm|in|pt|pc|ch|rem|vh|vw|vmin|vmax)/g.test(String(value));
 
+export const isUnitless = (value: number | string): boolean => isNumber(value) || !isUnit(value);
+
 export const getUnit = (value: number | string): string | null => {
   if (!isUnit(value)) return null;
 
@@ -97,6 +99,22 @@ export const toREM = (value: number, flag?: string) => {
     console.log(`${flag}->toREM`, value, toRelativeUnit(value));
   }
   return `${toRelativeUnit(value)}rem`;
+};
+
+export const maybeApplyUnit = (value: any, unit = 'rem') => {
+  if (isUnit(value)) return value;
+
+  switch (unit) {
+    case 'rem':
+      return toREM(value);
+    case 'em':
+      return toEM(value);
+    case '%':
+      return `${value}%`;
+    case 'px':
+    default:
+      return toPX(value);
+  }
 };
 
 export const color = {
@@ -181,6 +199,14 @@ const calcControlHeight = (config: Partial<ControlSettings> = {}) => {
 
 export const spacers = {
   ...SPACERS,
+  none: SPACERS[0],
+  xs: SPACERS[1],
+  sm: SPACERS[2],
+  base: SPACERS[3],
+  lg: SPACERS[4],
+  xl: SPACERS[5],
+  controlX: CONTROL_PADDING_X,
+  controlY: CONTROL_PADDING_Y,
   auto: 'auto',
 };
 
@@ -235,65 +261,6 @@ export const link = {
   },
 };
 
-const buttonVariant = (value: string) => {
-  const bg = Color(value);
-  const borderColor = Color(value);
-  const textColor = Color(value).isDark() ? Color(color.white) : Color(color.dark);
-
-  return css`
-    background-color: ${bg.string()};
-    border-color: ${borderColor.string()};
-    color: ${textColor.string()};
-    text-decoration: none;
-    &:hover,
-    &:focus {
-      background-color: ${bg.darken(0.2).string()};
-      border-color: ${borderColor.darken(0.2).string()};
-      color: ${textColor.string()};
-      text-decoration: none;
-    }
-    &:disabled {
-      background-color: ${bg.alpha(0.8).desaturate(0.3).string()};
-      border-color: ${borderColor.alpha(0.8).desaturate(0.3).string()};
-      color: ${textColor.alpha(0.8).string()};
-      outline: none;
-      pointer-events: none;
-    }
-  `;
-};
-
-export const sizes = {
-  minViewportWidth: 1000,
-};
-
-export const zIndexes = {
-  modal: 1000,
-  tooltip: 100,
-  dropdown: 101,
-  toast: 105,
-};
-
-export const transition = {
-  duration: {
-    linear: '80ms',
-    enter: '300ms',
-    leave: '300ms',
-    easeIn: '300ms',
-    easeOut: '400ms',
-    easeInOut: '500ms',
-  },
-  timing: {
-    enter: 'cubic-bezier(0, 0, 0.2, 0.1)', // linearOutSlowIn
-    leave: 'cubic-bezier(0.4, 0, 1, 1)', // fastOutLinearIn
-    easeIn: 'cubic-bezier(0.55, 0, 0.55, 0.2)',
-    easeOut: 'cubic-bezier(0.25, 0.8, 0.25, 1)',
-    easeInOut: 'cubic-bezier(0.35, 0, 0.25, 1)',
-    fastOutSlowIn: 'cubic-bezier(0.4, 0, 0.2, 1)',
-    fastOutLinearIn: 'cubic-bezier(0.4, 0, 1, 1)',
-    linearOutSlowIn: 'cubic-bezier(0, 0, 0.2, 0.1)',
-  },
-};
-
 export const control = {
   color: VARIANTS.dark,
   bg: VARIANTS.light,
@@ -333,6 +300,66 @@ export const control = {
   },
 };
 
+const buttonVariant = (value: string) => {
+  const bg = Color(value);
+  const borderColor = Color(value);
+  const textColor = Color(value).isDark() ? Color(color.white) : Color(color.dark);
+
+  return css`
+    background-color: ${bg.string()};
+    border: ${control.borderWidth} solid ${borderColor.string()};
+    color: ${textColor.string()};
+    text-decoration: none;
+    &:hover,
+    &:focus {
+      background-color: ${bg.darken(0.2).string()};
+      border-color: ${borderColor.darken(0.2).string()};
+      color: ${textColor.string()};
+      text-decoration: none;
+    }
+    &:disabled {
+      background-color: ${bg.alpha(0.8).desaturate(0.3).string()};
+      border-color: transparent;
+      color: ${textColor.alpha(0.8).string()};
+      outline: none;
+      pointer-events: none;
+    }
+  `;
+};
+
+export const sizes = {
+  minViewportWidth: 1000,
+};
+
+export const zIndexes = {
+  modal: 1000,
+  dialog: 1001,
+  tooltip: 100,
+  dropdown: 101,
+  toast: 105,
+};
+
+export const transition = {
+  duration: {
+    linear: '80ms',
+    enter: '300ms',
+    leave: '300ms',
+    easeIn: '300ms',
+    easeOut: '400ms',
+    easeInOut: '500ms',
+  },
+  timing: {
+    enter: 'cubic-bezier(0, 0, 0.2, 0.1)', // linearOutSlowIn
+    leave: 'cubic-bezier(0.4, 0, 1, 1)', // fastOutLinearIn
+    easeIn: 'cubic-bezier(0.55, 0, 0.55, 0.2)',
+    easeOut: 'cubic-bezier(0.25, 0.8, 0.25, 1)',
+    easeInOut: 'cubic-bezier(0.35, 0, 0.25, 1)',
+    fastOutSlowIn: 'cubic-bezier(0.4, 0, 0.2, 1)',
+    fastOutLinearIn: 'cubic-bezier(0.4, 0, 1, 1)',
+    linearOutSlowIn: 'cubic-bezier(0, 0, 0.2, 0.1)',
+  },
+};
+
 const directions = {
   top: 'top',
   right: 'right',
@@ -347,9 +374,7 @@ export function generateSpacer(prop: string) {
     let spacing = '0';
     let rule = '';
 
-    spacing = sizes
-      .map((sz) => (isNumber(sz) && spacers[sz] ? toREM(spacers[sz]) : isUnit(sz) ? sz : toREM(sz)))
-      .join(' ');
+    spacing = sizes.map((sz) => (isUnitless(sz) ? toREM(spacers[sz]) ?? toREM(sz) : sz)).join(' ');
 
     if (!dir) {
       rule = `${prop}: ${spacing};`;
@@ -421,18 +446,23 @@ export const mixin = {
       .join(', ')};
   `,
   dropShadow: (...levels: number[]) => css`
-    filter: drop-shadow(
-      ${levels
-        .reduce((acc, level) => {
-          const normalizeLevel = level < 0 ? 0 : level > 4 ? 4 : level;
-          acc.push(shadow[normalizeLevel]);
-          return acc;
-        }, [])
-        .join(', ')}
-    );
+    filter: ${levels
+      .reduce((acc, depth) => {
+        acc.push(`drop-shadow(${shadow[depth]})`);
+        return acc;
+      }, [])
+      .join(' ')};
   `,
   margin: generateSpacer('margin'),
   padding: generateSpacer('padding'),
+  spacer: (...keys: (number | string)[]) => {
+    return keys
+      .reduce((acc, key) => {
+        acc.push(isString(key) && !isNil(spacers[key]) ? toREM(spacers[key]) : maybeApplyUnit(key));
+        return acc;
+      }, [])
+      .join(' ');
+  },
   borderRadius: (...keys: string[]) => css`
     border-radius: ${keys
       .reduce((acc, key) => {

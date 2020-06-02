@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Styled as StyledControl } from '../Control';
 import { control, mixin } from '../../core/style';
 
 export const Styled = {
@@ -11,21 +12,19 @@ export const Styled = {
       content: '';
       position: absolute;
       top: 50%;
-      right: calc(var(--font-size-base) * 1.25);
+      right: 1.25rem;
       display: inline-block;
       width: 0;
       height: 0;
-      margin-top: -0.15625rem; // ~2.5px
-      border: 0.34375rem solid transparent; // ~3px
+      margin-top: -0.15625rem; // ~2.75px
+      border: 0.34375rem solid transparent; // ~5.5px
       border-top-color: ${control.color};
       pointer-events: none;
     }
   `,
-  Select: styled.select`
-    border: 0;
+  Select: styled(StyledControl.Input)`
     display: inline-block;
-    width: 100%;
-    padding: 0.5rem 2.25rem 0.5rem 1rem;
+    padding-right: calc(${mixin.spacer('controlX')} + 1.25rem);
     ${mixin.appearanceNone}
   `,
 };

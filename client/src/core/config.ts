@@ -44,77 +44,43 @@ const Config = (
   settings: Record<string, any> = {},
   utils: AvailUtilities = {},
 ): AvailUtilities => ({
-  align: {
+  backgroundColor: {
     enabled: true,
     responsive: false,
-    property: 'vertical-align',
-    class: 'align',
-    inputType: 'select',
-    options: CSS_VALUE_PRESETS.align,
+    property: 'background-color',
+    class: 'bg',
+    inputType: 'colorpicker',
     items: [
+      ...toOptions(THEME_COLORS, {
+        WHITE,
+        body: BODY_COLOR,
+        muted: TEXT_MUTED,
+        BLACK_50,
+        WHITE_50,
+      }),
       {
-        name: 'baseline',
-        value: 'baseline',
-      },
-      {
-        name: 'top',
-        value: 'top',
-      },
-      {
-        name: 'middle',
-        value: 'middle',
-      },
-      {
-        name: 'bottom',
-        value: 'bottom',
-      },
-      {
-        name: 'text-bottom',
-        value: 'text-bottom',
-      },
-      {
-        name: 'text-top',
-        value: 'text-top',
+        name: 'transparent',
+        value: 'transparent',
       },
     ],
   },
-  float: {
-    enabled: true,
-    responsive: true,
-    property: 'float',
-    class: 'float',
-    inputType: 'select',
-    options: CSS_VALUE_PRESETS.float,
-    items: [
-      {
-        name: 'left',
-        value: 'left',
-      },
-      {
-        name: 'right',
-        value: 'right',
-      },
-      {
-        name: 'none',
-        value: 'none',
-      },
-    ],
-  },
-  overflow: {
+  color: {
     enabled: true,
     responsive: false,
-    property: 'overflow',
-    class: 'overflow',
-    inputType: 'select',
-    options: CSS_VALUE_PRESETS.overflow,
+    property: 'color',
+    class: 'text',
+    inputType: 'colorpicker',
     items: [
+      ...toOptions(THEME_COLORS, {
+        WHITE,
+        body: BODY_COLOR,
+        muted: TEXT_MUTED,
+        BLACK_50,
+        WHITE_50,
+      }),
       {
-        name: 'auto',
-        value: 'auto',
-      },
-      {
-        name: 'hidden',
-        value: 'hidden',
+        name: 'reset',
+        value: 'inherit',
       },
     ],
   },
@@ -164,24 +130,21 @@ const Config = (
       },
     ],
   },
-  shadow: {
+  float: {
     enabled: true,
-    responsive: false,
-    property: 'box-shadow',
-    class: 'shadow',
-    inputType: 'text',
+    responsive: true,
+    property: 'float',
+    class: 'float',
+    inputType: 'select',
+    options: CSS_VALUE_PRESETS.float,
     items: [
       {
-        name: '',
-        value: BOX_SHADOW,
+        name: 'left',
+        value: 'left',
       },
       {
-        name: 'sm',
-        value: BOX_SHADOW_SM,
-      },
-      {
-        name: 'lg',
-        value: BOX_SHADOW_LG,
+        name: 'right',
+        value: 'right',
       },
       {
         name: 'none',
@@ -189,33 +152,36 @@ const Config = (
       },
     ],
   },
-  position: {
+  fontFamily: {
     enabled: true,
     responsive: false,
-    property: 'position',
-    class: 'position',
-    inputType: 'select',
-    options: CSS_VALUE_PRESETS.position,
+    property: 'font-family',
+    class: 'font',
+    inputType: 'text',
+    items: [{ name: 'monospace', value: FONT_FAMILY_MONOSPACE }],
+  },
+  lineHeight: {
+    enabled: true,
+    responsive: false,
+    property: 'line-height',
+    class: 'lh',
+    inputType: 'number',
     items: [
       {
-        name: 'static',
-        value: 'static',
+        name: '1',
+        value: '1',
       },
       {
-        name: 'relative',
-        value: 'relative',
+        name: 'sm',
+        value: `${LINE_HEIGHT_SM}`,
       },
       {
-        name: 'absolute',
-        value: 'absolute',
+        name: 'base',
+        value: `${LINE_HEIGHT_BASE}`,
       },
       {
-        name: 'fixed',
-        value: 'fixed',
-      },
-      {
-        name: 'sticky',
-        value: 'sticky',
+        name: 'lg',
+        value: `${LINE_HEIGHT_LG}`,
       },
     ],
   },
@@ -231,8 +197,8 @@ const Config = (
         value: `${BORDER_WIDTH} solid ${BORDER_COLOR}`,
       },
       {
-        name: 0,
-        value: 0,
+        name: '0',
+        value: '0',
       },
     ],
   },
@@ -248,8 +214,8 @@ const Config = (
         value: `${BORDER_WIDTH} solid ${BORDER_COLOR}`,
       },
       {
-        name: 0,
-        value: 0,
+        name: '0',
+        value: '0',
       },
     ],
   },
@@ -265,8 +231,8 @@ const Config = (
         value: `${BORDER_WIDTH} solid ${BORDER_COLOR}`,
       },
       {
-        name: 0,
-        value: 0,
+        name: '0',
+        value: '0',
       },
     ],
   },
@@ -282,8 +248,8 @@ const Config = (
         value: `${BORDER_WIDTH} solid ${BORDER_COLOR}`,
       },
       {
-        name: 0,
-        value: 0,
+        name: '0',
+        value: '0',
       },
     ],
   },
@@ -299,8 +265,8 @@ const Config = (
         value: `${BORDER_WIDTH} solid ${BORDER_COLOR}`,
       },
       {
-        name: 0,
-        value: 0,
+        name: '0',
+        value: '0',
       },
     ],
   },
@@ -356,7 +322,7 @@ const Config = (
     property: 'width',
     class: 'vw',
     inputType: 'text',
-    items: [{ name: 100, value: '100vw' }],
+    items: [{ name: '100', value: '100vw' }],
   },
   minViewportWidth: {
     enabled: true,
@@ -364,7 +330,7 @@ const Config = (
     property: 'min-width',
     class: 'min-vw',
     inputType: 'text',
-    items: [{ name: 100, value: '100vw' }],
+    items: [{ name: '100', value: '100vw' }],
   },
   height: {
     enabled: true,
@@ -401,7 +367,7 @@ const Config = (
     property: 'max-height',
     class: 'mh',
     inputType: 'text',
-    items: [{ name: 100, value: '100%' }],
+    items: [{ name: '100', value: '100%' }],
   },
   viewportHeight: {
     enabled: true,
@@ -409,7 +375,7 @@ const Config = (
     property: 'height',
     class: 'vh',
     inputType: 'text',
-    items: [{ name: 100, value: '100vh' }],
+    items: [{ name: '100', value: '100vh' }],
   },
   minViewportHeight: {
     enabled: true,
@@ -417,7 +383,7 @@ const Config = (
     property: 'min-height',
     class: 'min-vh',
     inputType: 'text',
-    items: [{ name: 100, value: '100vh' }],
+    items: [{ name: '100', value: '100vh' }],
   },
   // Flex utilities
   flex: {
@@ -463,11 +429,11 @@ const Config = (
     items: [
       {
         name: 'grow-0',
-        value: 0,
+        value: '0',
       },
       {
         name: 'grow-1',
-        value: 1,
+        value: '1',
       },
     ],
   },
@@ -480,11 +446,11 @@ const Config = (
     items: [
       {
         name: 'shrink-0',
-        value: 0,
+        value: '0',
       },
       {
         name: 'shrink-1',
-        value: 1,
+        value: '1',
       },
     ],
   },
@@ -647,35 +613,35 @@ const Config = (
     items: [
       {
         name: 'first',
-        value: -1,
+        value: '-1',
       },
       {
-        name: 0,
-        value: 0,
+        name: '0',
+        value: '0',
       },
       {
-        name: 1,
-        value: 1,
+        name: '1',
+        value: '1',
       },
       {
-        name: 2,
-        value: 2,
+        name: '2',
+        value: '2',
       },
       {
-        name: 3,
-        value: 3,
+        name: '3',
+        value: '3',
       },
       {
-        name: 4,
-        value: 4,
+        name: '4',
+        value: '4',
       },
       {
-        name: 5,
-        value: 5,
+        name: '5',
+        value: '5',
       },
       {
         name: 'last',
-        value: 6,
+        value: '6',
       },
     ],
   },
@@ -943,68 +909,23 @@ const Config = (
       },
     ],
   },
-  color: {
+  textDecoration: {
     enabled: true,
     responsive: false,
-    property: 'color',
-    class: 'text',
-    inputType: 'colorpicker',
-    items: [
-      ...toOptions(THEME_COLORS, {
-        WHITE,
-        body: BODY_COLOR,
-        muted: TEXT_MUTED,
-        BLACK_50,
-        WHITE_50,
-      }),
-      {
-        name: 'reset',
-        value: 'inherit',
-      },
-    ],
-  },
-  lineHeight: {
-    enabled: true,
-    responsive: false,
-    property: 'line-height',
-    class: 'lh',
-    inputType: 'number',
+    property: 'text-decoration',
+    inputType: 'text',
     items: [
       {
-        name: 1,
-        value: 1,
+        name: 'none',
+        value: 'none',
       },
       {
-        name: 'sm',
-        value: `${LINE_HEIGHT_SM}`,
+        name: 'underline',
+        value: 'underline',
       },
       {
-        name: 'base',
-        value: `${LINE_HEIGHT_BASE}`,
-      },
-      {
-        name: 'lg',
-        value: `${LINE_HEIGHT_LG}`,
-      },
-    ],
-  },
-  backgroundColor: {
-    enabled: true,
-    responsive: false,
-    property: 'background-color',
-    class: 'bg',
-    inputType: 'colorpicker',
-    items: [
-      ...toOptions(THEME_COLORS, {
-        WHITE,
-        body: BODY_COLOR,
-        muted: TEXT_MUTED,
-        BLACK_50,
-        WHITE_50,
-      }),
-      {
-        name: 'transparent',
-        value: 'transparent',
+        name: 'line-through',
+        value: 'line-through',
       },
     ],
   },
@@ -1026,57 +947,72 @@ const Config = (
       },
     ],
   },
-  textDecoration: {
+  overflow: {
     enabled: true,
     responsive: false,
-    property: 'text-decoration',
-    inputType: 'text',
-    items: [
-      {
-        name: 'none',
-        value: 'none',
-      },
-      {
-        name: 'underline',
-        value: 'underline',
-      },
-      {
-        name: 'line-through',
-        value: 'line-through',
-      },
-    ],
-  },
-  wordWrap: {
-    enabled: true,
-    responsive: false,
-    property: 'word-wrap',
-    class: 'text',
-    inputType: 'text',
-    items: [{ name: 'break', value: 'break-word' }],
-  },
-  fontFamily: {
-    enabled: true,
-    responsive: false,
-    property: 'font-family',
-    class: 'font',
-    inputType: 'text',
-    items: [{ name: 'monospace', value: FONT_FAMILY_MONOSPACE }],
-  },
-  userSelect: {
-    enabled: true,
-    responsive: false,
-    property: 'user-select',
-    class: 'user-select',
+    property: 'overflow',
+    class: 'overflow',
     inputType: 'select',
-    options: CSS_VALUE_PRESETS.userSelect,
+    options: CSS_VALUE_PRESETS.overflow,
     items: [
-      {
-        name: 'all',
-        value: 'all',
-      },
       {
         name: 'auto',
         value: 'auto',
+      },
+      {
+        name: 'hidden',
+        value: 'hidden',
+      },
+    ],
+  },
+  position: {
+    enabled: true,
+    responsive: false,
+    property: 'position',
+    class: 'position',
+    inputType: 'select',
+    options: CSS_VALUE_PRESETS.position,
+    items: [
+      {
+        name: 'static',
+        value: 'static',
+      },
+      {
+        name: 'relative',
+        value: 'relative',
+      },
+      {
+        name: 'absolute',
+        value: 'absolute',
+      },
+      {
+        name: 'fixed',
+        value: 'fixed',
+      },
+      {
+        name: 'sticky',
+        value: 'sticky',
+      },
+    ],
+  },
+  shadow: {
+    enabled: true,
+    responsive: false,
+    property: 'box-shadow',
+    class: 'shadow',
+    inputType: 'text',
+    items: [
+      {
+        name: '',
+        value: BOX_SHADOW,
+      },
+      {
+        name: 'sm',
+        value: BOX_SHADOW_SM,
+      },
+      {
+        name: 'lg',
+        value: BOX_SHADOW_LG,
       },
       {
         name: 'none',
@@ -1130,8 +1066,8 @@ const Config = (
         value: ROUNDED_PILL,
       },
       {
-        name: 0,
-        value: 0,
+        name: '0',
+        value: '0',
       },
     ],
   },
@@ -1167,6 +1103,62 @@ const Config = (
     inputType: 'text',
     items: [{ name: '', value: toREM(BORDER_RADIUS) }],
   },
+  userSelect: {
+    enabled: true,
+    responsive: false,
+    property: 'user-select',
+    class: 'user-select',
+    inputType: 'select',
+    options: CSS_VALUE_PRESETS.userSelect,
+    items: [
+      {
+        name: 'all',
+        value: 'all',
+      },
+      {
+        name: 'auto',
+        value: 'auto',
+      },
+      {
+        name: 'none',
+        value: 'none',
+      },
+    ],
+  },
+  verticalAlign: {
+    enabled: true,
+    responsive: false,
+    property: 'vertical-align',
+    class: 'align',
+    inputType: 'select',
+    options: CSS_VALUE_PRESETS.align,
+    items: [
+      {
+        name: 'baseline',
+        value: 'baseline',
+      },
+      {
+        name: 'top',
+        value: 'top',
+      },
+      {
+        name: 'middle',
+        value: 'middle',
+      },
+      {
+        name: 'bottom',
+        value: 'bottom',
+      },
+      {
+        name: 'text-bottom',
+        value: 'text-bottom',
+      },
+      {
+        name: 'text-top',
+        value: 'text-top',
+      },
+    ],
+  },
   visibility: {
     enabled: true,
     responsive: false,
@@ -1185,10 +1177,18 @@ const Config = (
       },
     ],
   },
+  wordWrap: {
+    enabled: true,
+    responsive: false,
+    property: 'word-wrap',
+    class: 'text',
+    inputType: 'text',
+    items: [{ name: 'break', value: 'break-word' }],
+  },
   ...utils,
 });
 
-export function generateConfig(utils: AvailUtilities = {}) {
+export function generateConfig(utils: AvailUtilities = {}): AvailUtilities {
   const config = Config(utils);
 
   return Object.entries(config).reduce((form, [key, value]) => {

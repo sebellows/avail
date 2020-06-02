@@ -6,7 +6,7 @@ import { OptionProps as Option } from '../../core/contracts';
 import { Control } from '../Control';
 import { FieldFeedback } from '../FieldFeedback';
 import { FieldDescription } from '../FieldDescription';
-import { formControlResolver } from '../formControlResolver';
+import { FormControlResolver } from '../formControlResolver';
 
 import { RepeaterItem } from './RepeaterItem';
 import { Styled } from './styles';
@@ -33,7 +33,8 @@ const Repeater = forwardRef<{}, FormArrayProps>(
   ) => {
     const [items, setItems] = useState(initialItems as Option[]);
 
-    const id = `${initialId}-repeater`;
+    // const id = `${initialId}-repeater`;
+    const id = initialId;
 
     function handleAdd(event: any) {
       const newItem = { name: '', value: '' };
@@ -63,8 +64,12 @@ const Repeater = forwardRef<{}, FormArrayProps>(
       setItems(updateItems);
 
       if (onChange) {
-        onChange(items);
+        onChange(event);
       }
+    }
+
+    function handleBlur(event: any) {
+      props?.onBlur?.(event);
     }
 
     return (
@@ -73,19 +78,21 @@ const Repeater = forwardRef<{}, FormArrayProps>(
         {items.length &&
           items.map((item: Option, i: number) => (
             <RepeaterItem
-              key={`${id}-repeater-item-${i}`}
+              key={`${id}_items_${i}`}
               before={i}
               onAdd={handleAdd}
               onRemove={(i: number) => handleRemove(i)}
             >
               <Styled.Field>
-                <Styled.Label first={i === 0} htmlFor={`${id}-${i}-key`}>
+                <Styled.Label first={i === 0} htmlFor={`${id}_items_${i}_name`}>
                   {keyLabel}
                 </Styled.Label>
                 <Control
-                  name={`${id}-${i}-key`}
+                  id={`${id}_items_${i}_name`}
+                  name={`${id}_items_${i}_name`}
                   className={classNames(i === 0 && 'first')}
                   value={item.name}
+                  onBlur={handleBlur}
                   onChange={(event: ChangeEvent) => handleChange('name', i, event)}
                   isValid={!error || !error[id]}
                   isInvalid={error && error[id]}
@@ -97,19 +104,22 @@ const Repeater = forwardRef<{}, FormArrayProps>(
               </Styled.Separator>
 
               <Styled.Field>
-                <Styled.Label first={i === 0} htmlFor={`${id}-${i}-value`}>
+                <Styled.Label first={i === 0} htmlFor={`${id}_items_${i}_value`}>
                   {valueLabel}
                 </Styled.Label>
-                {formControlResolver(inputType, {
-                  name: `${id}-${i}-value`,
-                  arialabel: `${id}-${i}-value`,
-                  value: item.value,
-                  readOnly: item.readOnly,
-                  options,
-                  onChange: (event: ChangeEvent) => handleChange('value', i, event),
-                  isValid: !error || !error[id],
-                  isInvalid: error && error[id],
-                })}
+                <FormControlResolver
+                  type={inputType}
+                  id={`${id}_items_${i}_value`}
+                  name={`${id}_items_${i}_value`}
+                  arialabel={`${id}_items_${i}_value`}
+                  value={item.value}
+                  readOnly={item.readOnly}
+                  options={options}
+                  onBlur={handleBlur}
+                  onChange={(event: ChangeEvent) => handleChange('value', i, event)}
+                  isValid={!error || !error[id]}
+                  isInvalid={error && error[id]}
+                />
               </Styled.Field>
             </RepeaterItem>
           ))}

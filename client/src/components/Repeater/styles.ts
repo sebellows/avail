@@ -8,14 +8,11 @@ interface StyledLabelProps {
 
 export const Styled = {
   Wrapper: styled.fieldset`
-    padding-top: 2rem;
-
-    legend {
-      position: relative;
-      top: -1rem;
-    }
+    padding-top: 1rem;
   `,
   Legend: styled.legend`
+    position: relative;
+    top: -1.5rem;
     font-size: ${toREM(font.sizes.lg)};
   `,
   Label: styled.label<StyledLabelProps>`
@@ -23,9 +20,10 @@ export const Styled = {
     ${({ first }) => {
       if (first) {
         return css`
-          margin: 0;
           position: absolute;
           top: -2rem;
+          margin: 0;
+          font-weight: 700;
         `;
       }
     }}

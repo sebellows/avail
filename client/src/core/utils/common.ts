@@ -2,32 +2,35 @@
 /* eslint-disable no-useless-escape */
 import { FieldElement } from '../contracts/form';
 
-export const isNil = (obj: any) => obj === undefined || obj === null;
+export const isNil = (obj: any): boolean => obj === undefined || obj === null;
 export const isDefined = (obj: any): boolean => obj !== undefined && obj !== null;
 
-export const isObject = (obj: any) => typeof obj === 'object';
+export const isObject = (obj: any): boolean => typeof obj === 'object';
 
 export const typeOf = (obj: any, is?: string): string | boolean => {
   const type = Object.prototype.toString.call(obj).slice(8, -1).toLowerCase();
   return is ? type === is : type;
 };
 
-export const isPlainObject = (obj: any) => typeOf(obj, 'object');
-export const isString = (obj: any) => typeOf(obj, 'string');
-export const isNumber = (obj: any) => typeOf(obj, 'number');
+export const isBoolean = (obj: any): boolean => typeOf(obj, 'boolean') as boolean;
+export const isPlainObject = (obj: any): boolean => typeOf(obj, 'object') as boolean;
+export const isString = (obj: any): boolean => typeOf(obj, 'string') as boolean;
+export const isSymbol = (obj: any): boolean => typeOf(obj, 'symbol') as boolean;
+export const isNumber = (obj: any): boolean => typeOf(obj, 'number') as boolean;
+export const isInteger = (obj: any): boolean => isNumber(obj) && (Number.isInteger(obj) as boolean);
 
-export const isEmpty = (obj: any) => {
+export const isEmpty = (obj: any): boolean => {
   if (Array.isArray(obj) || typeof obj == 'string') {
-    return obj.length > 0;
+    return obj.length === 0;
   }
   if (isPlainObject(obj)) {
-    return Object.keys(obj).length > 0;
+    return Object.keys(obj).length === 0;
   }
   if (obj instanceof Map || obj instanceof Set) {
-    return obj.size > 0;
+    return obj.size === 0;
   }
   if (typeof obj == 'number') {
-    return obj > 0;
+    return obj <= 0;
   }
 
   return false;
@@ -62,15 +65,13 @@ export const getNode = (el: any): Node | boolean => {
   return false;
 };
 
-export const isCheckBoxInput = (element: FieldElement): element is HTMLInputElement =>
-  element.type === 'checkbox';
-export const isRadioInput = (element: FieldElement): element is HTMLInputElement =>
-  element.type === 'radio';
-export const isRadioOrCheckbox = (ref: FieldElement): ref is HTMLInputElement =>
-  isRadioInput(ref) || isCheckBoxInput(ref);
+export const isCheckBoxInput = (el: FieldElement): el is HTMLInputElement => el.type === 'checkbox';
+export const isRadioInput = (el: FieldElement): el is HTMLInputElement => el.type === 'radio';
+export const isRadioOrCheckbox = (el: FieldElement): el is HTMLInputElement =>
+  isRadioInput(el) || isCheckBoxInput(el);
 
 /** Check whether an object has the property. */
-export const hasOwn = (obj: any, key: string) => {
+export const hasOwn = (obj: any, key: string): boolean => {
   return (
     Object.prototype.hasOwnProperty.call(obj, key) ||
     !isNil(Object.getOwnPropertyDescriptor(obj, key))
@@ -121,11 +122,42 @@ const coerceToBoolean = (value: unknown): boolean => {
 export const toBoolean = (value: unknown) => coerceToBoolean(value);
 
 /** Create a memoize version of a pure function. */
-export const memoize = <T>(fn: (str: string) => T) => {
-  const cache = {};
-  return function cachedFn(str) {
-    return cache[str] || (cache[str] = fn(str));
+// export const memoize = <T>(fn: (str: string) => T) => {
+//   const cache = {};
+//   return function cachedFn(str: string) {
+//     return cache[str] || (cache[str] = fn(str));
+//   };
+// };
+
+/** Used as the maximum memoize cache size. */
+const MAX_MEMOIZE_SIZE = 500;
+
+/** Create a memoized version of a pure function. */
+export const memoize = <T>(fn: (str: string) => T, cap: number | boolean = false) => {
+  const memoized = function (str: string) {
+    const key = str;
+    const cache = memoized.cache;
+
+    if (cap) {
+      const cacheSize = isInteger(cap) ? cap : MAX_MEMOIZE_SIZE;
+      if (cache.size === cacheSize) {
+        cache.clear();
+      }
+    }
+
+    if (cache.has(key)) {
+      return cache.get(key);
+    }
+
+    const result = fn(str);
+    memoized.cache = cache.set(key, result) || cache;
+
+    return result;
   };
+
+  memoized.cache = new Map();
+
+  return memoized;
 };
 
 /** Camelize a hyphen-delimited string. */

@@ -9,7 +9,7 @@ const BaseButton = styled.button<ButtonProps>`
   text-align: center;
   background: ${({ variant }) => color[variant] ?? 'transparent'};
   box-shadow: none;
-  color: ${({ variant }) => (variant ? mixin.invert(variant) : color.dark)};
+  color: ${({ variant }) => (variant ? mixin.invert(color[variant]) : color.dark)};
   ${mixin.appearanceNone}
 
   * {

@@ -1,5 +1,4 @@
 export { Button } from './Button';
-export { Collapse } from './Collapse';
 export { Dialog } from './Dialog';
 export { Field } from './Field';
 export { Control } from './Control';
