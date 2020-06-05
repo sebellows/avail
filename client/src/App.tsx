@@ -8,57 +8,36 @@ import React, {
   useRef,
   useReducer,
 } from 'react';
+import styled from 'styled-components';
+import { produce } from 'immer';
 import { generateConfig } from './core/config';
 import { generateSettings } from './core/settings';
 import { Spinner, Tabs, Tab, Button } from './components';
 import { SettingsForm } from './containers/SettingsForm';
 import { UtilitiesForm } from './containers/UtilitiesForm';
 import { FormContext } from './context/FormContext';
-// import { store } from './store';
 
 import './App.scss';
-import {
-  AvailSetting,
-  AvailSettings,
-  AvailSettingField,
-  AvailUtility,
-  AvailUtilities,
-  OptionProps,
-} from './core/contracts';
-import { set } from './core/utils';
+import { reducer } from './reducers';
+import { AvailSettings } from './core/contracts';
+
+const SubmitButton = styled(Button)`
+  position: fixed;
+  top: 90vh;
+  right: 2rem;
+  z-index: 1100;
+`;
 
 const initialUtilities = generateConfig();
 const initialSettings = generateSettings() as AvailSettings;
 
-function reducer(state: AvailSettings, action) {
-  switch (action.type) {
-    case 'export':
-      return {
-        export: { ...state.export, ...{ fields: { ...state.export.fields, ...action.payload } } },
-      };
-    case 'colorSchemes':
-      return { colorSchemes: action.payload };
-    case 'global':
-      return { global: action.payload };
-    case 'border':
-      return { border: action.payload };
-    case 'mediaQuery':
-      return { mediaQuery: action.payload };
-    case 'spacing':
-      return { spacing: action.payload };
-    default:
-      throw new Error();
-  }
-}
-
 export default function App() {
   const [activeTab, setActiveTab] = useState('settings');
-  const [utilities, setUtilities] = useState(initialUtilities);
-  const [settings, setSettings] = useState(initialSettings);
   const [loading, setLoading] = useState(false);
   const [addExitClass, setExitClass] = useState(false);
 
-  // const [state, dispatch] = useReducer(reducer, initialSettings);
+  const [settings, dispatchSettings] = useReducer(reducer, initialSettings);
+  const [utilities, dispatchUtilities] = useReducer(reducer, initialUtilities);
 
   const formRef = useRef(null);
 
@@ -70,21 +49,6 @@ export default function App() {
       return () => clearTimeout(fadeSpinner);
     }
   }, [loading, settings]);
-
-  const updateSettings = useCallback(
-    (path: string | string[], value: string) => {
-      console.log('updateSettings', settings, path, value);
-      setSettings({ ...settings, ...set(settings, path, value) });
-    },
-    [settings],
-  );
-
-  const updateUtilities = useCallback(
-    (utility: AvailUtility) => {
-      setUtilities({ ...utilities, utility });
-    },
-    [utilities],
-  );
 
   function handleLoad(event: AnimationEvent) {
     event.persist();
@@ -102,18 +66,9 @@ export default function App() {
     console.log('submitted', values);
   }
 
-  const submitStyles = {
-    position: 'fixed',
-    top: '90vh',
-    right: '2rem',
-    zIndex: '1100',
-  };
-
   const context = {
-    settings,
-    updateSettings,
-    utilities,
-    updateUtilities,
+    dispatchSettings,
+    dispatchUtilities,
   };
 
   return (
@@ -138,15 +93,15 @@ export default function App() {
             onSelect={(target: string) => setActiveTab(target)}
           >
             <Tab target="settings" title="Global Settings">
-              <SettingsForm />
+              <SettingsForm settings={settings} />
             </Tab>
             <Tab target="utilities" title="Utility Class Configuration">
               <UtilitiesForm id="avail-utilities" utilities={utilities} />
             </Tab>
           </Tabs>
-          <Button type="submit" variant="primary" style={submitStyles}>
+          <SubmitButton type="submit" variant="primary">
             Submit
-          </Button>
+          </SubmitButton>
         </form>
       </FormContext.Provider>
     </div>

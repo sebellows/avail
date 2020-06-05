@@ -27,8 +27,8 @@ import {
   WHITE_50,
 } from './constants';
 import { toOptions } from './models/Option';
-import { toREM } from './style';
-import { AvailUtilities } from './contracts';
+import { toREM, toPX } from './style';
+import { AvailUtilities, AvailUtility } from './contracts';
 import { CSS_VALUE_PRESETS } from './presets';
 
 const createSpacers = (prefix = '') =>
@@ -194,7 +194,7 @@ const Config = (
     items: [
       {
         name: '',
-        value: `${BORDER_WIDTH} solid ${BORDER_COLOR}`,
+        value: `${toPX(BORDER_WIDTH)} solid ${BORDER_COLOR}`,
       },
       {
         name: '0',
@@ -316,14 +316,14 @@ const Config = (
     inputType: 'text',
     items: [{ name: '100', value: '100%' }],
   },
-  viewportWidth: {
-    enabled: true,
-    responsive: false,
-    property: 'width',
-    class: 'vw',
-    inputType: 'text',
-    items: [{ name: '100', value: '100vw' }],
-  },
+  // viewportWidth: {
+  //   enabled: true,
+  //   responsive: false,
+  //   property: 'width',
+  //   class: 'vw',
+  //   inputType: 'text',
+  //   items: [{ name: '100', value: '100vw' }],
+  // },
   minViewportWidth: {
     enabled: true,
     responsive: false,
@@ -369,14 +369,14 @@ const Config = (
     inputType: 'text',
     items: [{ name: '100', value: '100%' }],
   },
-  viewportHeight: {
-    enabled: true,
-    responsive: false,
-    property: 'height',
-    class: 'vh',
-    inputType: 'text',
-    items: [{ name: '100', value: '100vh' }],
-  },
+  // viewportHeight: {
+  //   enabled: true,
+  //   responsive: false,
+  //   property: 'height',
+  //   class: 'vh',
+  //   inputType: 'text',
+  //   items: [{ name: '100', value: '100vh' }],
+  // },
   minViewportHeight: {
     enabled: true,
     responsive: false,
@@ -1190,6 +1190,11 @@ const Config = (
 
 export function generateConfig(utils: AvailUtilities = {}): AvailUtilities {
   const config = Config(utils);
+
+  // return Object.keys(config).map((key) => {
+  //   config[key].id = key;
+  //   return config[key];
+  // });
 
   return Object.entries(config).reduce((form, [key, value]) => {
     form[key] = { id: key, ...value };

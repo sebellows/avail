@@ -1,4 +1,4 @@
-import React, { ChangeEvent, forwardRef, Ref, useState } from 'react';
+import React, { ChangeEvent, forwardRef, Ref, useState, useEffect } from 'react';
 
 import { classNames } from '../../core/utils/classNames';
 import { OptionProps as Option } from '../../core/contracts';
@@ -15,7 +15,7 @@ import { FormArrayProps } from './props';
 const Repeater = forwardRef<{}, FormArrayProps>(
   (
     {
-      id: initialId,
+      id,
       className = '',
       error,
       inputType,
@@ -23,6 +23,7 @@ const Repeater = forwardRef<{}, FormArrayProps>(
       legend = null,
       options,
       keyLabel = 'Utility Class Suffix',
+      readOnly = false,
       valueLabel = 'Property Value',
       onAdd,
       onChange,
@@ -31,27 +32,24 @@ const Repeater = forwardRef<{}, FormArrayProps>(
     },
     ref: Ref<any>,
   ) => {
-    const [items, setItems] = useState(initialItems as Option[]);
+    const [items, setItems] = useState([]);
 
-    // const id = `${initialId}-repeater`;
-    const id = initialId;
+    useEffect(() => {
+      setItems(initialItems as Option[]);
+    }, [initialItems]);
 
     function handleAdd(event: any) {
       const newItem = { name: '', value: '' };
 
       setItems([...items, newItem]);
 
-      if (onAdd) {
-        onAdd(event);
-      }
+      onAdd?.(event);
     }
 
     function handleRemove(index: number) {
       setItems([...items.slice(0, index), ...items.slice(index + 1)]);
 
-      if (onRemove) {
-        onRemove(index);
-      }
+      onRemove?.(index);
     }
 
     function handleChange(key: string, index: number, event: any) {
@@ -63,9 +61,7 @@ const Repeater = forwardRef<{}, FormArrayProps>(
 
       setItems(updateItems);
 
-      if (onChange) {
-        onChange(event);
-      }
+      onChange?.(event);
     }
 
     function handleBlur(event: any) {
@@ -76,53 +72,59 @@ const Repeater = forwardRef<{}, FormArrayProps>(
       <Styled.Wrapper ref={ref} id={id} className={classNames('repeater', className)}>
         {legend && <Styled.Legend>{legend}</Styled.Legend>}
         {items.length &&
-          items.map((item: Option, i: number) => (
-            <RepeaterItem
-              key={`${id}_items_${i}`}
-              before={i}
-              onAdd={handleAdd}
-              onRemove={(i: number) => handleRemove(i)}
-            >
-              <Styled.Field>
-                <Styled.Label first={i === 0} htmlFor={`${id}_items_${i}_name`}>
-                  {keyLabel}
-                </Styled.Label>
-                <Control
-                  id={`${id}_items_${i}_name`}
-                  name={`${id}_items_${i}_name`}
-                  className={classNames(i === 0 && 'first')}
-                  value={item.name}
-                  onBlur={handleBlur}
-                  onChange={(event: ChangeEvent) => handleChange('name', i, event)}
-                  isValid={!error || !error[id]}
-                  isInvalid={error && error[id]}
-                />
-              </Styled.Field>
+          items.map((item: Option, i: number) => {
+            const nameID = `${id}_items_${i}_name`;
+            const valueID = `${id}_items_${i}_value`;
 
-              <Styled.Separator className="sep" aria-hidden="true">
-                :
-              </Styled.Separator>
+            return (
+              <RepeaterItem
+                key={`${id}_items_${i}`}
+                before={i}
+                onAdd={handleAdd}
+                onRemove={(i: number) => handleRemove(i)}
+              >
+                <Styled.Field>
+                  <Styled.Label first={i === 0} htmlFor={nameID}>
+                    {keyLabel}
+                  </Styled.Label>
+                  <Control
+                    id={nameID}
+                    name={nameID}
+                    className={classNames(i === 0 && 'first')}
+                    value={item.name}
+                    onBlur={handleBlur}
+                    onChange={(event: ChangeEvent) => handleChange('name', i, event)}
+                    isValid={!error || !error[id]}
+                    isInvalid={error && error[id]}
+                  />
+                </Styled.Field>
 
-              <Styled.Field>
-                <Styled.Label first={i === 0} htmlFor={`${id}_items_${i}_value`}>
-                  {valueLabel}
-                </Styled.Label>
-                <FormControlResolver
-                  type={inputType}
-                  id={`${id}_items_${i}_value`}
-                  name={`${id}_items_${i}_value`}
-                  arialabel={`${id}_items_${i}_value`}
-                  value={item.value}
-                  readOnly={item.readOnly}
-                  options={options}
-                  onBlur={handleBlur}
-                  onChange={(event: ChangeEvent) => handleChange('value', i, event)}
-                  isValid={!error || !error[id]}
-                  isInvalid={error && error[id]}
-                />
-              </Styled.Field>
-            </RepeaterItem>
-          ))}
+                <Styled.Separator className="sep" aria-hidden="true">
+                  :
+                </Styled.Separator>
+
+                <Styled.Field>
+                  <Styled.Label first={i === 0} htmlFor={valueID}>
+                    {valueLabel}
+                  </Styled.Label>
+                  <FormControlResolver
+                    type={inputType}
+                    id={valueID}
+                    name={valueID}
+                    arialabel={valueID}
+                    value={item.value}
+                    readOnly={readOnly}
+                    disabled={readOnly}
+                    options={options}
+                    onBlur={handleBlur}
+                    onChange={(event: ChangeEvent) => handleChange('value', i, event)}
+                    isValid={!error || !error[id]}
+                    isInvalid={error && error[id]}
+                  />
+                </Styled.Field>
+              </RepeaterItem>
+            );
+          })}
         {props?.description && <FieldDescription>{props?.description}</FieldDescription>}
         {props?.isInvalid && error && <FieldFeedback type="invalid">{error[id]}</FieldFeedback>}
       </Styled.Wrapper>

@@ -91,7 +91,7 @@ export const toString = (val: unknown): string => {
  * Convert an input value to a number for persistence.
  * If the conversion fails, return original string.
  */
-export const toNumber = (val: unknown): number | unknown => {
+export const toNumber = (val: any): number | any => {
   const num = parseFloat(String(val));
   return isNaN(num) ? val : num;
 };

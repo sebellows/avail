@@ -1,5 +1,5 @@
 import * as CONST from '../constants';
-import { hyphenate, isPlainObject } from '../utils';
+import { hyphenate, isPlainObject, typeOf } from '../utils';
 import { OptionProps } from '../contracts';
 
 export class Option implements OptionProps {
@@ -16,29 +16,31 @@ export class Option implements OptionProps {
   }
   set value(value: string) {
     value = typeof value == 'string' ? value : `${value}`;
-
-    if (value.endsWith('px')) {
-      this._value = parseInt(value, 10).toString();
-    } else {
-      this._value = hyphenate(value);
-    }
+    this._value = hyphenate(value);
   }
   private _value: string;
 
   readOnly = false;
 
-  constructor(item: string | [string, string] | Record<string, any>) {
-    if (typeof item == 'string') {
-      this.name = item;
-      this.value = CONST[item] ?? item;
-    } else if (Array.isArray(item)) {
-      const [name, value] = item;
-      this.name = name;
-      this.value = this._getValue(value);
-    } else {
-      const { name, value } = item;
-      this.name = name;
-      this.value = this._getValue(value);
+  constructor(item: string | [string, string] | OptionProps) {
+    switch (typeOf(item)) {
+      case 'string':
+        item = item as string;
+        this.name = item;
+        this.value = CONST[item] ?? item;
+        break;
+      case 'array':
+        this.name = item[0];
+        this.value = this._getValue(item[1]);
+        break;
+      case 'object':
+        const { name, value } = item as OptionProps;
+        this.name = (name ?? value) as string;
+        this.value = this._getValue(value);
+        break;
+      default:
+        this.name = 'ERROR';
+        this.value = 'error';
     }
   }
 
@@ -69,7 +71,7 @@ const optionsFactory = (
 };
 
 export const toOptions = (...collection: any[]): OptionProps[] => {
-  return collection.reduce((acc: OptionProps[], item: string | Record<string, any> | string[]) => {
+  return collection.reduce((acc: OptionProps[], item: string | OptionProps | [string, string]) => {
     acc.push(...optionsFactory(item));
     return acc;
   }, [] as OptionProps[]);

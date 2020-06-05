@@ -39,16 +39,15 @@ const Styled = {
   `,
 };
 
-const SettingsForm: FC<{}> = React.memo(() => {
+const SettingsForm: FC<SettingsFormProps> = React.memo(({ settings }) => {
   return (
     <FormContext.Consumer>
-      {(context: FormContextState) =>
-        Object.entries(context.settings).map(([id, setting], i: number) => {
-          const fieldsetID = `settings_${id}`;
+      {({ dispatchSettings }) =>
+        Object.entries(settings).map(([id, setting], i: number) => {
           const { legend, fields: fieldsMap } = setting;
 
           if (!setting.fields) {
-            console.log('No fieldsMap', id, context.settings, setting);
+            console.log('No fieldsMap', id, settings, setting);
             return (
               <h1 key={id} className="text-danger">
                 No fieldsMap
@@ -63,43 +62,28 @@ const SettingsForm: FC<{}> = React.memo(() => {
                 field.legend = legend;
               }
 
-              const fieldID = `${fieldsetID}_fields_${key}`;
-
-              return (
-                <FormControlResolver
-                  key={fieldID}
-                  {...field}
-                  type={field.type}
-                  id={fieldID}
-                  className="mb-3"
-                  // onChange={(event: any) => {
-                  //   const paths = [...event.target.name.split('_'), 'value'];
-                  //   context.updateSettings(paths, event.target.value);
-                  // }}
-                />
-              );
+              return <FormControlResolver key={field.id} {...field} className="mb-3" />;
             });
           }
           return (
-            <Styled.Fieldset id={fieldsetID} key={fieldsetID}>
+            <Styled.Fieldset id={id} key={id}>
               <legend className="font-size-lg">{setting.legend}</legend>
               <Styled.Fields className="fields">
                 {fields.map(([key, field], idx: number) => {
-                  const fieldID = `${fieldsetID}_fields_${key}`;
                   if (field.attrs) {
                     field = { ...field, ...field.attrs };
                     delete field.attrs;
                   }
                   return (
                     <Field
-                      key={fieldID}
+                      key={field.id}
                       className={classNames(
                         field?.classMap?.container,
                         field.type === 'repeater' && 'has-fieldset',
                       )}
                     >
                       {field?.label && (
-                        <label htmlFor={fieldID} className={classNames(field?.classMap?.label)}>
+                        <label htmlFor={field.id} className={classNames(field?.classMap?.label)}>
                           {field.label}
                         </label>
                       )}
@@ -107,27 +91,8 @@ const SettingsForm: FC<{}> = React.memo(() => {
                         <FormControlResolver
                           {...field}
                           type={field.type}
-                          id={fieldID}
+                          id={field.id}
                           className={classNames(field?.classMap?.control)}
-                          onBlur={(event: any) => {
-                            const paths = event.target.name.split('_');
-                            if (field.type !== 'repeater') {
-                              paths.push('value');
-                            }
-                            console.log('updateSettings', paths, event, context.settings);
-                            context.updateSettings(paths, event.target.value);
-                          }}
-                          onChange={(event: any) => {
-                            if (
-                              field.type === 'radiogroup' ||
-                              field.type === 'checkbox' ||
-                              field.type === 'select'
-                            ) {
-                              const paths = event.target.name.split('_');
-                              console.log('updateSettings', paths, event, context.settings);
-                              context.updateSettings([...paths, 'value'], event.target.value);
-                            }
-                          }}
                         />
                       }
                       {/* `radiogroup` already sets a description */}

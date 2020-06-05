@@ -1,8 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { forwardRef, Ref } from 'react';
+import React, { forwardRef, Ref, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { classNames } from '../../core/utils';
+import { classNames, LEFT, RIGHT, listen } from '../../core/utils';
 import { ChevronLeftIcon, ChevronRightIcon } from '../Icon';
 import { Styled } from './styles';
 
@@ -20,18 +20,29 @@ const ModalContent = forwardRef<{}, any>(
     },
     ref: Ref<any>,
   ) => {
+    useEffect(() => {
+      listen(document.body, 'keyup', (event: any) => {
+        event.preventDefault();
+        // Prevent from being fired twice
+        event.stopImmediatePropagation();
+
+        if (event.keyCode === LEFT) {
+          onClickPrev?.(event);
+        }
+        if (event.keyCode === RIGHT) {
+          onClickNext?.(event);
+        }
+      });
+    }, [onClickPrev, onClickNext]);
+
     function handleClickPrev(event: any) {
       event.preventDefault();
-      if (onClickPrev) {
-        onClickPrev(event);
-      }
+      onClickPrev?.(event);
     }
 
     function handleClickNext(event: any) {
       event.preventDefault();
-      if (onClickNext) {
-        onClickNext(event);
-      }
+      onClickNext?.(event);
     }
 
     return createPortal(

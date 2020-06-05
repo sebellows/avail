@@ -36,7 +36,7 @@ export const Styled = {
     background-color: ${color.bg.body};
     background-clip: padding-box;
     ${mixin.borderRadius('lg')}
-    box-shadow: ${mixin.shadow(2, 3)};
+    ${mixin.shadow(2, 3)};
     outline: 0;
     pointer-events: auto;
     z-index: ${zIndexes.dialog};

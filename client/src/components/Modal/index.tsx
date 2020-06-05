@@ -56,8 +56,9 @@ const Modal = forwardRef<{}, any>(
       setExited(false);
     });
 
-    const handleClose = useEventCallback(() => {
+    const handleClose = useEventCallback((msg?: string) => {
       onClose?.();
+      console.log('Modal->handleClose', `msg: ${msg}`);
 
       noScroll.off();
 
@@ -75,32 +76,32 @@ const Modal = forwardRef<{}, any>(
 
       prevShow.current = show;
 
-      return () => handleClose();
-    }, [show, handleClose, handleShow]);
+      // return () => handleClose('Modal->useEffect->handleShow');
+    }, [show, handleShow]);
 
     useEffect(() => {
       const { current: wasShown } = prevShow;
       if (!exited || (exited && wasShown)) return;
 
-      handleClose();
+      handleClose('Modal->useEffect->handleClose');
     }, [exited, handleClose, prevShow]);
 
     useWillUnmount(() => {
       setExited(true);
       const closeout = setTimeout(() => {
         if (!prevShow.current) {
-          handleClose();
+          handleClose('Modal->useWillUnmount->prevShow.current');
         }
       });
       clearTimeout(closeout);
     });
 
     const handleKeyUp = (event: any) => {
+      // console.log('Modal->handleKeyUp called', event.keyCode, `ESCAPE = ${ESCAPE}`);
       if (event.keyCode === ESCAPE) {
-        onClose?.(event);
-      }
-      if (onKeyUp) {
-        onKeyUp(event);
+        handleClose('Modal->handleKeyUp->escape');
+      } else {
+        onKeyUp?.(event);
       }
     };
 

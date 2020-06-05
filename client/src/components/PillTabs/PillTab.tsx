@@ -8,13 +8,23 @@ import { PillTabProps } from './props';
 
 const PillTab = forwardRef<{}, PillTabProps>(
   (
-    { selected = false, checked = false, children, id, value, onSelect, ...props },
+    {
+      selected = false,
+      checked = false,
+      checkboxID,
+      children,
+      id,
+      value,
+      onChange,
+      onSelect,
+      ...props
+    },
     ref: Ref<any>,
   ) => {
     return (
       <Styled.Tab id={id} ref={ref} className={classNames('pill-tab', props.className)}>
         <Styled.TabContent>
-          <Styled.TabSwitch name={`${id}-active`} checked={checked} value={value}>
+          <Styled.TabSwitch name={checkboxID} checked={checked} value={value} onChange={onChange}>
             {children}
           </Styled.TabSwitch>
         </Styled.TabContent>

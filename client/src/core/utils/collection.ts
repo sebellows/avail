@@ -9,6 +9,7 @@ import {
   isNil,
   isDefined,
   isObject,
+  toNumber,
 } from './common';
 import { range } from './range';
 
@@ -31,9 +32,6 @@ export const collection = <T>(
       return _current;
     },
     set current(keyOrItem: string | number | T) {
-      // if (!keys[key]) {
-      //   throw new Error(`${key} does not exist in the collection.`);
-      // }
       if (isPlainObject(keyOrItem)) {
         currIndex = keys.findIndex((key) => key === keyOrItem[trackingKey]);
         _current = keyOrItem;
@@ -65,10 +63,7 @@ export const collection = <T>(
       return last(items, paramOrFn);
     },
     map: function (fn: (item: T, index?: number, arr?: T[]) => any) {
-      if (isPlainObject(items)) {
-        return this.values().map(fn);
-      }
-      return (items as T[]).map(fn);
+      return isPlainObject(items) ? this.values().map(fn) : (items as T[]).map(fn);
     },
     values: function (): T[] {
       return isPlainObject(items) ? (Object.values(items) as T[]) : (items as T[]);
@@ -102,38 +97,17 @@ export const getNestedProp = (obj: any, key: string) => {
   }
 };
 
-export const setNestedProp = (obj: Record<string, any>, prop: string, value: any) => {
-  set(obj, prop, value);
-  // if (isPlainObject(obj)) {
-  //   for (const key in obj) {
-  //     if (key === prop) {
-  //       if (isPlainObject(obj[prop]) && isPlainObject(value)) {
-  //         obj[prop] = { ...obj[prop], ...value };
-  //       } else {
-  //         obj[prop] = value;
-  //       }
-  //       break;
-  //     }
-  //     setNestedProp(obj[key], prop, value);
-  //   }
-  // }
-};
-
 const _getPosition = (
   values: any,
   paramOrFn: string | Function = null,
   position: number | 'first' | 'last',
 ) => {
   function getFirstOrLast(arr: any[]) {
-    if (arr.length) {
-      if (position === 'last' || position === 'first') {
-        return position === 'last' ? arr.reverse()[0] : arr[0];
-      }
-      if (typeof position == 'number' && arr[position]) {
-        return arr[position];
-      }
-    }
-    return arr;
+    if (!arr.length) return arr;
+
+    const index = position === 'first' ? 0 : position;
+
+    return position === 'last' ? arr[arr.length - 1] : arr[index];
   }
 
   if (typeof values == 'string') {
@@ -145,24 +119,24 @@ const _getPosition = (
       const strs = values.split(sep);
       return getFirstOrLast(strs);
     }
-  } else if ((Array.isArray(values) && values.length) || isIterable(values)) {
-    let valuesArr = Array.isArray(values) ? values : Array.from(values);
-
-    if (paramOrFn) {
-      if (typeof paramOrFn == 'string') {
-        valuesArr = values.filter((val) => {
-          if (isPlainObject(val) && paramOrFn in val) {
-            return val;
-          }
-          return val === paramOrFn;
-        });
-      } else if (typeof paramOrFn == 'function') {
-        valuesArr = paramOrFn(values);
-      }
-    }
-    return getFirstOrLast(valuesArr);
   }
-  return values;
+
+  if (!Array.isArray(values) && !isIterable(values)) return values;
+
+  const valuesArr = isIterable(values) ? Array.from(values) : values;
+
+  if (paramOrFn) {
+    if (typeof paramOrFn == 'function') {
+      return getFirstOrLast(paramOrFn(valuesArr));
+    }
+    return getFirstOrLast(
+      valuesArr.filter((val) => {
+        return (isPlainObject(val) && paramOrFn in val) || val === paramOrFn;
+      }),
+    );
+  }
+
+  return getFirstOrLast(valuesArr);
 };
 
 export const first = (values: any, paramOrFn?: string | Function): any => {
@@ -183,7 +157,7 @@ export const clone = (value: any, callback?: Function) => {
 };
 
 const cloneObjectDeep = (value: any, callback?: Function) => {
-  if (typeof callback === 'function') {
+  if (callback && typeof callback === 'function') {
     return callback(value);
   }
   if (Object.keys(value).length) {
@@ -215,8 +189,7 @@ const propNameRE = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?
  *
  * @example
  * ```
- * toPath('a[0].b.c');
- * // => ['a', '0', 'b', 'c']
+ * toPath('a[0].b.c'); // => ['a', '0', 'b', 'c']
  * ```
  */
 export const toPath = (value: string | Symbol | (string | Symbol)[]): (string | Symbol)[] => {
@@ -292,6 +265,55 @@ export function get(obj: object, path: string | string[], defaultValue: any = un
 
   return index && index == paths.length ? obj : defaultValue;
 }
+
+/**
+ * Checks if `path` exists on `object`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @param {Array|string} path The path to check.
+ * @param {Function} hasFunc The function to check properties.
+ * @returns {boolean} Returns `true` if `path` exists, else `false`.
+ */
+export function has(obj: object, path: string | string[], hasFunc?: Function): boolean {
+  if (isNil(obj)) return false;
+
+  path = castPath(path, obj);
+
+  let i = -1;
+  let length = path.length;
+  let result = false;
+
+  while (++i < length) {
+    const key = toKey(path[i]);
+    if (!(result = obj != null && hasFunc(obj, key))) {
+      break;
+    }
+    obj = obj[toString(key)];
+  }
+
+  if (result || ++i != length) {
+    return result;
+  }
+
+  return Array.isArray(obj) && !!obj[toNumber(path)];
+}
+
+export const setNestedProp = (obj: Record<string, any>, prop: string, value: any) => {
+  if (isPlainObject(obj)) {
+    for (const key in obj) {
+      if (key === prop) {
+        if (isPlainObject(obj[prop]) && isPlainObject(value)) {
+          obj[prop] = { ...obj[prop], ...value };
+        } else {
+          obj[prop] = value;
+        }
+        break;
+      }
+      setNestedProp(obj[key], prop, value);
+    }
+  }
+};
 
 /**
  * Sets the value at `path` of `object`. If a portion of `path` doesn't exist,

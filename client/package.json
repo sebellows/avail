@@ -18,6 +18,7 @@
     "@typescript-eslint/typescript-estree": "^2.28.0",
     "color": "^3.1.2",
     "framer-motion": "^1.10.3",
+    "immer": "^6.0.9",
     "node-sass": "^4.13.1",
     "prismjs": "^1.20.0",
     "react": "^16.13.1",

@@ -1,10 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { forwardRef, InputHTMLAttributes, Ref, useState } from 'react';
+import React, {
+  forwardRef,
+  InputHTMLAttributes,
+  Ref,
+  useEffect,
+  useState,
+  ChangeEvent,
+  useRef,
+} from 'react';
 import styled from 'styled-components';
 
 import { OptionProps, ComponentProps } from '../core/contracts';
 import { validFormProps, classNames } from '../core/utils';
 import { control, transition, radius, mixin } from '../core/style';
+import { usePrevious } from '../hooks/usePrevious';
 
 export type ControlType = HTMLSelectElement | HTMLTextAreaElement | HTMLInputElement;
 
@@ -66,23 +75,15 @@ export const Styled = {
 
 const Control = forwardRef<{}, ControlProps>(
   (
-    {
-      className,
-      disabled: initialDisabled,
-      type = 'text',
-      isValid,
-      isInvalid,
-      value: initialValue,
-      ...props
-    },
+    { className, disabled: initialDisabled, type = 'text', isValid, isInvalid, value, ...props },
     ref: Ref<any>,
   ) => {
-    const [value, setValue] = useState(initialValue);
+    // const [value, setValue] = useState(initialValue);
     const [disabled, setDisabled] = useState(initialDisabled);
 
     const formProps = validFormProps(props, { exclude: ['onChange'] });
 
-    React.useEffect(() => {
+    useEffect(() => {
       if (!formProps.name && formProps.id) {
         formProps.name = formProps.id;
       }
@@ -92,27 +93,21 @@ const Control = forwardRef<{}, ControlProps>(
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    function handleChange(event: any) {
+    function handleChange(event: ChangeEvent<HTMLInputElement>) {
       event.persist();
-      setValue(event.target.value);
-
-      if (props.onChange) {
-        props.onChange(event);
-      }
+      props?.onChange?.(event);
     }
 
     return (
-      <>
-        <Styled.Input
-          {...formProps}
-          ref={ref}
-          type={type}
-          value={value}
-          disabled={disabled}
-          className={classNames('control', className)}
-          onChange={handleChange}
-        />
-      </>
+      <Styled.Input
+        {...formProps}
+        ref={ref}
+        type={type}
+        value={value}
+        disabled={disabled}
+        className={classNames('control', className)}
+        onChange={handleChange}
+      />
     );
   },
 );
