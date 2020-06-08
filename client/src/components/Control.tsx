@@ -70,32 +70,37 @@ export const Styled = {
     &:focus {
       border-color: ${control.focus.borderColor};
     }
+
+    &.is-invalid {
+      background-color: ${control.invalid.bg};
+      border-color: ${control.invalid.borderColor};
+      color: ${control.invalid.color};
+    }
   `,
 };
 
-const Control = forwardRef<{}, ControlProps>(
+const Control = forwardRef<HTMLInputElement, ControlProps>(
   (
-    { className, disabled: initialDisabled, type = 'text', isValid, isInvalid, value, ...props },
-    ref: Ref<any>,
+    {
+      className,
+      disabled,
+      id,
+      isValid,
+      isInvalid,
+      name,
+      onChange,
+      readOnly,
+      type = 'text',
+      value,
+      ...props
+    },
+    ref: Ref<HTMLInputElement>,
   ) => {
-    // const [value, setValue] = useState(initialValue);
-    const [disabled, setDisabled] = useState(initialDisabled);
-
     const formProps = validFormProps(props, { exclude: ['onChange'] });
-
-    useEffect(() => {
-      if (!formProps.name && formProps.id) {
-        formProps.name = formProps.id;
-      }
-      if (formProps.readOnly) {
-        setDisabled(true);
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
 
     function handleChange(event: ChangeEvent<HTMLInputElement>) {
       event.persist();
-      props?.onChange?.(event);
+      onChange?.(event);
     }
 
     return (
@@ -103,9 +108,11 @@ const Control = forwardRef<{}, ControlProps>(
         {...formProps}
         ref={ref}
         type={type}
+        id={id ?? name}
+        name={name ?? id}
         value={value}
-        disabled={disabled}
-        className={classNames('control', className)}
+        disabled={readOnly ?? disabled}
+        className={classNames('control', { 'is-invalid': !!isInvalid }, className)}
         onChange={handleChange}
       />
     );

@@ -11,6 +11,7 @@ export interface FormArrayProps extends ComponentProps {
   classMap?: ClassMap;
   description?: string;
   error?: Record<string, any>; // TODO: replace with FieldError map?
+  id?: string;
   keyLabel?: string;
   valueLabel?: string;
   legend?: string;

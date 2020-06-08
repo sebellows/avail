@@ -50,6 +50,22 @@ export interface AvailUtilities {
   [key: string]: AvailUtility;
 }
 
-export interface AvailConfig<T> {
+export interface AvailConfig<T extends AvailSetting | AvailUtility> {
   [key: string]: T;
+}
+
+export interface AvailState<T = AvailSetting | AvailUtility> {
+  config: AvailConfig<T>;
+  inProgress?: boolean;
+}
+
+export interface StateConfig {
+  name: string;
+  value: string | boolean;
+}
+
+export interface StateActionConfig {
+  type: string;
+  config?: StateConfig;
+  inProgress?: boolean;
 }

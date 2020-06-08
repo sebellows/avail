@@ -8,12 +8,14 @@ import React, {
   Fragment,
   FC,
   ChangeEvent,
+  useContext,
+  useCallback,
 } from 'react';
 import Prism from 'prismjs';
 
 import { usePrevious } from '../hooks/usePrevious';
 import { useClickOutside } from '../hooks/useClickOutside';
-import { AvailUtility, AvailUtilities, ComponentProps } from '../core/contracts';
+import { AvailUtility, AvailUtilities, ComponentProps, StateConfig } from '../core/contracts';
 import { generateUtility, generateResponsiveUtility } from '../core/build';
 import { classNames } from '../core/utils';
 
@@ -29,7 +31,7 @@ import {
 } from '../components';
 
 import '../styles/prism.css';
-import { FormContext, FormContextState } from '../context/FormContext';
+import { UtilitiesContext, SET_CONFIG } from '../store';
 
 const DialogTitle = ({ children }) => (
   <h3 className="font-size-lg font-weight-bold mb-0">
@@ -38,10 +40,12 @@ const DialogTitle = ({ children }) => (
 );
 
 export interface UtilitiesFormProps extends ComponentProps {
-  utilities: AvailUtilities;
+  utilities?: AvailUtilities;
 }
 
-const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, utilities, ...props }) => {
+const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
+  const [utilities, setUtilities] = useContext(UtilitiesContext);
+
   const [activeModel, setActiveModel] = useState(null);
   const lastActiveModel = usePrevious(activeModel);
   const [open, setOpen] = useState(false);
@@ -50,6 +54,13 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, utilities, ...pr
   const dialogRef = useRef(null);
   const fieldsetRef = useRef(null);
   const activeIndex = useRef(0);
+
+  const onUpdate = useCallback(
+    (config: StateConfig) => {
+      setUtilities({ type: SET_CONFIG, config });
+    },
+    [setUtilities],
+  );
 
   useEffect(() => {
     Prism.highlightAll();
@@ -97,104 +108,76 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, utilities, ...pr
     setOpen(false);
   }
 
-  // function handleUtilityChange(event: any) {
-  //   if (event?.target) {
-  //     if (event?.target.type === 'checkbox') {
-  //       setActiveModel({ ...activeModel, responsive: event.target.checked });
-  //     } else {
-  //       setActiveModel({ ...activeModel, class: event.target.value });
-  //     }
-  //   } else if (Array.isArray(event)) {
-  //     setActiveModel({ ...activeModel, items: event });
-  //   }
-  // }
-
   return (
-    <FormContext.Consumer>
-      {({ dispatchUtilities }) => (
-        <Fragment>
-          <PillTabs id={id} className={classNames('utility-tabs', props.className)}>
-            {Object.values(utilities).map((utility: AvailUtility, i: number) => (
-              <PillTab
-                key={`${utility.id}-${i}`}
-                id={`pill-tab-${utility.id}`}
-                value={`${utility.id}_enabled`}
-                checkboxID={`${utility.id}_enabled`}
-                checked={utility.enabled}
-                onChange={({ target: { name, checked } }) =>
-                  dispatchUtilities({ name, value: `${checked}` })
-                }
-                selected={activeModel?.id === utility.id}
-                onSelect={() => handleSelect(utility)}
-              >
-                <code className="font-size-base">{utility.property}</code>
-              </PillTab>
-            ))}
-          </PillTabs>
-
-          <Modal
-            show={open && activeModel}
-            onClose={handleClose}
-            onClickPrev={handleClickPrev}
-            onClickNext={handleClickNext}
+    <Fragment>
+      <PillTabs id={id} className={classNames('utility-tabs', props.className)}>
+        {Object.values(utilities.config).map((utility: AvailUtility, i: number) => (
+          <PillTab
+            key={`${utility.id}-${i}`}
+            id={`pill-tab-${utility.id}`}
+            value={`${utility.id}_enabled`}
+            checkboxID={`${utility.id}_enabled`}
+            checked={utility.enabled}
+            onChange={({ target: { name, checked } }) => {
+              setUtilities({ type: SET_CONFIG, config: { name, value: `${checked}` } });
+            }}
+            selected={activeModel?.id === utility.id}
+            onSelect={() => handleSelect(utility)}
           >
-            {activeModel?.id && (
-              <Dialog
-                ref={dialogRef}
-                title={<DialogTitle>{activeModel.property}</DialogTitle>}
-                onClose={handleClose}
-              >
-                <div id={`utility-${activeModel.id}`}>
-                  {activeModel.description && <p>{activeModel.description}</p>}
-                  <fieldset ref={fieldsetRef}>
-                    <Field>
-                      <label htmlFor={`${activeModel.id}_class`}>Root class prefix:</label>
-                      <Control
-                        name={`${activeModel.id}_class`}
-                        value={activeModel.class}
-                        aria-label={'Root class prefix'}
-                        onBlur={(event: any) => {
-                          // handleUtilityChange(event);
-                          const { name, value } = event.target;
-                          dispatchUtilities({ name, value });
-                        }}
-                        required
-                      />
-                    </Field>
-                    <ToggleControl
-                      name={`${activeModel.id}_responsive`}
-                      value="responsive"
-                      checked={activeModel.responsive}
-                      onChange={(event) => {
-                        // handleUtilityChange(event);
-                        const { name, value } = event.target;
-                        dispatchUtilities({ name, value });
-                      }}
-                    >
-                      <span>Make responsive classes?</span>
-                    </ToggleControl>
-                    <Repeater
-                      {...activeModel}
-                      id={`${activeModel.id}`}
-                      onChange={(event) => {
-                        // handleUtilityChange(event);
-                        const { name, value } = event.target;
-                        dispatchUtilities({ name, value });
-                      }}
-                    />
-                  </fieldset>
-                  <output className="output">
-                    <pre>
-                      <code className="language-css">{output}</code>
-                    </pre>
-                  </output>
-                </div>
-              </Dialog>
-            )}
-          </Modal>
-        </Fragment>
-      )}
-    </FormContext.Consumer>
+            <code className="font-size-base">{utility.property}</code>
+          </PillTab>
+        ))}
+      </PillTabs>
+
+      <Modal
+        show={open && activeModel}
+        onClose={handleClose}
+        onClickPrev={handleClickPrev}
+        onClickNext={handleClickNext}
+      >
+        {activeModel?.id && (
+          <Dialog
+            ref={dialogRef}
+            title={<DialogTitle>{activeModel.property}</DialogTitle>}
+            onClose={handleClose}
+          >
+            <div id={`utility-${activeModel.id}`}>
+              {activeModel.description && <p>{activeModel.description}</p>}
+              <fieldset ref={fieldsetRef}>
+                <Field>
+                  <label htmlFor={`${activeModel.id}_class`}>Root class prefix:</label>
+                  <Control
+                    name={`${activeModel.id}_class`}
+                    value={activeModel.class}
+                    aria-label={'Root class prefix'}
+                    onBlur={({ target: { name, value } }) => {
+                      setUtilities({ type: SET_CONFIG, config: { name, value } });
+                    }}
+                    required
+                  />
+                </Field>
+                <ToggleControl
+                  name={`${activeModel.id}_responsive`}
+                  value="responsive"
+                  checked={activeModel.responsive}
+                  onChange={({ target: { name, value } }) => {
+                    setUtilities({ type: SET_CONFIG, config: { name, value } });
+                  }}
+                >
+                  <span>Make responsive classes?</span>
+                </ToggleControl>
+                <Repeater {...activeModel} id={`${activeModel.id}`} onUpdate={onUpdate} />
+              </fieldset>
+              <output className="output">
+                <pre>
+                  <code className="language-css">{output}</code>
+                </pre>
+              </output>
+            </div>
+          </Dialog>
+        )}
+      </Modal>
+    </Fragment>
   );
 });
 

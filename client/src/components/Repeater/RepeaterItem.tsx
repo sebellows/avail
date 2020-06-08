@@ -18,6 +18,14 @@ const RepeaterItem = forwardRef<{}, FormArrayProps>(
     },
     ref: Ref<any>,
   ) => {
+    function handleAdd() {
+      onAdd?.({ name: id, value: '' });
+    }
+
+    function handleRemove() {
+      onRemove?.(id);
+    }
+
     return (
       <StyledItem.Wrapper ref={ref} className={classNames('repeater-item', className)}>
         {!isNil(before) && (
@@ -27,10 +35,14 @@ const RepeaterItem = forwardRef<{}, FormArrayProps>(
         <StyledItem.Group className="repeater-item-group">{children}</StyledItem.Group>
 
         <StyledItem.Append className="repeater-item-append">
-          <button type="button" className="btn fab mini-fab btn-default add" onClick={onAdd}>
+          <button type="button" className="btn fab mini-fab btn-default add" onClick={handleAdd}>
             <PlusIcon size="12" />
           </button>
-          <button type="button" className="btn fab mini-fab btn-default remove" onClick={onRemove}>
+          <button
+            type="button"
+            className="btn fab mini-fab btn-default remove"
+            onClick={handleRemove}
+          >
             <MinusIcon size="12" />
           </button>
         </StyledItem.Append>

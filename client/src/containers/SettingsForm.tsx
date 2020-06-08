@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { FC, Fragment, useMemo } from 'react';
-import { AvailConfig, AvailSetting, ComponentProps } from '../core/contracts';
+import React, { FC, Fragment, useContext, useMemo, useCallback } from 'react';
+import { AvailConfig, AvailSetting, ComponentProps, StateConfig } from '../core/contracts';
 import { FormControlResolver } from '../components/formControlResolver';
 import { Field, FieldDescription } from '../components';
 import { classNames, hyphenate, typeOf, toPath, get } from '../core/utils';
 import styled from 'styled-components';
-import { FormContext, FormContextState } from '../context/FormContext';
+import { SettingsContext, ADD_ITEM, REMOVE_ITEM, SET_CONFIG } from '../store';
 import { mixin } from '../core/style';
 
 export interface SettingsFormProps extends ComponentProps {
-  settings: AvailConfig<AvailSetting>;
+  settings?: AvailConfig<AvailSetting>;
 }
 
 const Styled = {
@@ -39,77 +39,105 @@ const Styled = {
   `,
 };
 
-const SettingsForm: FC<SettingsFormProps> = React.memo(({ settings }) => {
+const SettingsForm: FC<SettingsFormProps> = React.memo(() => {
+  const [settings, setSettings] = useContext(SettingsContext);
+
+  const onUpdate = useCallback(
+    (config: StateConfig) => {
+      setSettings({ type: SET_CONFIG, config });
+    },
+    [setSettings],
+  );
+
+  const repeaterHandlers = {
+    onAdd: (config: StateConfig) => {
+      setSettings({ type: ADD_ITEM, config });
+    },
+    onRemove: (config: string | Partial<StateConfig>) => {
+      config = typeof config == 'string' ? { name: config } : config;
+      console.log('onRemove', config);
+      setSettings({ type: REMOVE_ITEM, config });
+    },
+  };
+
   return (
-    <FormContext.Consumer>
-      {({ dispatchSettings }) =>
-        Object.entries(settings).map(([id, setting], i: number) => {
-          const { legend, fields: fieldsMap } = setting;
+    <Fragment>
+      {Object.entries(settings.config).map(([id, setting], i: number) => {
+        const { legend, fields: fieldsMap } = setting;
 
-          if (!setting.fields) {
-            console.log('No fieldsMap', id, settings, setting);
-            return (
-              <h1 key={id} className="text-danger">
-                No fieldsMap
-              </h1>
-            );
-          }
-          const fields = Object.entries(fieldsMap);
-
-          if (fields.length === 1 && ['radiogroup', 'repeater'].includes(fields[0][1].type)) {
-            return fields.map(([key, field], idx: number) => {
-              if (idx === 0) {
-                field.legend = legend;
-              }
-
-              return <FormControlResolver key={field.id} {...field} className="mb-3" />;
-            });
-          }
+        if (!setting.fields) {
+          console.log('No fieldsMap', id, settings, setting);
           return (
-            <Styled.Fieldset id={id} key={id}>
-              <legend className="font-size-lg">{setting.legend}</legend>
-              <Styled.Fields className="fields">
-                {fields.map(([key, field], idx: number) => {
-                  if (field.attrs) {
-                    field = { ...field, ...field.attrs };
-                    delete field.attrs;
-                  }
-                  return (
-                    <Field
-                      key={field.id}
-                      className={classNames(
-                        field?.classMap?.container,
-                        field.type === 'repeater' && 'has-fieldset',
-                      )}
-                    >
-                      {field?.label && (
-                        <label htmlFor={field.id} className={classNames(field?.classMap?.label)}>
-                          {field.label}
-                        </label>
-                      )}
-                      {
-                        <FormControlResolver
-                          {...field}
-                          type={field.type}
-                          id={field.id}
-                          className={classNames(field?.classMap?.control)}
-                        />
-                      }
-                      {/* `radiogroup` already sets a description */}
-                      {field.description && field.type !== 'radiogroup' && (
-                        <FieldDescription className={classNames(field?.classMap?.description)}>
-                          {field.description}
-                        </FieldDescription>
-                      )}
-                    </Field>
-                  );
-                })}
-              </Styled.Fields>
-            </Styled.Fieldset>
+            <h1 key={id} className="text-danger">
+              No fieldsMap
+            </h1>
           );
-        })
-      }
-    </FormContext.Consumer>
+        }
+        const fields = Object.entries(fieldsMap);
+
+        if (fields.length === 1 && ['radiogroup', 'repeater'].includes(fields[0][1].type)) {
+          return fields.map(([key, field], idx: number) => {
+            if (idx === 0) {
+              field.legend = legend;
+            }
+
+            return (
+              <FormControlResolver
+                key={field.id}
+                {...field}
+                className="mb-3"
+                onUpdate={onUpdate}
+                {...repeaterHandlers}
+              />
+            );
+          });
+        }
+        return (
+          <Styled.Fieldset id={id} key={id}>
+            <legend className="font-size-lg">{setting.legend}</legend>
+            <Styled.Fields className="fields">
+              {fields.map(([key, field], idx: number) => {
+                if (field.attrs) {
+                  field = { ...field, ...field.attrs };
+                  delete field.attrs;
+                }
+                return (
+                  <Field
+                    key={field.id}
+                    className={classNames(
+                      field?.classMap?.container,
+                      field.type === 'repeater' && 'has-fieldset',
+                    )}
+                  >
+                    {field?.label && (
+                      <label htmlFor={field.id} className={classNames(field?.classMap?.label)}>
+                        {field.label}
+                      </label>
+                    )}
+                    {
+                      <FormControlResolver
+                        {...field}
+                        type={field.type}
+                        id={field.id}
+                        className={classNames(field?.classMap?.control)}
+                        onUpdate={onUpdate}
+                        {...repeaterHandlers}
+                      />
+                    }
+                    {/* `radiogroup` already sets a description */}
+                    {field.description && field.type !== 'radiogroup' && (
+                      <FieldDescription className={classNames(field?.classMap?.description)}>
+                        {field.description}
+                      </FieldDescription>
+                    )}
+                  </Field>
+                );
+              })}
+            </Styled.Fields>
+          </Styled.Fieldset>
+        );
+      })}
+    </Fragment>
   );
 });
 

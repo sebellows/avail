@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { ChangeEvent, forwardRef, Ref, useState, useEffect } from 'react';
 
 import { classNames } from '../../core/utils/classNames';
@@ -11,6 +12,7 @@ import { FormControlResolver } from '../formControlResolver';
 import { RepeaterItem } from './RepeaterItem';
 import { Styled } from './styles';
 import { FormArrayProps } from './props';
+import { usePrevious } from '../../hooks/usePrevious';
 
 const Repeater = forwardRef<{}, FormArrayProps>(
   (
@@ -28,44 +30,35 @@ const Repeater = forwardRef<{}, FormArrayProps>(
       onAdd,
       onChange,
       onRemove,
+      onBlur,
       ...props
     },
     ref: Ref<any>,
   ) => {
-    const [items, setItems] = useState([]);
+    const [items, setItems] = useState(initialItems);
+    const prevItemsCount = usePrevious(initialItems.length);
 
     useEffect(() => {
-      setItems(initialItems as Option[]);
-    }, [initialItems]);
+      if (prevItemsCount !== initialItems.length) {
+        setItems(initialItems as Option[]);
+      }
+    }, [initialItems, prevItemsCount]);
 
-    function handleAdd(event: any) {
-      const newItem = { name: '', value: '' };
-
-      setItems([...items, newItem]);
-
-      onAdd?.(event);
+    function handleAdd(item: Record<string, string>) {
+      onAdd?.(item);
     }
 
-    function handleRemove(index: number) {
-      setItems([...items.slice(0, index), ...items.slice(index + 1)]);
-
-      onRemove?.(index);
+    function handleRemove(itemID: string) {
+      onRemove?.(itemID);
     }
 
-    function handleChange(key: string, index: number, event: any) {
+    function handleChange(event: any) {
       event.preventDefault();
-
-      const updateItems = [...items];
-
-      updateItems[index][key] = event.target.value;
-
-      setItems(updateItems);
-
       onChange?.(event);
     }
 
     function handleBlur(event: any) {
-      props?.onBlur?.(event);
+      onBlur?.(event);
     }
 
     return (
@@ -73,15 +66,17 @@ const Repeater = forwardRef<{}, FormArrayProps>(
         {legend && <Styled.Legend>{legend}</Styled.Legend>}
         {items.length &&
           items.map((item: Option, i: number) => {
-            const nameID = `${id}_items_${i}_name`;
-            const valueID = `${id}_items_${i}_value`;
+            const itemID = `${id}_items_${i}`;
+            const nameID = `${itemID}_name`;
+            const valueID = `${itemID}_value`;
 
             return (
               <RepeaterItem
-                key={`${id}_items_${i}`}
+                key={itemID}
                 before={i}
+                id={itemID}
                 onAdd={handleAdd}
-                onRemove={(i: number) => handleRemove(i)}
+                onRemove={handleRemove}
               >
                 <Styled.Field>
                   <Styled.Label first={i === 0} htmlFor={nameID}>
@@ -93,7 +88,7 @@ const Repeater = forwardRef<{}, FormArrayProps>(
                     className={classNames(i === 0 && 'first')}
                     value={item.name}
                     onBlur={handleBlur}
-                    onChange={(event: ChangeEvent) => handleChange('name', i, event)}
+                    onChange={handleChange}
                     isValid={!error || !error[id]}
                     isInvalid={error && error[id]}
                   />
@@ -116,8 +111,7 @@ const Repeater = forwardRef<{}, FormArrayProps>(
                     readOnly={readOnly}
                     disabled={readOnly}
                     options={options}
-                    onBlur={handleBlur}
-                    onChange={(event: ChangeEvent) => handleChange('value', i, event)}
+                    onBlur={onBlur}
                     isValid={!error || !error[id]}
                     isInvalid={error && error[id]}
                   />

@@ -2,7 +2,7 @@
 import { COLORS, DIRECTIONS, GRAYS, GRID_BREAKPOINTS, THEME_COLORS } from './constants';
 import { toOptions } from './models/Option';
 import { CSS_VALUE_PRESETS } from './presets';
-import { AvailSettings, AvailSetting } from './contracts';
+import { AvailConfig, AvailSetting } from './contracts';
 
 const AVAIL_COLOR_SCHEMES = {
   colors: COLORS,
@@ -19,7 +19,7 @@ function updateColorScheme(settings: Record<string, any>) {
   return AVAIL_COLOR_SCHEMES;
 }
 
-export const Settings = (settings: AvailSettings): AvailSettings => {
+export const Settings = (settings: AvailConfig<AvailSetting>): AvailConfig<AvailSetting> => {
   const colorSchemes = updateColorScheme(settings);
   const colors = toOptions(colorSchemes.colors);
   const grays = toOptions(colorSchemes.grays);
@@ -32,7 +32,7 @@ export const Settings = (settings: AvailSettings): AvailSettings => {
       fields: {
         prefix: {
           type: 'text',
-          id: 'settings_export_fields_prefix',
+          id: 'export_fields_prefix_value',
           label: 'Prefix',
           attrs: { placeholder: 'app-' },
           value: '',
@@ -40,7 +40,7 @@ export const Settings = (settings: AvailSettings): AvailSettings => {
         },
         sizingUnit: {
           type: 'radiogroup',
-          id: 'settings_export_fields_sizingUnit',
+          id: 'export_fields_sizingUnit_value',
           legend: 'Default sizing unit',
           options: toOptions(['px', 'em', 'rem']),
           value: 'rem',
@@ -48,7 +48,7 @@ export const Settings = (settings: AvailSettings): AvailSettings => {
         },
         fileType: {
           type: 'radiogroup',
-          id: 'settings_export_fields_fileType',
+          id: 'export_fields_fileType_value',
           legend: 'Exported file type',
           options: toOptions(['CSS', 'SCSS']),
           value: 'css',
@@ -61,21 +61,21 @@ export const Settings = (settings: AvailSettings): AvailSettings => {
       fields: {
         colors: {
           type: 'repeater',
-          id: 'settings_colorSchemes_fields_colors',
+          id: 'colorSchemes_fields_colors',
           inputType: 'color',
           legend: 'Colors',
           items: colors,
         },
         grays: {
           type: 'repeater',
-          id: 'settings_colorSchemes_fields_grays',
+          id: 'colorSchemes_fields_grays',
           inputType: 'color',
           legend: 'Grays',
           items: grays,
         },
         variants: {
           type: 'repeater',
-          id: 'settings_colorSchemes_fields_variants',
+          id: 'colorSchemes_fields_variants',
           inputType: 'colorpicker',
           legend: 'Theme Variant Colors',
           options: [...colors, ...grays],
@@ -88,7 +88,7 @@ export const Settings = (settings: AvailSettings): AvailSettings => {
       fields: {
         bodyColor: {
           type: 'colorpicker',
-          id: 'settings_global_fields_bodyColor',
+          id: 'global_fields_bodyColor_value',
           label: 'Body color',
           value: THEME_COLORS.dark,
           options: allColors,
@@ -96,7 +96,7 @@ export const Settings = (settings: AvailSettings): AvailSettings => {
         },
         bodyBgColor: {
           type: 'colorpicker',
-          id: 'settings_global_fields_bodyBgColor',
+          id: 'global_fields_bodyBgColor_value',
           label: 'Body background color',
           value: COLORS.white,
           options: allColors,
@@ -104,21 +104,21 @@ export const Settings = (settings: AvailSettings): AvailSettings => {
         },
         fontFamily: {
           type: 'text',
-          id: 'settings_global_fields_fontFamily',
+          id: 'global_fields_fontFamily_value',
           label: 'Default font-family',
           value: `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"`,
           description: 'Default global font-family.',
         },
         headingsFontFamily: {
           type: 'text',
-          id: 'settings_global_fields_headingsFontFamily',
+          id: 'global_fields_headingsFontFamily_value',
           label: 'Headings font-family',
           value: 'inherit',
           description: 'By default inherits from global font-family.',
         },
         monospaceFontFamily: {
           type: 'text',
-          id: 'settings_global_fields_monospaceFontFamily',
+          id: 'global_fields_monospaceFontFamily_value',
           label: 'Monospace font-family',
           value: `SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
           monospace`,
@@ -126,27 +126,27 @@ export const Settings = (settings: AvailSettings): AvailSettings => {
         },
         fontSize: {
           type: 'number',
-          id: 'settings_global_fields_fontSize',
+          id: 'global_fields_fontSize_value',
           label: 'Base font size',
           value: '16',
           description: 'Set in `px` (will be converted if default unit configured).',
         },
         lineHeight: {
           type: 'text',
-          id: 'settings_global_fields_lineHeight',
+          id: 'global_fields_lineHeight_value',
           label: 'Default line-height',
           value: '1.5',
         },
         fontWeight: {
           type: 'select',
-          id: 'settings_global_fields_fontWeight',
+          id: 'global_fields_fontWeight_value',
           label: 'Default font-weight',
           value: 'normal',
           options: toOptions(CSS_VALUE_PRESETS.fontWeight),
         },
         paragraphMargin: {
           type: 'number',
-          id: 'settings_global_fields_paragraphMargin',
+          id: 'global_fields_paragraphMargin_value',
           label: 'Paragraph margin',
           value: '12',
           description:
@@ -154,7 +154,7 @@ export const Settings = (settings: AvailSettings): AvailSettings => {
         },
         headingsMargin: {
           type: 'number',
-          id: 'settings_global_fields_headingsMargin',
+          id: 'global_fields_headingsMargin_value',
           label: 'Headings margin',
           value: '12',
           description:
@@ -167,7 +167,7 @@ export const Settings = (settings: AvailSettings): AvailSettings => {
       fields: {
         width: {
           type: 'number',
-          id: 'settings_border_fields_width',
+          id: 'border_fields_width_value',
           label: 'Border width',
           value: '1',
           description: 'Default border width applied to border-related utility classes.',
@@ -175,7 +175,7 @@ export const Settings = (settings: AvailSettings): AvailSettings => {
         },
         style: {
           type: 'select',
-          id: 'settings_border_fields_style',
+          id: 'border_fields_style_value',
           label: 'Border style',
           value: 'solid',
           options: toOptions(CSS_VALUE_PRESETS.borderStyle),
@@ -183,7 +183,7 @@ export const Settings = (settings: AvailSettings): AvailSettings => {
         },
         color: {
           type: 'colorpicker',
-          id: 'settings_border_fields_color',
+          id: 'border_fields_color_value',
           label: 'Border color',
           options: toOptions(allColors),
           value: GRAYS['gray-100'],
@@ -196,7 +196,7 @@ export const Settings = (settings: AvailSettings): AvailSettings => {
       fields: {
         breakpoints: {
           type: 'repeater',
-          id: 'settings_mediaQuery_fields_breakpoints',
+          id: 'mediaQuery_fields_breakpoints',
           inputType: 'number',
           items: toOptions(GRID_BREAKPOINTS),
           description: 'Used to generate responsive utility classes.',
@@ -209,7 +209,7 @@ export const Settings = (settings: AvailSettings): AvailSettings => {
       fields: {
         suffixes: {
           type: 'repeater',
-          id: 'settings_spacing_fields_suffixes',
+          id: 'spacing_fields_suffixes',
           inputType: 'text',
           items: toOptions(DIRECTIONS),
           readOnly: true,
@@ -221,11 +221,13 @@ export const Settings = (settings: AvailSettings): AvailSettings => {
   };
 };
 
-export function generateSettings(config: AvailSettings = {}): AvailSettings {
+export function generateSettings(
+  config: AvailConfig<AvailSetting> = {},
+): AvailConfig<AvailSetting> {
   const settings = Settings(config);
 
   return Object.entries(settings).reduce((acc, [key, value]) => {
-    acc[key] = { id: `settings_${key}`, ...value } as AvailSetting;
+    acc[key] = { id: key, ...value } as AvailSetting;
     return acc;
   }, {});
 }

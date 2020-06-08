@@ -37,6 +37,7 @@ const RadioGroup = forwardRef<{}, FormGroupProps>(
             <ToggleControl
               key={`${option.name}-${i}`}
               type="radio"
+              id={`${option.name}-${i}`}
               name={id}
               value={option.value}
               checked={value === option.value}

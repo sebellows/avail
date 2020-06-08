@@ -249,7 +249,7 @@ function castPath<T extends Object>(value: any, obj: T): string[] {
  * Gets the value at `path` of `object`. If the resolved value is
  * `undefined`, the `defaultValue` is returned in its place.
  */
-export function get(obj: object, path: string | string[], defaultValue: any = undefined): any {
+export function get<T>(obj: T, path: string | string[], defaultValue: any = undefined): any {
   if (isNil(obj)) return defaultValue;
 
   const paths = castPath(path, obj);
@@ -299,22 +299,6 @@ export function has(obj: object, path: string | string[], hasFunc?: Function): b
   return Array.isArray(obj) && !!obj[toNumber(path)];
 }
 
-export const setNestedProp = (obj: Record<string, any>, prop: string, value: any) => {
-  if (isPlainObject(obj)) {
-    for (const key in obj) {
-      if (key === prop) {
-        if (isPlainObject(obj[prop]) && isPlainObject(value)) {
-          obj[prop] = { ...obj[prop], ...value };
-        } else {
-          obj[prop] = value;
-        }
-        break;
-      }
-      setNestedProp(obj[key], prop, value);
-    }
-  }
-};
-
 /**
  * Sets the value at `path` of `object`. If a portion of `path` doesn't exist,
  * it's created. Arrays are created for missing index properties while objects
@@ -351,4 +335,47 @@ export function set<T>(
   }
 
   return obj;
+}
+
+/**
+ * Removes the property at `path` of `obj`.
+ *
+ * **Note:** This method mutates `obj`.
+ *
+ * @param {Object} obj The object to modify.
+ * @param {Array|string} path The path of the property to unset.
+ * @returns {boolean} Returns `true` if the property is deleted, else `false`.
+ *
+ * @example
+ *
+ * const obj = { 'a': [{ 'b': { 'c': 7 } }] };
+ * _.unset(obj, 'a[0].b.c');
+ * // => true
+ *
+ * console.log(obj);
+ * // => { 'a': [{ 'b': {} }] };
+ *
+ * _.unset(obj, ['a', '0', 'b', 'c']);
+ * // => true
+ *
+ * console.log(obj);
+ * // => { 'a': [{ 'b': {} }] };
+ */
+export function unset<T>(obj: T, path: string | Symbol | (string | Symbol)[]): boolean {
+  if (obj == null) return true;
+
+  const paths = castPath(path, obj) as string[];
+  obj = paths.length < 2 ? obj : get(obj, paths.slice(0, -1));
+
+  function _delete(): boolean {
+    const lastKey = Array.isArray(obj) ? toNumber(last(paths)) : toKey(last(paths));
+
+    if (isNumber(lastKey) && Array.isArray(obj)) {
+      obj.splice(+lastKey, 1);
+      return obj.length === lastKey;
+    }
+    return delete obj[toKey(last(paths)) as string];
+  }
+
+  return obj == null || _delete();
 }

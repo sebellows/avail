@@ -4,22 +4,20 @@ import React, {
   useEffect,
   useState,
   SyntheticEvent,
-  useCallback,
   useRef,
   useReducer,
 } from 'react';
 import styled from 'styled-components';
-import { produce } from 'immer';
 import { generateConfig } from './core/config';
 import { generateSettings } from './core/settings';
 import { Spinner, Tabs, Tab, Button } from './components';
 import { SettingsForm } from './containers/SettingsForm';
 import { UtilitiesForm } from './containers/UtilitiesForm';
-import { FormContext } from './context/FormContext';
+import { Store } from './store';
 
 import './App.scss';
-import { reducer } from './reducers';
-import { AvailSettings } from './core/contracts';
+// import { reducer } from './store/reducers';
+import { AvailConfig, AvailSetting } from './core/contracts';
 
 const SubmitButton = styled(Button)`
   position: fixed;
@@ -28,16 +26,16 @@ const SubmitButton = styled(Button)`
   z-index: 1100;
 `;
 
-const initialUtilities = generateConfig();
-const initialSettings = generateSettings() as AvailSettings;
+// const initialUtilities = generateConfig();
+// const initialSettings = generateSettings() as AvailConfig<AvailSetting>;
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('settings');
   const [loading, setLoading] = useState(false);
   const [addExitClass, setExitClass] = useState(false);
 
-  const [settings, dispatchSettings] = useReducer(reducer, initialSettings);
-  const [utilities, dispatchUtilities] = useReducer(reducer, initialUtilities);
+  // const [settings, dispatchSettings] = useReducer(reducer, initialSettings);
+  // const [utilities, dispatchUtilities] = useReducer(reducer, initialUtilities);
 
   const formRef = useRef(null);
 
@@ -48,7 +46,7 @@ export default function App() {
       }, 2000);
       return () => clearTimeout(fadeSpinner);
     }
-  }, [loading, settings]);
+  }, [loading]);
 
   function handleLoad(event: AnimationEvent) {
     event.persist();
@@ -66,10 +64,10 @@ export default function App() {
     console.log('submitted', values);
   }
 
-  const context = {
-    dispatchSettings,
-    dispatchUtilities,
-  };
+  // const context = {
+  //   dispatchSettings,
+  //   dispatchUtilities,
+  // };
 
   return (
     <div
@@ -85,7 +83,7 @@ export default function App() {
 
       {loading && <Spinner exit={addExitClass} onAnimationEnd={handleLoad} />}
 
-      <FormContext.Provider value={context}>
+      <Store>
         <form ref={formRef} noValidate onSubmit={handleSubmit}>
           <Tabs
             id="avail-config"
@@ -93,17 +91,17 @@ export default function App() {
             onSelect={(target: string) => setActiveTab(target)}
           >
             <Tab target="settings" title="Global Settings">
-              <SettingsForm settings={settings} />
+              <SettingsForm />
             </Tab>
             <Tab target="utilities" title="Utility Class Configuration">
-              <UtilitiesForm id="avail-utilities" utilities={utilities} />
+              <UtilitiesForm id="avail-utilities" />
             </Tab>
           </Tabs>
           <SubmitButton type="submit" variant="primary">
             Submit
           </SubmitButton>
         </form>
-      </FormContext.Provider>
+      </Store>
     </div>
   );
 }
