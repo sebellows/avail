@@ -14,7 +14,8 @@
 }
 .output pre[class*='language-'] {
   margin: 0;
-  overflow: hidden;
+  max-height: 540px;
+  overflow: auto;
 }
 .output pre[class*='language-'] code {
   display: block;

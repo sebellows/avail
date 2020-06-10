@@ -39,10 +39,12 @@ export interface AvailUtility {
   description?: string;
   enabled?: boolean;
   inputType?: string;
-  property: string | string[];
+  property: string;
   responsive: boolean;
   options?: string[] | OptionProps[];
-  values?: Record<string, any> | string[]; // TODO: remove, part of old build.ts
+  subitems?: OptionProps[];
+  subproperties?: Record<string, any>;
+  // values?: Record<string, any> | string[]; // TODO: remove, part of old build.ts
   items?: OptionProps[];
 }
 

@@ -31,7 +31,7 @@ import {
 } from '../components';
 
 import '../styles/prism.css';
-import { UtilitiesContext, SET_CONFIG } from '../store';
+import { UtilitiesContext, SET_CONFIG, SettingsContext } from '../store';
 
 const DialogTitle = ({ children }) => (
   <h3 className="font-size-lg font-weight-bold mb-0">
@@ -44,6 +44,7 @@ export interface UtilitiesFormProps extends ComponentProps {
 }
 
 const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
+  const [settings] = useContext(SettingsContext);
   const [utilities, setUtilities] = useContext(UtilitiesContext);
 
   const [activeModel, setActiveModel] = useState(null);
@@ -69,12 +70,12 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
   useEffect(() => {
     if (activeModel && lastActiveModel !== activeModel) {
       if (activeModel.responsive) {
-        setOutput(generateResponsiveUtility(activeModel));
+        setOutput(generateResponsiveUtility(settings.config, activeModel));
       } else {
-        setOutput(generateUtility(activeModel));
+        setOutput(generateUtility(settings.config, activeModel));
       }
     }
-  }, [activeModel, lastActiveModel]);
+  }, [activeModel, lastActiveModel, settings]);
 
   useClickOutside(dialogRef, handleClose);
 
@@ -166,6 +167,23 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
                 >
                   <span>Make responsive classes?</span>
                 </ToggleControl>
+                {activeModel.subproperties && (
+                  <div className="d-flex align-items-center mb-3">
+                    {Object.entries(activeModel.subproperties).map(([prop, val]) => (
+                      <ToggleControl
+                        key={`${activeModel.id}-${prop}`}
+                        name={`${activeModel.id}_subproperties_${prop}`}
+                        value={prop}
+                        checked={val}
+                        onChange={({ target: { name, checked } }) => {
+                          setUtilities({ type: SET_CONFIG, config: { name, value: checked } });
+                        }}
+                      >
+                        <span>Make utility classes for {prop}?</span>
+                      </ToggleControl>
+                    ))}
+                  </div>
+                )}
                 <Repeater {...activeModel} id={`${activeModel.id}`} onUpdate={onUpdate} />
               </fieldset>
               <output className="output">

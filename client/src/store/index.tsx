@@ -26,7 +26,7 @@ const initialSettingsState: AvailState<AvailSetting> = {
 };
 
 const initialUtilitiesState: AvailState<AvailUtility> = {
-  config: generateConfig(),
+  config: generateConfig(initialSettingsState.config),
   inProgress: true,
 };
 

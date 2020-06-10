@@ -72,8 +72,6 @@ export const TEAL = '#20c997';
 export const CYAN = '#17a2b8';
 
 export const COLORS = {
-  black: BLACK,
-  white: WHITE,
   blue: BLUE,
   indigo: INDIGO,
   magenta: MAGENTA,
@@ -105,6 +103,8 @@ export const VARIANTS = {
   danger: DANGER,
   light: LIGHT,
   dark: DARK,
+  black: BLACK,
+  white: WHITE,
 };
 
 export const THEME_COLORS = VARIANTS;

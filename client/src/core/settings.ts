@@ -98,7 +98,7 @@ export const Settings = (settings: AvailConfig<AvailSetting>): AvailConfig<Avail
           type: 'colorpicker',
           id: 'global_fields_bodyBgColor_value',
           label: 'Body background color',
-          value: COLORS.white,
+          value: THEME_COLORS.white,
           options: allColors,
           description: 'Default body background color.',
         },
@@ -204,10 +204,10 @@ export const Settings = (settings: AvailConfig<AvailSetting>): AvailConfig<Avail
         },
       },
     },
-    spacing: {
-      legend: 'Spacing class direction suffixes',
+    nameGeneration: {
+      legend: 'Suffix configuration for utility class name generation',
       fields: {
-        suffixes: {
+        directions: {
           type: 'repeater',
           id: 'spacing_fields_suffixes',
           inputType: 'text',

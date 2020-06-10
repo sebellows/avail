@@ -27,38 +27,58 @@ import {
   WHITE_50,
 } from './constants';
 import { toOptions } from './models/Option';
-import { toREM, toPX } from './style';
-import { AvailConfig, AvailUtility } from './contracts';
+import { toREM, toPX, toEM } from './style';
+import { AvailConfig, AvailUtility, AvailSetting } from './contracts';
 import { CSS_VALUE_PRESETS } from './presets';
+import { get } from './utils';
 
-const createSpacers = (prefix = '') =>
+const createSpacers = (prefix = '', unitFn = toREM) =>
   Object.entries(SPACERS).reduce((acc, [k, v]) => {
-    acc[`${prefix}${k}`] = toREM(v);
+    acc[`${prefix}${k}`] = unitFn(v);
     return acc;
   }, {});
 
-const REM_SPACERS = createSpacers();
-const NEGATIVE_SPACERS = createSpacers('n');
+function getSettingValues(settings: AvailConfig<AvailSetting>, path: string): Record<string, any> {
+  return Object.entries(get(settings, path, {})).reduce(
+    (acc, [k, config]: [string, Record<string, any>]) => {
+      acc[k] = config.value;
+      return acc;
+    },
+    {},
+  );
+}
 
 const Config = (
-  settings: Record<string, any> = {},
+  settings: AvailConfig<AvailSetting> = {},
   utils: AvailConfig<AvailUtility> = {},
 ): AvailConfig<AvailUtility> => {
+  const prefix = get(settings, 'export.fields.prefix.value', '');
+  const unit = get(settings, 'export.fields.sizingUnit.value', '');
+  // const colors = get(settings, 'colorSchemes.fields.colors.items', []);
+  // const grays = get(settings, 'colorSchemes.fields.grays.items', []);
+  const variants = get(settings, 'colorSchemes.fields.variants.items', []);
+  const globals = getSettingValues(settings, 'global.fields');
+  const borderSettings = getSettingValues(settings, 'border.fields');
+  // const breakpoints = get(settings, 'mediaQuery.fields.breakpoints.items', {});
+  const directions = get(settings, 'nameGeneration.fields.directions.items', []);
+
+  const unitFn = unit === 'px' ? toPX : unit === 'em' ? toEM : toREM;
+  const spacerUnits = toOptions(createSpacers('', unitFn), 'auto', { none: 0 });
+  const negativeSpacerUnits = toOptions(createSpacers('n', unitFn));
+
   return {
     backgroundColor: {
       enabled: true,
       responsive: false,
       property: 'background-color',
-      class: 'bg',
+      class: `${prefix}bg`,
       inputType: 'colorpicker',
       items: [
-        ...toOptions(THEME_COLORS, {
-          WHITE,
-          body: BODY_COLOR,
-          muted: TEXT_MUTED,
-          BLACK_50,
-          WHITE_50,
-        }),
+        ...variants,
+        {
+          name: 'body',
+          value: BODY_COLOR,
+        },
         {
           name: 'transparent',
           value: 'transparent',
@@ -69,19 +89,13 @@ const Config = (
       enabled: true,
       responsive: false,
       property: 'color',
-      class: 'text',
+      class: `${prefix}text`,
       inputType: 'colorpicker',
       items: [
-        ...toOptions(THEME_COLORS, {
-          WHITE,
-          body: BODY_COLOR,
-          muted: TEXT_MUTED,
-          BLACK_50,
-          WHITE_50,
-        }),
+        ...variants,
         {
-          name: 'reset',
-          value: 'inherit',
+          name: 'muted',
+          value: TEXT_MUTED,
         },
       ],
     },
@@ -89,7 +103,7 @@ const Config = (
       enabled: true,
       responsive: true,
       property: 'display',
-      class: 'd',
+      class: `${prefix}d`,
       inputType: 'select',
       options: CSS_VALUE_PRESETS.display,
       items: [
@@ -135,7 +149,7 @@ const Config = (
       enabled: true,
       responsive: true,
       property: 'float',
-      class: 'float',
+      class: `${prefix}float`,
       inputType: 'select',
       options: CSS_VALUE_PRESETS.float,
       items: [
@@ -157,15 +171,28 @@ const Config = (
       enabled: true,
       responsive: false,
       property: 'font-family',
-      class: 'font',
+      class: `${prefix}font-family`,
       inputType: 'text',
-      items: [{ name: 'monospace', value: FONT_FAMILY_MONOSPACE }],
+      items: [
+        {
+          name: 'base',
+          value: globals.fontFamily ?? 'sans-serif',
+        },
+        {
+          name: 'heading',
+          value: globals.headingsFontFamily ?? 'sans-serif',
+        },
+        {
+          name: 'monospace',
+          value: globals.monospaceFontFamily ?? 'monospace',
+        },
+      ],
     },
     lineHeight: {
       enabled: true,
       responsive: false,
       property: 'line-height',
-      class: 'lh',
+      class: `${prefix}lh`,
       inputType: 'number',
       items: [
         {
@@ -178,7 +205,7 @@ const Config = (
         },
         {
           name: 'base',
-          value: `${LINE_HEIGHT_BASE}`,
+          value: globals.lineHeight ?? '1.5',
         },
         {
           name: 'lg',
@@ -190,101 +217,29 @@ const Config = (
       enabled: true,
       responsive: false,
       property: 'border',
-      class: 'border',
+      class: `${prefix}border`,
       inputType: 'text',
+      subproperties: {
+        directions: true,
+        variants: true,
+      },
       items: [
         {
           name: '',
-          value: `${toPX(BORDER_WIDTH)} solid ${BORDER_COLOR}`,
+          value: `${unitFn(borderSettings.width)} solid ${borderSettings.color}`,
         },
         {
           name: '0',
           value: '0',
         },
       ],
-    },
-    borderTop: {
-      enabled: true,
-      responsive: false,
-      property: 'border-top',
-      class: 'border-top',
-      inputType: 'text',
-      items: [
-        {
-          name: '',
-          value: `${BORDER_WIDTH} solid ${BORDER_COLOR}`,
-        },
-        {
-          name: '0',
-          value: '0',
-        },
-      ],
-    },
-    borderRight: {
-      enabled: true,
-      responsive: false,
-      property: 'border-right',
-      class: 'border-right',
-      inputType: 'text',
-      items: [
-        {
-          name: '',
-          value: `${BORDER_WIDTH} solid ${BORDER_COLOR}`,
-        },
-        {
-          name: '0',
-          value: '0',
-        },
-      ],
-    },
-    borderBottom: {
-      enabled: true,
-      responsive: false,
-      property: 'border-bottom',
-      class: 'border-bottom',
-      inputType: 'text',
-      items: [
-        {
-          name: '',
-          value: `${BORDER_WIDTH} solid ${BORDER_COLOR}`,
-        },
-        {
-          name: '0',
-          value: '0',
-        },
-      ],
-    },
-    borderLeft: {
-      enabled: true,
-      responsive: false,
-      property: 'border-left',
-      class: 'border-left',
-      inputType: 'text',
-      items: [
-        {
-          name: '',
-          value: `${BORDER_WIDTH} solid ${BORDER_COLOR}`,
-        },
-        {
-          name: '0',
-          value: '0',
-        },
-      ],
-    },
-    borderColor: {
-      enabled: true,
-      responsive: false,
-      property: 'border-color',
-      class: 'border',
-      inputType: 'text',
-      items: [...toOptions(THEME_COLORS, { WHITE })],
     },
     // Sizing utilities
     width: {
       enabled: true,
       responsive: false,
       property: 'width',
-      class: 'w',
+      class: `${prefix}w`,
       inputType: 'text',
       items: [
         {
@@ -313,31 +268,15 @@ const Config = (
       enabled: true,
       responsive: false,
       property: 'max-width',
-      class: 'mw',
+      class: `${prefix}mw`,
       inputType: 'text',
       items: [{ name: '100', value: '100%' }],
-    },
-    // viewportWidth: {
-    //   enabled: true,
-    //   responsive: false,
-    //   property: 'width',
-    //   class: 'vw',
-    //   inputType: 'text',
-    //   items: [{ name: '100', value: '100vw' }],
-    // },
-    minViewportWidth: {
-      enabled: true,
-      responsive: false,
-      property: 'min-width',
-      class: 'min-vw',
-      inputType: 'text',
-      items: [{ name: '100', value: '100vw' }],
     },
     height: {
       enabled: true,
       responsive: false,
       property: 'height',
-      class: 'h',
+      class: `${prefix}h`,
       inputType: 'text',
       items: [
         {
@@ -366,32 +305,16 @@ const Config = (
       enabled: true,
       responsive: false,
       property: 'max-height',
-      class: 'mh',
+      class: `${prefix}mh`,
       inputType: 'text',
       items: [{ name: '100', value: '100%' }],
-    },
-    // viewportHeight: {
-    //   enabled: true,
-    //   responsive: false,
-    //   property: 'height',
-    //   class: 'vh',
-    //   inputType: 'text',
-    //   items: [{ name: '100', value: '100vh' }],
-    // },
-    minViewportHeight: {
-      enabled: true,
-      responsive: false,
-      property: 'min-height',
-      class: 'min-vh',
-      inputType: 'text',
-      items: [{ name: '100', value: '100vh' }],
     },
     // Flex utilities
     flex: {
       enabled: true,
       responsive: true,
       property: 'flex',
-      class: 'flex',
+      class: `${prefix}flex`,
       inputType: 'text',
       items: [{ name: 'fill', value: '1 1 auto' }],
     },
@@ -399,7 +322,7 @@ const Config = (
       enabled: true,
       responsive: true,
       property: 'flex-direction',
-      class: 'flex',
+      class: `${prefix}flex`,
       inputType: 'select',
       options: CSS_VALUE_PRESETS.flexDirection,
       items: [
@@ -425,7 +348,7 @@ const Config = (
       enabled: true,
       responsive: true,
       property: 'flex-grow',
-      class: 'flex',
+      class: `${prefix}flex`,
       inputType: 'number',
       items: [
         {
@@ -442,7 +365,7 @@ const Config = (
       enabled: true,
       responsive: true,
       property: 'flex-shrink',
-      class: 'flex',
+      class: `${prefix}flex`,
       inputType: 'number',
       items: [
         {
@@ -459,7 +382,7 @@ const Config = (
       enabled: true,
       responsive: true,
       property: 'flex-wrap',
-      class: 'flex',
+      class: `${prefix}flex`,
       inputType: 'select',
       options: CSS_VALUE_PRESETS.flexWrap,
       items: [
@@ -481,7 +404,7 @@ const Config = (
       enabled: true,
       responsive: true,
       property: 'justify-content',
-      class: 'justify-content',
+      class: `${prefix}justify-content`,
       inputType: 'select',
       options: CSS_VALUE_PRESETS.justifyContent,
       items: [
@@ -511,7 +434,7 @@ const Config = (
       enabled: true,
       responsive: true,
       property: 'align-items',
-      class: 'align-items',
+      class: `${prefix}align-items`,
       inputType: 'select',
       options: CSS_VALUE_PRESETS.alignItems,
       items: [
@@ -541,7 +464,7 @@ const Config = (
       enabled: true,
       responsive: true,
       property: 'align-content',
-      class: 'align-content',
+      class: `${prefix}align-content`,
       inputType: 'select',
       options: CSS_VALUE_PRESETS.alignContent,
       items: [
@@ -575,7 +498,7 @@ const Config = (
       enabled: true,
       responsive: true,
       property: 'align-self',
-      class: 'align-self',
+      class: `${prefix}align-self`,
       inputType: 'select',
       options: CSS_VALUE_PRESETS.alignSelf,
       items: [
@@ -609,7 +532,7 @@ const Config = (
       enabled: true,
       responsive: true,
       property: 'order',
-      class: 'order',
+      class: `${prefix}order`,
       inputType: 'number',
       items: [
         {
@@ -651,178 +574,178 @@ const Config = (
       enabled: true,
       responsive: true,
       property: 'margin',
-      class: 'm',
+      class: `${prefix}m`,
       inputType: 'text',
-      items: [...toOptions(REM_SPACERS, 'auto')],
+      items: [...spacerUnits],
     },
     marginX: {
       enabled: true,
       responsive: true,
       property: 'margin-right margin-left',
-      class: 'mx',
+      class: `${prefix}m${directions.x}`,
       inputType: 'text',
-      items: [...toOptions(REM_SPACERS, 'auto')],
+      items: [...spacerUnits],
     },
     marginY: {
       enabled: true,
       responsive: true,
       property: 'margin-top margin-bottom',
-      class: 'my',
+      class: `${prefix}m${directions.y}`,
       inputType: 'text',
-      items: [...toOptions(REM_SPACERS, 'auto')],
+      items: [...spacerUnits],
     },
     marginTop: {
       enabled: true,
       responsive: true,
       property: 'margin-top',
-      class: 'mt',
+      class: `${prefix}m${directions.top}`,
       inputType: 'text',
-      items: [...toOptions(REM_SPACERS, 'auto')],
+      items: [...spacerUnits],
     },
     marginRight: {
       enabled: true,
       responsive: true,
       property: 'margin-right',
-      class: 'mr',
+      class: `${prefix}m${directions.right}`,
       inputType: 'text',
-      items: [...toOptions(REM_SPACERS, 'auto')],
+      items: [...spacerUnits],
     },
     marginBottom: {
       enabled: true,
       responsive: true,
       property: 'margin-bottom',
-      class: 'mb',
+      class: `${prefix}m${directions.bottom}`,
       inputType: 'text',
-      items: [...toOptions(REM_SPACERS, 'auto')],
+      items: [...spacerUnits],
     },
     marginLeft: {
       enabled: true,
       responsive: true,
       property: 'margin-left',
-      class: 'ml',
+      class: `${prefix}m${directions.left}`,
       inputType: 'text',
-      items: [...toOptions(REM_SPACERS, 'auto')],
+      items: [...spacerUnits],
     },
     // Negative margin utilities
     negativeMargin: {
       enabled: true,
       responsive: true,
       property: 'margin',
-      class: 'm',
+      class: `${prefix}m`,
       inputType: 'text',
-      items: [...toOptions(NEGATIVE_SPACERS)],
+      items: [...negativeSpacerUnits],
     },
     negativeMarginX: {
       enabled: true,
       responsive: true,
       property: 'margin-right margin-left',
-      class: 'mx',
+      class: `${prefix}m${directions.x}`,
       inputType: 'text',
-      items: [...toOptions(NEGATIVE_SPACERS)],
+      items: [...negativeSpacerUnits],
     },
     negativeMarginY: {
       enabled: true,
       responsive: true,
       property: 'margin-top margin-bottom',
-      class: 'my',
+      class: `${prefix}m${directions.y}`,
       inputType: 'text',
-      items: [...toOptions(NEGATIVE_SPACERS)],
+      items: [...negativeSpacerUnits],
     },
     negativeMarginTop: {
       enabled: true,
       responsive: true,
       property: 'margin-top',
-      class: 'mt',
+      class: `${prefix}m${directions.top}`,
       inputType: 'text',
-      items: [...toOptions(NEGATIVE_SPACERS)],
+      items: [...negativeSpacerUnits],
     },
     negativeMarginRight: {
       enabled: true,
       responsive: true,
       property: 'margin-right',
-      class: 'mr',
+      class: `${prefix}m${directions.right}`,
       inputType: 'text',
-      items: [...toOptions(NEGATIVE_SPACERS)],
+      items: [...negativeSpacerUnits],
     },
     negativeMarginBottom: {
       enabled: true,
       responsive: true,
       property: 'margin-bottom',
-      class: 'mb',
+      class: `${prefix}m${directions.bottom}`,
       inputType: 'text',
-      items: [...toOptions(NEGATIVE_SPACERS)],
+      items: [...negativeSpacerUnits],
     },
     negativeMarginLeft: {
       enabled: true,
       responsive: true,
       property: 'margin-left',
-      class: 'ml',
+      class: `${prefix}m${directions.left}`,
       inputType: 'text',
-      items: [...toOptions(NEGATIVE_SPACERS)],
+      items: [...negativeSpacerUnits],
     },
     // Padding utilities
     padding: {
       enabled: true,
       responsive: true,
       property: 'padding',
-      class: 'p',
+      class: `${prefix}p`,
       inputType: 'text',
-      items: [...toOptions(SPACERS)],
+      items: [...spacerUnits],
     },
     paddingX: {
       enabled: true,
       responsive: true,
       property: 'padding-right padding-left',
-      class: 'px',
+      class: `${prefix}p${directions.x}`,
       inputType: 'text',
-      items: [...toOptions(SPACERS)],
+      items: [...spacerUnits],
     },
     paddingY: {
       enabled: true,
       responsive: true,
       property: 'padding-top padding-bottom',
-      class: 'py',
+      class: `${prefix}p${directions.y}`,
       inputType: 'text',
-      items: [...toOptions(SPACERS)],
+      items: [...spacerUnits],
     },
     paddingTop: {
       enabled: true,
       responsive: true,
       property: 'padding-top',
-      class: 'pt',
+      class: `${prefix}p${directions.top}`,
       inputType: 'text',
-      items: [...toOptions(SPACERS)],
+      items: [...spacerUnits],
     },
     paddingRight: {
       enabled: true,
       responsive: true,
       property: 'padding-right',
-      class: 'pr',
+      class: `${prefix}p${directions.right}`,
       inputType: 'text',
-      items: [...toOptions(SPACERS)],
+      items: [...spacerUnits],
     },
     paddingBottom: {
       enabled: true,
       responsive: true,
       property: 'padding-bottom',
-      class: 'pb',
+      class: `${prefix}p${directions.bottom}`,
       inputType: 'text',
-      items: [...toOptions(SPACERS)],
+      items: [...spacerUnits],
     },
     paddingLeft: {
       enabled: true,
       responsive: true,
       property: 'padding-left',
-      class: 'pl',
+      class: `${prefix}p${directions.left}`,
       inputType: 'text',
-      items: [...toOptions(SPACERS)],
+      items: [...spacerUnits],
     },
     // Text
     fontStyle: {
       enabled: true,
       responsive: false,
       property: 'font-style',
-      class: 'font',
+      class: `${prefix}font-style`,
       inputType: 'select',
       options: CSS_VALUE_PRESETS.fontStyle,
       items: [
@@ -840,7 +763,7 @@ const Config = (
       enabled: true,
       responsive: false,
       property: 'font-weight',
-      class: 'font-weight',
+      class: `${prefix}font-weight`,
       inputType: 'select',
       options: CSS_VALUE_PRESETS.fontWeight,
       items: [
@@ -870,7 +793,7 @@ const Config = (
       enabled: true,
       responsive: false,
       property: 'text-transform',
-      class: 'text',
+      class: `${prefix}text`,
       inputType: 'select',
       options: CSS_VALUE_PRESETS.textTransform,
       items: [
@@ -892,7 +815,7 @@ const Config = (
       enabled: true,
       responsive: true,
       property: 'text-align',
-      class: 'text',
+      class: `${prefix}text`,
       inputType: 'select',
       options: CSS_VALUE_PRESETS.textAlign,
       items: [
@@ -914,6 +837,7 @@ const Config = (
       enabled: true,
       responsive: false,
       property: 'text-decoration',
+      class: `${prefix}text-decoration`,
       inputType: 'text',
       items: [
         {
@@ -934,7 +858,7 @@ const Config = (
       enabled: true,
       responsive: false,
       property: 'white-space',
-      class: 'text',
+      class: `${prefix}text`,
       inputType: 'select',
       options: CSS_VALUE_PRESETS.whiteSpace,
       items: [
@@ -952,7 +876,7 @@ const Config = (
       enabled: true,
       responsive: false,
       property: 'overflow',
-      class: 'overflow',
+      class: `${prefix}overflow`,
       inputType: 'select',
       options: CSS_VALUE_PRESETS.overflow,
       items: [
@@ -970,7 +894,7 @@ const Config = (
       enabled: true,
       responsive: false,
       property: 'position',
-      class: 'position',
+      class: `${prefix}position`,
       inputType: 'select',
       options: CSS_VALUE_PRESETS.position,
       items: [
@@ -1000,7 +924,7 @@ const Config = (
       enabled: true,
       responsive: false,
       property: 'box-shadow',
-      class: 'shadow',
+      class: `${prefix}shadow`,
       inputType: 'text',
       items: [
         {
@@ -1025,7 +949,7 @@ const Config = (
       enabled: true,
       responsive: false,
       property: 'pointer-events',
-      class: 'pe',
+      class: `${prefix}pointer-events`,
       inputType: 'select',
       options: CSS_VALUE_PRESETS.pointerEvents,
       items: [
@@ -1039,24 +963,24 @@ const Config = (
         },
       ],
     },
-    rounded: {
+    borderRadius: {
       enabled: true,
       responsive: false,
       property: 'border-radius',
-      class: 'rounded',
+      class: `${prefix}rounded`,
       inputType: 'text',
       items: [
         {
           name: '',
-          value: toREM(BORDER_RADIUS),
+          value: unitFn(BORDER_RADIUS),
         },
         {
           name: 'sm',
-          value: toREM(BORDER_RADIUS_SM),
+          value: unitFn(BORDER_RADIUS_SM),
         },
         {
           name: 'lg',
-          value: toREM(BORDER_RADIUS_LG),
+          value: unitFn(BORDER_RADIUS_LG),
         },
         {
           name: 'circle',
@@ -1072,43 +996,43 @@ const Config = (
         },
       ],
     },
-    roundedTop: {
+    borderRadiusTop: {
       enabled: true,
       responsive: false,
       property: 'border-top-left-radius border-top-right-radius',
-      class: 'rounded-top',
+      class: `${prefix}rounded`,
       inputType: 'text',
-      items: [{ name: '', value: toREM(BORDER_RADIUS) }],
+      items: [{ name: 'top-left', value: unitFn(BORDER_RADIUS) }],
     },
-    roundedRight: {
+    borderRadiusRight: {
       enabled: true,
       responsive: false,
       property: 'border-top-right-radius border-bottom-right-radius',
-      class: 'rounded-right',
+      class: `${prefix}rounded`,
       inputType: 'text',
-      items: [{ name: '', value: toREM(BORDER_RADIUS) }],
+      items: [{ name: 'top-right', value: unitFn(BORDER_RADIUS) }],
     },
-    roundedBottom: {
+    borderRadiusBottom: {
       enabled: true,
       responsive: false,
       property: 'border-bottom-right-radius border-bottom-left-radius',
-      class: 'rounded-bottom',
+      class: `${prefix}rounded`,
       inputType: 'text',
-      items: [{ name: '', value: toREM(BORDER_RADIUS) }],
+      items: [{ name: 'bottom-right', value: unitFn(BORDER_RADIUS) }],
     },
-    roundedLeft: {
+    borderRadiusLeft: {
       enabled: true,
       responsive: false,
       property: 'border-bottom-left-radius border-top-left-radius',
-      class: 'rounded-left',
+      class: `${prefix}rounded`,
       inputType: 'text',
-      items: [{ name: '', value: toREM(BORDER_RADIUS) }],
+      items: [{ name: 'bottom-left', value: unitFn(BORDER_RADIUS) }],
     },
     userSelect: {
       enabled: true,
       responsive: false,
       property: 'user-select',
-      class: 'user-select',
+      class: `${prefix}user-select`,
       inputType: 'select',
       options: CSS_VALUE_PRESETS.userSelect,
       items: [
@@ -1130,7 +1054,7 @@ const Config = (
       enabled: true,
       responsive: false,
       property: 'vertical-align',
-      class: 'align',
+      class: `${prefix}align`,
       inputType: 'select',
       options: CSS_VALUE_PRESETS.align,
       items: [
@@ -1182,7 +1106,7 @@ const Config = (
       enabled: true,
       responsive: false,
       property: 'word-wrap',
-      class: 'text',
+      class: `${prefix}text`,
       inputType: 'text',
       items: [{ name: 'break', value: 'break-word' }],
     },
@@ -1190,8 +1114,11 @@ const Config = (
   };
 };
 
-export function generateConfig(utils: AvailConfig<AvailUtility> = {}): AvailConfig<AvailUtility> {
-  const config = Config(utils);
+export function generateConfig(
+  settings: AvailConfig<AvailSetting>,
+  utils: AvailConfig<AvailUtility> = {},
+): AvailConfig<AvailUtility> {
+  const config = Config(settings, utils);
 
   return Object.entries(config).reduce((form, [key, value]) => {
     form[key] = { id: key, ...value };
