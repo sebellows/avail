@@ -16,3 +16,4 @@ export { SelectControl } from './SelectControl';
 export { Spinner } from './Spinner';
 export { Switch } from './Switch';
 export { Tab, Tabs } from './TabNavigation';
+export { Toast } from './Toast';

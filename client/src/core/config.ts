@@ -54,13 +54,11 @@ const Config = (
 ): AvailConfig<AvailUtility> => {
   const prefix = get(settings, 'export.fields.prefix.value', '');
   const unit = get(settings, 'export.fields.sizingUnit.value', '');
-  // const colors = get(settings, 'colorSchemes.fields.colors.items', []);
-  // const grays = get(settings, 'colorSchemes.fields.grays.items', []);
   const variants = get(settings, 'colorSchemes.fields.variants.items', []);
   const globals = getSettingValues(settings, 'global.fields');
   const borderSettings = getSettingValues(settings, 'border.fields');
   // const breakpoints = get(settings, 'mediaQuery.fields.breakpoints.items', {});
-  const directions = get(settings, 'nameGeneration.fields.directions.items', []);
+  // const directions = get(settings, 'nameGeneration.fields.directions.items', []);
 
   const unitFn = unit === 'px' ? toPX : unit === 'em' ? toEM : toREM;
   const spacerUnits = toOptions(createSpacers('', unitFn), 'auto', { none: 0 });
@@ -576,54 +574,10 @@ const Config = (
       property: 'margin',
       class: `${prefix}m`,
       inputType: 'text',
-      items: [...spacerUnits],
-    },
-    marginX: {
-      enabled: true,
-      responsive: true,
-      property: 'margin-right margin-left',
-      class: `${prefix}m${directions.x}`,
-      inputType: 'text',
-      items: [...spacerUnits],
-    },
-    marginY: {
-      enabled: true,
-      responsive: true,
-      property: 'margin-top margin-bottom',
-      class: `${prefix}m${directions.y}`,
-      inputType: 'text',
-      items: [...spacerUnits],
-    },
-    marginTop: {
-      enabled: true,
-      responsive: true,
-      property: 'margin-top',
-      class: `${prefix}m${directions.top}`,
-      inputType: 'text',
-      items: [...spacerUnits],
-    },
-    marginRight: {
-      enabled: true,
-      responsive: true,
-      property: 'margin-right',
-      class: `${prefix}m${directions.right}`,
-      inputType: 'text',
-      items: [...spacerUnits],
-    },
-    marginBottom: {
-      enabled: true,
-      responsive: true,
-      property: 'margin-bottom',
-      class: `${prefix}m${directions.bottom}`,
-      inputType: 'text',
-      items: [...spacerUnits],
-    },
-    marginLeft: {
-      enabled: true,
-      responsive: true,
-      property: 'margin-left',
-      class: `${prefix}m${directions.left}`,
-      inputType: 'text',
+      subproperties: {
+        directions: true,
+        negativeUnits: true,
+      },
       items: [...spacerUnits],
     },
     // Negative margin utilities
@@ -633,54 +587,9 @@ const Config = (
       property: 'margin',
       class: `${prefix}m`,
       inputType: 'text',
-      items: [...negativeSpacerUnits],
-    },
-    negativeMarginX: {
-      enabled: true,
-      responsive: true,
-      property: 'margin-right margin-left',
-      class: `${prefix}m${directions.x}`,
-      inputType: 'text',
-      items: [...negativeSpacerUnits],
-    },
-    negativeMarginY: {
-      enabled: true,
-      responsive: true,
-      property: 'margin-top margin-bottom',
-      class: `${prefix}m${directions.y}`,
-      inputType: 'text',
-      items: [...negativeSpacerUnits],
-    },
-    negativeMarginTop: {
-      enabled: true,
-      responsive: true,
-      property: 'margin-top',
-      class: `${prefix}m${directions.top}`,
-      inputType: 'text',
-      items: [...negativeSpacerUnits],
-    },
-    negativeMarginRight: {
-      enabled: true,
-      responsive: true,
-      property: 'margin-right',
-      class: `${prefix}m${directions.right}`,
-      inputType: 'text',
-      items: [...negativeSpacerUnits],
-    },
-    negativeMarginBottom: {
-      enabled: true,
-      responsive: true,
-      property: 'margin-bottom',
-      class: `${prefix}m${directions.bottom}`,
-      inputType: 'text',
-      items: [...negativeSpacerUnits],
-    },
-    negativeMarginLeft: {
-      enabled: true,
-      responsive: true,
-      property: 'margin-left',
-      class: `${prefix}m${directions.left}`,
-      inputType: 'text',
+      subproperties: {
+        directions: true,
+      },
       items: [...negativeSpacerUnits],
     },
     // Padding utilities
@@ -690,54 +599,9 @@ const Config = (
       property: 'padding',
       class: `${prefix}p`,
       inputType: 'text',
-      items: [...spacerUnits],
-    },
-    paddingX: {
-      enabled: true,
-      responsive: true,
-      property: 'padding-right padding-left',
-      class: `${prefix}p${directions.x}`,
-      inputType: 'text',
-      items: [...spacerUnits],
-    },
-    paddingY: {
-      enabled: true,
-      responsive: true,
-      property: 'padding-top padding-bottom',
-      class: `${prefix}p${directions.y}`,
-      inputType: 'text',
-      items: [...spacerUnits],
-    },
-    paddingTop: {
-      enabled: true,
-      responsive: true,
-      property: 'padding-top',
-      class: `${prefix}p${directions.top}`,
-      inputType: 'text',
-      items: [...spacerUnits],
-    },
-    paddingRight: {
-      enabled: true,
-      responsive: true,
-      property: 'padding-right',
-      class: `${prefix}p${directions.right}`,
-      inputType: 'text',
-      items: [...spacerUnits],
-    },
-    paddingBottom: {
-      enabled: true,
-      responsive: true,
-      property: 'padding-bottom',
-      class: `${prefix}p${directions.bottom}`,
-      inputType: 'text',
-      items: [...spacerUnits],
-    },
-    paddingLeft: {
-      enabled: true,
-      responsive: true,
-      property: 'padding-left',
-      class: `${prefix}p${directions.left}`,
-      inputType: 'text',
+      subproperties: {
+        directions: true,
+      },
       items: [...spacerUnits],
     },
     // Text
@@ -969,6 +833,9 @@ const Config = (
       property: 'border-radius',
       class: `${prefix}rounded`,
       inputType: 'text',
+      subproperties: {
+        corners: true,
+      },
       items: [
         {
           name: '',
@@ -995,38 +862,6 @@ const Config = (
           value: '0',
         },
       ],
-    },
-    borderRadiusTop: {
-      enabled: true,
-      responsive: false,
-      property: 'border-top-left-radius border-top-right-radius',
-      class: `${prefix}rounded`,
-      inputType: 'text',
-      items: [{ name: 'top-left', value: unitFn(BORDER_RADIUS) }],
-    },
-    borderRadiusRight: {
-      enabled: true,
-      responsive: false,
-      property: 'border-top-right-radius border-bottom-right-radius',
-      class: `${prefix}rounded`,
-      inputType: 'text',
-      items: [{ name: 'top-right', value: unitFn(BORDER_RADIUS) }],
-    },
-    borderRadiusBottom: {
-      enabled: true,
-      responsive: false,
-      property: 'border-bottom-right-radius border-bottom-left-radius',
-      class: `${prefix}rounded`,
-      inputType: 'text',
-      items: [{ name: 'bottom-right', value: unitFn(BORDER_RADIUS) }],
-    },
-    borderRadiusLeft: {
-      enabled: true,
-      responsive: false,
-      property: 'border-bottom-left-radius border-top-left-radius',
-      class: `${prefix}rounded`,
-      inputType: 'text',
-      items: [{ name: 'bottom-left', value: unitFn(BORDER_RADIUS) }],
     },
     userSelect: {
       enabled: true,

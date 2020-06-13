@@ -6,7 +6,7 @@ import { Styled } from './styles';
 import { ToggleControlProps } from './props';
 
 const ToggleControl = React.forwardRef<{}, ToggleControlProps>(
-  ({ as: Component = 'label', children, type = 'checkbox', ...props }, ref: Ref<any>) => {
+  ({ as: Component = 'label', children, type = 'checkbox', onChange, ...props }, ref: Ref<any>) => {
     const inputRef = useRef(null);
     const htmlProps = containerProps(props);
     const formProps = validFormProps(props);
@@ -17,18 +17,16 @@ const ToggleControl = React.forwardRef<{}, ToggleControlProps>(
     }
 
     function handleChange(event: any) {
-      if (props.onChange) {
-        props.onChange(event);
-      }
+      onChange?.(event);
     }
 
     return (
       <Styled.Wrapper ref={ref} {...htmlProps} as={Component}>
-        <Styled.Control ref={inputRef} type={inputType} {...formProps} onChange={handleChange} />
+        <Styled.Control ref={inputRef} {...formProps} type={inputType} onChange={handleChange} />
         <Styled.Container className="toggle-container">
           <Styled.Outer className="toggle-outer" inputType={inputType} />
           <Styled.Inner className="toggle-inner" inputType={inputType}>
-            {type === 'checkbox' && (
+            {inputType === 'checkbox' && (
               <CheckIcon
                 fill={formProps?.checked ? control.active.bg : control.bg}
                 strokeDashoffset="22.91026"

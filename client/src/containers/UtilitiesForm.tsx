@@ -17,7 +17,7 @@ import { usePrevious } from '../hooks/usePrevious';
 import { useClickOutside } from '../hooks/useClickOutside';
 import { AvailUtility, AvailUtilities, ComponentProps, StateConfig } from '../core/contracts';
 import { generateUtility, generateResponsiveUtility } from '../core/build';
-import { classNames } from '../core/utils';
+import { classNames, get } from '../core/utils';
 
 import {
   Control,
@@ -31,7 +31,7 @@ import {
 } from '../components';
 
 import '../styles/prism.css';
-import { UtilitiesContext, SET_CONFIG, SettingsContext } from '../store';
+import { UtilitiesContext, SET_CONFIG, SettingsContext, ADD_ITEM, REMOVE_ITEM } from '../store';
 
 const DialogTitle = ({ children }) => (
   <h3 className="font-size-lg font-weight-bold mb-0">
@@ -47,10 +47,10 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
   const [settings] = useContext(SettingsContext);
   const [utilities, setUtilities] = useContext(UtilitiesContext);
 
-  const [activeModel, setActiveModel] = useState(null);
-  const lastActiveModel = usePrevious(activeModel);
+  const [activeModelID, setActiveModelID] = useState(null);
+  // const lastActiveModelID = usePrevious(activeModelID);
   const [open, setOpen] = useState(false);
-  const [output, setOutput] = useState('Code goes here'); // TODO: remove default here
+  const [output, setOutput] = useState('// No styles were generated'); // TODO: remove default here
 
   const dialogRef = useRef(null);
   const fieldsetRef = useRef(null);
@@ -68,46 +68,57 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
   });
 
   useEffect(() => {
-    if (activeModel && lastActiveModel !== activeModel) {
-      if (activeModel.responsive) {
-        setOutput(generateResponsiveUtility(settings.config, activeModel));
+    if (activeModelID) {
+      if (utilities.config[activeModelID].responsive) {
+        setOutput(generateResponsiveUtility(settings.config, utilities.config[activeModelID]));
       } else {
-        setOutput(generateUtility(settings.config, activeModel));
+        setOutput(generateUtility(settings.config, utilities.config[activeModelID]));
       }
     }
-  }, [activeModel, lastActiveModel, settings]);
+  }, [activeModelID, settings, utilities]);
 
   useClickOutside(dialogRef, handleClose);
 
-  const indices = Object.keys(utilities);
+  const indices = Object.keys(utilities.config);
 
-  function handleSelect(utility: any) {
+  function handleSelect(utilityID: string) {
     setOpen(!open);
-    activeIndex.current = indices.indexOf(utility.id);
-    setActiveModel(utility);
+    activeIndex.current = indices.indexOf(utilityID);
+    setActiveModelID(utilityID);
   }
 
-  const handleClickPrev = (event: any) => {
+  const handleClickPrev = () => {
     const { current: _activeIndex } = activeIndex;
 
     if (_activeIndex) {
       activeIndex.current = _activeIndex === 0 ? indices.length - 1 : _activeIndex - 1;
-      setActiveModel(utilities[indices[activeIndex.current]]);
+      setActiveModelID(indices[activeIndex.current]);
     }
   };
 
-  const handleClickNext = (event: any) => {
+  const handleClickNext = () => {
     const { current: _activeIndex } = activeIndex;
 
     if (_activeIndex) {
       activeIndex.current = _activeIndex === indices.length - 1 ? 0 : _activeIndex + 1;
-      setActiveModel(utilities[indices[activeIndex.current]]);
+      setActiveModelID(indices[activeIndex.current]);
     }
   };
 
   function handleClose() {
     setOpen(false);
   }
+
+  const repeaterHandlers = {
+    onAdd: (config: StateConfig) => {
+      setUtilities({ type: ADD_ITEM, config });
+    },
+    onRemove: (config: string | Partial<StateConfig>) => {
+      config = typeof config == 'string' ? { name: config } : config;
+      console.log('onRemove', config);
+      setUtilities({ type: REMOVE_ITEM, config });
+    },
+  };
 
   return (
     <Fragment>
@@ -122,8 +133,8 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
             onChange={({ target: { name, checked } }) => {
               setUtilities({ type: SET_CONFIG, config: { name, value: `${checked}` } });
             }}
-            selected={activeModel?.id === utility.id}
-            onSelect={() => handleSelect(utility)}
+            selected={activeModelID === utility.id}
+            onSelect={() => handleSelect(utility.id)}
           >
             <code className="font-size-base">{utility.property}</code>
           </PillTab>
@@ -131,25 +142,27 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
       </PillTabs>
 
       <Modal
-        show={open && activeModel}
+        show={open && activeModelID}
         onClose={handleClose}
         onClickPrev={handleClickPrev}
         onClickNext={handleClickNext}
       >
-        {activeModel?.id && (
+        {activeModelID && (
           <Dialog
             ref={dialogRef}
-            title={<DialogTitle>{activeModel.property}</DialogTitle>}
+            title={<DialogTitle>{utilities.config[activeModelID].property}</DialogTitle>}
             onClose={handleClose}
           >
-            <div id={`utility-${activeModel.id}`}>
-              {activeModel.description && <p>{activeModel.description}</p>}
+            <div id={`utility-${activeModelID}`}>
+              {utilities.config[activeModelID].description && (
+                <p>{utilities.config[activeModelID].description}</p>
+              )}
               <fieldset ref={fieldsetRef}>
-                <Field>
-                  <label htmlFor={`${activeModel.id}_class`}>Root class prefix:</label>
+                <Field className="mb-3">
+                  <label htmlFor={`${activeModelID}_class`}>Root class prefix:</label>
                   <Control
-                    name={`${activeModel.id}_class`}
-                    value={activeModel.class}
+                    name={`${activeModelID}_class`}
+                    value={utilities.config[activeModelID].class}
                     aria-label={'Root class prefix'}
                     onBlur={({ target: { name, value } }) => {
                       setUtilities({ type: SET_CONFIG, config: { name, value } });
@@ -158,33 +171,41 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
                   />
                 </Field>
                 <ToggleControl
-                  name={`${activeModel.id}_responsive`}
-                  value="responsive"
-                  checked={activeModel.responsive}
-                  onChange={({ target: { name, value } }) => {
-                    setUtilities({ type: SET_CONFIG, config: { name, value } });
+                  name={`${activeModelID}_responsive`}
+                  className="mb-3"
+                  value={`${activeModelID}-responsive`}
+                  checked={!!utilities.config[activeModelID].responsive}
+                  onChange={({ target: { name, checked } }) => {
+                    setUtilities({ type: SET_CONFIG, config: { name, value: checked } });
                   }}
                 >
                   <span>Make responsive classes?</span>
                 </ToggleControl>
-                {activeModel.subproperties && (
+                {utilities.config[activeModelID].subproperties && (
                   <div className="d-flex align-items-center mb-3">
-                    {Object.entries(activeModel.subproperties).map(([prop, val]) => (
-                      <ToggleControl
-                        key={`${activeModel.id}-${prop}`}
-                        name={`${activeModel.id}_subproperties_${prop}`}
-                        value={prop}
-                        checked={val}
-                        onChange={({ target: { name, checked } }) => {
-                          setUtilities({ type: SET_CONFIG, config: { name, value: checked } });
-                        }}
-                      >
-                        <span>Make utility classes for {prop}?</span>
-                      </ToggleControl>
-                    ))}
+                    {Object.entries(utilities.config[activeModelID].subproperties).map(
+                      ([prop, val]) => (
+                        <ToggleControl
+                          key={`${activeModelID}-${prop}`}
+                          name={`${activeModelID}_subproperties_${prop}`}
+                          value={prop}
+                          checked={val}
+                          onChange={({ target: { name, checked } }) => {
+                            setUtilities({ type: SET_CONFIG, config: { name, value: checked } });
+                          }}
+                        >
+                          <span>Make utility classes for {prop}?</span>
+                        </ToggleControl>
+                      ),
+                    )}
                   </div>
                 )}
-                <Repeater {...activeModel} id={`${activeModel.id}`} onUpdate={onUpdate} />
+                <Repeater
+                  {...utilities.config[activeModelID]}
+                  id={activeModelID}
+                  onUpdate={onUpdate}
+                  {...repeaterHandlers}
+                />
               </fieldset>
               <output className="output">
                 <pre>

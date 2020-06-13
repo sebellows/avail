@@ -193,7 +193,7 @@ const Colorpicker = forwardRef<HTMLDivElement, ControlProps>(
         className={classNames('colorpicker', className, isOpen && 'is-open')}
         {...htmlProps}
       >
-        <Styled.Field className="colorpicker-form-group">
+        <Styled.Field as="div" className="colorpicker-form-group">
           <Styled.ColorControl className="colorpicker-control">
             <Styled.ColorTarget
               value={Color.isColor(value as string) ? color : 'transparent'}

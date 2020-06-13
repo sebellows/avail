@@ -22,15 +22,23 @@ const FormControlResolver: React.FC<FormControlResolverProps> = ({
   ...props
 }) => {
   const handlers = {
-    onChange: ({ target: { name, value, type } }) => {
+    onChange: (event: any) => {
+      const { name, value, type } = event.target;
+
       if (type === 'radio' || type === 'checkbox' || type === 'select') {
         onUpdate({ name, value });
       }
+
+      props?.onChange?.(event);
     },
-    onBlur: ({ target: { name, value, type } }) => {
+    onBlur: (event: any) => {
+      const { name, value, type } = event.target;
+
       if (type === 'input') {
         onUpdate({ name, value });
       }
+
+      props?.onBlur?.(event);
     },
   };
 
@@ -45,7 +53,7 @@ const FormControlResolver: React.FC<FormControlResolverProps> = ({
   const formControl = useMemo(() => {
     switch (controlType) {
       case 'checkbox':
-        return <ToggleControl {...props} {...handlers} />;
+        return <ToggleControl {...props} {...handlers} children={props?.label} />;
       case 'radiogroup':
         return <RadioGroup {...props} {...handlers} />;
       case 'select':

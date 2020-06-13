@@ -1,119 +1,16 @@
-import { GRID_BREAKPOINTS, INDENT_AMOUNT } from './constants';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { INDENT_AMOUNT, INDENT_LEVEL } from './constants';
 import { range } from './utils/range';
 // import { AvailUtilities } from './contracts/avail';
 import { AvailConfig, AvailSetting, OptionProps, AvailUtility } from './contracts';
-import { isPlainObject } from './utils/common';
+// import { isPlainObject } from './utils/common';
 import { toEM } from './style';
 import { get } from './utils';
 
-export function generateUtilities(
-  settings: AvailConfig<AvailSetting>,
-  utilities: AvailConfig<AvailUtility>,
-  indentAmt = INDENT_AMOUNT,
-): string {
-  return Object.entries(utilities).reduce((css: string, [key, utility]) => {
-    if (utility.responsive) {
-      return (css += generateResponsiveUtility(settings, utility, indentAmt));
-    }
-    return (css += generateUtility(settings, utility, indentAmt));
-  }, '');
+function indentBy(level: number): string {
+  const tab = '  ';
+  return level > INDENT_LEVEL ? tab.repeat(level) : '';
 }
-
-// Loop over each breakpoint
-export function generateResponsiveUtility(
-  settings: AvailConfig<AvailSetting>,
-  utility: AvailUtility,
-  indentAmt = INDENT_AMOUNT,
-): string {
-  return Object.entries(GRID_BREAKPOINTS).reduce((css: string, [breakpoint, screenSize]) => {
-    const bpSize = (isPlainObject(screenSize)
-      ? (screenSize as { value: number; readOnly: boolean }).value
-      : screenSize) as number;
-
-    const infix = bpSize === 0 ? '' : `-${breakpoint}`;
-    const mqOpen = bpSize !== 0 ? `@media (min-width: ${toEM(bpSize)}) {\n` : '';
-    const mqClose = bpSize !== 0 ? `}\n\n` : '\n';
-    const _indentAmt = bpSize === 0 ? indentAmt : indentAmt * 2;
-
-    return (css += `${mqOpen}${generateUtility(settings, utility, _indentAmt, infix)}${mqClose}`);
-  }, '');
-}
-
-function getIndentAmount(indent: number): string {
-  return range(indent).reduce((str: string, curr: number) => (str += ' '), '');
-}
-
-/**
- * Generates interior declararion block of a CSS selector.
- */
-export function generateDeclaration(
-  properties: string[],
-  value: string,
-  indentAmt: number,
-): string {
-  return properties.reduce((css: string, prop: string, i: number) => {
-    const indent = properties.length > 1 ? `\n${getIndentAmount(indentAmt)}` : ' ';
-    const nl = properties.length > 1 && i > 0 ? '\n' : ' ';
-
-    return (css += `${indent}${prop}: ${value} !important;${nl}`);
-  }, '');
-}
-
-/**
- * Generates utility classes as formatted string.
- */
-// export function generateUtility(
-//   utility: CollectionObj,
-//   indentAmt = INDENT_AMOUNT,
-//   infix = '',
-// ): string {
-//   let { class: className, property: properties } = utility;
-//   let values = utility.values || utility.items;
-
-//   if (values == null || properties == null) return '';
-
-//   const indentBy = properties.length > 1 && indentAmt > INDENT_AMOUNT ? indentAmt / 2 : indentAmt;
-//   const openingSelectorIndent = indentAmt === INDENT_AMOUNT ? '' : getIndentAmount(indentBy);
-
-//   // If the values are an array or string, convert it into a object
-//   if (Array.isArray(values)) {
-//     values = values.reduce((o, val) => {
-//       if (isPlainObject(val)) {
-//         // Comes from `items`
-//         o[val.name] = val.value;
-//       } else {
-//         // Comes from original `utilities` values
-//         o[val] = val;
-//       }
-//       return o;
-//     }, {});
-//   }
-
-//   const entries = Object.entries(values);
-
-//   return entries.reduce((css, [key, value], i) => {
-//     // Multiple properties are possible, for example with vertical
-//     // or horizontal margins or paddings.
-//     if (typeof properties === 'string') {
-//       properties = properties.split(' ');
-//     }
-
-//     // Use custom class if present
-//     const propertyClass = className || properties[0] || '';
-//     infix = propertyClass === '' && infix.startsWith('-') ? infix.slice(1) : infix;
-//     const modifier = propertyClass.length && key !== '' ? `-${key}` : '';
-//     const closingSelectorIndent = properties.length > 1 ? openingSelectorIndent : '';
-
-//     return (css +=
-//       value != null
-//         ? `${openingSelectorIndent}.${propertyClass}${infix}${modifier} {${generateDeclaration(
-//             properties,
-//             value as string,
-//             indentAmt,
-//           )}${closingSelectorIndent}}\n`
-//         : '');
-//   }, '');
-// }
 
 /**
  * Generate a utility class name from configuration settings.
@@ -121,8 +18,8 @@ export function generateDeclaration(
  */
 function generateClassName(strs: string[], sep = '-') {
   return strs
+    .filter((str: string) => str != null && str.length > 0)
     .map((str: string) => (str.startsWith('-') ? str.slice(1) : str))
-    .filter((str: string) => str.length > 0)
     .join(sep);
 }
 
@@ -130,21 +27,44 @@ function generateClassName(strs: string[], sep = '-') {
  * Generate a CSS declaration block.
  * TODO: Handle formatting with PostCSS instead of manually indenting.
  */
-function generateDeclarationBlock(option: OptionProps, properties: string[], indentAmt: number) {
+function generateDeclarationBlock(
+  option: OptionProps,
+  properties: string | string[],
+  indentLevel: number,
+  isImportant = true,
+) {
+  properties = Array.isArray(properties) ? properties : [properties];
+
   const { name, value } = option;
-  const indentBy = properties.length > 1 && indentAmt > INDENT_AMOUNT ? indentAmt / 2 : indentAmt;
-  const openingSelectorIndent = indentAmt === INDENT_AMOUNT ? '' : getIndentAmount(indentBy);
-  const closingSelectorIndent = properties ? openingSelectorIndent : '';
+  // If there is more than one propery, break onto new lines and indent accordingly.
+  // Otherwise, keep on same line and add a space AFTER the OPENING bracket.
+  // const indent = properties.length > 1 ? indentBy(indentLevel) : ' ';
+  // Calculate the indentation for multi-line and nested blocks.
+  // const _indentBy = properties.length > 1 && indentLevel > INDENT_LEVEL ? indentLevel / 2 : indentLevel;
+  // If `indentAmt` is the default, we set like a top-level line w/ no ident.
+  const blockIndent = indentBy(indentLevel);
+  const openingWhitespace = properties.length > 1 ? `\n${indentBy(indentLevel + 1)}` : ' ';
+
+  // See `settings.export.fields.isImportant`
+  const important = isImportant ? ' !important' : '';
 
   const innerBlock = properties.reduce((css: string, prop: string, i: number) => {
-    const indent = properties.length > 1 ? `\n${getIndentAmount(indentAmt)}` : ' ';
-    const nl = properties.length > 1 && i > 0 ? '\n' : ' ';
+    // If there is more than one propery, add a linebreak at the end.
+    // Otherwise, keep on same line and add a space BEFORE the CLOSING bracket.
+    // const nl = properties.length > 1 && i > 0 ? '\n' : ' ';
+    const closingWhitespace = properties.length > 1 && i > 0 ? '\n' : ' ';
 
-    return (css += `${indent}${prop}: ${value} !important;${nl}`);
+    return (css += `${openingWhitespace}${prop}: ${value}${important};${closingWhitespace}`);
   }, '');
 
-  return `${openingSelectorIndent}.${name} {${innerBlock}${closingSelectorIndent}}\n`;
+  return `${blockIndent}.${name} {${innerBlock}}\n`;
 }
+
+const defaultFormattingOptions = {
+  indentLevel: INDENT_LEVEL,
+  infix: '',
+  isImportant: true,
+};
 
 /**
  * If a utility is configured to set direction-based modifiers (i.e., `margin-left`, etc.)
@@ -153,9 +73,9 @@ function generateDeclarationBlock(option: OptionProps, properties: string[], ind
 function generateDirectionModifiers(
   directions: OptionProps[],
   utility: AvailUtility,
-  indentAmt = INDENT_AMOUNT,
-  infix = '',
+  options = {},
 ): string {
+  const { indentLevel, infix, isImportant } = { ...defaultFormattingOptions, ...options };
   let { class: className, items, property } = utility;
 
   const itemsCSS = [];
@@ -167,7 +87,7 @@ function generateDirectionModifiers(
     items.forEach(({ name, value }) => {
       const classParts = [className || property, dirName, infix, name] as string[];
       const dirItem = { name: generateClassName(classParts), value };
-      itemsCSS.push(generateDeclarationBlock(dirItem, subprops, indentAmt));
+      itemsCSS.push(generateDeclarationBlock(dirItem, subprops, indentLevel, isImportant));
     });
   });
 
@@ -181,15 +101,12 @@ function generateDirectionModifiers(
 function generateVariantModifiers(
   variants: OptionProps[],
   utility: AvailUtility,
-  options = {},
+  options: Record<string, any> = {},
 ): string {
   let { class: className, property } = utility;
-  const { indentAmt, infix, directions } = {
-    ...{
-      indentAmt: INDENT_AMOUNT,
-      infix: '',
-      directions: null,
-    },
+  const { indentLevel, infix, isImportant, directions } = {
+    directions: null,
+    ...defaultFormattingOptions,
     ...options,
   };
 
@@ -200,7 +117,12 @@ function generateVariantModifiers(
     const classParts = [className || property, infix, name] as string[];
 
     itemsCSS.push(
-      generateDeclarationBlock({ name: generateClassName(classParts), value }, subprops, indentAmt),
+      generateDeclarationBlock(
+        { name: generateClassName(classParts), value },
+        subprops,
+        indentLevel,
+        isImportant,
+      ),
     );
 
     // TODO: this is probably only used for `border-color`. Possibly refactor?
@@ -214,7 +136,7 @@ function generateVariantModifiers(
         // Destructure current classParts to append the direction name.
         const [first, ...rest] = classParts;
         const variantItem = { name: generateClassName([first, dirName, ...rest]), value };
-        itemsCSS.push(generateDeclarationBlock(variantItem, subprops, indentAmt));
+        itemsCSS.push(generateDeclarationBlock(variantItem, subprops, indentLevel, isImportant));
       });
     }
   });
@@ -228,20 +150,13 @@ function generateVariantModifiers(
 export function generateUtility(
   settings: AvailConfig<AvailSetting>,
   utility: AvailUtility,
-  indentAmt = INDENT_AMOUNT,
+  indentLevel = INDENT_LEVEL,
   infix = '',
 ): string {
   let { class: className, items, property, subproperties } = utility;
+  const isImportant = get(settings, 'export.fields.isImportant.checked', []);
 
   if (items == null || property == null) return '';
-
-  // TODO: This should no longer be true
-  // Multiple properties are possible, for example with vertical
-  // or horizontal margins or paddings.
-  let properties = property.split(' ');
-
-  // Use custom class if present
-  const classPaths = [className || properties[0] || '', infix];
 
   let subpropertyStyles = '';
   if (subproperties) {
@@ -249,13 +164,18 @@ export function generateUtility(
 
     if (hasDirections) {
       const directions = get(settings, 'nameGeneration.fields.directions.items', []);
-      subpropertyStyles += generateDirectionModifiers(directions, utility, indentAmt, infix);
+      subpropertyStyles += generateDirectionModifiers(directions, utility, {
+        indentLevel,
+        infix,
+        isImportant,
+      });
     }
     if (hasVariants) {
       const variants = get(settings, 'colorSchemes.fields.variants.items', []);
       subpropertyStyles += generateVariantModifiers(variants, utility, {
-        indentAmt,
+        indentLevel,
         infix,
+        isImportant,
         directions: hasDirections
           ? get(settings, 'nameGeneration.fields.directions.items', [])
           : null,
@@ -264,11 +184,45 @@ export function generateUtility(
   }
 
   let utilityCSS = items.reduce((css, { name, value }, i) => {
-    classPaths.push(`${name}`);
-    const _name = generateClassName(classPaths);
+    // Piece together the class name
+    const _name = generateClassName([className || property || '', infix, name as string]);
 
     return (css +=
-      value != null ? generateDeclarationBlock({ name: _name, value }, properties, indentAmt) : '');
+      value != null
+        ? generateDeclarationBlock({ name: _name, value }, property, indentLevel, isImportant)
+        : '');
   }, '');
   return (utilityCSS += subpropertyStyles);
+}
+
+// Loop over each breakpoint
+export function generateResponsiveUtility(
+  settings: AvailConfig<AvailSetting>,
+  utility: AvailUtility,
+): string {
+  const breakpoints = get(settings, 'mediaQuery.fields.breakpoints.items');
+  return breakpoints.reduce((css: string, { name, value }) => {
+    if (value === '0') {
+      return (css += `${generateUtility(settings, utility)}\n`);
+    }
+
+    return (css += `@media (min-width: ${toEM(value)}) {\n${generateUtility(
+      settings,
+      utility,
+      1,
+      name,
+    )}}\n`);
+  }, '');
+}
+
+export function generateUtilities(
+  settings: AvailConfig<AvailSetting>,
+  utilities: AvailConfig<AvailUtility>,
+): string {
+  return Object.values(utilities).reduce((css: string, utility) => {
+    if (utility.responsive) {
+      return (css += generateResponsiveUtility(settings, utility));
+    }
+    return (css += generateUtility(settings, utility));
+  }, '');
 }

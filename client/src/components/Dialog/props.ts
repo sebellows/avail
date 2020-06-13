@@ -6,7 +6,7 @@ export interface DialogProps {
   children?: any;
   focus?: boolean;
   title?: any;
-  style?: CSSProperties;
+  size?: string;
   tabIndex?: number;
   width?: string;
   onClose?: (event: SyntheticEvent) => void;

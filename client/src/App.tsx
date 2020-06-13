@@ -1,41 +1,27 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, {
-  AnimationEvent,
-  useEffect,
-  useState,
-  SyntheticEvent,
-  useRef,
-  useReducer,
-} from 'react';
+import React, { AnimationEvent, useEffect, useState, SyntheticEvent, useRef } from 'react';
 import styled from 'styled-components';
-import { generateConfig } from './core/config';
-import { generateSettings } from './core/settings';
-import { Spinner, Tabs, Tab, Button } from './components';
+import { Button, Spinner, Tabs, Tab, Toast } from './components';
 import { SettingsForm } from './containers/SettingsForm';
 import { UtilitiesForm } from './containers/UtilitiesForm';
 import { Store } from './store';
 
 import './App.scss';
-// import { reducer } from './store/reducers';
-import { AvailConfig, AvailSetting } from './core/contracts';
+import 'react-toastify/dist/ReactToastify.css';
+
+import { zIndexes, spacers, toREM } from './core/style';
 
 const SubmitButton = styled(Button)`
   position: fixed;
   top: 90vh;
-  right: 2rem;
-  z-index: 1100;
+  right: ${toREM(spacers.base * 2)};
+  z-index: ${zIndexes.submitBtn};
 `;
-
-// const initialUtilities = generateConfig();
-// const initialSettings = generateSettings() as AvailConfig<AvailSetting>;
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('settings');
   const [loading, setLoading] = useState(false);
   const [addExitClass, setExitClass] = useState(false);
-
-  // const [settings, dispatchSettings] = useReducer(reducer, initialSettings);
-  // const [utilities, dispatchUtilities] = useReducer(reducer, initialUtilities);
 
   const formRef = useRef(null);
 
@@ -64,14 +50,10 @@ export default function App() {
     console.log('submitted', values);
   }
 
-  // const context = {
-  //   dispatchSettings,
-  //   dispatchUtilities,
-  // };
-
   return (
     <div
-      className="App container"
+      id="App"
+      className="container"
       style={{
         position: 'relative',
         overflow: 'hidden',
@@ -102,6 +84,7 @@ export default function App() {
           </SubmitButton>
         </form>
       </Store>
+      <Toast autoClose={5000} />
     </div>
   );
 }

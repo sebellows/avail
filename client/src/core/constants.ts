@@ -6,6 +6,7 @@ import { Color } from './utils/color';
 /**
  * CSS Output Settings
  */
+export const INDENT_LEVEL = 0;
 export const INDENT_AMOUNT = 2;
 export const INDENT = range(2).reduce((str: string, curr: number) => (str += ' '), '');
 
@@ -17,13 +18,23 @@ export const BORDER_STYLES = {
 };
 
 export const DIRECTIONS = {
-  // default: '',
   top: 'top',
   bottom: 'bottom',
   left: 'left',
   right: 'right',
   y: 'top bottom',
   x: 'left right',
+};
+
+export const CORNERS = {
+  top: 'top-left top-right',
+  bottom: 'bottom-left bottom-right',
+  left: 'top-left bottom-left',
+  right: 'top-right bottom-right',
+  topLeft: 'top-left',
+  topRight: 'top-right',
+  bottomLeft: 'bottom-left',
+  bottomRight: 'bottom-right',
 };
 
 /**

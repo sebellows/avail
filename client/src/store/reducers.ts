@@ -3,29 +3,7 @@ import { AvailState, StateActionConfig, AvailSetting, AvailUtility } from '../co
 import { addItem, removeItem, setInProgress, setConfig } from './actions';
 import { ADD_ITEM, REMOVE_ITEM, SET_IN_PROGRESS, SET_CONFIG } from './types';
 
-// const reducer = (state, action) => {
-//   const { payload } = action;
-//   switch (action.type) {
-//     case "ADD_ITEM":
-//      return addNewItem(state, payload.todoItem);
-//     default:
-//      return state;
-// }};
-// function addNewItem(state, task) {
-//   const list = [...state.list];
-//   const newItem = {
-//     itemId: list.length + 1,
-//     task: task,
-//     completed: false
-//   };
-//   return {
-//     list: [...state.list, newItem]
-//   };
-// }
-
-type StateConfigType = AvailSetting | AvailUtility;
-
-export function stateReducer<T = StateConfigType>(
+export function stateReducer<T = AvailSetting | AvailUtility>(
   state: AvailState<T>,
   action: Partial<StateActionConfig>,
 ) {

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { color, mixin, isUnit, toREM } from '../../core/style';
+import { color, mixin, isUnit, toREM, focusShadow, transition } from '../../core/style';
 import { ButtonProps } from './props';
 
 /** Buttons */
@@ -28,6 +28,16 @@ export const StyledFAB = styled(BaseButton)<ButtonProps>`
   flex: none;
   border: 0;
   ${mixin.borderRadius('circle')}
+  ${mixin.shadow(0, 1)}
   padding: 0;
   ${({ size }) => mixin.size(size ? (isUnit(size) ? size : toREM(+size)) : toREM(54))}
+  transition: all ${transition.duration.easeInOut} ${transition.timing.easeInOut};
+
+  &:hover {
+    ${mixin.shadow('depth1')}
+  }
+  &:focus {
+    outline: none;
+    ${mixin.shadow(focusShadow.depth2)}
+  }
 `;

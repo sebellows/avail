@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import React from 'react';
 import { COLORS, DIRECTIONS, GRAYS, GRID_BREAKPOINTS, THEME_COLORS } from './constants';
 import { toOptions } from './models/Option';
 import { CSS_VALUE_PRESETS } from './presets';
@@ -37,6 +38,19 @@ export const Settings = (settings: AvailConfig<AvailSetting>): AvailConfig<Avail
           attrs: { placeholder: 'app-' },
           value: '',
           description: 'Prepend a custom prefix to all generated utility classes?',
+        },
+        isImportant: {
+          type: 'checkbox',
+          id: 'export_fields_isImportant_value',
+          label: (
+            <>
+              Use <code>!important</code>?
+            </>
+          ),
+          checked: true,
+          value: 'isImportant',
+          description:
+            'This will force all properties defined in utility classes to override specificity and inline styles.',
         },
         sizingUnit: {
           type: 'radiogroup',

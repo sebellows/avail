@@ -1,6 +1,8 @@
 import styled from 'styled-components';
-import { mixin, transition, zIndexes } from '../../core/style';
+import { mixin, transition, zIndexes, toREM, spacers } from '../../core/style';
 import { FocusTrap } from '../FocusTrap';
+
+const NAV_ITEM_WIDTH = 60;
 
 const ModalBase = styled.div`
   position: fixed;
@@ -17,7 +19,7 @@ const NavItem = styled.a`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 60px;
+  width: ${toREM(NAV_ITEM_WIDTH)};
   height: 100%;
   padding: 0;
   opacity: 0.5;
@@ -32,17 +34,26 @@ export const Styled = {
     animation-timing-function: ${transition.timing.easeOut};
   `,
   Modal: styled(ModalBase)`
-    ${mixin.flexCenter}
+    display: flex;
+    justify-content: center;
     z-index: ${zIndexes.modal};
+
+    @media (min-width: 600px) {
+      align-items: center;
+    }
   `,
   Content: styled(FocusTrap)`
     position: relative;
     top: 0;
     left: 0;
-    width: 100%;
-    z-index: calc(var(--modal-zindex) + 1);
+    width: calc(100% - ${toREM(spacers.base * 2)});
+    z-index: ${zIndexes.modal + 1};
     transform: translate3d(0, 0, 0);
     ${mixin.transition({ dur: 'easeIn', timing: 'easeIn' })}
+
+    @media (min-width: 600px) {
+      max-width: calc(100% - ${toREM(NAV_ITEM_WIDTH * 2)});
+    }
 
     @media (min-width: 960px) {
       position: absolute;
@@ -53,12 +64,21 @@ export const Styled = {
   `,
   Nav: styled.nav`
     position: fixed;
-    top: 0;
+    top: calc(100vh - ${toREM(NAV_ITEM_WIDTH)});
     left: 0;
     width: 100%;
-    height: 100%;
+    height: ${toREM(NAV_ITEM_WIDTH)};
     list-style: none;
     pointer-events: none;
+
+    @media (min-width: 600px) {
+      top: 0;
+      height: 100%;
+    }
+
+    @media (hover: hover) {
+      max-width: calc(100% - 15px);
+    }
   `,
   Prev: styled(NavItem)`
     left: 0;

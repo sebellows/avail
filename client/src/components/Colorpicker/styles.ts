@@ -1,6 +1,16 @@
 import styled, { keyframes, css } from 'styled-components';
-import { color, control, mixin, radius, shadow, zIndexes, transition } from '../../core/style';
-import { ControlProps, Styled as StyledControl } from '../Control';
+import {
+  calcControlHeight,
+  color,
+  control,
+  mixin,
+  radius,
+  shadow,
+  zIndexes,
+  transition,
+  toREM,
+} from '../../core/style';
+import { ControlProps, Styled as StyledControl, StyledBaseInput } from '../Control';
 
 const dropdownEnter = keyframes`
   from {
@@ -38,15 +48,16 @@ export const Styled = {
    * Datalist Form Field (i.e., autocomplete, typeahead)
    */
   Wrapper: styled.div<WrapperProps>`
-    background-color: ${color.bg.body};
-    background-clip: padding-box;
-    border-radius: calc(${radius.base} / 2);
-    box-shadow: none;
-    color: ${control.color};
+    // background-color: ${color.bg.body};
+    // background-clip: padding-box;
+    // border-radius: calc(${radius.base} / 2);
+    // box-shadow: none;
+    // color: ${control.color};
     display: block;
     width: 100%;
     max-width: 500px;
-    height: calc(1.5em + 0.75rem + 2px);
+    // height: calc(1.5em + 0.75rem + 2px);
+    height: ${control.height};
     position: relative;
     ${(props) =>
       props &&
@@ -54,9 +65,9 @@ export const Styled = {
       css`
         z-index: 100;
       `};
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.5;
+    // font-size: 1rem;
+    // font-weight: 400;
+    // line-height: 1.5;
     user-select: none;
 
     &:focus {
@@ -65,11 +76,12 @@ export const Styled = {
   `,
 
   /** Form group */
-  Field: styled.div`
+  Field: styled(StyledControl.Input)`
     display: flex;
     align-items: stretch;
     justify-content: space-between;
     position: relative;
+    padding: 0;
   `,
 
   /** Color input */
@@ -89,14 +101,16 @@ export const Styled = {
   `,
   ColorTarget: styled.div<ControlProps>`
     position: absolute;
-    top: 0;
-    left: 0;
+    top: -${control.borderWidth};
+    left: -${control.borderWidth};
     width: 100%;
-    height: calc(1.5em + 0.75rem);
+    // height: calc(1.5em + 0.75rem);
+    height: ${toREM(calcControlHeight({ borderWidth: 0 }))};
     line-height: 1;
     background-clip: content-box;
     background-color: ${({ value }) => value};
     border: 1px solid ${control.borderColor};
+    border-radius: ${radius.base} ${radius.sm} ${radius.sm} ${radius.base};
     box-shadow: inset 0 0 0 5px ${color.bg.body}, inset 0 0 0 6px ${mixin.rgba(color.black, 0.2)},
       1px 0 1px 0 ${mixin.rgba(color.black, 0.12)};
     box-sizing: content-box;
@@ -111,8 +125,9 @@ export const Styled = {
   `,
 
   /** Form control */
-  Control: styled(StyledControl.Input)` {
-    border-color: rgba(0, 0, 0, 0.03125);
+  Control: styled(StyledBaseInput)` {
+    background-color: transparent;
+    border-color: transparent;
     border-radius: 0 calc(${radius.base} - 1px) calc(${radius.base} - 1px) 0;
     flex: 1 1;
   `,
@@ -123,7 +138,7 @@ export const Styled = {
     box-shadow: ${shadow[1]}, ${shadow[2]}, ${shadow[3]};
     position: absolute;
     top: calc(1.5em + 0.75rem + 2px);
-    left: 3.25rem;
+    left: 0;
     right: 0;
     overflow: hidden;
     max-height: 240px;

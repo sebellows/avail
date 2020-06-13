@@ -7,10 +7,10 @@ interface ClassMap {
   legend?: string;
 }
 
-export interface FormArrayProps extends ComponentProps {
+export interface RepeaterProps extends ComponentProps {
   classMap?: ClassMap;
   description?: string;
-  error?: Record<string, any>; // TODO: replace with FieldError map?
+  errors?: Record<string, any>; // TODO: replace with FieldError map?
   id?: string;
   keyLabel?: string;
   valueLabel?: string;

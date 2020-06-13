@@ -1,19 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, {
-  forwardRef,
-  InputHTMLAttributes,
-  Ref,
-  useEffect,
-  useState,
-  ChangeEvent,
-  useRef,
-} from 'react';
+import React, { forwardRef, InputHTMLAttributes, Ref, ChangeEvent } from 'react';
 import styled from 'styled-components';
 
 import { OptionProps, ComponentProps } from '../core/contracts';
 import { validFormProps, classNames } from '../core/utils';
 import { control, transition, radius, mixin } from '../core/style';
-import { usePrevious } from '../hooks/usePrevious';
 
 export type ControlType = HTMLSelectElement | HTMLTextAreaElement | HTMLInputElement;
 
@@ -33,17 +24,60 @@ function isToggle(type: string) {
   return type === 'checkbox' || type === 'radio';
 }
 
+export const StyledBaseInput = styled.input<ControlProps>`
+  background-color: ${({ disabled, isInvalid }: ControlProps) => {
+    return isInvalid ? control.invalid.bg : disabled ? control.disabled.bg : control.bg;
+  }};
+  background-clip: padding-box;
+  border-width: ${control.borderWidth};
+  border-style: solid;
+  border-color: ${({ disabled, isInvalid }: ControlProps) => {
+    return isInvalid
+      ? control.invalid.borderColor
+      : disabled
+      ? control.disabled.borderColor
+      : control.borderColor;
+  }};
+  border-radius: ${radius.base};
+  box-shadow: none;
+  color: ${({ disabled, isInvalid }: ControlProps) => {
+    return isInvalid ? control.invalid.color : disabled ? control.disabled.color : control.color;
+  }};
+  display: block;
+  width: 100%;
+  height: ${({ type }) => (isToggle(type) ? '100%' : control.height)};
+  ${mixin.padding.all('controlY', 'controlX')}
+  font-family: ${control.fontFamily};
+  font-size: ${control.fontSize};
+  font-weight: 400;
+  line-height: ${control.lineHeight};
+  outline: none;
+  transition: background-color ${transition.duration.easeIn} ${transition.timing.easeIn},
+    outline ${transition.duration.easeIn} ${transition.timing.easeIn},
+    color ${transition.duration.easeIn} ${transition.timing.easeIn},
+    box-shadow ${transition.duration.easeIn} ${transition.timing.easeIn};
+`;
+
 export const Styled = {
-  Input: styled.input<ControlProps>`
-    background-color: ${({ isInvalid }) => (isInvalid ? control.invalid.bg : control.bg)};
+  Input: styled(StyledBaseInput)<ControlProps>`
+    background-color: ${({ disabled, isInvalid }: ControlProps) => {
+      return isInvalid ? control.invalid.bg : disabled ? control.disabled.bg : control.bg;
+    }};
     background-clip: padding-box;
     border-width: ${control.borderWidth};
     border-style: solid;
-    border-color: ${({ isInvalid }) =>
-      isInvalid ? control.invalid.borderColor : control.borderColor};
+    border-color: ${({ disabled, isInvalid }: ControlProps) => {
+      return isInvalid
+        ? control.invalid.borderColor
+        : disabled
+        ? control.disabled.borderColor
+        : control.borderColor;
+    }};
     border-radius: ${radius.base};
     box-shadow: none;
-    color: ${({ isInvalid }: ControlProps) => (isInvalid ? control.invalid.color : control.color)};
+    color: ${({ disabled, isInvalid }: ControlProps) => {
+      return isInvalid ? control.invalid.color : disabled ? control.disabled.color : control.color;
+    }};
     display: block;
     width: 100%;
     height: ${({ type }) => (isToggle(type) ? '100%' : control.height)};
@@ -69,6 +103,10 @@ export const Styled = {
     }
     &:focus {
       border-color: ${control.focus.borderColor};
+    }
+
+    &:disabled {
+      pointer-events: none;
     }
 
     &.is-invalid {

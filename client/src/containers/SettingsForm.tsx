@@ -109,7 +109,7 @@ const SettingsForm: FC<SettingsFormProps> = React.memo(() => {
                       field.type === 'repeater' && 'has-fieldset',
                     )}
                   >
-                    {field?.label && (
+                    {field?.label && field.type !== 'checkbox' && (
                       <label htmlFor={field.id} className={classNames(field?.classMap?.label)}>
                         {field.label}
                       </label>

@@ -324,7 +324,6 @@ export function set<T>(
     if (i !== paths.length - 1) {
       const objValue = nested[key];
       newValue = customizer ? customizer(objValue, key, nested) : undefined;
-
       if (!isDefined(newValue)) {
         newValue = isObject(objValue) ? objValue : isNumber(paths[i + 1]) ? [] : {};
       }

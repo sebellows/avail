@@ -1,10 +1,11 @@
 import React, { forwardRef, Ref } from 'react';
 import { classNames, isNil } from '../../core/utils';
 import { MinusIcon, PlusIcon } from '../Icon';
-import { FormArrayProps } from './props';
 import { StyledItem } from './styles';
+import { RepeaterProps } from './props';
+import { Button } from '../Button';
 
-const RepeaterItem = forwardRef<{}, FormArrayProps>(
+const RepeaterItem = forwardRef<{}, RepeaterProps>(
   (
     {
       id = '',
@@ -18,14 +19,6 @@ const RepeaterItem = forwardRef<{}, FormArrayProps>(
     },
     ref: Ref<any>,
   ) => {
-    function handleAdd() {
-      onAdd?.({ name: id, value: '' });
-    }
-
-    function handleRemove() {
-      onRemove?.(id);
-    }
-
     return (
       <StyledItem.Wrapper ref={ref} className={classNames('repeater-item', className)}>
         {!isNil(before) && (
@@ -35,16 +28,18 @@ const RepeaterItem = forwardRef<{}, FormArrayProps>(
         <StyledItem.Group className="repeater-item-group">{children}</StyledItem.Group>
 
         <StyledItem.Append className="repeater-item-append">
-          <button type="button" className="btn fab mini-fab btn-default add" onClick={handleAdd}>
+          <Button fab variant="white" size={20} className="add" onClick={onAdd}>
             <PlusIcon size="12" />
-          </button>
-          <button
-            type="button"
-            className="btn fab mini-fab btn-default remove"
-            onClick={handleRemove}
-          >
+          </Button>
+          <Button fab variant="white" size={20} className="remove" onClick={onRemove}>
             <MinusIcon size="12" />
-          </button>
+          </Button>
+          {/* <button type="button" className="btn fab mini-fab btn-default add" onClick={onAdd}>
+            <PlusIcon size="12" />
+          </button> */}
+          {/* <button type="button" className="btn fab mini-fab btn-default remove" onClick={onRemove}>
+            <MinusIcon size="12" />
+          </button> */}
         </StyledItem.Append>
       </StyledItem.Wrapper>
     );

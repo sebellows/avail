@@ -188,7 +188,7 @@ export const font = {
   size: (size: number) => `font-size: ${size}px;`,
 };
 
-const calcControlHeight = (config: Partial<ControlSettings> = {}) => {
+export const calcControlHeight = (config: Partial<ControlSettings> = {}) => {
   const { paddingY, borderWidth, fontSize, lineHeight } = { ...CONTROL_SETTINGS, ...config };
   const py = paddingY * 2;
   const bw = borderWidth * 2;
@@ -223,9 +223,9 @@ const SHADOW_UMBRA = Color(BLACK).alpha(0.2).string();
 const SHADOW_PENUMBRA = Color(BLACK).alpha(0.14).string();
 const SHADOW_AMBIENCE = Color(BLACK).alpha(0.12).string();
 
-const FOCUS_SHADOW_UMBRA = Color(VARIANTS.primary).alpha(0.5).string();
-const FOCUS_SHADOW_PENUMBRA = Color(VARIANTS.primary).alpha(0.3).string();
-const FOCUS_SHADOW_AMBIENCE = Color(VARIANTS.primary).alpha(0.18).string();
+const FOCUS_SHADOW_UMBRA = Color(COLORS.magenta).alpha(0.5).string();
+const FOCUS_SHADOW_PENUMBRA = Color(COLORS.magenta).alpha(0.3).string();
+const FOCUS_SHADOW_AMBIENCE = Color(COLORS.magenta).alpha(0.18).string();
 
 export const shadow = {
   0: `0 1px 2px 0px ${SHADOW_AMBIENCE}`,
@@ -241,6 +241,19 @@ export const shadow = {
 };
 
 export const focusShadow = {
+  0: `0 1px 2px 0px ${FOCUS_SHADOW_PENUMBRA}`,
+  1: `0 2px 4px -1px ${FOCUS_SHADOW_UMBRA}`,
+  2: `0 4px 5px 0 ${FOCUS_SHADOW_PENUMBRA}`,
+  3: `0 1px 10px 0 ${FOCUS_SHADOW_UMBRA}`,
+  depth1: `0 2px 1px -1px ${FOCUS_SHADOW_UMBRA}, 0 1px 1px 0 ${FOCUS_SHADOW_PENUMBRA}, 0 1px 3px 0 ${FOCUS_SHADOW_AMBIENCE}`,
+  depth2: `0 1px 5px 0 ${FOCUS_SHADOW_UMBRA}, 0 2px 2px 0 ${FOCUS_SHADOW_PENUMBRA}, 0 3px 1px -2px ${FOCUS_SHADOW_AMBIENCE}`,
+  depth3: `0 1px 8px 0 ${FOCUS_SHADOW_UMBRA}, 0 3px 4px 0 ${FOCUS_SHADOW_PENUMBRA}, 0 3px 3px -2px ${FOCUS_SHADOW_AMBIENCE}`,
+  depth4: `0 2px 4px -1px ${FOCUS_SHADOW_UMBRA}, 0 4px 5px 0 ${FOCUS_SHADOW_PENUMBRA}, 0 1px 10px 0 ${FOCUS_SHADOW_AMBIENCE}`,
+  depth5: `0 3px 5px -1px ${FOCUS_SHADOW_UMBRA}, 0 5px 8px 0 ${FOCUS_SHADOW_PENUMBRA}, 0 1px 14px 0 ${FOCUS_SHADOW_AMBIENCE}`,
+  depth6: `0 3px 5px -1px ${FOCUS_SHADOW_UMBRA}, 0 6px 10px 0 ${FOCUS_SHADOW_PENUMBRA}, 0 1px 18px 0 ${FOCUS_SHADOW_AMBIENCE}`,
+};
+
+export const focusDropShadow = {
   0: `0 0px 2px ${FOCUS_SHADOW_PENUMBRA}`,
   1: `0 0px 4px ${FOCUS_SHADOW_UMBRA}`,
   2: `0 0px 5px ${FOCUS_SHADOW_PENUMBRA}`,
@@ -286,9 +299,9 @@ export const control = {
     invalid: VARIANTS.danger,
   },
   disabled: {
-    bg: Color(VARIANTS.light).lighten(0.3).alpha(0.8).string(),
+    bg: Color(VARIANTS.light).darken(0.3).alpha(0.3).string(),
     color: Color(VARIANTS.dark).lighten(0.3).alpha(0.8).string(),
-    borderColor: Color(BLACK_06).lighten(0.05).alpha(0.8).string(),
+    borderColor: BLACK_12,
   },
   focus: {
     borderColor: Color(COLORS.magenta).alpha(0.4).hsl().string(), // --magenta
@@ -334,6 +347,7 @@ export const sizes = {
 export const zIndexes = {
   modal: 1000,
   dialog: 1001,
+  submitBtn: 50,
   tooltip: 100,
   dropdown: 101,
   toast: 105,
@@ -440,7 +454,11 @@ export const mixin = {
   shadow: (...levels: (number | string)[]) => css`
     box-shadow: ${levels
       .reduce((acc, depth) => {
-        acc.push(shadow[depth]);
+        if (shadow[depth]) {
+          acc.push(shadow[depth]);
+        } else {
+          acc.push(depth);
+        }
         return acc;
       }, [])
       .join(', ')};
@@ -448,7 +466,11 @@ export const mixin = {
   dropShadow: (...levels: number[]) => css`
     filter: ${levels
       .reduce((acc, depth) => {
-        acc.push(`drop-shadow(${shadow[depth]})`);
+        if (shadow[depth]) {
+          acc.push(`drop-shadow(${shadow[depth]})`);
+        } else {
+          acc.push(`drop-shadow(${depth})`);
+        }
         return acc;
       }, [])
       .join(' ')};

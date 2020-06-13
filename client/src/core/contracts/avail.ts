@@ -5,6 +5,7 @@
  **************************************************/
 
 import { OptionProps } from './form';
+import { ReactElement } from 'react';
 
 export interface AvailSetting {
   id?: string;
@@ -15,13 +16,14 @@ export interface AvailSetting {
 export interface AvailSettingField {
   id: string;
   type: string;
+  checked?: boolean; // used on checkboxes and switches
   classMap?: Record<string, string>;
   description?: string;
   inputType?: string;
-  label?: string;
+  label?: string | ReactElement;
   legend?: string;
-  items?: OptionProps[];
-  options?: OptionProps[];
+  items?: OptionProps[]; // used on repeater fields
+  options?: OptionProps[]; // used on select and radiogroup fields
   // presets?: string[] | Record<string, any>;
   attrs?: Record<string, any>;
   readOnly?: boolean;
@@ -45,7 +47,7 @@ export interface AvailUtility {
   subitems?: OptionProps[];
   subproperties?: Record<string, any>;
   // values?: Record<string, any> | string[]; // TODO: remove, part of old build.ts
-  items?: OptionProps[];
+  items?: OptionProps[]; // used on repeater fields
 }
 
 export interface AvailUtilities {

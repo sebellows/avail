@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ChangeEvent, forwardRef, Ref, useState, useEffect } from 'react';
+import React, { forwardRef, Ref, useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 import { classNames } from '../../core/utils/classNames';
-import { OptionProps as Option } from '../../core/contracts';
+import { OptionProps as Option, OptionProps } from '../../core/contracts';
 
 import { Control } from '../Control';
 import { FieldFeedback } from '../FieldFeedback';
@@ -11,15 +11,23 @@ import { FormControlResolver } from '../formControlResolver';
 
 import { RepeaterItem } from './RepeaterItem';
 import { Styled } from './styles';
-import { FormArrayProps } from './props';
+import { RepeaterProps } from './props';
 import { usePrevious } from '../../hooks/usePrevious';
 
-const Repeater = forwardRef<{}, FormArrayProps>(
+// const Msg = ({ closeToast, id, msg }) => (
+//   <div>
+//     {msg}
+//     <button>Retry</button>
+//     <button onClick={closeToast}>Close</button>
+//   </div>
+// )
+
+const Repeater = forwardRef<{}, RepeaterProps>(
   (
     {
       id,
       className = '',
-      error,
+      errors: initialErrors = {},
       inputType,
       items: initialItems = [],
       legend = null,
@@ -36,6 +44,7 @@ const Repeater = forwardRef<{}, FormArrayProps>(
     ref: Ref<any>,
   ) => {
     const [items, setItems] = useState(initialItems);
+    const [errors, setErrors] = useState(initialErrors);
     const prevItemsCount = usePrevious(initialItems.length);
 
     useEffect(() => {
@@ -44,8 +53,26 @@ const Repeater = forwardRef<{}, FormArrayProps>(
       }
     }, [initialItems, prevItemsCount]);
 
-    function handleAdd(item: Record<string, string>) {
-      onAdd?.(item);
+    useEffect(() => {
+      if (Object.keys(errors).length) {
+        Object.values(errors).forEach((errMsg: string) => {
+          toast.error(errMsg, { position: 'top-right' });
+        });
+      }
+      return () => {
+        Object.keys(errors).forEach((err) => delete errors[err]);
+      };
+    }, [errors]);
+
+    function _removeError(name: string) {
+      const _errors = { ...errors };
+      delete _errors[name];
+      setErrors(_errors);
+    }
+
+    function handleAdd() {
+      const nextID = items.length === 0 ? 1 : items.length;
+      onAdd?.({ name: `${id}_items_${nextID}`, value: '' });
     }
 
     function handleRemove(itemID: string) {
@@ -58,6 +85,28 @@ const Repeater = forwardRef<{}, FormArrayProps>(
     }
 
     function handleBlur(event: any) {
+      const { classList, name, value } = event.target;
+
+      if (classList.contains('repeater-name')) {
+        // Check if the name value already exists.
+        const itemNames = items.filter((item: OptionProps) => item.name === event.target.value);
+        if (itemNames.length > 1) {
+          setErrors({
+            ...errors,
+            [name]: `The utility class suffix \`${value}\` already exists for ${id}!`,
+          });
+        } else if (Object.keys(errors).includes(name)) {
+          _removeError(name);
+        }
+      }
+      // All repeater `value` fields are required.
+      if (classList.contains('repeater-value')) {
+        if (value.length === 0) {
+          setErrors({ ...errors, [name]: `A value for \`${name}\` is required in ${id} utility!` });
+        } else if (Object.keys(errors).includes(name)) {
+          _removeError(name);
+        }
+      }
       onBlur?.(event);
     }
 
@@ -85,12 +134,12 @@ const Repeater = forwardRef<{}, FormArrayProps>(
                   <Control
                     id={nameID}
                     name={nameID}
-                    className={classNames(i === 0 && 'first')}
+                    className="repeater-name"
                     value={item.name}
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    isValid={!error || !error[id]}
-                    isInvalid={error && error[id]}
+                    isValid={!errors || !errors[nameID]}
+                    isInvalid={errors && errors[nameID]}
                   />
                 </Styled.Field>
 
@@ -105,22 +154,24 @@ const Repeater = forwardRef<{}, FormArrayProps>(
                   <FormControlResolver
                     type={inputType}
                     id={valueID}
+                    className="repeater-value"
                     name={valueID}
                     arialabel={valueID}
                     value={item.value}
                     readOnly={readOnly}
                     disabled={readOnly}
+                    required
                     options={options}
-                    onBlur={onBlur}
-                    isValid={!error || !error[id]}
-                    isInvalid={error && error[id]}
+                    onBlur={handleBlur}
+                    isValid={!errors || !errors[id]}
+                    isInvalid={errors && errors[id]}
                   />
                 </Styled.Field>
               </RepeaterItem>
             );
           })}
         {props?.description && <FieldDescription>{props?.description}</FieldDescription>}
-        {props?.isInvalid && error && <FieldFeedback type="invalid">{error[id]}</FieldFeedback>}
+        {props?.isInvalid && errors && <FieldFeedback type="invalid">{errors[id]}</FieldFeedback>}
       </Styled.Wrapper>
     );
   },
