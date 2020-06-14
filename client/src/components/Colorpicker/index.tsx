@@ -12,8 +12,7 @@ import {
   TAB,
   Color,
 } from '../../core/utils';
-import { ControlProps } from '../Control';
-import { OptionProps } from '../../core/contracts';
+import { FormControlProps, OptionProps } from '../../core/contracts';
 import { useClickOutside } from '../../hooks/useClickOutside';
 import { Styled } from './styles';
 
@@ -26,7 +25,7 @@ function coerceToHexColor(value: string) {
   return '#000000';
 }
 
-const Colorpicker = forwardRef<HTMLDivElement, ControlProps>(
+const Colorpicker = forwardRef<HTMLDivElement, FormControlProps>(
   (
     { className, isValid, isInvalid: initialInvalid, options, value: initialValue, ...props },
     ref: Ref<HTMLDivElement>,

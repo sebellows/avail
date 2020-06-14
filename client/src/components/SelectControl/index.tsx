@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { forwardRef, Ref, useEffect, useMemo, useRef } from 'react';
-import { OptionProps } from '../../core/contracts';
+import { FormControlProps, OptionProps } from '../../core/contracts';
 import { toOptions, Option } from '../../core/models/Option';
 import { classNames, validFormProps, containerProps, typeOf } from '../../core/utils';
 import { Styled } from './styles';
-import { ControlProps } from '../Control';
 
-const SelectControl = forwardRef<{}, ControlProps>(
+const SelectControl = forwardRef<{}, FormControlProps>(
   (
     {
       as: Component = 'div',

@@ -39,19 +39,6 @@ export const Settings = (settings: AvailConfig<AvailSetting>): AvailConfig<Avail
           value: '',
           description: 'Prepend a custom prefix to all generated utility classes?',
         },
-        isImportant: {
-          type: 'checkbox',
-          id: 'export_fields_isImportant_value',
-          label: (
-            <>
-              Use <code>!important</code>?
-            </>
-          ),
-          checked: true,
-          value: 'isImportant',
-          description:
-            'This will force all properties defined in utility classes to override specificity and inline styles.',
-        },
         sizingUnit: {
           type: 'radiogroup',
           id: 'export_fields_sizingUnit_value',
@@ -67,6 +54,23 @@ export const Settings = (settings: AvailConfig<AvailSetting>): AvailConfig<Avail
           options: toOptions(['CSS', 'SCSS']),
           value: 'css',
           description: 'Select file type to export utility classes as.',
+        },
+        isImportant: {
+          type: 'checkbox',
+          id: 'export_fields_isImportant_value',
+          classMap: {
+            container: 'fullwidth',
+            description: 'd-block',
+          },
+          label: (
+            <>
+              Use <code>!important</code>?
+            </>
+          ),
+          checked: true,
+          value: 'isImportant',
+          description:
+            'This will force all properties defined in utility classes to override specificity and inline styles.',
         },
       },
     },

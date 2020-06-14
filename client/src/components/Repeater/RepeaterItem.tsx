@@ -1,11 +1,13 @@
 import React, { forwardRef, Ref } from 'react';
-import { classNames, isNil } from '../../core/utils';
-import { MinusIcon, PlusIcon } from '../Icon';
-import { StyledItem } from './styles';
-import { RepeaterProps } from './props';
-import { Button } from '../Button';
 
-const RepeaterItem = forwardRef<{}, RepeaterProps>(
+import { Button } from '../Button';
+import { MinusIcon, PlusIcon } from '../Icon';
+import { classNames, isNil } from '../../core/utils';
+import { FormGroupProps } from '../../core/contracts';
+
+import { StyledItem } from './styles';
+
+const RepeaterItem = forwardRef<{}, FormGroupProps>(
   (
     {
       id = '',

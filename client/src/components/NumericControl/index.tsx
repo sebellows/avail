@@ -1,10 +1,10 @@
 import React, { forwardRef, Ref, useEffect, useState, useRef } from 'react';
-import { ControlProps } from '../Control';
+import { FormControlProps } from '../../core/contracts';
 import { MinusIcon, PlusIcon } from '../Icon';
 import { DOWN, UP, containerProps, validFormProps, classNames } from '../../core/utils';
 import { Styled } from './styles';
 
-interface NumericControlProps extends ControlProps {
+interface NumericControlProps extends FormControlProps {
   step?: number;
 }
 

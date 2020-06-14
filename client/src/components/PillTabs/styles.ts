@@ -40,6 +40,7 @@ export const Styled = {
     &:hover,
     &:focus {
       color: ${color.magenta};
+      outline: none;
     }
   `,
 };

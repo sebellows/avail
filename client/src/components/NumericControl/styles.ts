@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Styled as StyledControl } from '../Control';
+import { StyledControl } from '../Control';
 import { color, control, font, mixin, normalizeUnit, toRatio, toREM } from '../../core/style';
 
 const controlBorderWidth = normalizeUnit(control.borderWidth);
@@ -46,7 +46,7 @@ export const Styled = {
     border-radius: ${control.borderRadius};
     outline: none;
   `,
-  Control: styled(StyledControl.Input)`
+  Control: styled(StyledControl)`
     order: 2;
     flex: 1;
     border-left-width: 0 !important;

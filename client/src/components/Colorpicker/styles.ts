@@ -10,7 +10,8 @@ import {
   transition,
   toREM,
 } from '../../core/style';
-import { ControlProps, Styled as StyledControl, StyledBaseInput } from '../Control';
+import { FormControlProps } from '../../core/contracts';
+import { StyledControl, StyledBaseInput } from '../Control';
 
 const dropdownEnter = keyframes`
   from {
@@ -39,24 +40,15 @@ const dropdownLeave = keyframes`
 interface WrapperProps {
   open?: boolean;
 }
-// interface TargetProps {
-//   color?: string;
-// }
 
+/**
+ * Datalist Form Field (i.e., autocomplete, typeahead)
+ */
 export const Styled = {
-  /**
-   * Datalist Form Field (i.e., autocomplete, typeahead)
-   */
   Wrapper: styled.div<WrapperProps>`
-    // background-color: ${color.bg.body};
-    // background-clip: padding-box;
-    // border-radius: calc(${radius.base} / 2);
-    // box-shadow: none;
-    // color: ${control.color};
     display: block;
     width: 100%;
     max-width: 500px;
-    // height: calc(1.5em + 0.75rem + 2px);
     height: ${control.height};
     position: relative;
     ${(props) =>
@@ -65,9 +57,6 @@ export const Styled = {
       css`
         z-index: 100;
       `};
-    // font-size: 1rem;
-    // font-weight: 400;
-    // line-height: 1.5;
     user-select: none;
 
     &:focus {
@@ -76,7 +65,7 @@ export const Styled = {
   `,
 
   /** Form group */
-  Field: styled(StyledControl.Input)`
+  Field: styled(StyledControl)`
     display: flex;
     align-items: stretch;
     justify-content: space-between;
@@ -99,18 +88,17 @@ export const Styled = {
       bottom: 6px;
     }
   `,
-  ColorTarget: styled.div<ControlProps>`
+  ColorTarget: styled.div<FormControlProps>`
     position: absolute;
     top: -${control.borderWidth};
     left: -${control.borderWidth};
     width: 100%;
-    // height: calc(1.5em + 0.75rem);
     height: ${toREM(calcControlHeight({ borderWidth: 0 }))};
     line-height: 1;
     background-clip: content-box;
     background-color: ${({ value }) => value};
     border: 1px solid ${control.borderColor};
-    border-radius: ${radius.base} ${radius.sm} ${radius.sm} ${radius.base};
+    border-radius: ${radius.sm} 0 0 ${radius.sm};
     box-shadow: inset 0 0 0 5px ${color.bg.body}, inset 0 0 0 6px ${mixin.rgba(color.black, 0.2)},
       1px 0 1px 0 ${mixin.rgba(color.black, 0.12)};
     box-sizing: content-box;

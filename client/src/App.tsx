@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { AnimationEvent, useEffect, useState, SyntheticEvent, useRef } from 'react';
 import styled from 'styled-components';
-import { Button, Spinner, Tabs, Tab, Toast } from './components';
+
+import { Store } from './store';
+import { zIndexes, spacers, toREM } from './core/style';
 import { SettingsForm } from './containers/SettingsForm';
 import { UtilitiesForm } from './containers/UtilitiesForm';
-import { Store } from './store';
+import { Button, Spinner, Tabs, Tab, Toast } from './components';
 
 import './App.scss';
 import 'react-toastify/dist/ReactToastify.css';
-
-import { zIndexes, spacers, toREM } from './core/style';
 
 const SubmitButton = styled(Button)`
   position: fixed;

@@ -1,6 +1,5 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable no-useless-escape */
-import { FieldElement } from '../contracts/form';
 
 export const isNil = (obj: any): boolean => obj === undefined || obj === null;
 export const isDefined = (obj: any): boolean => obj !== undefined && obj !== null;
@@ -64,11 +63,6 @@ export const getNode = (el: any): Node | boolean => {
   }
   return false;
 };
-
-export const isCheckBoxInput = (el: FieldElement): el is HTMLInputElement => el.type === 'checkbox';
-export const isRadioInput = (el: FieldElement): el is HTMLInputElement => el.type === 'radio';
-export const isRadioOrCheckbox = (el: FieldElement): el is HTMLInputElement =>
-  isRadioInput(el) || isCheckBoxInput(el);
 
 /** Check whether an object has the property. */
 export const hasOwn = (obj: any, key: string): boolean => {

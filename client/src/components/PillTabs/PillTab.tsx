@@ -30,7 +30,7 @@ const PillTab = forwardRef<{}, PillTabProps>(
         </Styled.TabContent>
 
         <Styled.Toggle
-          fab
+          icon
           size={24}
           className="pill-tab-toggle"
           onClick={onSelect}

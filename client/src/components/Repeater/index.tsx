@@ -1,28 +1,19 @@
 import React, { forwardRef, Ref, useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 
+import { usePrevious } from '../../hooks/usePrevious';
 import { classNames } from '../../core/utils/classNames';
-import { OptionProps as Option, OptionProps } from '../../core/contracts';
+import { OptionProps, FormGroupProps } from '../../core/contracts';
 
 import { Control } from '../Control';
 import { FieldFeedback } from '../FieldFeedback';
 import { FieldDescription } from '../FieldDescription';
 import { FormControlResolver } from '../formControlResolver';
 
-import { RepeaterItem } from './RepeaterItem';
 import { Styled } from './styles';
-import { RepeaterProps } from './props';
-import { usePrevious } from '../../hooks/usePrevious';
+import { RepeaterItem } from './RepeaterItem';
 
-// const Msg = ({ closeToast, id, msg }) => (
-//   <div>
-//     {msg}
-//     <button>Retry</button>
-//     <button onClick={closeToast}>Close</button>
-//   </div>
-// )
-
-const Repeater = forwardRef<{}, RepeaterProps>(
+const Repeater = forwardRef<{}, FormGroupProps>(
   (
     {
       id,
@@ -49,7 +40,7 @@ const Repeater = forwardRef<{}, RepeaterProps>(
 
     useEffect(() => {
       if (prevItemsCount !== initialItems.length) {
-        setItems(initialItems as Option[]);
+        setItems(initialItems as OptionProps[]);
       }
     }, [initialItems, prevItemsCount]);
 
@@ -114,7 +105,7 @@ const Repeater = forwardRef<{}, RepeaterProps>(
       <Styled.Wrapper ref={ref} id={id} className={classNames('repeater', className)}>
         {legend && <Styled.Legend>{legend}</Styled.Legend>}
         {items.length &&
-          items.map((item: Option, i: number) => {
+          items.map((item: OptionProps, i: number) => {
             const itemID = `${id}_items_${i}`;
             const nameID = `${itemID}_name`;
             const valueID = `${itemID}_value`;
@@ -164,7 +155,7 @@ const Repeater = forwardRef<{}, RepeaterProps>(
                     options={options}
                     onBlur={handleBlur}
                     isValid={!errors || !errors[id]}
-                    isInvalid={errors && errors[id]}
+                    isInvalid={errors && !!errors[id]}
                   />
                 </Styled.Field>
               </RepeaterItem>

@@ -1,12 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { FC, Fragment, useContext, useMemo, useCallback } from 'react';
-import { AvailConfig, AvailSetting, ComponentProps, StateConfig } from '../core/contracts';
-import { FormControlResolver } from '../components/formControlResolver';
-import { Field, FieldDescription } from '../components';
-import { classNames, hyphenate, typeOf, toPath, get } from '../core/utils';
+import React, { FC, Fragment, useContext, useCallback } from 'react';
 import styled from 'styled-components';
-import { SettingsContext, ADD_ITEM, REMOVE_ITEM, SET_CONFIG } from '../store';
+import ReactTooltip from 'react-tooltip';
+
 import { mixin } from '../core/style';
+import { classNames } from '../core/utils';
+import {
+  AvailConfig,
+  AvailSetting,
+  ComponentProps,
+  StateConfig,
+  AvailSettingField,
+} from '../core/contracts';
+import { SettingsContext, ADD_ITEM, REMOVE_ITEM, SET_CONFIG } from '../store';
+import { Field, FieldDescription, FormControlResolver, InfoIcon } from '../components';
 
 export interface SettingsFormProps extends ComponentProps {
   settings?: AvailConfig<AvailSetting>;
@@ -33,7 +40,7 @@ const Styled = {
     grid-gap: ${mixin.spacer('base')};
     grid-template-columns: repeat(auto-fill, minmax(16.875rem, 1fr)); /* 270px */
 
-    .has-fieldset {
+    .fullwidth {
       grid-column: 1 / 4;
     }
   `,
@@ -64,19 +71,10 @@ const SettingsForm: FC<SettingsFormProps> = React.memo(() => {
     <Fragment>
       {Object.entries(settings.config).map(([id, setting], i: number) => {
         const { legend, fields: fieldsMap } = setting;
+        const fields = Object.values(fieldsMap);
 
-        if (!setting.fields) {
-          console.log('No fieldsMap', id, settings, setting);
-          return (
-            <h1 key={id} className="text-danger">
-              No fieldsMap
-            </h1>
-          );
-        }
-        const fields = Object.entries(fieldsMap);
-
-        if (fields.length === 1 && ['radiogroup', 'repeater'].includes(fields[0][1].type)) {
-          return fields.map(([key, field], idx: number) => {
+        if (fields?.length === 1 && ['radiogroup', 'repeater'].includes(fields[0].type)) {
+          return fields.map((field: AvailSettingField, idx: number) => {
             if (idx === 0) {
               field.legend = legend;
             }
@@ -96,7 +94,7 @@ const SettingsForm: FC<SettingsFormProps> = React.memo(() => {
           <Styled.Fieldset id={id} key={id}>
             <legend className="font-size-lg">{setting.legend}</legend>
             <Styled.Fields className="fields">
-              {fields.map(([key, field], idx: number) => {
+              {fields.map((field: AvailSettingField) => {
                 if (field.attrs) {
                   field = { ...field, ...field.attrs };
                   delete field.attrs;
@@ -106,12 +104,18 @@ const SettingsForm: FC<SettingsFormProps> = React.memo(() => {
                     key={field.id}
                     className={classNames(
                       field?.classMap?.container,
-                      field.type === 'repeater' && 'has-fieldset',
+                      field.type === 'repeater' && 'fullwidth',
                     )}
                   >
                     {field?.label && field.type !== 'checkbox' && (
                       <label htmlFor={field.id} className={classNames(field?.classMap?.label)}>
                         {field.label}
+                        {field.description && (
+                          <Fragment>
+                            <InfoIcon data-tip={field.description} data-for={`${field.id}-info`} />
+                            <ReactTooltip id={`${field.id}-info`} delayHide={1000} effect="solid" />
+                          </Fragment>
+                        )}
                       </label>
                     )}
                     {

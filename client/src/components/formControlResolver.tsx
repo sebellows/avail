@@ -1,15 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useMemo } from 'react';
+
+import { FormControlProps } from '../core/contracts';
+
 import { Repeater } from './Repeater';
 import { RadioGroup } from './RadioGroup';
 import { Colorpicker } from './Colorpicker';
 import { ColorControl } from './ColorControl';
 import { SelectControl } from './SelectControl';
 import { ToggleControl } from './ToggleControl';
-import { Control, ControlProps } from './Control';
+import { Control } from './Control';
 import { NumericControl } from './NumericControl';
 
-interface FormControlResolverProps extends ControlProps {
+interface FormControlResolverProps extends FormControlProps {
   type: string;
 }
 

@@ -1,3 +1,6 @@
+/* eslint-disable eqeqeq */
+/* eslint-disable no-useless-escape */
+
 import {
   isBoolean,
   isIterable,
@@ -11,78 +14,6 @@ import {
   isObject,
   toNumber,
 } from './common';
-import { range } from './range';
-
-/* eslint-disable eqeqeq */
-/* eslint-disable no-useless-escape */
-
-export const collection = <T>(
-  items: Record<string, T> | T[],
-  trackingKey: string | number = null,
-  loopAround = true,
-) => {
-  const keys = isPlainObject(items) ? Object.keys(items) : range((items as T[]).length);
-  let currIndex = 0;
-  let _current;
-
-  return {
-    keys,
-    size: keys.length,
-    get current() {
-      return _current;
-    },
-    set current(keyOrItem: string | number | T) {
-      if (isPlainObject(keyOrItem)) {
-        currIndex = keys.findIndex((key) => key === keyOrItem[trackingKey]);
-        _current = keyOrItem;
-      } else if (keys.includes(keyOrItem as never)) {
-        currIndex = keys.indexOf(keyOrItem as never);
-        _current = items[currIndex];
-      }
-    },
-    get: function (key: string | number) {
-      if (isPlainObject(items)) {
-        return getNestedProp(items, key as string);
-      }
-      return items[key];
-    },
-    has: function (key: string | number) {
-      return Boolean(this.get(key));
-    },
-    set: function (key: string, value: any) {
-      if (isPlainObject(items)) {
-        set(items, key, value);
-      } else {
-        items[key] = value;
-      }
-    },
-    first: function (paramOrFn?: string | Function) {
-      return first(items, paramOrFn);
-    },
-    last: function (paramOrFn?: string | Function) {
-      return last(items, paramOrFn);
-    },
-    map: function (fn: (item: T, index?: number, arr?: T[]) => any) {
-      return isPlainObject(items) ? this.values().map(fn) : (items as T[]).map(fn);
-    },
-    values: function (): T[] {
-      return isPlainObject(items) ? (Object.values(items) as T[]) : (items as T[]);
-    },
-    prev: function () {
-      const prevIndex = currIndex !== 0 ? currIndex - 1 : loopAround ? this.keys.length - 1 : 0;
-      const prevKey = isPlainObject(items) ? this.keys[prevIndex] : this.keys[+prevIndex];
-      currIndex = prevIndex;
-      this.current = items[prevKey];
-    },
-    next: function () {
-      const nextIndex =
-        currIndex !== this.keys.length - 1 ? currIndex + 1 : loopAround ? 0 : this.keys.length - 1;
-      const nextKey = isPlainObject(items) ? this.keys[nextIndex] : this.keys[+nextIndex];
-      currIndex = nextIndex;
-      this.current = items[nextKey];
-    },
-  };
-};
 
 export const getNestedProp = (obj: any, key: string) => {
   try {

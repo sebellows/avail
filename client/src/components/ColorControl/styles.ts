@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 import { Color } from '../../core/utils';
 
-import { Control, ControlProps } from '../Control';
+import { Control } from '../Control';
+import { FormControlProps } from '../../core/contracts';
 import { color, control, mixin, transition } from '../../core/style';
 
 interface StyledProps {
@@ -9,7 +10,7 @@ interface StyledProps {
 }
 
 export const Styled = {
-  Control: styled(Control)<ControlProps>`
+  Control: styled(Control)<FormControlProps>`
     padding: 0.3125rem;
 
     &::-webkit-color-swatch {

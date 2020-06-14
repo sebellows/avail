@@ -2,11 +2,11 @@
 import React, { forwardRef, Ref, useState, ChangeEvent } from 'react';
 
 import { DropletIcon } from '../Icon';
-import { ControlProps } from '../Control';
+import { FormControlProps } from '../../core/contracts';
 import { validFormProps } from '../../core/utils';
 import { Styled } from './styles';
 
-const ColorControl = forwardRef<{}, ControlProps>(
+const ColorControl = forwardRef<{}, FormControlProps>(
   ({ showLabel = true, ...props }, ref: Ref<any>) => {
     const [color, setColor] = useState(props?.value ?? '#000000');
 

@@ -1,15 +1,20 @@
 import React, { Ref } from 'react';
 import { classNames } from '../../core/utils';
 
-import { StyledButton, StyledFAB } from './styles';
+import { Styled } from './styles';
 import { ButtonProps } from './props';
 
 export const Button = React.forwardRef<{}, ButtonProps>(
-  ({ children, size = null, fab = false, type = 'button', variant, ...props }, ref: Ref<any>) => {
+  (
+    { children, size = null, fab = false, icon = false, type = 'button', variant, ...props },
+    ref: Ref<any>,
+  ) => {
+    const btnStyle = fab ? 'fab' : icon ? 'icon' : 'base';
+
     return (
       <>
-        {!fab && (
-          <StyledButton
+        {btnStyle === 'base' && (
+          <Styled.Button
             {...props}
             ref={ref}
             type={type}
@@ -17,10 +22,10 @@ export const Button = React.forwardRef<{}, ButtonProps>(
             variant={variant}
           >
             {children}
-          </StyledButton>
+          </Styled.Button>
         )}
-        {fab && (
-          <StyledFAB
+        {btnStyle === 'fab' && (
+          <Styled.FAB
             {...props}
             ref={ref}
             type={type}
@@ -29,7 +34,19 @@ export const Button = React.forwardRef<{}, ButtonProps>(
             size={size}
           >
             {children}
-          </StyledFAB>
+          </Styled.FAB>
+        )}
+        {btnStyle === 'icon' && (
+          <Styled.Icon
+            {...props}
+            ref={ref}
+            type={type}
+            className={classNames('icon-btn', props.className)}
+            variant={variant}
+            size={size}
+          >
+            {children}
+          </Styled.Icon>
         )}
       </>
     );

@@ -7,6 +7,16 @@
 import { OptionProps } from './form';
 import { ReactElement } from 'react';
 
+export interface AvailClassMap {
+  control?: string;
+  container?: string;
+  description?: string;
+  error?: string;
+  field?: string;
+  label?: string;
+  legend?: string;
+}
+
 export interface AvailSetting {
   id?: string;
   legend?: string;
@@ -17,7 +27,7 @@ export interface AvailSettingField {
   id: string;
   type: string;
   checked?: boolean; // used on checkboxes and switches
-  classMap?: Record<string, string>;
+  classMap?: AvailClassMap;
   description?: string;
   inputType?: string;
   label?: string | ReactElement;
