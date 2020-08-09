@@ -13,6 +13,7 @@ const RepeaterItem = forwardRef<{}, FormGroupProps>(
       id = '',
       className = '',
       children = null,
+      first = false,
       legend = null,
       before = null,
       onAdd,
@@ -22,7 +23,10 @@ const RepeaterItem = forwardRef<{}, FormGroupProps>(
     ref: Ref<any>,
   ) => {
     return (
-      <StyledItem.Wrapper ref={ref} className={classNames('repeater-item', className)}>
+      <StyledItem.Wrapper
+        ref={ref}
+        className={classNames('repeater-item', className, { 'is-first': first })}
+      >
         {!isNil(before) && (
           <StyledItem.Prepend className="repeater-item-prepend">{before}</StyledItem.Prepend>
         )}

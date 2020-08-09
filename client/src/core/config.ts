@@ -79,7 +79,7 @@ const Config = (
         },
         {
           name: 'transparent',
-          value: 'transparent',
+          value: '#cc0000',
         },
       ],
     },

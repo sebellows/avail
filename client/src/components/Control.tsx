@@ -1,4 +1,4 @@
-import React, { forwardRef, Ref, ChangeEvent } from 'react';
+import React, { forwardRef, Ref, ChangeEvent, useState } from 'react';
 import styled from 'styled-components';
 
 import { FormControlProps } from '../core/contracts';
@@ -80,16 +80,23 @@ const Control = forwardRef<HTMLInputElement, FormControlProps>(
       onChange,
       readOnly,
       type = 'text',
-      value,
+      value: initialValue,
       ...props
     },
     ref: Ref<HTMLInputElement>,
   ) => {
+    const [value, setValue] = useState(initialValue);
     const formProps = validFormProps(props, { exclude: ['onChange'] });
 
     function handleChange(event: ChangeEvent<HTMLInputElement>) {
       event.persist();
+      setValue(event.target.value);
       onChange?.(event);
+    }
+
+    function handleBlur(event: any) {
+      event.persist();
+      props?.onBlur?.(event);
     }
 
     return (
@@ -103,6 +110,7 @@ const Control = forwardRef<HTMLInputElement, FormControlProps>(
         disabled={readOnly ?? disabled}
         className={classNames('control', { 'is-invalid': !!isInvalid }, className)}
         onChange={handleChange}
+        onBlur={handleBlur}
       />
     );
   },

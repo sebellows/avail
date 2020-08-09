@@ -35,9 +35,10 @@ const FormControlResolver: React.FC<FormControlResolverProps> = ({
       props?.onChange?.(event);
     },
     onBlur: (event: any) => {
-      const { name, value, type } = event.target;
+      const { name, value, tagName } = event.target;
+      console.log('FormControlResolver->onBlur', name, value);
 
-      if (type === 'input') {
+      if (tagName === 'INPUT') {
         onUpdate({ name, value });
       }
 

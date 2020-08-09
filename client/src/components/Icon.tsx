@@ -1,4 +1,5 @@
 import React, { Ref } from 'react';
+import styled from 'styled-components';
 
 import { classNames } from '../core/utils/classNames';
 
@@ -10,6 +11,13 @@ export interface IconProps {
   size?: number | string;
   [key: string]: any;
 }
+
+const StyledIcon = styled.svg`
+  label & {
+    position: relative;
+    top: -1px;
+  }
+`;
 
 export const Icon = React.forwardRef<SVGSVGElement, IconProps>(
   (
@@ -25,7 +33,7 @@ export const Icon = React.forwardRef<SVGSVGElement, IconProps>(
     ref: Ref<SVGSVGElement>,
   ) => {
     return (
-      <svg
+      <StyledIcon
         ref={ref}
         xmlns="http://www.w3.org/2000/svg"
         width={size}
@@ -42,7 +50,7 @@ export const Icon = React.forwardRef<SVGSVGElement, IconProps>(
       >
         <title>{name}</title>
         {children}
-      </svg>
+      </StyledIcon>
     );
   },
 );

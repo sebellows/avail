@@ -51,6 +51,7 @@ const SettingsForm: FC<SettingsFormProps> = React.memo(() => {
 
   const onUpdate = useCallback(
     (config: StateConfig) => {
+      console.log('SettingsForm->onUpdate', config);
       setSettings({ type: SET_CONFIG, config });
     },
     [setSettings],
@@ -108,11 +109,19 @@ const SettingsForm: FC<SettingsFormProps> = React.memo(() => {
                     )}
                   >
                     {field?.label && field.type !== 'checkbox' && (
-                      <label htmlFor={field.id} className={classNames(field?.classMap?.label)}>
+                      <label
+                        htmlFor={field.id}
+                        className={classNames('mb-2', field?.classMap?.label)}
+                      >
                         {field.label}
                         {field.description && (
                           <Fragment>
-                            <InfoIcon data-tip={field.description} data-for={`${field.id}-info`} />
+                            &nbsp;
+                            <InfoIcon
+                              data-tip={field.description}
+                              data-for={`${field.id}-info`}
+                              size={16}
+                            />
                             <ReactTooltip id={`${field.id}-info`} delayHide={1000} effect="solid" />
                           </Fragment>
                         )}

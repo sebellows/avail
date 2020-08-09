@@ -104,6 +104,8 @@ const Repeater = forwardRef<{}, FormGroupProps>(
     return (
       <Styled.Wrapper ref={ref} id={id} className={classNames('repeater', className)}>
         {legend && <Styled.Legend>{legend}</Styled.Legend>}
+        {props?.description && <FieldDescription>{props?.description}</FieldDescription>}
+        {props?.isInvalid && errors && <FieldFeedback type="invalid">{errors[id]}</FieldFeedback>}
         {items.length &&
           items.map((item: OptionProps, i: number) => {
             const itemID = `${id}_items_${i}`;
@@ -113,6 +115,7 @@ const Repeater = forwardRef<{}, FormGroupProps>(
             return (
               <RepeaterItem
                 key={itemID}
+                first={i === 0}
                 before={i}
                 id={itemID}
                 onAdd={handleAdd}
@@ -161,8 +164,6 @@ const Repeater = forwardRef<{}, FormGroupProps>(
               </RepeaterItem>
             );
           })}
-        {props?.description && <FieldDescription>{props?.description}</FieldDescription>}
-        {props?.isInvalid && errors && <FieldFeedback type="invalid">{errors[id]}</FieldFeedback>}
       </Styled.Wrapper>
     );
   },

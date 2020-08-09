@@ -1,4 +1,4 @@
-import { InputHTMLAttributes } from 'react';
+import { InputHTMLAttributes, SyntheticEvent } from 'react';
 import { AvailClassMap } from './avail';
 import { ComponentProps } from './common';
 
@@ -42,7 +42,7 @@ export interface FormGroupProps extends ComponentProps {
   legend?: string;
   presets?: string[] | Record<string, any>;
   onAdd?: (event: any) => void;
-  onChange?: (...args: any[]) => void;
+  onChange?: (event: SyntheticEvent<FormControlType>) => void;
   onRemove?: (event: any) => void;
   after?: any; // TODO: currently unused
   before?: any; // TODO: currently unused

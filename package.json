@@ -1,0 +1,10 @@
+{
+  "name": "avail",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "cd ./client && yarn start",
+    "build": "cd ./client && yarn build",
+    "test": "cd ./client && yarn test"
+  }
+}

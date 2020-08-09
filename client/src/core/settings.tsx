@@ -42,6 +42,9 @@ export const Settings = (settings: AvailConfig<AvailSetting>): AvailConfig<Avail
         sizingUnit: {
           type: 'radiogroup',
           id: 'export_fields_sizingUnit_value',
+          classMap: {
+            legend: 'mb-2',
+          },
           legend: 'Default sizing unit',
           options: toOptions(['px', 'em', 'rem']),
           value: 'rem',
@@ -50,6 +53,9 @@ export const Settings = (settings: AvailConfig<AvailSetting>): AvailConfig<Avail
         fileType: {
           type: 'radiogroup',
           id: 'export_fields_fileType_value',
+          classMap: {
+            legend: 'mb-2',
+          },
           legend: 'Exported file type',
           options: toOptions(['CSS', 'SCSS']),
           value: 'css',
@@ -57,7 +63,7 @@ export const Settings = (settings: AvailConfig<AvailSetting>): AvailConfig<Avail
         },
         isImportant: {
           type: 'checkbox',
-          id: 'export_fields_isImportant_value',
+          id: 'export_fields_isImportant_checked',
           classMap: {
             container: 'fullwidth',
             description: 'd-block',

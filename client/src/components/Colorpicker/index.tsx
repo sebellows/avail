@@ -27,7 +27,14 @@ function coerceToHexColor(value: string) {
 
 const Colorpicker = forwardRef<HTMLDivElement, FormControlProps>(
   (
-    { className, isValid, isInvalid: initialInvalid, options, value: initialValue, ...props },
+    {
+      className,
+      isValid,
+      isInvalid: initialInvalid,
+      options: initialOptions,
+      value: initialValue,
+      ...props
+    },
     ref: Ref<HTMLDivElement>,
   ) => {
     const [isOpen, setOpen] = useState(false);
@@ -35,9 +42,21 @@ const Colorpicker = forwardRef<HTMLDivElement, FormControlProps>(
     const [color, setColor] = useState(initialValue);
     const [modelValue, setModelValue] = useState(initialValue);
     const [isInvalid, setInvalid] = useState(initialInvalid);
+    const [options, setOptions] = useState(initialOptions);
     const [focusedIndex, setFocusedIndex] = useState(-1);
 
     // const prevValue = usePrevious(value);
+    useEffect(() => {
+      if (typeof initialOptions === 'undefined') {
+        setTimeout(() => {
+          if (Array.isArray(initialOptions)) {
+            setOptions(initialOptions);
+          } else {
+            setOptions([]);
+          }
+        });
+      }
+    }, [options, setOptions, initialOptions]);
 
     // Need to enforce existence of `ref` for `useClickOutside` hook to work.
     if (!ref || !('current' in ref)) {
@@ -70,6 +89,7 @@ const Colorpicker = forwardRef<HTMLDivElement, FormControlProps>(
         setValue(_value);
 
         setColor(coerceToHexColor(_value).toLowerCase());
+        console.log('ColorPicker->updateViewModel', _value, color, props);
 
         const currentModel = Object.values(options).find((option) => option.value === _value);
         const formattedValue = currentModel
@@ -77,6 +97,7 @@ const Colorpicker = forwardRef<HTMLDivElement, FormControlProps>(
           : _value;
         setModelValue(formattedValue);
       },
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       [options],
     );
 

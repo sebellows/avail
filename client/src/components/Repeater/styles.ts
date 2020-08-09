@@ -14,8 +14,8 @@ export const Styled = {
   `,
   Legend: styled.legend`
     position: relative;
-    top: -1.5rem;
     font-size: ${toREM(font.sizes.lg)};
+    float: none;
   `,
   Label: styled.label<StyledLabelProps>`
     display: ${({ first }) => (first ? 'block' : 'none')};
@@ -49,6 +49,7 @@ const StyledItemAddon = styled.span`
   background-color: ${color.bg.light};
 `;
 
+// RepeaterItem styles
 export const StyledItem = {
   Wrapper: styled.div`
     border: solid ${color.border.base};
@@ -56,6 +57,10 @@ export const StyledItem = {
     display: flex;
     align-items: stretch;
     width: 100%;
+
+    &:first-of-type {
+      ${mixin.margin.top('2.25rem')}
+    }
 
     &:last-of-type {
       border-bottom-width: 1px;

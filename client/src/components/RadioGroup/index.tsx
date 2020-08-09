@@ -25,7 +25,7 @@ const RadioGroup = forwardRef<{}, FormGroupProps>(
     },
     ref: Ref<any>,
   ) => {
-    function handleChange(event: SyntheticEvent) {
+    function handleChange(event: SyntheticEvent<HTMLInputElement>) {
       onChange?.(event);
     }
 
