@@ -2,6 +2,7 @@ import React, { forwardRef, Ref } from 'react';
 import { ComponentProps } from '../../core/contracts';
 import { Icon } from '../Icon';
 import { classNames } from '../../core/utils';
+import { Styled } from './styles';
 
 interface ColorpickerDialogProps extends ComponentProps {
   hue?: number;
@@ -13,44 +14,53 @@ interface ColorpickerDialogProps extends ComponentProps {
 const ColorpickerDialog = forwardRef<HTMLDivElement, ColorpickerDialogProps>(
   ({ className, hue, lightness, alpha, open = false }, ref: Ref<HTMLDivElement>) => {
     return (
-      <div
+      <Styled.Dialog.Wrapper
         ref={ref}
         className={classNames('colorpicker-dialog', className, { 'is-open': open })}
         style={{ width: '375px', height: '180px' }}
       >
-        <div className="colorpicker-dialog-inner">
-          <div className="colorpicker-control colorpicker-hue-control">
-            <div className="colorpicker-control-slider">
+        <Styled.Dialog.Inner className="colorpicker-dialog-inner">
+          <Styled.Dialog.HueControl className="colorpicker-control colorpicker-hue-control">
+            <Styled.Dialog.Slider className="colorpicker-control-slider">
               <canvas width="271" height="151"></canvas>
-            </div>
-            <div className="colorpicker-control-crosshair">
+            </Styled.Dialog.Slider>
+
+            <Styled.Dialog.Crosshair className="colorpicker-control-crosshair">
               <Icon name="crosshair" size="18" />
-            </div>
-            <div className="colorpicker-control-skein"></div>
-          </div>
-          <div className="colorpicker-control colorpicker-lightness-control">
-            <div className="colorpicker-control-slider">
+            </Styled.Dialog.Crosshair>
+
+            <Styled.Dialog.Skein className="colorpicker-control-skein"></Styled.Dialog.Skein>
+          </Styled.Dialog.HueControl>
+
+          <Styled.Dialog.LightnessControl className="colorpicker-control colorpicker-lightness-control">
+            <Styled.Dialog.Slider className="colorpicker-control-slider">
               <canvas width="24" height="151"></canvas>
-            </div>
-            <div className="colorpicker-control-slide-button-container">
-              <div className="colorpicker-control-slide-button"></div>
-            </div>
-            <div className="colorpicker-control-skein"></div>
-          </div>
-          <div className="colorpicker-control colorpicker-alpha-control">
-            <div className="colorpicker-control-slider">
+            </Styled.Dialog.Slider>
+
+            <Styled.Dialog.SliderButton className="colorpicker-control-slide-button-container">
+              <Styled.Dialog.SliderButtonInner className="colorpicker-control-slide-button"></Styled.Dialog.SliderButtonInner>
+            </Styled.Dialog.SliderButton>
+
+            <Styled.Dialog.Skein className="colorpicker-control-skein"></Styled.Dialog.Skein>
+          </Styled.Dialog.LightnessControl>
+
+          <Styled.Dialog.AlphaControl className="colorpicker-control colorpicker-alpha-control">
+            <Styled.Dialog.Slider className="colorpicker-control-slider">
               <canvas width="24" height="151"></canvas>
-            </div>
-            <div className="colorpicker-control-slider-button">
-              <div className="colorpicker-control-slider-button-inner"></div>
-            </div>
-            <div className="colorpicker-control-skein"></div>
-          </div>
-          <button type="button" className="colorpicker-close">
+            </Styled.Dialog.Slider>
+
+            <Styled.Dialog.SliderButton className="colorpicker-control-slider-button">
+              <Styled.Dialog.SliderButtonInner className="colorpicker-control-slider-button-inner"></Styled.Dialog.SliderButtonInner>
+            </Styled.Dialog.SliderButton>
+
+            <Styled.Dialog.Skein className="colorpicker-control-skein"></Styled.Dialog.Skein>
+          </Styled.Dialog.AlphaControl>
+
+          <Styled.Dialog.Close type="button" className="colorpicker-close">
             <Icon name="close" size="18" />
-          </button>
-        </div>
-      </div>
+          </Styled.Dialog.Close>
+        </Styled.Dialog.Inner>
+      </Styled.Dialog.Wrapper>
     );
   },
 );

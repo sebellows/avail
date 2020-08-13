@@ -37,6 +37,13 @@ const dropdownLeave = keyframes`
   }
 `;
 
+const DialogControl = styled.div`
+  display: block;
+  position: absolute;
+  top: 0;
+  padding: 0.375rem;
+`;
+
 interface WrapperProps {
   open?: boolean;
 }
@@ -198,4 +205,107 @@ export const Styled = {
       width: 1rem;
     }
   `,
+  Dialog: {
+    Wrapper: styled.div`
+      position: absolute;
+      left: 0;
+      top: 100%;
+      z-index: 1040;
+      border-radius: 0.5rem;
+      box-shadow: rgba(0, 0, 0, 0.2) 0px 15px 15px 0px;
+    `,
+    Inner: styled.div`
+      display: flex;
+      align-items: stretch;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      padding: 0.375rem;
+    `,
+    Crosshair: styled.div`
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      height: 20px;
+      width: 20px;
+    `,
+    Skein: styled.div`
+      background: rgba(255, 0, 0, 0.2);
+      opacity: 0;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      cursor: crosshair;
+      pointer-events: none;
+    `,
+    /* Controls for Hue, Lightness, and Alpha */
+    HueControl: styled(DialogControl)`
+      left: 0;
+      width: 75%;
+    `,
+    LightnessControl: styled(DialogControl)`
+      left: 75%;
+      width: 12.5%;
+    `,
+    AlphaControl: styled(DialogControl)`
+      left: 87.5%;
+      width: 12.5%;
+    `,
+    Slider: styled.div`
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+    `,
+    SliderButton: styled.div`
+      position: absolute;
+      left: -4px;
+      top: -4px;
+    `,
+    SliderButtonInner: styled.div`
+      position: relative;
+      padding: 8px;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        border: 3px solid black;
+        z-index: 1;
+        outline: 1px solid white;
+      }
+      &::after {
+        content: '';
+        position: absolute;
+        top: 3px;
+        right: 3px;
+        bottom: 3px;
+        left: 3px;
+        border: 1px solid white;
+        z-index: 2;
+      }
+    `,
+    Close: styled.button`
+      display: none;
+      position: absolute;
+      left: 12px;
+      bottom: 12px;
+      padding: 0px 15px;
+      max-width: 317px;
+      overflow: hidden;
+      height: 18px;
+      white-space: nowrap;
+      border: 1px solid rgb(153, 153, 153);
+      color: rgb(240, 240, 240);
+      font: 12px sans-serif;
+      text-align: center;
+      cursor: pointer;
+    `,
+  },
 };

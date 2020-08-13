@@ -77,3 +77,74 @@ export function styles(node: HTMLElement | Property, property?: Property) {
 
   (node as HTMLElement).style.cssText += cssText;
 }
+
+export function getElementPosition(el: Element, relativeToViewport: boolean) {
+  const rect = el.getBoundingClientRect();
+
+  let x = rect.left || 0;
+  let y = rect.top || 0;
+
+  if (!relativeToViewport) {
+    const viewPos = getViewPosition();
+
+    x += viewPos[0];
+    y += viewPos[1];
+  }
+
+  return [x, y];
+}
+
+export function getViewPosition() {
+  const { clientLeft, clientTop, scrollLeft, scrollTop } = document.documentElement;
+
+  return [
+    (window.pageXOffset || scrollLeft) - (clientLeft || 0),
+    (window.pageYOffset || scrollTop) - (clientTop || 0),
+  ];
+}
+
+export function getViewSize() {
+  const doc = document.documentElement;
+  return [window.innerWidth || doc.clientWidth, window.innerHeight || doc.clientHeight];
+}
+
+export function getElementSize(el: HTMLElement) {
+  return [el.offsetWidth, el.offsetHeight];
+}
+
+// get pointer's X/Y coordinates relative to viewport
+export function getAbsPointerPosition(event: any) {
+  let x = 0;
+  let y = 0;
+
+  const { changedTouches, clientX, clientY } = event;
+
+  if (typeof changedTouches !== 'undefined' && changedTouches.length) {
+    // touch devices
+    x = changedTouches[0].clientX;
+    y = changedTouches[0].clientY;
+  } else if (typeof clientX === 'number') {
+    x = clientX;
+    y = clientY;
+  }
+
+  return { x, y };
+}
+
+// get pointer's X/Y coordinates relative to target element
+export function getRelPointerPosition(event: any) {
+  let { changedTouches, clientX = 0, clientY = 0, srcElement, target: evtTarget } = event;
+  const target = evtTarget || srcElement;
+  const targetRect = target.getBoundingClientRect();
+
+  if (typeof changedTouches !== 'undefined' && changedTouches.length) {
+    // touch devices
+    clientX = changedTouches[0].clientX;
+    clientY = changedTouches[0].clientY;
+  }
+
+  let x = clientX - targetRect.left || 0;
+  let y = clientY - targetRect.top || 0;
+
+  return { x, y };
+}
