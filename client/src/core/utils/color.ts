@@ -1,13 +1,24 @@
 import { default as ColorLib } from 'color';
 import convert from 'color-convert';
 
-type ColorParam = ColorLib | string | ArrayLike<number> | number | { [key: string]: any };
+export type ColorParam = ColorLib | string | ArrayLike<number> | number | { [key: string]: any };
+
+export type ColorModel = keyof typeof convert;
+
+export interface ColorColor<T extends ColorParam> extends ColorLib<T> {
+  model?: ColorModel;
+  isColor?: (value: string) => boolean;
+  isHexadecimal?: (strOrCode: string | number) => boolean;
+  isHexColor?: (str: string) => boolean;
+}
 
 /**
  * Duplicates `ColorConstructor` in `Color` library.
  */
-function Color<T extends ColorParam = ColorParam>(obj: T, model?: keyof typeof convert) {
-  return ColorLib(obj, model);
+function Color<T extends ColorParam = ColorParam>(obj: T, model?: ColorModel): ColorColor<T> {
+  let _Color = ColorLib(obj, model);
+  (_Color as ColorColor<T>).model = model;
+  return _Color;
 }
 
 /** Static method for checking the validity of a color value. */
