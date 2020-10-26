@@ -13,7 +13,6 @@ yarn.lock
 
 # Build directories
 dist
-public
 .rpt2_cache
 test-build
 

@@ -1,6 +1,6 @@
-import { css } from 'styled-components';
-import { Color, isNil, isString } from './utils';
-import { CSS_VALUE_PRESETS } from './presets';
+import { css } from 'styled-components'
+import { Color, isNil, isString } from './utils'
+import { CSS_VALUE_PRESETS } from './presets'
 import {
   BODY_BG,
   BODY_COLOR,
@@ -30,24 +30,24 @@ import {
   LINE_HEIGHT_BASE,
   LINE_HEIGHT_LG,
   BLACK,
-} from './constants';
-import { isNumber } from './utils';
+} from './constants'
+import { isNumber } from './utils'
 // set in px units
-export const BASE_FONT_SIZE = 16;
-export const BASE_LINE_HEIGHT = 1.5;
-export const CONTROL_PADDING_X = 12;
-export const CONTROL_PADDING_Y = 5;
-export const CONTROL_BORDER_WIDTH = 1.5;
+export const BASE_FONT_SIZE = 16
+export const BASE_LINE_HEIGHT = 1.5
+export const CONTROL_PADDING_X = 12
+export const CONTROL_PADDING_Y = 5
+export const CONTROL_BORDER_WIDTH = 1.5
 
 export interface ControlSettings {
-  fontSize: number;
-  lineHeight: number;
-  paddingX: number;
-  paddingY: number;
-  borderWidth: number;
+  fontSize: number
+  lineHeight: number
+  paddingX: number
+  paddingY: number
+  borderWidth: number
 }
 
-export type CSSUnit = 'px' | 'em' | 'rem';
+export type CSSUnit = 'px' | 'em' | 'rem'
 
 export const CONTROL_SETTINGS: ControlSettings = {
   fontSize: FONT_SIZE_ROOT,
@@ -55,67 +55,70 @@ export const CONTROL_SETTINGS: ControlSettings = {
   paddingX: CONTROL_PADDING_X,
   paddingY: CONTROL_PADDING_Y,
   borderWidth: CONTROL_BORDER_WIDTH,
-};
+}
 
 export const isUnit = (value: number | string): boolean =>
-  /[-+]{0,1}\d(.?)+(em|ex|%|px|cm|mm|in|pt|pc|ch|rem|vh|vw|vmin|vmax)/g.test(String(value));
+  /[-+]{0,1}\d(.?)+(em|ex|%|px|cm|mm|in|pt|pc|ch|rem|vh|vw|vmin|vmax)/g.test(String(value))
 
-export const isUnitless = (value: number | string): boolean => isNumber(value) || !isUnit(value);
+export const isUnitless = (value: number | string): boolean => isNumber(value) || !isUnit(value)
 
 export const getUnit = (value: number | string): string | null => {
-  if (!isUnit(value)) return null;
+  if (!isUnit(value)) return null
 
-  const numStr = String(value);
-  const unitStartIndex = numStr.split('').findIndex((str) => /[a-z]/g.test(str));
+  const numStr = String(value)
+  const unitStartIndex = numStr.split('').findIndex((str) => /[a-z]/g.test(str))
 
-  return numStr.slice(unitStartIndex);
-};
+  return numStr.slice(unitStartIndex)
+}
 
 export const stripUnit = (value: number | string): number =>
-  (isUnit(value) ? parseFloat(String(value)) : value) as number;
+  (isUnit(value) ? parseFloat(String(value)) : value) as number
 
 export const normalizeUnit = (value: string | number): number => {
-  const unit = getUnit(value);
-  const baseUnitSize = !unit || unit === 'px' ? 1 : FONT_SIZE_ROOT;
-  return stripUnit(value) * baseUnitSize;
-};
+  const unit = getUnit(value)
+  const baseUnitSize = !unit || unit === 'px' ? 1 : FONT_SIZE_ROOT
+  return stripUnit(value) * baseUnitSize
+}
 
 export const normalizeUnits = (...values: (string | number)[]): number => {
-  return values.reduce((acc: number, size: string | number) => acc + normalizeUnit(size), 0);
-};
+  return values.reduce(
+    (acc: number, size: string | number) => acc + normalizeUnit(size),
+    0,
+  ) as number
+}
 
 export const toRatio = (value: number | string, baseUnitSize): number => {
-  const denominator = baseUnitSize ? normalizeUnit(baseUnitSize) : FONT_SIZE_ROOT;
-  return normalizeUnit(value) / denominator;
-};
+  const denominator = baseUnitSize ? normalizeUnit(baseUnitSize) : FONT_SIZE_ROOT
+  return normalizeUnit(value) / denominator
+}
 
-export const toPX = (value: string | number) => `${Math.floor(normalizeUnit(value))}px`;
+export const toPX = (value: string | number) => `${Math.floor(normalizeUnit(value))}px`
 
-const toRelativeUnit = (value: string | number) => normalizeUnit(value) / FONT_SIZE_ROOT;
+const toRelativeUnit = (value: string | number) => normalizeUnit(value) / FONT_SIZE_ROOT
 
-export const toEM = (value: number) => `${toRelativeUnit(value)}em`;
+export const toEM = (value: number) => `${toRelativeUnit(value)}em`
 export const toREM = (value: number, flag?: string) => {
   if (flag) {
-    console.log(`${flag}->toREM`, value, toRelativeUnit(value));
+    console.log(`${flag}->toREM`, value, toRelativeUnit(value))
   }
-  return `${toRelativeUnit(value)}rem`;
-};
+  return `${toRelativeUnit(value)}rem`
+}
 
 export const maybeApplyUnit = (value: any, unit = 'rem') => {
-  if (isUnit(value)) return value;
+  if (isUnit(value)) return value
 
   switch (unit) {
     case 'rem':
-      return toREM(value);
+      return toREM(value)
     case 'em':
-      return toEM(value);
+      return toEM(value)
     case '%':
-      return `${value}%`;
+      return `${value}%`
     case 'px':
     default:
-      return toPX(value);
+      return toPX(value)
   }
-};
+}
 
 export const color = {
   ...COLORS,
@@ -157,7 +160,7 @@ export const color = {
       focusBorder: Color(COLORS.magenta).hsl().string(),
     },
   },
-};
+}
 
 export const font = {
   family: {
@@ -170,9 +173,9 @@ export const font = {
   },
   weight: (value: string | number) => {
     if (CSS_VALUE_PRESETS.fontWeight.includes(`${value}`)) {
-      return `font-weight: ${CSS_VALUE_PRESETS.fontWeight[`${value}`]};`;
+      return `font-weight: ${CSS_VALUE_PRESETS.fontWeight[`${value}`]};`
     }
-    return `font-weight: normal;`;
+    return `font-weight: normal;`
   },
   sizes: {
     base: FONT_SIZE_BASE,
@@ -186,16 +189,16 @@ export const font = {
     h6: H6_FONT_SIZE,
   },
   size: (size: number) => `font-size: ${size}px;`,
-};
+}
 
 export const calcControlHeight = (config: Partial<ControlSettings> = {}) => {
-  const { paddingY, borderWidth, fontSize, lineHeight } = { ...CONTROL_SETTINGS, ...config };
-  const py = paddingY * 2;
-  const bw = borderWidth * 2;
-  const innerHeight = fontSize * lineHeight;
+  const { paddingY, borderWidth, fontSize, lineHeight } = { ...CONTROL_SETTINGS, ...config }
+  const py = paddingY * 2
+  const bw = borderWidth * 2
+  const innerHeight = fontSize * lineHeight
 
-  return innerHeight + py + bw;
-};
+  return innerHeight + py + bw
+}
 
 export const spacers = {
   ...SPACERS,
@@ -208,7 +211,7 @@ export const spacers = {
   controlX: CONTROL_PADDING_X,
   controlY: CONTROL_PADDING_Y,
   auto: 'auto',
-};
+}
 
 export const radius = {
   none: '0',
@@ -217,15 +220,15 @@ export const radius = {
   lg: '0.325rem',
   pill: '50rem',
   circle: '50%',
-};
+}
 
-const SHADOW_UMBRA = Color(BLACK).alpha(0.2).string();
-const SHADOW_PENUMBRA = Color(BLACK).alpha(0.14).string();
-const SHADOW_AMBIENCE = Color(BLACK).alpha(0.12).string();
+const SHADOW_UMBRA = Color(BLACK).alpha(0.2).string()
+const SHADOW_PENUMBRA = Color(BLACK).alpha(0.14).string()
+const SHADOW_AMBIENCE = Color(BLACK).alpha(0.12).string()
 
-const FOCUS_SHADOW_UMBRA = Color(COLORS.magenta).alpha(0.5).string();
-const FOCUS_SHADOW_PENUMBRA = Color(COLORS.magenta).alpha(0.3).string();
-const FOCUS_SHADOW_AMBIENCE = Color(COLORS.magenta).alpha(0.18).string();
+const FOCUS_SHADOW_UMBRA = Color(COLORS.magenta).alpha(0.5).string()
+const FOCUS_SHADOW_PENUMBRA = Color(COLORS.magenta).alpha(0.3).string()
+const FOCUS_SHADOW_AMBIENCE = Color(COLORS.magenta).alpha(0.18).string()
 
 export const shadow = {
   0: `0 1px 2px 0px ${SHADOW_AMBIENCE}`,
@@ -238,7 +241,7 @@ export const shadow = {
   depth4: `0 2px 4px -1px ${SHADOW_UMBRA}, 0 4px 5px 0 ${SHADOW_PENUMBRA}, 0 1px 10px 0 ${SHADOW_AMBIENCE}`,
   depth5: `0 3px 5px -1px ${SHADOW_UMBRA}, 0 5px 8px 0 ${SHADOW_PENUMBRA}, 0 1px 14px 0 ${SHADOW_AMBIENCE}`,
   depth6: `0 3px 5px -1px ${SHADOW_UMBRA}, 0 6px 10px 0 ${SHADOW_PENUMBRA}, 0 1px 18px 0 ${SHADOW_AMBIENCE}`,
-};
+}
 
 export const focusShadow = {
   0: `0 1px 2px 0px ${FOCUS_SHADOW_PENUMBRA}`,
@@ -251,7 +254,7 @@ export const focusShadow = {
   depth4: `0 2px 4px -1px ${FOCUS_SHADOW_UMBRA}, 0 4px 5px 0 ${FOCUS_SHADOW_PENUMBRA}, 0 1px 10px 0 ${FOCUS_SHADOW_AMBIENCE}`,
   depth5: `0 3px 5px -1px ${FOCUS_SHADOW_UMBRA}, 0 5px 8px 0 ${FOCUS_SHADOW_PENUMBRA}, 0 1px 14px 0 ${FOCUS_SHADOW_AMBIENCE}`,
   depth6: `0 3px 5px -1px ${FOCUS_SHADOW_UMBRA}, 0 6px 10px 0 ${FOCUS_SHADOW_PENUMBRA}, 0 1px 18px 0 ${FOCUS_SHADOW_AMBIENCE}`,
-};
+}
 
 export const focusDropShadow = {
   0: `0 0px 2px ${FOCUS_SHADOW_PENUMBRA}`,
@@ -263,7 +266,7 @@ export const focusDropShadow = {
   depth3: `0 0px 4px ${FOCUS_SHADOW_UMBRA}`,
   depth4: `0 0px 5px ${FOCUS_SHADOW_PENUMBRA}`,
   depth5: `0 0px 10px ${FOCUS_SHADOW_UMBRA}`,
-};
+}
 
 export const link = {
   color: LINK_COLOR,
@@ -272,7 +275,7 @@ export const link = {
     color: LINK_HOVER_COLOR,
     decoration: LINK_HOVER_DECORATION,
   },
-};
+}
 
 export const control = {
   color: VARIANTS.dark,
@@ -311,12 +314,12 @@ export const control = {
     borderColor: VARIANTS.danger,
     color: VARIANTS.danger,
   },
-};
+}
 
 const buttonVariant = (value: string) => {
-  const bg = Color(value);
-  const borderColor = Color(value);
-  const textColor = Color(value).isDark() ? Color(color.white) : Color(color.dark);
+  const bg = Color(value)
+  const borderColor = Color(value)
+  const textColor = Color(value).isDark() ? Color(color.white) : Color(color.dark)
 
   return css`
     background-color: ${bg.string()};
@@ -337,12 +340,12 @@ const buttonVariant = (value: string) => {
       outline: none;
       pointer-events: none;
     }
-  `;
-};
+  `
+}
 
 export const sizes = {
   minViewportWidth: 1000,
-};
+}
 
 export const zIndexes = {
   modal: 1000,
@@ -351,7 +354,7 @@ export const zIndexes = {
   tooltip: 100,
   dropdown: 101,
   toast: 105,
-};
+}
 
 export const transition = {
   duration: {
@@ -372,7 +375,7 @@ export const transition = {
     fastOutLinearIn: 'cubic-bezier(0.4, 0, 1, 1)',
     linearOutSlowIn: 'cubic-bezier(0, 0, 0.2, 0.1)',
   },
-};
+}
 
 const directions = {
   top: 'top',
@@ -381,29 +384,29 @@ const directions = {
   left: 'left',
   x: 'left right',
   y: 'top bottom',
-};
+}
 
 export function generateSpacer(prop: string) {
   function makeRule(dir: string, ...sizes: any[]) {
-    let spacing = '0';
-    let rule = '';
+    let spacing = '0'
+    let rule = ''
 
-    spacing = sizes.map((sz) => (isUnitless(sz) ? toREM(spacers[sz]) ?? toREM(sz) : sz)).join(' ');
+    spacing = sizes.map((sz) => (isUnitless(sz) ? toREM(spacers[sz]) ?? toREM(sz) : sz)).join(' ')
 
     if (!dir) {
-      rule = `${prop}: ${spacing};`;
+      rule = `${prop}: ${spacing};`
     } else {
       if (dir === 'x' || dir === 'y') {
-        const [start, end] = directions[dir].split(' ');
-        rule = `${prop}-${start}: ${spacing}; ${prop}-${end}: ${spacing};`;
+        const [start, end] = directions[dir].split(' ')
+        rule = `${prop}-${start}: ${spacing}; ${prop}-${end}: ${spacing};`
       } else {
-        rule = `${prop}-${directions[dir]}: ${spacing};`;
+        rule = `${prop}-${directions[dir]}: ${spacing};`
       }
     }
 
     return css`
       ${rule}
-    `;
+    `
   }
 
   return {
@@ -414,13 +417,13 @@ export function generateSpacer(prop: string) {
     left: (...sizes: any[]) => makeRule('left', ...sizes),
     x: (...sizes: any[]) => makeRule('x', ...sizes),
     y: (...sizes: any[]) => makeRule('y', ...sizes),
-  };
+  }
 }
 
 interface TransitionParams {
-  dur?: string;
-  timing?: string;
-  delay?: string;
+  dur?: string
+  timing?: string
+  delay?: string
 }
 
 export const mixin = {
@@ -431,35 +434,35 @@ export const mixin = {
   transition: (params: string | TransitionParams, ...props: string[]) => {
     let dur,
       timing,
-      delay = '0ms';
+      delay = '0ms'
     if (typeof params == 'string') {
-      dur = params;
-      timing = params;
+      dur = params
+      timing = params
     } else {
-      dur = params.dur;
-      timing = params?.timing ?? params.dur;
-      if (params?.delay) delay = params.delay;
+      dur = params.dur
+      timing = params?.timing ?? params.dur
+      if (params?.delay) delay = params.delay
     }
-    const transValue = `${transition[dur] ?? dur} ${transition[timing] ?? timing} ${delay}`;
+    const transValue = `${transition[dur] ?? dur} ${transition[timing] ?? timing} ${delay}`
     if (props?.length) {
       return css`
         transition: ${props.map((prop) => prop + ' ' + transValue).join(', ')};
-      `;
+      `
     }
     return css`
       transition: all ${transValue};
-    `;
+    `
   },
   invert: (hue: string) => (Color(hue).isDark() ? color.white : color.dark),
   shadow: (...levels: (number | string)[]) => css`
     box-shadow: ${levels
       .reduce((acc, depth) => {
         if (shadow[depth]) {
-          acc.push(shadow[depth]);
+          acc.push(shadow[depth])
         } else {
-          acc.push(depth);
+          acc.push(depth)
         }
-        return acc;
+        return acc
       }, [])
       .join(', ')};
   `,
@@ -467,11 +470,11 @@ export const mixin = {
     filter: ${levels
       .reduce((acc, depth) => {
         if (shadow[depth]) {
-          acc.push(`drop-shadow(${shadow[depth]})`);
+          acc.push(`drop-shadow(${shadow[depth]})`)
         } else {
-          acc.push(`drop-shadow(${depth})`);
+          acc.push(`drop-shadow(${depth})`)
         }
-        return acc;
+        return acc
       }, [])
       .join(' ')};
   `,
@@ -480,16 +483,16 @@ export const mixin = {
   spacer: (...keys: (number | string)[]) => {
     return keys
       .reduce((acc, key) => {
-        acc.push(isString(key) && !isNil(spacers[key]) ? toREM(spacers[key]) : maybeApplyUnit(key));
-        return acc;
+        acc.push(isString(key) && !isNil(spacers[key]) ? toREM(spacers[key]) : maybeApplyUnit(key))
+        return acc
       }, [])
-      .join(' ');
+      .join(' ')
   },
   borderRadius: (...keys: string[]) => css`
     border-radius: ${keys
       .reduce((acc, key) => {
-        acc.push(radius[key]);
-        return acc;
+        acc.push(radius[key])
+        return acc
       }, [])
       .join(' ')};
   `,
@@ -562,4 +565,4 @@ export const mixin = {
       text-decoration: none;
     }
   `,
-};
+}

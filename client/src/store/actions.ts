@@ -1,11 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { produce } from 'immer';
-import { set, unset } from '../core/utils';
-import { AvailSetting, AvailState, AvailUtility } from '../core/contracts';
+import { produce } from 'immer'
+import { set, unset } from '../core/utils'
+import { AvailSetting, AvailConfig, AvailConfigType, AvailUtility } from '../core/contracts'
+
+interface AvailStateOLD<T = AvailConfigType> {
+  config: AvailConfig<T>
+  inProgress?: boolean
+}
 
 /** Actions */
 
-export function setConfig<T = AvailSetting>(state: AvailState<T>, { name, value }) {
+export function setConfig<T extends AvailConfigType>(state: AvailStateOLD<T>, { name, value }) {
   /**
    * Convert `event.target.name` to a path array.
    *
@@ -16,34 +21,34 @@ export function setConfig<T = AvailSetting>(state: AvailState<T>, { name, value 
    * name:  'colorSchemes_fields_colors_items_0_name'
    * paths: `['colorSchemes', 'fields', 'colors', 'items', '0', 'name]`
    */
-  const path = name.split('_');
+  const path = name.split('_')
 
   return produce(state, (draft) => {
-    set(draft.config, path, value);
-  });
+    set(draft.config, path, value)
+  })
 }
 
-export function addItem<T = AvailSetting>(state: AvailState<T>, { name, value }) {
-  const path = name.split('_');
+export function addItem<T extends AvailConfigType>(state: AvailStateOLD<T>, { name, value }) {
+  const path = name.split('_')
 
   return produce(state, (draft) => {
-    set(draft.config, path, value);
-  });
+    set(draft.config, path, value)
+  })
 }
 
-export function removeItem<T = AvailSetting>(state: AvailState<T>, { name }) {
-  const path = name.split('_');
+export function removeItem<T extends AvailConfigType>(state: AvailStateOLD<T>, { name }) {
+  const path = name.split('_')
 
   return produce(state, (draft) => {
-    unset(draft.config, path);
-  });
+    unset(draft.config, path)
+  })
 }
 
-export function setInProgress<T = AvailSetting | AvailUtility>(
-  state: AvailState<T>,
+export function setInProgress<T extends AvailConfigType>(
+  state: AvailStateOLD<T>,
   inProgress: boolean,
 ) {
   return produce(state, (draft) => {
-    set(draft.config, 'inProgress', inProgress);
-  });
+    set(draft.config, 'inProgress', inProgress)
+  })
 }

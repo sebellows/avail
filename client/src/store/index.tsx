@@ -1,66 +1,48 @@
-import React, {
-  // AnimationEvent,
-  createContext,
-  // useEffect,
-  useReducer,
-  // useRef,
-  // useState,
-  FC,
-} from 'react';
+import React, { createContext, useReducer, FC } from 'react'
 
-import { generateConfig } from '../core/config';
-import { generateSettings } from '../core/settings';
+import { generateConfig } from '../core/config'
+import { generateSettings } from '../core/settings'
 
-import { stateReducer } from './reducers';
-import { ADD_ITEM, REMOVE_ITEM, SET_IN_PROGRESS, SET_CONFIG } from './types';
-import { ComponentProps, AvailSetting, AvailState, AvailUtility } from '../core/contracts';
+import { stateReducer } from './reducers'
+import { ADD_ITEM, REMOVE_ITEM, SET_IN_PROGRESS, SET_CONFIG } from './types'
+import { ComponentProps, AvailSetting, AvailConfig, AvailUtility } from '../core/contracts'
 
-export type StoreContextState<T> = [AvailState<T>, (prev: any, next?: any) => void];
+interface AvailStateOLD<T = AvailSetting | AvailUtility> {
+  config: AvailConfig<T>
+  inProgress?: boolean
+}
 
-export const SettingsContext = createContext<StoreContextState<AvailSetting>>(null);
-export const UtilitiesContext = createContext<StoreContextState<AvailUtility>>(null);
+export type StoreContextState<T> = [AvailStateOLD<T>, (prev: any, next?: any) => void]
 
-const initialSettingsState: AvailState<AvailSetting> = {
+export const SettingsContext = createContext<StoreContextState<AvailSetting>>(null)
+export const UtilitiesContext = createContext<StoreContextState<AvailUtility>>(null)
+
+const initialSettingsState: AvailStateOLD<AvailSetting> = {
   config: generateSettings(),
   inProgress: true,
-};
+}
 
-const initialUtilitiesState: AvailState<AvailUtility> = {
+const initialUtilitiesState: AvailStateOLD<AvailUtility> = {
   config: generateConfig(initialSettingsState.config),
   inProgress: true,
-};
+}
 
 const Store: FC<ComponentProps> = ({ children }) => {
   // const [loading, setLoading] = useState(false);
   // const [addExitClass, setExitClass] = useState(false);
 
-  const [settings, setSettings] = useReducer(stateReducer, initialSettingsState);
-  const [utilities, setUtilities] = useReducer(stateReducer, initialUtilitiesState);
-
-  // useEffect(() => {
-  //   if (loading) {
-  //     const fadeSpinner = setTimeout(() => {
-  //       setExitClass(true);
-  //     }, 2000);
-  //     return () => clearTimeout(fadeSpinner);
-  //   }
-  // }, [loading, settings]);
-
-  // function handleLoad(event: AnimationEvent) {
-  //   event.persist();
-  //   setLoading(false);
-  //   setExitClass(false);
-  // }
+  const [settings, setSettings] = useReducer(stateReducer, initialSettingsState)
+  const [utilities, setUtilities] = useReducer(stateReducer, initialUtilitiesState)
 
   return (
-    <SettingsContext.Provider value={[settings as AvailState<AvailSetting>, setSettings]}>
-      <UtilitiesContext.Provider value={[utilities as AvailState<AvailUtility>, setUtilities]}>
+    <SettingsContext.Provider value={[settings as AvailStateOLD<AvailSetting>, setSettings]}>
+      <UtilitiesContext.Provider value={[utilities as AvailStateOLD<AvailUtility>, setUtilities]}>
         {children}
       </UtilitiesContext.Provider>
     </SettingsContext.Provider>
-  );
-};
+  )
+}
 
-Store.displayName = 'Store';
+Store.displayName = 'Store'
 
-export { Store, ADD_ITEM, REMOVE_ITEM, SET_IN_PROGRESS, SET_CONFIG };
+export { Store, ADD_ITEM, REMOVE_ITEM, SET_IN_PROGRESS, SET_CONFIG }

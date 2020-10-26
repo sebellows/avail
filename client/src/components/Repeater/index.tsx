@@ -1,17 +1,17 @@
-import React, { forwardRef, Ref, useState, useEffect } from 'react';
-import { toast } from 'react-toastify';
+import React, { forwardRef, Ref, useState, useEffect } from 'react'
+import { toast } from 'react-toastify'
 
-import { usePrevious } from '../../hooks/usePrevious';
-import { classNames } from '../../core/utils/classNames';
-import { OptionProps, FormGroupProps } from '../../core/contracts';
+import { usePrevious } from '../../hooks/usePrevious'
+import { classNames } from '../../core/utils/classNames'
+import { OptionProps, FormGroupProps } from '../../core/contracts'
 
-import { Control } from '../Control';
-import { FieldFeedback } from '../FieldFeedback';
-import { FieldDescription } from '../FieldDescription';
-import { FormControlResolver } from '../formControlResolver';
+import { Control } from '../Control'
+import { FieldFeedback } from '../FieldFeedback'
+import { FieldDescription } from '../FieldDescription'
+import { FormControlResolver } from '../formControlResolver'
 
-import { Styled } from './styles';
-import { RepeaterItem } from './RepeaterItem';
+import { Styled } from './styles'
+import { RepeaterItem } from './RepeaterItem'
 
 const Repeater = forwardRef<{}, FormGroupProps>(
   (
@@ -30,87 +30,92 @@ const Repeater = forwardRef<{}, FormGroupProps>(
       onChange,
       onRemove,
       onBlur,
+      onUpdate,
       ...props
     },
     ref: Ref<any>,
   ) => {
-    const [items, setItems] = useState(initialItems);
-    const [errors, setErrors] = useState(initialErrors);
-    const prevItemsCount = usePrevious(initialItems.length);
+    const [items, setItems] = useState(initialItems)
+    const [errors, setErrors] = useState(initialErrors)
+    const prevItemsCount = usePrevious(initialItems.length)
 
     useEffect(() => {
       if (prevItemsCount !== initialItems.length) {
-        setItems(initialItems as OptionProps[]);
+        setItems(initialItems as OptionProps[])
       }
-    }, [initialItems, prevItemsCount]);
+    }, [initialItems, prevItemsCount])
 
     useEffect(() => {
       if (Object.keys(errors).length) {
         Object.values(errors).forEach((errMsg: string) => {
-          toast.error(errMsg, { position: 'top-right' });
-        });
+          toast.error(errMsg, { position: 'top-right' })
+        })
       }
       return () => {
-        Object.keys(errors).forEach((err) => delete errors[err]);
-      };
-    }, [errors]);
+        Object.keys(errors).forEach((err) => delete errors[err])
+      }
+    }, [errors])
 
     function _removeError(name: string) {
-      const _errors = { ...errors };
-      delete _errors[name];
-      setErrors(_errors);
+      const _errors = { ...errors }
+      delete _errors[name]
+      setErrors(_errors)
     }
 
     function handleAdd() {
-      const nextID = items.length === 0 ? 1 : items.length;
-      onAdd?.({ name: `${id}_items_${nextID}`, value: '' });
+      const nextID = items.length === 0 ? 1 : items.length
+      onAdd?.({ name: `${id}_items_${nextID}`, value: '' })
     }
 
     function handleRemove(itemID: string) {
-      onRemove?.(itemID);
+      onRemove?.(itemID)
     }
 
     function handleChange(event: any) {
-      event.preventDefault();
-      onChange?.(event);
+      event.preventDefault()
+      onChange?.(event)
     }
 
     function handleBlur(event: any) {
-      const { classList, name, value } = event.target;
+      const { classList, name, value } = event.target
 
       if (classList.contains('repeater-name')) {
         // Check if the name value already exists.
-        const itemNames = items.filter((item: OptionProps) => item.name === event.target.value);
+        const itemNames = items.filter((item: OptionProps) => item.name === event.target.value)
         if (itemNames.length > 1) {
           setErrors({
             ...errors,
             [name]: `The utility class suffix \`${value}\` already exists for ${id}!`,
-          });
+          })
         } else if (Object.keys(errors).includes(name)) {
-          _removeError(name);
+          _removeError(name)
         }
       }
       // All repeater `value` fields are required.
       if (classList.contains('repeater-value')) {
         if (value.length === 0) {
-          setErrors({ ...errors, [name]: `A value for \`${name}\` is required in ${id} utility!` });
+          setErrors({ ...errors, [name]: `A value for \`${name}\` is required in ${id} utility!` })
         } else if (Object.keys(errors).includes(name)) {
-          _removeError(name);
+          _removeError(name)
         }
       }
-      onBlur?.(event);
+      onBlur?.(event)
     }
 
     return (
       <Styled.Wrapper ref={ref} id={id} className={classNames('repeater', className)}>
-        {legend && <Styled.Legend>{legend}</Styled.Legend>}
+        {legend && (
+          <Styled.Legend description={props?.description} isInvalid={props?.isInvalid}>
+            {legend}
+          </Styled.Legend>
+        )}
         {props?.description && <FieldDescription>{props?.description}</FieldDescription>}
         {props?.isInvalid && errors && <FieldFeedback type="invalid">{errors[id]}</FieldFeedback>}
         {items.length &&
           items.map((item: OptionProps, i: number) => {
-            const itemID = `${id}_items_${i}`;
-            const nameID = `${itemID}_name`;
-            const valueID = `${itemID}_value`;
+            const itemID = `${id}_items_${i}`
+            const nameID = `${itemID}_name`
+            const valueID = `${itemID}_value`
 
             return (
               <RepeaterItem
@@ -157,18 +162,19 @@ const Repeater = forwardRef<{}, FormGroupProps>(
                     required
                     options={options}
                     onBlur={handleBlur}
+                    onChange={handleChange}
                     isValid={!errors || !errors[id]}
                     isInvalid={errors && !!errors[id]}
                   />
                 </Styled.Field>
               </RepeaterItem>
-            );
+            )
           })}
       </Styled.Wrapper>
-    );
+    )
   },
-);
+)
 
-Repeater.displayName = 'Repeater';
+Repeater.displayName = 'Repeater'
 
-export { Repeater };
+export { Repeater }

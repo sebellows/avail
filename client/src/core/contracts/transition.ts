@@ -10,7 +10,7 @@ import {
  * interface, instead `TransitionProps` is a type only. This makes it difficult to
  * extend component interfaces to use their predefined prop types.
  */
-export interface TransitionProps {
+export interface TransitionProps<E extends HTMLElement> {
   /**
    * Show the component; triggers the enter or exit states
    */
@@ -37,36 +37,36 @@ export interface TransitionProps {
    * parameter `isAppearing` is supplied to indicate if the enter stage is
    * occurring on the initial mount
    */
-  onEnter?: EnterHandler;
+  onEnter?: EnterHandler<E>;
 
   /**
    * Callback fired after the "entering" status is applied. An extra parameter
    * isAppearing is supplied to indicate if the enter stage is occurring on
    * the initial mount
    */
-  onEntering?: EnterHandler;
+  onEntering?: EnterHandler<E>;
 
   /**
    * Callback fired after the "entered" status is applied. An extra parameter
    * isAppearing is supplied to indicate if the enter stage is occurring on
    * the initial mount
    */
-  onEntered?: EnterHandler;
+  onEntered?: EnterHandler<E>;
 
   /**
    * Callback fired before the "exiting" status is applied.
    */
-  onExit?: ExitHandler;
+  onExit?: ExitHandler<E>;
 
   /**
    * Callback fired after the "exiting" status is applied.
    */
-  onExiting?: ExitHandler;
+  onExiting?: ExitHandler<E>;
 
   /**
    * Callback fired after the "exited" status is applied.
    */
-  onExited?: ExitHandler;
+  onExited?: ExitHandler<E>;
 
   /**
    * A function child can be used instead of a React element. This function is
@@ -109,7 +109,7 @@ export interface TransitionProps {
    * node and a done callback. Allows for more fine grained transition end
    * logic. Note: Timeouts are still used as a fallback if provided.
    */
-  addEndListener?: EndHandler;
+  addEndListener?: EndHandler<E>;
 
   [prop: string]: any;
 }

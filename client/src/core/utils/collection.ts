@@ -13,20 +13,20 @@ import {
   isDefined,
   isObject,
   toNumber,
-} from './common';
+} from './common'
 
 export const getNestedProp = (obj: any, key: string) => {
   try {
     return key.split('.').reduce((o, prop) => {
       if (o instanceof Map) {
-        return o.get(prop);
+        return o.get(prop)
       }
-      return o[prop];
-    }, obj);
+      return o[prop]
+    }, obj)
   } catch (err) {
-    return null;
+    return null
   }
-};
+}
 
 const _getPosition = (
   values: any,
@@ -34,86 +34,86 @@ const _getPosition = (
   position: number | 'first' | 'last',
 ) => {
   function getFirstOrLast(arr: any[]) {
-    if (!arr.length) return arr;
+    if (!arr.length) return arr
 
-    const index = position === 'first' ? 0 : position;
+    const index = position === 'first' ? 0 : position
 
-    return position === 'last' ? arr[arr.length - 1] : arr[index];
+    return position === 'last' ? arr[arr.length - 1] : arr[index]
   }
 
   if (typeof values == 'string') {
     if (paramOrFn && typeof paramOrFn == 'function') {
-      const strs = paramOrFn(values);
-      return strs.length ? strs.reverse()[0] : values;
+      const strs = paramOrFn(values)
+      return strs.length ? strs.reverse()[0] : values
     } else {
-      const sep = paramOrFn && typeof paramOrFn == 'string' ? paramOrFn : '.';
-      const strs = values.split(sep);
-      return getFirstOrLast(strs);
+      const sep = paramOrFn && typeof paramOrFn == 'string' ? paramOrFn : '.'
+      const strs = values.split(sep)
+      return getFirstOrLast(strs)
     }
   }
 
-  if (!Array.isArray(values) && !isIterable(values)) return values;
+  if (!Array.isArray(values) && !isIterable(values)) return values
 
-  const valuesArr = isIterable(values) ? Array.from(values) : values;
+  const valuesArr = isIterable(values) ? Array.from(values) : values
 
   if (paramOrFn) {
     if (typeof paramOrFn == 'function') {
-      return getFirstOrLast(paramOrFn(valuesArr));
+      return getFirstOrLast(paramOrFn(valuesArr))
     }
     return getFirstOrLast(
       valuesArr.filter((val) => {
-        return (isPlainObject(val) && paramOrFn in val) || val === paramOrFn;
+        return (isPlainObject(val) && paramOrFn in val) || val === paramOrFn
       }),
-    );
+    )
   }
 
-  return getFirstOrLast(valuesArr);
-};
+  return getFirstOrLast(valuesArr)
+}
 
 export const first = (values: any, paramOrFn?: string | Function): any => {
-  return _getPosition(values, paramOrFn, 'first');
-};
+  return _getPosition(values, paramOrFn, 'first')
+}
 
 export const last = (values: any, paramOrFn?: string | Function): any => {
-  return _getPosition(values, paramOrFn, 'last');
-};
+  return _getPosition(values, paramOrFn, 'last')
+}
 
 export const clone = (value: any, callback?: Function) => {
   if (isPlainObject(value)) {
-    return cloneObjectDeep(value, callback);
+    return cloneObjectDeep(value, callback)
   } else if (Array.isArray(value)) {
-    return cloneArrayDeep(value, callback);
+    return cloneArrayDeep(value, callback)
   }
-  return value;
-};
+  return value
+}
 
 const cloneObjectDeep = (value: any, callback?: Function) => {
   if (callback && typeof callback === 'function') {
-    return callback(value);
+    return callback(value)
   }
   if (Object.keys(value).length) {
-    const res = new value.constructor();
+    const res = new value.constructor()
 
     for (const key in value) {
-      res[key] = clone(value[key], callback);
+      res[key] = clone(value[key], callback)
     }
 
-    return res;
+    return res
   }
-  return value;
-};
+  return value
+}
 
 const cloneArrayDeep = (value: any, callback?: Function) => {
-  return value.map((val: any) => clone(val, callback));
-};
+  return value.map((val: any) => clone(val, callback))
+}
 
 /** Used to match backslashes in property paths. */
-const escapeCharRE = /\\(\\)?/g;
+const escapeCharRE = /\\(\\)?/g
 
 /** Used to match property names within property paths. */
-const deepPropRE = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/;
-const plainPropRE = /^\w*$/;
-const propNameRE = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
+const deepPropRE = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/
+const plainPropRE = /^\w*$/
+const propNameRE = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g
 
 /**
  * Converts `value` to a property path array.
@@ -125,55 +125,55 @@ const propNameRE = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?
  */
 export const toPath = (value: string | Symbol | (string | Symbol)[]): (string | Symbol)[] => {
   if (Array.isArray(value)) {
-    return value.map(toKey);
+    return value.map(toKey)
   }
-  return isSymbol(value) ? [value] : stringToPath(String(value));
-};
+  return isSymbol(value) ? [value] : stringToPath(String(value))
+}
 
 /** Converts `string` to a property path array. */
 const stringToPath = memoize((str: string): string[] => {
-  const result = [];
+  const result = []
   if (str.charCodeAt(0) === 46 /* . */) {
-    result.push('');
+    result.push('')
   }
   str.replace(propNameRE, (match: string, num: number, quote: string, substr: string): string => {
-    const replacement = quote ? substr.replace(escapeCharRE, '$1') : num || match;
-    result.push(replacement);
-    return String(replacement);
-  });
-  return result;
-}, true);
+    const replacement = quote ? substr.replace(escapeCharRE, '$1') : num || match
+    result.push(replacement)
+    return String(replacement)
+  })
+  return result
+}, true)
 
 /** Converts `value` to a string key if it's not a string or symbol. */
 function toKey(value: string | Symbol): string | Symbol {
   if (typeof value == 'string' || isSymbol(value)) {
-    return value;
+    return value
   }
-  return `${value}` == '0' && 1 / Number(value) == -Infinity ? '-0' : `${value}`;
+  return `${value}` == '0' && 1 / Number(value) == -Infinity ? '-0' : `${value}`
 }
 
 /** Checks if `value` is a property name and not a property path. */
 function isKey<T extends Object>(value: any, object: T): boolean {
-  if (Array.isArray(value)) return false;
+  if (Array.isArray(value)) return false
 
   if (value == null || isBoolean(value) || isNumber(value) || isSymbol(value)) {
-    return true;
+    return true
   }
 
   return (
     plainPropRE.test(value) ||
     !deepPropRE.test(value) ||
     (object != null && value in Object(object))
-  );
+  )
 }
 
 /** Casts `value` to a path array if it's not one. */
 function castPath<T extends Object>(value: any, obj: T): string[] {
-  if (Array.isArray(value)) return value;
+  if (Array.isArray(value)) return value
 
-  if (isKey(value, obj)) return [value];
+  if (isKey(value, obj)) return [value]
 
-  return stringToPath(toString(value));
+  return stringToPath(toString(value))
 }
 
 /**
@@ -181,20 +181,20 @@ function castPath<T extends Object>(value: any, obj: T): string[] {
  * `undefined`, the `defaultValue` is returned in its place.
  */
 export function get<T>(obj: T, path: string | string[], defaultValue: any = undefined): any {
-  if (isNil(obj)) return defaultValue;
+  if (isNil(obj)) return defaultValue
 
-  const paths = castPath(path, obj);
+  const paths = castPath(path, obj)
 
-  let index = 0;
+  let index = 0
 
   for (const path of paths) {
     if (isDefined(obj)) {
-      obj = obj[path];
-      index++;
+      obj = obj[path]
+      index++
     }
   }
 
-  return index && index == paths.length ? obj : defaultValue;
+  return index && index == paths.length ? obj : defaultValue
 }
 
 /**
@@ -207,27 +207,27 @@ export function get<T>(obj: T, path: string | string[], defaultValue: any = unde
  * @returns {boolean} Returns `true` if `path` exists, else `false`.
  */
 export function has(obj: object, path: string | string[], hasFunc?: Function): boolean {
-  if (isNil(obj)) return false;
+  if (isNil(obj)) return false
 
-  path = castPath(path, obj);
+  path = castPath(path, obj)
 
-  let i = -1;
-  let length = path.length;
-  let result = false;
+  let i = -1
+  let length = path.length
+  let result = false
 
   while (++i < length) {
-    const key = toKey(path[i]);
+    const key = toKey(path[i])
     if (!(result = obj != null && hasFunc(obj, key))) {
-      break;
+      break
     }
-    obj = obj[toString(key)];
+    obj = obj[toString(key)]
   }
 
   if (result || ++i != length) {
-    return result;
+    return result
   }
 
-  return Array.isArray(obj) && !!obj[toNumber(path)];
+  return Array.isArray(obj) && !!obj[toNumber(path)]
 }
 
 /**
@@ -241,30 +241,30 @@ export function set<T>(
   value: any,
   customizer?: Function,
 ): T {
-  if (!isObject(obj) || !isDefined(obj)) return obj;
+  if (!isObject(obj) || !isDefined(obj)) return obj
 
-  const paths = castPath(path, obj);
+  const paths = castPath(path, obj)
 
-  let i = -1;
-  let nested = obj;
+  let i = -1
+  let nested = clone(obj)
 
   while (isDefined(nested) && ++i < paths.length) {
-    let key = toKey(String(paths[i])) as string;
-    let newValue = value;
+    let key = toKey(String(paths[i])) as string
+    let newValue = value
 
     if (i !== paths.length - 1) {
-      const objValue = nested[key];
-      newValue = customizer ? customizer(objValue, key, nested) : undefined;
+      const objValue = nested[key]
+      newValue = customizer ? customizer(objValue, key, nested) : undefined
       if (!isDefined(newValue)) {
-        newValue = isObject(objValue) ? objValue : isNumber(paths[i + 1]) ? [] : {};
+        newValue = isObject(objValue) ? objValue : isNumber(paths[i + 1]) ? [] : {}
       }
     }
 
-    nested[key] = newValue;
-    nested = nested[key];
+    nested[key] = newValue
+    nested = nested[key]
   }
 
-  return obj;
+  return obj
 }
 
 /**
@@ -292,20 +292,20 @@ export function set<T>(
  * // => { 'a': [{ 'b': {} }] };
  */
 export function unset<T>(obj: T, path: string | Symbol | (string | Symbol)[]): boolean {
-  if (obj == null) return true;
+  if (obj == null) return true
 
-  const paths = castPath(path, obj) as string[];
-  obj = paths.length < 2 ? obj : get(obj, paths.slice(0, -1));
+  const paths = castPath(path, obj) as string[]
+  obj = paths.length < 2 ? obj : get(obj, paths.slice(0, -1))
 
   function _delete(): boolean {
-    const lastKey = Array.isArray(obj) ? toNumber(last(paths)) : toKey(last(paths));
+    const lastKey = Array.isArray(obj) ? toNumber(last(paths)) : toKey(last(paths))
 
     if (isNumber(lastKey) && Array.isArray(obj)) {
-      obj.splice(+lastKey, 1);
-      return obj.length === lastKey;
+      obj.splice(+lastKey, 1)
+      return obj.length === lastKey
     }
-    return delete obj[toKey(last(paths)) as string];
+    return delete obj[toKey(last(paths)) as string]
   }
 
-  return obj == null || _delete();
+  return obj == null || _delete()
 }

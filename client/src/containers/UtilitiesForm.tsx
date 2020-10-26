@@ -1,23 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, {
-  forwardRef,
-  useState,
-  useEffect,
-  Ref,
-  useRef,
-  Fragment,
-  FC,
-  ChangeEvent,
-  useContext,
-  useCallback,
-} from 'react';
-import Prism from 'prismjs';
+import React, { useState, useEffect, useRef, Fragment, FC, useContext, useCallback } from 'react'
+import Prism from 'prismjs'
 
-import { usePrevious } from '../hooks/usePrevious';
-import { useClickOutside } from '../hooks/useClickOutside';
-import { AvailUtility, AvailUtilities, ComponentProps, StateConfig } from '../core/contracts';
-import { generateUtility, generateResponsiveUtility } from '../core/build';
-import { classNames, get } from '../core/utils';
+import { usePrevious } from '../hooks/usePrevious'
+import { useClickOutside } from '../hooks/useClickOutside'
+import {
+  AvailUtility,
+  AvailUtilities,
+  ComponentProps,
+  StateConfig,
+  AvailConfig,
+} from '../core/contracts'
+import { generateUtility, generateResponsiveUtility } from '../core/build'
+import { classNames, get } from '../core/utils'
 
 import {
   Control,
@@ -28,102 +23,124 @@ import {
   PillTabs,
   Repeater,
   ToggleControl,
-} from '../components';
+} from '../components'
 
-import '../styles/prism.css';
-import { UtilitiesContext, SET_CONFIG, SettingsContext, ADD_ITEM, REMOVE_ITEM } from '../store';
+import '../styles/prism.css'
+import { useStore } from '../store/useStore'
+import { generateConfig } from '../core/config'
 
 const DialogTitle = ({ children }) => (
   <h3 className="font-size-lg font-weight-bold mb-0">
     <code>{children}</code>
   </h3>
-);
+)
 
 export interface UtilitiesFormProps extends ComponentProps {
-  utilities?: AvailUtilities;
+  utilities?: AvailUtilities
 }
 
 const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
-  const [settings] = useContext(SettingsContext);
-  const [utilities, setUtilities] = useContext(UtilitiesContext);
+  const {
+    settings,
+    utilities,
+    updateUtilities,
+    addUtility,
+    initializeUtilities,
+    removeUtility,
+  } = useStore()
+  // const utilities = useStore((state) => state.utilities as AvailConfig<AvailUtility>)
+  // const updateUtilities = useStore((state) => state.updateUtilities)
+  // const addUtility = useStore((state) => state.addUtility)
+  // const removeUtility = useStore((state) => state.removeUtility)
 
-  const [activeModelID, setActiveModelID] = useState(null);
+  const [activeModelID, setActiveModelID] = useState(null)
   // const lastActiveModelID = usePrevious(activeModelID);
-  const [open, setOpen] = useState(false);
-  const [output, setOutput] = useState('// No styles were generated'); // TODO: remove default here
+  const [open, setOpen] = useState(false)
+  const [output, setOutput] = useState('// No styles were generated') // TODO: remove default here
 
-  const dialogRef = useRef(null);
-  const fieldsetRef = useRef(null);
-  const activeIndex = useRef(0);
+  const dialogRef = useRef(null)
+  const fieldsetRef = useRef(null)
+  const activeIndex = useRef(0)
+
+  React.useEffect(() => {
+    initializeUtilities(() => generateConfig(settings))
+    console.log('initializeSettings', settings)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const onUpdate = useCallback(
-    (config: StateConfig) => {
-      setUtilities({ type: SET_CONFIG, config });
+    (config: StateConfig, event: any) => {
+      console.log('UtilitiesForm->onUpdate', event, config)
+      updateUtilities(config)
     },
-    [setUtilities],
-  );
+    [updateUtilities],
+  )
 
   useEffect(() => {
-    Prism.highlightAll();
-  });
+    Prism.highlightAll()
+  })
 
   useEffect(() => {
     if (activeModelID) {
-      if (utilities.config[activeModelID].responsive) {
-        setOutput(generateResponsiveUtility(settings.config, utilities.config[activeModelID]));
+      if ((utilities[activeModelID] as AvailUtility).responsive) {
+        setOutput(generateResponsiveUtility(settings, utilities[activeModelID] as AvailUtility))
       } else {
-        setOutput(generateUtility(settings.config, utilities.config[activeModelID]));
+        setOutput(generateUtility(settings, utilities[activeModelID] as AvailUtility))
       }
     }
-  }, [activeModelID, settings, utilities]);
+  }, [activeModelID, settings, utilities])
 
-  useClickOutside(dialogRef, handleClose);
+  useEffect(() => {
+    console.log('UtilitiesForm->settings', settings)
+  }, [settings])
 
-  const indices = Object.keys(utilities.config);
+  useClickOutside(dialogRef, handleClose)
+
+  const indices = Object.keys(utilities)
 
   function handleSelect(utilityID: string) {
-    setOpen(!open);
-    activeIndex.current = indices.indexOf(utilityID);
-    setActiveModelID(utilityID);
+    setOpen(!open)
+    activeIndex.current = indices.indexOf(utilityID)
+    setActiveModelID(utilityID)
   }
 
   const handleClickPrev = () => {
-    const { current: _activeIndex } = activeIndex;
+    const { current: _activeIndex } = activeIndex
 
     if (_activeIndex) {
-      activeIndex.current = _activeIndex === 0 ? indices.length - 1 : _activeIndex - 1;
-      setActiveModelID(indices[activeIndex.current]);
+      activeIndex.current = _activeIndex === 0 ? indices.length - 1 : _activeIndex - 1
+      setActiveModelID(indices[activeIndex.current])
     }
-  };
+  }
 
   const handleClickNext = () => {
-    const { current: _activeIndex } = activeIndex;
+    const { current: _activeIndex } = activeIndex
 
     if (_activeIndex) {
-      activeIndex.current = _activeIndex === indices.length - 1 ? 0 : _activeIndex + 1;
-      setActiveModelID(indices[activeIndex.current]);
+      activeIndex.current = _activeIndex === indices.length - 1 ? 0 : _activeIndex + 1
+      setActiveModelID(indices[activeIndex.current])
     }
-  };
+  }
 
   function handleClose() {
-    setOpen(false);
+    setOpen(false)
   }
 
   const repeaterHandlers = {
     onAdd: (config: StateConfig) => {
-      setUtilities({ type: ADD_ITEM, config });
+      addUtility(config)
     },
     onRemove: (config: string | Partial<StateConfig>) => {
-      config = typeof config == 'string' ? { name: config } : config;
-      console.log('onRemove', config);
-      setUtilities({ type: REMOVE_ITEM, config });
+      config = typeof config == 'string' ? { name: config } : config
+      console.log('onRemove', config)
+      removeUtility(config)
     },
-  };
+  }
 
   return (
     <Fragment>
       <PillTabs id={id} className={classNames('utility-tabs', props.className)}>
-        {Object.values(utilities.config).map((utility: AvailUtility, i: number) => (
+        {Object.values(utilities).map((utility: any, i: number) => (
           <PillTab
             key={`${utility.id}-${i}`}
             id={`pill-tab-${utility.id}`}
@@ -131,7 +148,7 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
             checkboxID={`${utility.id}_enabled`}
             checked={utility.enabled}
             onChange={({ target: { name, checked } }) => {
-              setUtilities({ type: SET_CONFIG, config: { name, value: `${checked}` } });
+              updateUtilities({ name, value: `${checked}` })
             }}
             selected={activeModelID === utility.id}
             onSelect={() => handleSelect(utility.id)}
@@ -150,22 +167,22 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
         {activeModelID && (
           <Dialog
             ref={dialogRef}
-            title={<DialogTitle>{utilities.config[activeModelID].property}</DialogTitle>}
+            title={<DialogTitle>{(utilities[activeModelID] as AvailUtility).property}</DialogTitle>}
             onClose={handleClose}
           >
             <div id={`utility-${activeModelID}`}>
-              {utilities.config[activeModelID].description && (
-                <p>{utilities.config[activeModelID].description}</p>
+              {(utilities[activeModelID] as AvailUtility).description && (
+                <p>{(utilities[activeModelID] as AvailUtility).description}</p>
               )}
               <fieldset ref={fieldsetRef}>
                 <Field className="mb-3">
                   <label htmlFor={`${activeModelID}_class`}>Root class prefix:</label>
                   <Control
                     name={`${activeModelID}_class`}
-                    value={utilities.config[activeModelID].class}
+                    value={(utilities[activeModelID] as AvailUtility).class}
                     aria-label={'Root class prefix'}
                     onBlur={({ target: { name, value } }) => {
-                      setUtilities({ type: SET_CONFIG, config: { name, value } });
+                      updateUtilities({ name, value })
                     }}
                     required
                   />
@@ -174,16 +191,16 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
                   name={`${activeModelID}_responsive`}
                   className="mb-3"
                   value={`${activeModelID}-responsive`}
-                  checked={!!utilities.config[activeModelID].responsive}
-                  onChange={({ target: { name, checked } }) => {
-                    setUtilities({ type: SET_CONFIG, config: { name, value: checked } });
+                  checked={!!(utilities[activeModelID] as AvailUtility).responsive}
+                  onChange={({ target: { name, checked: value } }) => {
+                    updateUtilities({ name, value })
                   }}
                 >
                   <span>Make responsive classes?</span>
                 </ToggleControl>
-                {utilities.config[activeModelID].subproperties && (
+                {(utilities[activeModelID] as AvailUtility).subproperties && (
                   <div className="d-flex align-items-center mb-3">
-                    {Object.entries(utilities.config[activeModelID].subproperties).map(
+                    {Object.entries((utilities[activeModelID] as AvailUtility).subproperties).map(
                       ([prop, val]) => (
                         <ToggleControl
                           key={`${activeModelID}-${prop}`}
@@ -191,7 +208,7 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
                           value={prop}
                           checked={val}
                           onChange={({ target: { name, checked } }) => {
-                            setUtilities({ type: SET_CONFIG, config: { name, value: checked } });
+                            updateUtilities({ name, value: checked })
                           }}
                         >
                           <span>Make utility classes for {prop}?</span>
@@ -201,7 +218,7 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
                   </div>
                 )}
                 <Repeater
-                  {...utilities.config[activeModelID]}
+                  {...utilities[activeModelID]}
                   id={activeModelID}
                   onUpdate={onUpdate}
                   {...repeaterHandlers}
@@ -217,9 +234,9 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
         )}
       </Modal>
     </Fragment>
-  );
-});
+  )
+})
 
-UtilitiesForm.displayName = 'UtilitiesForm';
+UtilitiesForm.displayName = 'UtilitiesForm'
 
-export { UtilitiesForm };
+export { UtilitiesForm }

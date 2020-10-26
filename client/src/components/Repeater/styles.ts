@@ -1,21 +1,35 @@
-import styled, { css } from 'styled-components';
+import styled, { css } from 'styled-components'
 
-import { font, mixin, color, control, toREM } from '../../core/style';
+import { font, mixin, color, control, toREM } from '../../core/style'
 
-import { Field } from '../Field';
+import { Field } from '../Field'
 
 interface StyledLabelProps {
-  first?: boolean;
+  first?: boolean
+}
+
+interface StyledLegendProps {
+  description?: string
+  isInvalid?: boolean
 }
 
 export const Styled = {
   Wrapper: styled.fieldset`
     padding-top: 1rem;
+
+    small + .repeater-item:first-of-type {
+      ${mixin.margin.top('2.25rem')}
+    }
   `,
-  Legend: styled.legend`
+  Legend: styled.legend<StyledLegendProps>`
     position: relative;
     font-size: ${toREM(font.sizes.lg)};
-    float: none;
+    ${({ description, isInvalid }) =>
+      description || isInvalid ? mixin.margin.bottom(1) : mixin.margin.bottom(2)}
+
+    + .repeater-item:first-of-type {
+      ${mixin.margin.top('4.25rem')}
+    }
   `,
   Label: styled.label<StyledLabelProps>`
     display: ${({ first }) => (first ? 'block' : 'none')};
@@ -26,7 +40,7 @@ export const Styled = {
           top: -2rem;
           margin: 0;
           font-weight: 700;
-        `;
+        `
       }
     }}
   `,
@@ -39,7 +53,7 @@ export const Styled = {
     ${mixin.inlineFlexCenter}
     ${mixin.margin.x(1)}
   `,
-};
+}
 
 const StyledItemAddon = styled.span`
   ${mixin.inlineFlexCenter}
@@ -47,7 +61,7 @@ const StyledItemAddon = styled.span`
   ${mixin.padding.all(1)}
   min-width: 2rem;
   background-color: ${color.bg.light};
-`;
+`
 
 // RepeaterItem styles
 export const StyledItem = {
@@ -57,10 +71,6 @@ export const StyledItem = {
     display: flex;
     align-items: stretch;
     width: 100%;
-
-    &:first-of-type {
-      ${mixin.margin.top('2.25rem')}
-    }
 
     &:last-of-type {
       border-bottom-width: 1px;
@@ -79,4 +89,4 @@ export const StyledItem = {
   Append: styled(StyledItemAddon)`
     justify-content: space-between;
   `,
-};
+}

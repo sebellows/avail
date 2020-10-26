@@ -1,6 +1,6 @@
-import convert from 'color-convert';
-import { Color, ColorColor, ColorParam, ColorModel } from '../../core/utils/color';
-import { capitalize } from '../../core/utils';
+import convert from 'color-convert'
+import { Color, ColorColor, ColorParam, ColorModel } from '../../core/utils/color'
+import { capitalize } from '../../core/utils'
 
 export const COLOR_OPTIONS = {
   /**
@@ -20,46 +20,46 @@ export const COLOR_OPTIONS = {
    * 'HV' - hue and value (brightness) in the palette area, no slider (experimental setting)
    */
   mode: 'HSV',
-};
+}
 
-export type ColorpickerPreviewPosition = 'left' | 'right';
+export type ColorpickerPreviewPosition = 'left' | 'right'
 
 export interface ColorpickerBackgroundMap<T> {
-  image: T;
-  position: T;
-  size: T;
-  repeat: T;
-  origin: T;
+  image: T
+  position: T
+  size: T
+  repeat: T
+  origin: T
 }
 
 interface ColorOptions {
-  context?: any;
+  context?: any
   channels?: {
-    r: number; // red [0-255]
-    g: number; // green [0-255]
-    b: number; // blue [0-255]
-    h: number; // hue [0-360]
-    s: number; // saturation [0-100]
-    v: number; // value (brightness) [0-100]
-    a: number; // alpha (opacity) [0.0 - 1.0]
-  };
-  crosshairRef?: HTMLElement;
-  previewRef?: HTMLElement;
+    r: number // red [0-255]
+    g: number // green [0-255]
+    b: number // blue [0-255]
+    h: number // hue [0-360]
+    s: number // saturation [0-100]
+    v: number // value (brightness) [0-100]
+    a: number // alpha (opacity) [0.0 - 1.0]
+  }
+  crosshairRef?: HTMLElement
+  previewRef?: HTMLElement
   preview?: {
     // (px) space between color preview and content of the previewRef
-    padding?: number;
+    padding?: number
     // 'left' | 'right' - position of the color preview in previewRef
-    position?: ColorpickerPreviewPosition;
+    position?: ColorpickerPreviewPosition
     // (px) width of the color preview displayed in previewRef
-    size?: number;
-    separator?: string[];
-  };
-  width?: number;
-  height?: number;
-  sliderSize?: number;
+    size?: number
+    separator?: string[]
+  }
+  width?: number
+  height?: number
+  sliderSize?: number
   chessboard?: {
-    squares?: string[];
-  };
+    squares?: string[]
+  }
 }
 
 const DefaultColorOptions: ColorOptions = {
@@ -86,7 +86,7 @@ const DefaultColorOptions: ColorOptions = {
   chessboard: {
     squares: ['#666666', '#999999'],
   },
-};
+}
 
 export const colour = <T extends ColorParam>(
   _color: string | ColorColor<T>,
@@ -106,20 +106,20 @@ export const colour = <T extends ColorParam>(
     height,
     sliderSize,
     chessboard,
-  } = { ...DefaultColorOptions, ...options };
+  } = { ...DefaultColorOptions, ...options }
 
-  let color = typeof _color == 'string' ? Color(_color) : _color;
+  let color = typeof _color == 'string' ? Color(_color) : _color
 
   // Canvas scaling for retina displays
   //
   // adapted from https://www.html5rocks.com/en/tutorials/canvas/hidpi/
   //
   function scaleCanvasForHighDPR(canvas: HTMLCanvasElement) {
-    let dpr = window.devicePixelRatio || 1;
-    canvas.width *= dpr;
-    canvas.height *= dpr;
-    const ctx = canvas.getContext('2d');
-    ctx.scale(dpr, dpr);
+    let dpr = window.devicePixelRatio || 1
+    canvas.width *= dpr
+    canvas.height *= dpr
+    const ctx = canvas.getContext('2d')
+    ctx.scale(dpr, dpr)
   }
 
   function genColorPreviewCanvas(
@@ -128,59 +128,59 @@ export const colour = <T extends ColorParam>(
     specWidth = 64,
     scaleForHighDPR = false,
   ): { canvas: HTMLCanvasElement; width: number; height: number } {
-    let sepW = Math.round(previewSeparator.length);
-    let sqSize = 8;
-    let sqColor1 = chessboard.squares[0];
-    let sqColor2 = chessboard.squares[1];
+    let sepW = Math.round(previewSeparator.length)
+    let sqSize = 8
+    let sqColor1 = chessboard.squares[0]
+    let sqColor2 = chessboard.squares[1]
 
-    let cWidth = specWidth ? specWidth : sqSize * 2;
-    let cHeight = sqSize * 2;
+    let cWidth = specWidth ? specWidth : sqSize * 2
+    let cHeight = sqSize * 2
 
-    let canvas = document.createElement('canvas');
-    let ctx = canvas.getContext('2d');
+    let canvas = document.createElement('canvas')
+    let ctx = canvas.getContext('2d')
 
-    canvas.width = cWidth;
-    canvas.height = cHeight;
+    canvas.width = cWidth
+    canvas.height = cHeight
     if (scaleForHighDPR) {
-      scaleCanvasForHighDPR(canvas);
+      scaleCanvasForHighDPR(canvas)
     }
 
     // transparency chessboard - background
-    ctx.fillStyle = sqColor1;
-    ctx.fillRect(0, 0, cWidth, cHeight);
+    ctx.fillStyle = sqColor1
+    ctx.fillRect(0, 0, cWidth, cHeight)
 
     // transparency chessboard - squares
-    ctx.fillStyle = sqColor2;
+    ctx.fillStyle = sqColor2
     for (let x = 0; x < cWidth; x += sqSize * 2) {
-      ctx.fillRect(x, 0, sqSize, sqSize);
-      ctx.fillRect(x + sqSize, sqSize, sqSize, sqSize);
+      ctx.fillRect(x, 0, sqSize, sqSize)
+      ctx.fillRect(x + sqSize, sqSize, sqSize, sqSize)
     }
 
     if (color) {
       // actual color in foreground
-      ctx.fillStyle = color;
-      ctx.fillRect(0, 0, cWidth, cHeight);
+      ctx.fillStyle = color
+      ctx.fillRect(0, 0, cWidth, cHeight)
     }
 
-    let start = null;
+    let start = null
     switch (separatorPos) {
       case 'left':
-        start = 0;
-        ctx.clearRect(0, 0, sepW / 2, cHeight);
-        break;
+        start = 0
+        ctx.clearRect(0, 0, sepW / 2, cHeight)
+        break
       case 'right':
-        start = cWidth - sepW;
-        ctx.clearRect(cWidth - sepW / 2, 0, sepW / 2, cHeight);
-        break;
+        start = cWidth - sepW
+        ctx.clearRect(cWidth - sepW / 2, 0, sepW / 2, cHeight)
+        break
     }
     if (start !== null) {
-      ctx.lineWidth = 1;
+      ctx.lineWidth = 1
       for (let i = 0; i < previewSeparator.length; i += 1) {
-        ctx.beginPath();
-        ctx.strokeStyle = previewSeparator[i];
-        ctx.moveTo(0.5 + start + i, 0);
-        ctx.lineTo(0.5 + start + i, cHeight);
-        ctx.stroke();
+        ctx.beginPath()
+        ctx.strokeStyle = previewSeparator[i]
+        ctx.moveTo(0.5 + start + i, 0)
+        ctx.lineTo(0.5 + start + i, cHeight)
+        ctx.stroke()
       }
     }
 
@@ -188,7 +188,7 @@ export const colour = <T extends ColorParam>(
       canvas,
       width: cWidth,
       height: cHeight,
-    };
+    }
   }
 
   // if position or width is not set => fill the entire element (0%-100%)
@@ -197,9 +197,9 @@ export const colour = <T extends ColorParam>(
     position?: ColorpickerPreviewPosition,
     width?: number,
   ) {
-    color = color || 'rgba(0,0,0,0)';
+    color = color || 'rgba(0,0,0,0)'
 
-    let params = [];
+    let params = []
 
     if (position && width) {
       params = [
@@ -208,83 +208,83 @@ export const colour = <T extends ColorParam>(
         `${color} ${width}px`,
         `rgba(0,0,0,0) ${width + 1}px`,
         `rgba(0,0,0,0) 100%`,
-      ];
+      ]
     } else {
-      params = ['to right', `${color} 0%`, `${color} 100%`];
+      params = ['to right', `${color} 0%`, `${color} 100%`]
     }
 
     return ['', '-webkit-'].reduce(
       (acc, prefix) => (acc += `${prefix}linear-gradient(${params.join(', ')});`),
-    );
+    )
   }
 
   function createSliderGradient(canvasRef: HTMLCanvasElement) {
     const sliderObj = {
       elm: null,
       draw: null,
-    };
+    }
 
-    const ctx = canvasRef.getContext('2d');
+    const ctx = canvasRef.getContext('2d')
 
     const drawFn = function (width: number, height: number, color1: string, color2: string) {
-      canvasRef.width = width;
-      canvasRef.height = height;
+      canvasRef.width = width
+      canvasRef.height = height
 
-      ctx.clearRect(0, 0, canvasRef.width, canvasRef.height);
+      ctx.clearRect(0, 0, canvasRef.width, canvasRef.height)
 
-      var grad = ctx.createLinearGradient(0, 0, 0, canvasRef.height);
-      grad.addColorStop(0, color1);
-      grad.addColorStop(1, color2);
+      var grad = ctx.createLinearGradient(0, 0, 0, canvasRef.height)
+      grad.addColorStop(0, color1)
+      grad.addColorStop(1, color2)
 
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, canvasRef.width, canvasRef.height);
-    };
+      ctx.fillStyle = grad
+      ctx.fillRect(0, 0, canvasRef.width, canvasRef.height)
+    }
 
-    sliderObj.elm = canvasRef;
-    sliderObj.draw = drawFn;
+    sliderObj.elm = canvasRef
+    sliderObj.draw = drawFn
 
-    return sliderObj;
+    return sliderObj
   }
 
   function createASliderGradient(canvasRef: HTMLCanvasElement) {
     const sliderObj = {
       elm: null,
       draw: null,
-    };
+    }
 
-    const ctx = canvasRef.getContext('2d');
+    const ctx = canvasRef.getContext('2d')
 
     const drawFn = function (width: number, height: number, acolor: string) {
-      canvasRef.width = width;
-      canvasRef.height = height;
+      canvasRef.width = width
+      canvasRef.height = height
 
-      ctx.clearRect(0, 0, canvasRef.width, canvasRef.height);
+      ctx.clearRect(0, 0, canvasRef.width, canvasRef.height)
 
-      let sqSize = canvasRef.width / 2;
+      let sqSize = canvasRef.width / 2
 
       // dark gray background
-      ctx.fillStyle = chessboard.squares[0];
-      ctx.fillRect(0, 0, canvasRef.width, canvasRef.height);
+      ctx.fillStyle = chessboard.squares[0]
+      ctx.fillRect(0, 0, canvasRef.width, canvasRef.height)
 
       for (let y = 0; y < canvasRef.height; y += sqSize * 2) {
         // light gray squares
-        ctx.fillStyle = chessboard.squares[1];
-        ctx.fillRect(0, y, sqSize, sqSize);
-        ctx.fillRect(sqSize, y + sqSize, sqSize, sqSize);
+        ctx.fillStyle = chessboard.squares[1]
+        ctx.fillRect(0, y, sqSize, sqSize)
+        ctx.fillRect(sqSize, y + sqSize, sqSize, sqSize)
       }
 
-      const grad = ctx.createLinearGradient(0, 0, 0, canvasRef.height);
-      grad.addColorStop(0, acolor);
-      grad.addColorStop(1, 'rgba(0,0,0,0)');
+      const grad = ctx.createLinearGradient(0, 0, 0, canvasRef.height)
+      grad.addColorStop(0, acolor)
+      grad.addColorStop(1, 'rgba(0,0,0,0)')
 
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, canvasRef.width, canvasRef.height);
-    };
+      ctx.fillStyle = grad
+      ctx.fillRect(0, 0, canvasRef.width, canvasRef.height)
+    }
 
-    sliderObj.elm = canvasRef;
-    sliderObj.draw = drawFn;
+    sliderObj.elm = canvasRef
+    sliderObj.draw = drawFn
 
-    return sliderObj;
+    return sliderObj
   }
 
   return {
@@ -306,52 +306,52 @@ export const colour = <T extends ColorParam>(
      */
     channel: function (name: string, value?: number): number | boolean {
       if (typeof name !== 'string') {
-        throw new Error('Invalid value for channel name: ' + name);
+        throw new Error('Invalid value for channel name: ' + name)
       }
 
       if (value === undefined) {
         // getting channel value
         if (!channels.hasOwnProperty(name.toLowerCase())) {
-          console.warn('Getting unknown channel: ' + name);
-          return false;
+          console.warn('Getting unknown channel: ' + name)
+          return false
         }
-        return channels[name.toLowerCase()];
+        return channels[name.toLowerCase()]
       } else {
         // setting channel value
-        let res = '';
+        let res = ''
         switch (name.toLowerCase()) {
           case 'r':
-            res = color.red(value).toString();
-            break;
+            res = color.red(value).toString()
+            break
           case 'g':
-            res = color.green(value).toString();
-            break;
+            res = color.green(value).toString()
+            break
           case 'b':
-            res = color.blue(value).toString();
-            break;
+            res = color.blue(value).toString()
+            break
           case 'h':
-            res = color.hue(value).toString();
-            break;
+            res = color.hue(value).toString()
+            break
           case 's':
-            res = color.saturationv(value).toString();
-            break;
+            res = color.saturationv(value).toString()
+            break
           case 'v':
-            res = color.value(value).toString();
-            break;
+            res = color.value(value).toString()
+            break
           case 'a':
-            res = color.alpha(value).toString();
-            break;
+            res = color.alpha(value).toString()
+            break
           default:
-            console.warn(`Setting unknown channel: ${name}`);
-            return false;
+            console.warn(`Setting unknown channel: ${name}`)
+            return false
         }
         if (res) {
-          this.redraw(); // immediately redraws the picker, if it's displayed
-          return true;
+          // redraw(); // immediately redraws the picker, if it's displayed
+          return true
         }
       }
 
-      return false;
+      return false
     },
 
     /**
@@ -359,7 +359,7 @@ export const colour = <T extends ColorParam>(
      * Returns the color format currently in effect.
      */
     getFormat: function (): ColorModel {
-      return color.model;
+      return color.model
     },
 
     /**
@@ -372,34 +372,34 @@ export const colour = <T extends ColorParam>(
      * element.style.background = picker.toBackground();
      */
     toBackground: function (color?: string): string {
-      return color;
+      return color
     },
 
     // Returns a data URL of a gray chessboard image that indicates transparency
     background: function (color: string) {
-      let backgrounds = [];
+      let backgrounds = []
 
       // CSS gradient for background color preview
-      backgrounds.push(genColorPreviewGradient(color));
+      backgrounds.push(genColorPreviewGradient(color))
 
       // data URL of generated PNG image with a gray transparency chessboard
-      let preview = genColorPreviewCanvas();
-      backgrounds.push([`url('${preview.canvas.toDataURL()}')`, 'left top', 'repeat'].join(' '));
+      let preview = genColorPreviewCanvas()
+      backgrounds.push([`url('${preview.canvas.toDataURL()}')`, 'left top', 'repeat'].join(' '))
 
-      return backgrounds.join(', ');
+      return backgrounds.join(', ')
     },
 
     chessboard: function (color?: string) {
-      let preview = genColorPreviewCanvas(color);
-      return preview.canvas.toDataURL();
+      let preview = genColorPreviewCanvas(color)
+      return preview.canvas.toDataURL()
     },
 
     setPreviewElementBg: function (bgcolor?: string) {
       if (!previewRef) {
-        return;
+        return
       }
 
-      let backgrounds: ColorpickerBackgroundMap<string>[] = [];
+      let backgrounds: ColorpickerBackgroundMap<string>[] = []
 
       if (!bgcolor) {
         // there is no color preview to display -> let's remove any previous background image
@@ -409,7 +409,7 @@ export const colour = <T extends ColorParam>(
           size: 'auto',
           repeat: 'no-repeat',
           origin: 'padding-box',
-        });
+        })
       } else {
         // CSS gradient for background color preview
         backgrounds.push({
@@ -422,25 +422,25 @@ export const colour = <T extends ColorParam>(
           size: 'auto',
           repeat: previewPosition ? 'repeat-y' : 'repeat',
           origin: 'padding-box',
-        });
+        })
 
         const position = previewPosition
           ? { left: 'right', right: 'left' }[previewPosition]
-          : 'left';
+          : 'left'
         // data URL of generated PNG image with a gray transparency chessboard
         const { canvas, width, height } = genColorPreviewCanvas(
           'rgba(0,0,0,0)',
           position as ColorpickerPreviewPosition,
           64,
           true,
-        );
+        )
         backgrounds.push({
           image: `url(${canvas.toDataURL()})`,
           position: `${position} top`,
           size: `${width}px ${height}px`,
           repeat: position ? 'repeat-y' : 'repeat',
           origin: 'padding-box',
-        });
+        })
       }
 
       const bgMap: ColorpickerBackgroundMap<string[]> = {
@@ -449,58 +449,58 @@ export const colour = <T extends ColorParam>(
         size: [],
         repeat: [],
         origin: [],
-      };
+      }
       const bg = backgrounds.reduce(
         (acc: ColorpickerBackgroundMap<string[]>, curr: ColorpickerBackgroundMap<string>) => {
           Object.entries(curr).forEach(([k, v]) => {
-            acc[k].push(v);
-          });
-          return acc;
+            acc[k].push(v)
+          })
+          return acc
         },
         bgMap,
-      ) as ColorpickerBackgroundMap<string[]>;
+      ) as ColorpickerBackgroundMap<string[]>
 
       // set previewRef's background-images
       Object.entries(bg).forEach(([prop, value]) => {
-        previewRef.style[`background${capitalize(prop)}`] = value.join(', ');
-      });
+        previewRef.style[`background${capitalize(prop)}`] = value.join(', ')
+      })
 
       // set/restore previewRef's padding
       if (previewPosition) {
         previewRef.style[`padding${capitalize(previewPosition)}`] = `${
           previewSize + previewPadding
-        }px`;
+        }px`
       }
     },
 
     redrawPad: function (yChannel = 's', canvasRef: HTMLCanvasElement) {
       // redraw the pad pointer
-      let x = Math.round((channels.h / 360) * (width - 1));
-      let y = Math.round((1 - channels[yChannel] / 100) * (height - 1));
+      let x = Math.round((channels.h / 360) * (width - 1))
+      let y = Math.round((1 - channels[yChannel] / 100) * (height - 1))
       // var crossOuterSize = (2 * THIS.pointerBorderWidth + THIS.pointerThickness + 2 * THIS.crossSize);
-      let ofs = -8;
-      const _crosshairRef = crosshairRef || document.querySelector('colorpicker-control-crosshair');
-      _crosshairRef.style.left = `${x + ofs}px`;
-      _crosshairRef.style.top = `${y + ofs}px`;
-      const draw = createSliderGradient(canvasRef).draw;
+      let ofs = -8
+      const _crosshairRef = crosshairRef || document.querySelector('colorpicker-control-crosshair')
+      _crosshairRef.style.left = `${x + ofs}px`
+      _crosshairRef.style.top = `${y + ofs}px`
+      const draw = createSliderGradient(canvasRef).draw
 
-      let color1 = convert.hsv.rgb([channels.h, 100, channels.v]).toString();
-      let color2 = convert.hsv.rgb([channels.h, 0, channels.v]).toString();
+      let color1 = convert.hsv.rgb([channels.h, 100, channels.v]).toString()
+      let color2 = convert.hsv.rgb([channels.h, 0, channels.v]).toString()
 
       // redraw the slider
       switch (yChannel) {
         case 's':
-          draw(sliderSize, height, color1, color2);
-          break;
+          draw(sliderSize, height, color1, color2)
+          break
         case 'v':
-          color1 = convert.hsv.rgb([channels.h, channels.s, 100]).toString();
-          color2 = 'rgb(0, 0, 0)';
-          draw(sliderSize, height, color1, color2);
-          break;
+          color1 = convert.hsv.rgb([channels.h, channels.s, 100]).toString()
+          color2 = 'rgb(0, 0, 0)'
+          draw(sliderSize, height, color1, color2)
+          break
       }
 
       // redraw the alpha slider
-      createASliderGradient(canvasRef).draw(sliderSize, height, Color(color).hex());
+      createASliderGradient(canvasRef).draw(sliderSize, height, Color(color).hex())
     },
 
     // redrawSld: function (sldChannel) {
@@ -526,5 +526,5 @@ export const colour = <T extends ColorParam>(
     //     Math.floor(jsc.pub.sliderInnerSpace / 2) +
     //     'px';
     // }
-  };
-};
+  }
+}

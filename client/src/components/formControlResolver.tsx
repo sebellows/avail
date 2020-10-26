@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useMemo } from 'react';
+import React, { useMemo } from 'react'
 
-import { FormControlProps } from '../core/contracts';
+import { FormControlProps } from '../core/contracts'
 
-import { Repeater } from './Repeater';
-import { RadioGroup } from './RadioGroup';
-import { Colorpicker } from './Colorpicker';
-import { ColorControl } from './ColorControl';
-import { SelectControl } from './SelectControl';
-import { ToggleControl } from './ToggleControl';
-import { Control } from './Control';
-import { NumericControl } from './NumericControl';
+import { Repeater } from './Repeater'
+import { RadioGroup } from './RadioGroup'
+import { Colorpicker } from './Colorpicker'
+import { ColorControl } from './ColorControl'
+import { SelectControl } from './SelectControl'
+import { ToggleControl } from './ToggleControl'
+import { Control } from './Control'
+import { NumericControl } from './NumericControl'
 
 interface FormControlResolverProps extends FormControlProps {
-  type: string;
+  type: string
 }
 
 const FormControlResolver: React.FC<FormControlResolverProps> = ({
@@ -21,65 +21,73 @@ const FormControlResolver: React.FC<FormControlResolverProps> = ({
   type: controlType,
   onAdd = null,
   onRemove = null,
-  onUpdate,
+  onUpdate = (...args: any[]) => {},
   ...props
 }) => {
+  // console.log('onUpdate', controlType, onUpdate, onAdd)
   const handlers = {
     onChange: (event: any) => {
-      const { name, value, type } = event.target;
+      const {
+        target: { name, value, type },
+        type: eventType,
+      } = event
+      console.log('FormControlResolver->onChange', name, value, type, eventType, onUpdate)
 
-      if (type === 'radio' || type === 'checkbox' || type === 'select') {
-        onUpdate({ name, value });
+      if (type === 'radio' || type === 'checkbox' || type === 'select' || eventType === 'click') {
+        onUpdate({ name, value }, event)
       }
 
-      props?.onChange?.(event);
+      props?.onChange?.(event)
     },
     onBlur: (event: any) => {
-      const { name, value, tagName } = event.target;
-      console.log('FormControlResolver->onBlur', name, value);
+      const {
+        target: { name, value, tagName, type },
+        type: eventType,
+      } = event
 
-      if (tagName === 'INPUT') {
-        onUpdate({ name, value });
+      if (tagName === 'INPUT' && eventType !== 'blur') {
+        console.log('FormControlResolver->onBlur', name, value, eventType)
+        onUpdate?.({ name, value }, event)
       }
 
-      props?.onBlur?.(event);
+      props?.onBlur?.(event)
     },
-  };
+  }
 
   if (controlType === 'repeater') {
-    [onAdd, onRemove].forEach((fn) => {
+    ;[onAdd, onRemove].forEach((fn) => {
       if (fn && typeof fn == 'function') {
-        handlers[fn.name] = fn;
+        handlers[fn.name] = fn
       }
-    });
+    })
   }
 
   const formControl = useMemo(() => {
     switch (controlType) {
       case 'checkbox':
-        return <ToggleControl {...props} {...handlers} children={props?.label} />;
+        return <ToggleControl {...props} {...handlers} children={props?.label} />
       case 'radiogroup':
-        return <RadioGroup {...props} {...handlers} />;
+        return <RadioGroup {...props} {...handlers} />
       case 'select':
-        return <SelectControl {...props} {...handlers} />;
+        return <SelectControl {...props} {...handlers} />
       case 'colorpicker':
-        return <Colorpicker {...props} {...handlers} />;
+        return <Colorpicker {...props} {...handlers} />
       case 'repeater':
-        return <Repeater {...props} {...handlers} />;
+        return <Repeater {...props} {...handlers} />
       case 'number':
-        return <NumericControl {...props} {...handlers} />;
+        return <NumericControl {...props} {...handlers} />
       case 'color':
-        return <ColorControl {...props} {...handlers} />;
+        return <ColorControl {...props} {...handlers} />
       // text, color, etc.[...]
       default:
         // return <h1 className="text-danger">{props.id}</h1>;
-        return <Control {...props} {...handlers} />;
+        return <Control {...props} {...handlers} />
     }
-  }, [controlType, props, handlers]);
+  }, [controlType, props, handlers])
 
-  return formControl;
-};
+  return formControl
+}
 
-FormControlResolver.displayName = 'FormControlResolver';
+FormControlResolver.displayName = 'FormControlResolver'
 
-export { FormControlResolver };
+export { FormControlResolver }
