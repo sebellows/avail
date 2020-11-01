@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react'
 
 /**
  * From react-restart/hooks <https://github.com/react-restart/hooks>
@@ -26,13 +26,25 @@ import { useRef, useEffect } from 'react';
  * ```
  */
 export function useMounted(): () => boolean {
-  const mounted = useRef(true);
-  const isMounted = useRef(() => mounted.current);
+  const mounted = useRef(true)
+  const isMounted = useRef(() => mounted.current)
   useEffect(
     () => () => {
-      mounted.current = false;
+      mounted.current = false
     },
     [],
-  );
-  return isMounted.current;
+  )
+  return isMounted.current
+}
+
+export function useFirstMountState(): boolean {
+  const isFirst = useRef(true)
+
+  if (isFirst.current) {
+    isFirst.current = false
+
+    return true
+  }
+
+  return isFirst.current
 }

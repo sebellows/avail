@@ -17,7 +17,9 @@ export interface AvailClassMap {
   legend?: string
 }
 
-export interface AvailSetting extends Record<string | number | symbol, unknown> {
+export type AvailConfigRecord = Record<string | number | symbol, unknown>
+
+export interface AvailSetting extends AvailConfigRecord {
   id?: string
   legend?: string
   fields?: Record<string, AvailSettingField>
@@ -45,7 +47,7 @@ export interface AvailSettings {
   [key: string]: AvailSetting
 }
 
-export interface AvailUtility extends Record<string | number | symbol, unknown> {
+export interface AvailUtility extends AvailConfigRecord {
   id?: string
   class?: string
   description?: string
@@ -64,11 +66,21 @@ export interface AvailUtilities {
   [key: string]: AvailUtility
 }
 
+export interface AvailState {
+  settings: Record<string, AvailSetting>
+  utilities: Record<string, AvailUtility>
+}
+export type AvailStateType = keyof AvailState
+
 // export interface AvailConfig<T extends AvailSetting | AvailUtility> {
 //   [key: string]: T;
 // }
+// [keyof JSX.IntrinsicElements]
 export type AvailConfigType = AvailSetting | AvailUtility
-export type AvailConfig<AvailConfigType> = Record<string, AvailConfigType>
+// export type AvailConfig<AvailConfigType> = Record<string, AvailConfigType>
+export type AvailConfig<P = any> = {
+  [K in AvailStateType]: P extends AvailState[K] ? K : AvailState[K]
+}[AvailStateType]
 
 // export interface AvailState<T = AvailSetting | AvailUtility> {
 //   config: AvailConfig<T>

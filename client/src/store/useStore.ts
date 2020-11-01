@@ -3,11 +3,13 @@ import { produce } from 'immer'
 import create, { GetState, State, PartialState, UseStore, SetState, StateCreator } from 'zustand'
 import { combine, devtools } from 'zustand/middleware'
 
-import { get as getValue, set as setValue, toMap, unset } from '../core/utils'
+import { clone, get as getValue, set as setValue, toMap, unset } from '../core/utils'
 import { generateConfig } from '../core/config'
 import { generateSettings } from '../core/settings'
 import {
   AvailConfig,
+  AvailState,
+  AvailStateType,
   AvailSetting,
   AvailSettings,
   AvailUtility,
@@ -15,18 +17,15 @@ import {
   StateConfig,
 } from '../core/contracts'
 
-const initialSettings = generateSettings()
-const initialUtilities = generateConfig(initialSettings)
-const Source = {
-  settings: initialSettings,
-  utilities: initialUtilities,
-}
-
-interface AvailStore {
-  settings: Record<string, AvailSetting>
-  utilities: Record<string, AvailUtility>
-}
-type AvailType = keyof AvailStore
+// interface AvailState {
+//   settings: Record<string, AvailSetting>
+//   utilities: Record<string, AvailUtility>
+// }
+// type AvailStateType = keyof AvailState
+// enum AvailType {
+//   settings = 'AvailSetting',
+//   utilities = 'AvailUtility',
+// }
 
 type Config<T extends State> = StateCreator<T, (fn: (draft: T) => void) => void>
 
@@ -34,16 +33,23 @@ type Config<T extends State> = StateCreator<T, (fn: (draft: T) => void) => void>
 export const immer = <T extends State>(config: Config<T>): StateCreator<T> => (set, get, api) =>
   config((fn) => set(produce(fn) as (state: T) => T), get, api)
 
-const normalizePath = (path: string) => {
-  return path.split('_').reduce((acc, key, i) => {
-    if (i === 0) {
-      return (acc += key)
-    }
-    if (isNaN(+key)) {
-      return (acc += `.${key}`)
-    }
-    return (acc += `[${key}]`)
-  }, '')
+// const normalizePath = (path: string) => {
+//   return path.split('_').reduce((acc, key, i) => {
+//     if (i === 0) {
+//       return (acc += key)
+//     }
+//     if (isNaN(+key)) {
+//       return (acc += `.${key}`)
+//     }
+//     return (acc += `[${key}]`)
+//   }, '')
+// }
+
+const getUpdateItem = (state: any, name: string) => {
+  let paths = name.split('_')
+  const lastKey = paths.pop()
+  const item = getValue(state, paths)
+  return [lastKey, item]
 }
 
 /**
@@ -58,24 +64,16 @@ const normalizePath = (path: string) => {
  * OR
  * paths: `colorSchemes.fields.colors.items.0.name`
  */
-export function update<T = AvailType>(
-  config: AvailType,
-  set,
-  get,
-  api,
-): (state: StateConfig) => void {
+export function update<T = AvailStateType>(config: T, set): (state: StateConfig) => void {
   return function ({ name, value }) {
-    const path = normalizePath(name)
-    const prevValue = getValue(get()[config], path)
-
     set((state) => {
-      setValue(state[config], path, value)
-      console.log(`Previous ${config} value ${prevValue} updated to ${value} on path "${path}"`)
+      const [key, item] = getUpdateItem(state[config], name)
+      item[key] = value
     })
   }
 }
 
-export function initialize<T>(configType: AvailType, set): (fn: () => AvailConfig<T>) => void {
+export function initialize<T>(configType: AvailStateType, set): (fn: () => AvailConfig<T>) => void {
   return function (fn: () => AvailConfig<T>) {
     set((state) => {
       state[configType] = fn()
@@ -84,25 +82,30 @@ export function initialize<T>(configType: AvailType, set): (fn: () => AvailConfi
   }
 }
 
-export function add(config: AvailType, set): (config: StateConfig) => void {
+export function add(config: AvailStateType, set): (config: StateConfig) => void {
   return function ({ name, value }) {
-    const path = normalizePath(name)
+    // const path = normalizePath(name)
 
     set((state) => {
-      setValue(state[config], path, value)
-      console.log(`Value ${value} added to path "${path}"`)
+      const [key, item] = getUpdateItem(state[config], name)
+      item[key] = value
+
+      // setValue(state[config], name.split('_'), value)
+      console.log(`Value ${value} added to path "${name.split('_')}"`)
     })
   }
 }
 
-export function remove(config: AvailType, set, get): (config: Partial<StateConfig>) => void {
+export function remove(config: AvailStateType, set, get): (config: Partial<StateConfig>) => void {
   return function ({ name }) {
-    const path = normalizePath(name)
-    const prevValue = getValue(get()[config], path)
+    // const path = normalizePath(name)
+    const prevValue = getValue(get()[config], name.split('_'))
 
     set((state) => {
-      unset(state[config], path)
-      console.log(`Value ${prevValue} removed from path "${path}"`)
+      const [key, item] = getUpdateItem(state[config], name)
+      delete item[key]
+      // unset(state[config], name.split('_'))
+      console.log(`Value ${prevValue} removed from path "${name.split('_')}"`)
     })
   }
 }
@@ -116,18 +119,25 @@ export const createStore = <T extends State>(config: Config<T>, storeName?: stri
     process.env.NODE_ENV === 'development' ? devtools(immer(config), storeName) : immer(config),
   )
 
-const store = (set, get, api) => ({
-  settings: {},
-  initializeSettings: initialize('settings', set),
-  updateSettings: update('settings', set, get, api),
-  addSetting: add('settings', set),
-  removeSetting: remove('settings', set, get),
-  utilities: {},
-  initializeUtilities: initialize('utilities', set),
-  updateUtilities: update('utilities', set, get, api),
-  addUtility: add('utilities', set),
-  removeUtility: remove('utilities', set, get),
-})
+const settings = generateSettings()
+// const utilities = generateConfig(initialSettings)
 
-export const useStore = createStore(store, 'AvailStore')
+const store = (set, get, api) => {
+  const state = {
+    settings,
+    initializeSettings: initialize('settings', set),
+    updateSettings: update('settings', set),
+    addSetting: add('settings', set),
+    removeSetting: remove('settings', set, get),
+    utilities: {},
+    initializeUtilities: initialize('utilities', set),
+    updateUtilities: update('utilities', set),
+    addUtility: add('utilities', set),
+    removeUtility: remove('utilities', set, get),
+  }
+  // state.utilities = generateConfig(state.settings)
+  return state
+}
+
+export const useStore = createStore(store, 'AvailState')
 // export const useUtilities = createStore<AvailUtility>('utilities', 'AvailUtilities')

@@ -63,9 +63,16 @@ const FormControlResolver: React.FC<FormControlResolverProps> = ({
   }
 
   const formControl = useMemo(() => {
+    const toggleProps =
+      controlType === 'checkbox' && !!props?.label ? { children: props.label } : {}
+
     switch (controlType) {
       case 'checkbox':
-        return <ToggleControl {...props} {...handlers} children={props?.label} />
+        return (
+          <ToggleControl {...props} {...handlers}>
+            {props?.children}
+          </ToggleControl>
+        )
       case 'radiogroup':
         return <RadioGroup {...props} {...handlers} />
       case 'select':

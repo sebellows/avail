@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { forwardRef, Ref, useEffect, useMemo, useRef } from 'react';
-import { FormControlProps, OptionProps } from '../../core/contracts';
-import { toOptions, Option } from '../../core/models/Option';
-import { classNames, validFormProps, containerProps, typeOf } from '../../core/utils';
-import { Styled } from './styles';
+import React, { forwardRef, Ref, useEffect, useMemo, useRef } from 'react'
+import { FormControlProps, OptionProps } from '../../core/contracts'
+import { isOption, toOptions } from '../../core/models/Option'
+import { classNames, validFormProps, containerProps, typeOf } from '../../core/utils'
+import { Styled } from './styles'
 
 const SelectControl = forwardRef<{}, FormControlProps>(
   (
@@ -20,21 +20,21 @@ const SelectControl = forwardRef<{}, FormControlProps>(
     ref: Ref<any>,
   ) => {
     const options = useMemo(() => {
-      if (Array.isArray(initialOptions) && initialOptions.some((opt) => opt instanceof Option)) {
-        return initialOptions;
+      if (Array.isArray(initialOptions) && initialOptions.some(isOption)) {
+        return initialOptions
       }
-      return toOptions(initialOptions);
-    }, [initialOptions]);
+      return toOptions(initialOptions)
+    }, [initialOptions])
 
     function handleChange(event: any) {
       if (props.onChange) {
-        props.onChange(event);
+        props.onChange(event)
       }
     }
 
-    const { controlClass = '' } = props;
-    const htmlProps = containerProps(props, { exclude: ['controlClass'] });
-    const formProps = validFormProps(props);
+    const { controlClass = '' } = props
+    const htmlProps = containerProps(props, { exclude: ['controlClass'] })
+    const formProps = validFormProps(props)
 
     return (
       <Styled.Wrapper
@@ -61,14 +61,14 @@ const SelectControl = forwardRef<{}, FormControlProps>(
               <option key={`${_option.name}-${i}`} value={_option.value}>
                 {_option.name}
               </option>
-            );
+            )
           })}
         </Styled.Select>
       </Styled.Wrapper>
-    );
+    )
   },
-);
+)
 
-SelectControl.displayName = 'SelectControl';
+SelectControl.displayName = 'SelectControl'
 
-export { SelectControl };
+export { SelectControl }

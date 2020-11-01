@@ -1,9 +1,9 @@
 import { add, createStore, initialize, remove, update } from './useStore'
 
-const store = (set, get, api) => ({
+const store = (set, get) => ({
   settings: null,
   initialize: initialize('settings', set),
-  update: update('settings', set, get, api),
+  update: update('settings', set),
   add: add('settings', set),
   remove: remove('settings', set, get),
 })

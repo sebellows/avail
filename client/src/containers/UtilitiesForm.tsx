@@ -28,6 +28,7 @@ import {
 import '../styles/prism.css'
 import { useStore } from '../store/useStore'
 import { generateConfig } from '../core/config'
+import { useFirstMountState } from '../hooks'
 
 const DialogTitle = ({ children }) => (
   <h3 className="font-size-lg font-weight-bold mb-0">
@@ -48,31 +49,31 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
     initializeUtilities,
     removeUtility,
   } = useStore()
-  // const utilities = useStore((state) => state.utilities as AvailConfig<AvailUtility>)
-  // const updateUtilities = useStore((state) => state.updateUtilities)
-  // const addUtility = useStore((state) => state.addUtility)
-  // const removeUtility = useStore((state) => state.removeUtility)
 
   const [activeModelID, setActiveModelID] = useState(null)
   // const lastActiveModelID = usePrevious(activeModelID);
   const [open, setOpen] = useState(false)
   const [output, setOutput] = useState('// No styles were generated') // TODO: remove default here
+  const isFirstMount = useFirstMountState()
 
   const dialogRef = useRef(null)
   const fieldsetRef = useRef(null)
   const activeIndex = useRef(0)
 
   React.useEffect(() => {
+    console.log('UtilitiesForm->utilities', Object.keys(utilities))
+    // if (Object.keys(utilities).length === 0) {
     initializeUtilities(() => generateConfig(settings))
-    console.log('initializeSettings', settings)
+    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [settings])
 
   const onUpdate = useCallback(
     (config: StateConfig, event: any) => {
-      console.log('UtilitiesForm->onUpdate', event, config)
+      console.log('UtilitiesForm->onUpdate', event, config, utilities)
       updateUtilities(config)
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [updateUtilities],
   )
 

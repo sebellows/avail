@@ -1,9 +1,9 @@
-import styled, { keyframes, css } from 'styled-components';
-import { Control } from '../Control';
-import { mixin, control, transition } from '../../core/style';
-import { ToggleControlProps } from './props';
+import styled, { keyframes, css } from 'styled-components'
+import { Control } from '../Control'
+import { mixin, control, transition } from '../../core/style'
+import { ToggleControlProps } from './props'
 
-const checkStrokeDashOffset = '22.910259';
+const checkStrokeDashOffset = '22.910259'
 
 /* Fades in the background of the checkbox when it goes from unchecked -> checked. */
 const fadeInBg = keyframes`
@@ -15,7 +15,7 @@ const fadeInBg = keyframes`
     opacity: 1;
     background-color: ${control.checked.bg};
   }
-`;
+`
 /* Fades out the background of the checkbox when it goes from checked -> unchecked. */
 const fadeOutBg = keyframes`
   0%,
@@ -27,7 +27,7 @@ const fadeOutBg = keyframes`
     opacity: 0;
     background-color: ${control.bg};
   }
-`;
+`
 /* "Draws" in the checkmark when the checkbox goes from unchecked -> checked. */
 const toCheckedPath = keyframes`
   0%,
@@ -40,7 +40,7 @@ const toCheckedPath = keyframes`
   100% {
     stroke-dashoffset: 0;
   }
-`;
+`
 /* Hides the checkmark when the checkbox goes from checked -> unchecked. */
 const toUncheckedPath = keyframes`
   from {
@@ -51,7 +51,7 @@ const toUncheckedPath = keyframes`
   to {
     stroke-dashoffset: ${checkStrokeDashOffset};
   }
-`;
+`
 
 const ToggleUI = styled.div<{ inputType }>`
   ${mixin.cover}
@@ -66,7 +66,7 @@ const ToggleUI = styled.div<{ inputType }>`
     inputType === 'radio'
       ? 'border-color ease 280ms'
       : `border-color 150ms ${transition.timing.linearOutSlowIn}`};
-`;
+`
 export const Styled = {
   Wrapper: styled.label`
     position: relative;
@@ -155,4 +155,4 @@ export const Styled = {
     position: relative;
     user-select: auto;
   `,
-};
+}

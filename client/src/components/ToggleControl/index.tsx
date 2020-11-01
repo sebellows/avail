@@ -1,9 +1,9 @@
-import React, { Ref, useRef, useState } from 'react';
-import { control } from '../../core/style';
-import { validFormProps, containerProps } from '../../core/utils';
-import { CheckIcon } from '../Icon';
-import { Styled } from './styles';
-import { ToggleControlProps } from './props';
+import React, { Ref, useRef, useState } from 'react'
+import { control } from '../../core/style'
+import { validFormProps, containerProps } from '../../core/utils'
+import { CheckIcon } from '../Icon'
+import { Styled } from './styles'
+import { ToggleControlProps } from './props'
 
 const ToggleControl = React.forwardRef<{}, ToggleControlProps>(
   (
@@ -17,20 +17,20 @@ const ToggleControl = React.forwardRef<{}, ToggleControlProps>(
     },
     ref: Ref<any>,
   ) => {
-    const [checked, setChecked] = useState(initialChecked);
+    const [checked, setChecked] = useState(initialChecked)
 
-    const inputRef = useRef(null);
-    const htmlProps = containerProps(props, { exclude: ['checked'] });
-    const formProps = validFormProps(props);
-    const inputType = type === 'radio' ? type : 'checkbox';
+    const inputRef = useRef(null)
+    const htmlProps = containerProps(props, { exclude: ['checked'] })
+    const formProps = validFormProps(props)
+    const inputType = type === 'radio' ? type : 'checkbox'
 
     if (Component === 'label') {
-      htmlProps['htmlFor'] = formProps?.name || formProps?.id;
+      htmlProps['htmlFor'] = formProps?.name || formProps?.id
     }
 
     function handleChange(event: any) {
-      setChecked(event.target.checked);
-      onChange?.(event);
+      setChecked(event.target.checked)
+      onChange?.(event)
     }
 
     return (
@@ -58,10 +58,10 @@ const ToggleControl = React.forwardRef<{}, ToggleControlProps>(
           <Styled.Content {...(children as React.ReactElement)?.props}>{children}</Styled.Content>
         )}
       </Styled.Wrapper>
-    );
+    )
   },
-);
+)
 
-ToggleControl.displayName = 'ToggleControl';
+ToggleControl.displayName = 'ToggleControl'
 
-export { ToggleControl };
+export { ToggleControl }
