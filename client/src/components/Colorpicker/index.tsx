@@ -1,4 +1,11 @@
-import React, { forwardRef, Ref, useState, useRef, useEffect, useCallback } from 'react'
+import React, {
+  forwardRef,
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  ComponentPropsWithRef,
+} from 'react'
 import {
   classNames,
   containerProps,
@@ -15,6 +22,7 @@ import {
 import { FormControlProps, OptionProps } from '../../core/contracts'
 import { useClickOutside } from '../../hooks/useClickOutside'
 import { Styled } from './styles'
+import { useEnsuredRef } from '../../hooks'
 
 function coerceToHexColor(value: string) {
   if (Color.isHexColor(value)) {
@@ -25,46 +33,41 @@ function coerceToHexColor(value: string) {
   return '#000000'
 }
 
-const Colorpicker = forwardRef<HTMLDivElement, FormControlProps>(
+interface ColorpickerProps
+  extends Omit<FormControlProps, 'className' | 'children'>,
+    ComponentPropsWithRef<'div'> {}
+
+// (instance: HTMLDivElement) => void)
+const Colorpicker = forwardRef<HTMLDivElement, ColorpickerProps>(
   (
     {
       className,
       isValid,
       isInvalid: initialInvalid,
-      options: initialOptions,
+      options: initialOptions = [],
       value: initialValue,
       ...props
     },
-    ref: Ref<HTMLDivElement>,
+    ref,
   ) => {
     const [isOpen, setOpen] = useState(false)
     const [value, setValue] = useState(initialValue)
     const [color, setColor] = useState(initialValue)
     const [modelValue, setModelValue] = useState(initialValue)
     const [isInvalid, setInvalid] = useState(initialInvalid)
-    const [options, setOptions] = useState(initialOptions)
+    const [options, setOptions] = useState<OptionProps[]>(initialOptions)
     const [focusedIndex, setFocusedIndex] = useState(-1)
 
-    // const prevValue = usePrevious(value);
-    useEffect(() => {
-      if (typeof initialOptions === 'undefined') {
-        setTimeout(() => {
-          if (Array.isArray(initialOptions)) {
-            setOptions(initialOptions)
-          } else {
-            setOptions([])
-          }
-        })
-      }
-    }, [options, setOptions, initialOptions])
-
-    // Need to enforce existence of `ref` for `useClickOutside` hook to work.
-    if (!ref || !('current' in ref)) {
-      ref = React.createRef<HTMLDivElement>()
-    }
+    const componentRef = useEnsuredRef<HTMLDivElement>(ref)
 
     const inputRef = useRef(null)
     const panelRef = useRef(null)
+
+    useEffect(() => {
+      if (!options.length && initialOptions.length) {
+        setOptions(initialOptions)
+      }
+    }, [options, setOptions, initialOptions])
 
     /**
      * Check that the color value is valid since there are a number of ways to set
@@ -74,10 +77,14 @@ const Colorpicker = forwardRef<HTMLDivElement, FormControlProps>(
       if (!isInvalid && !Color.isColor(value as string)) {
         inputRef.current.setCustomValidity(`${value} is not a valid CSS color!`)
         setInvalid(true)
+        // To help return an immediate `isInvalid` boolean
+        return false
       } else if (isInvalid && Color.isColor(value as string)) {
         inputRef.current.setCustomValidity('')
         setInvalid(false)
       }
+      // To help return an immediate `isInvalid` boolean
+      return true
     }, [value, isInvalid, setInvalid])
 
     /**
@@ -89,7 +96,6 @@ const Colorpicker = forwardRef<HTMLDivElement, FormControlProps>(
         setValue(_value)
 
         setColor(coerceToHexColor(_value).toLowerCase())
-        // console.log('ColorPicker->updateViewModel', _value, color, props)
 
         const currentModel = Object.values(options).find((option) => option.value === _value)
         const formattedValue = currentModel
@@ -100,10 +106,6 @@ const Colorpicker = forwardRef<HTMLDivElement, FormControlProps>(
       // eslint-disable-next-line react-hooks/exhaustive-deps
       [options],
     )
-
-    useEffect(() => {
-      checkValidity()
-    }, [checkValidity])
 
     useEffect(() => {
       const { current: currentPanelRef } = panelRef
@@ -124,7 +126,7 @@ const Colorpicker = forwardRef<HTMLDivElement, FormControlProps>(
       }
     }, [panelRef, isOpen, ref])
 
-    useClickOutside(ref, handleClose)
+    useClickOutside(componentRef, handleClose)
 
     function handleChange(event: any) {
       let value
@@ -152,13 +154,15 @@ const Colorpicker = forwardRef<HTMLDivElement, FormControlProps>(
     function handleFocus(event: any) {
       if (!isOpen) setOpen(true)
 
-      if (props.onFocus) props.onFocus(event)
+      props?.onFocus?.(event)
     }
 
     function handleBlur(event: any) {
       event.persist()
 
-      if (props.onBlur) props.onBlur(event)
+      checkValidity()
+
+      props?.onBlur?.(event)
     }
 
     function handleClose() {
@@ -220,7 +224,7 @@ const Colorpicker = forwardRef<HTMLDivElement, FormControlProps>(
 
     return (
       <Styled.Wrapper
-        ref={ref}
+        ref={componentRef}
         className={classNames('colorpicker', className, isOpen && 'is-open')}
         {...htmlProps}
       >

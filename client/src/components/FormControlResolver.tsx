@@ -24,14 +24,13 @@ const FormControlResolver: React.FC<FormControlResolverProps> = ({
   onUpdate = (...args: any[]) => {},
   ...props
 }) => {
-  // console.log('onUpdate', controlType, onUpdate, onAdd)
   const handlers = {
     onChange: (event: any) => {
       const {
         target: { name, value, type },
         type: eventType,
       } = event
-      console.log('FormControlResolver->onChange', name, value, type, eventType, onUpdate)
+      // console.log('FormControlResolver->onChange', name, value, type, eventType, onUpdate)
 
       if (type === 'radio' || type === 'checkbox' || type === 'select' || eventType === 'click') {
         onUpdate({ name, value }, event)
@@ -46,7 +45,7 @@ const FormControlResolver: React.FC<FormControlResolverProps> = ({
       } = event
 
       if (tagName === 'INPUT' && eventType !== 'blur') {
-        console.log('FormControlResolver->onBlur', name, value, eventType)
+        // console.log('FormControlResolver->onBlur', name, value, eventType)
         onUpdate?.({ name, value }, event)
       }
 

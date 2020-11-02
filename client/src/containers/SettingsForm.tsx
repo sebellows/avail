@@ -43,44 +43,15 @@ const SettingsForm: FC<SettingsFormProps> = React.memo(() => {
   // const { initializeSettings, updateSettings, addSetting, removeSetting } = useStore(
   //   (state) => state,
   // )
-  const state = useStore((state) => state)
   const settings = useStore((state) => state.settings)
   const updateSettings = useStore((state) => state.updateSettings)
   const addSetting = useStore((state) => state.addSetting)
   const removeSetting = useStore((state) => state.removeSetting)
-  // const initializeSettings = useStore((state) => state.initializeSettings)
-  // const [settings, setSettings] = React.useState(initialSettings)
 
-  // React.useEffect(() => {
-  //   // initializeSettings(() => generateSettings())
-  //   console.log('initializeSettings', settings)
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [])
-
-  // const onUpdate = useCallback(
-  //   (config: StateConfig, event: any) => {
-  //     updateSettings(config)
-  //     console.log('SettingsForm->onUpdate', event, config, settings)
-  //   },
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  //   [updateSettings],
-  // )
-
-  const onUpdate = (config: StateConfig, event: any) => {
+  const onUpdate = (config: StateConfig, event?: any) => {
     updateSettings(config)
-    // setHasUpdated(true)
-    // setSettings(_settings)
-    console.log('SettingsForm->onUpdate', config, settings)
+    // console.log('SettingsForm->onUpdate', config, settings)
   }
-
-  // React.useEffect(() => {
-  //   console.log('isFirstMount && hasUpdated', isFirstMount, hasUpdated)
-  //   if (!isFirstMount && hasUpdated) {
-  //     console.log('settings', settings)
-  //     setHasUpdated(false)
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [settings, hasUpdated])
 
   const onAdd = useCallback(
     (config: StateConfig) => {

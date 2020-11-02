@@ -1,12 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { forwardRef, Ref, useEffect, useState, useRef } from 'react'
+import React, { forwardRef, Ref, useEffect, useRef } from 'react'
 import { ESCAPE, listen, noScroll } from '../../core/utils'
-import { useEventCallback } from '../../hooks/useEventCallback'
-import { useWillUnmount } from '../../hooks/useWillUnmount'
+import { useEventCallback, useFirstMountState, useLifecycles, usePrevious } from '../../hooks'
 import { ModalTrigger } from './ModalTrigger'
 import { ModalContent } from './ModalContent'
-import { useFirstMountState } from '../../hooks'
-import { usePrevious } from '../../hooks/usePrevious'
 
 function ignoreSiblings(siblings: NodeList | string[], fn: (el: HTMLElement) => void) {
   if (siblings && siblings.length) {
@@ -72,45 +69,28 @@ const Modal = forwardRef<{}, any>(
       })
     })
 
-    useEffect(() => {
-      document.body.addEventListener('close', (e?: any) => {
-        console.log('Modal->addListener', e)
-      })
-
-      return function unmount() {
-        document.body.removeEventListener('close', (e?: any) => {
-          console.log('Modal->removeListener', e)
-        })
-      }
-    }, [])
-
-    useEffect(() => {
-      console.log('Modal->show?', show)
-      if (!isFirstMount && !show) {
-        handleClose()
-      } else if (show) {
-        handleShow()
-      }
-
-      // return () => handleClose('Modal->useEffect->handleShow');
-    }, [isFirstMount, show, handleClose, handleShow])
-
-    // useEffect(() => {
-    //   const { current: wasShown } = prevShow
-    //   if (!exited || (exited && wasShown)) return
-
-    //   handleClose('Modal->useEffect->handleClose')
-    // }, [exited, handleClose, prevShow])
-
-    useWillUnmount(() => {
-      // setExited(true)
-      const closeout = setTimeout(() => {
-        if (!prevShow) {
-          handleClose('Modal->useWillUnmount->prevShow.current')
+    useLifecycles(
+      () => {
+        if (show) {
+          handleShow()
         }
-      })
-      clearTimeout(closeout)
-    })
+      },
+      () => {
+        const closeout = setTimeout(() => {
+          if (!prevShow) {
+            handleClose('Modal Unmounting and closing')
+          }
+        })
+        clearTimeout(closeout)
+      },
+    )
+
+    useEffect(() => {
+      if (!isFirstMount) {
+        console.log('Modal->useEffect->show', show)
+        show ? handleShow() : handleClose()
+      }
+    }, [isFirstMount, show, handleClose, handleShow])
 
     const handleKeyUp = (event: any) => {
       // console.log('Modal->handleKeyUp called', event.keyCode, `ESCAPE = ${ESCAPE}`);

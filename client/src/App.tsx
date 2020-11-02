@@ -66,7 +66,7 @@ export default function App() {
       {loading && <Spinner exit={addExitClass} onAnimationEnd={handleLoad} />}
 
       {/* <Store> */}
-      <form ref={formRef} noValidate onSubmit={handleSubmit}>
+      <form ref={formRef} onSubmit={handleSubmit}>
         <Tabs
           id="avail-config"
           activeKey={activeTab}

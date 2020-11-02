@@ -60,16 +60,13 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
   const activeIndex = useRef(0)
 
   React.useEffect(() => {
-    console.log('UtilitiesForm->utilities', Object.keys(utilities))
-    // if (Object.keys(utilities).length === 0) {
+    // console.log('UtilitiesForm->utilities', Object.keys(utilities))
     initializeUtilities(() => generateConfig(settings))
-    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settings])
 
   const onUpdate = useCallback(
-    (config: StateConfig, event: any) => {
-      console.log('UtilitiesForm->onUpdate', event, config, utilities)
+    (config: StateConfig, event?: any) => {
       updateUtilities(config)
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -89,10 +86,6 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
       }
     }
   }, [activeModelID, settings, utilities])
-
-  useEffect(() => {
-    console.log('UtilitiesForm->settings', settings)
-  }, [settings])
 
   useClickOutside(dialogRef, handleClose)
 
@@ -132,7 +125,6 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
     },
     onRemove: (config: string | Partial<StateConfig>) => {
       config = typeof config == 'string' ? { name: config } : config
-      console.log('onRemove', config)
       removeUtility(config)
     },
   }
