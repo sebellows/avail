@@ -54,7 +54,6 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
   // const lastActiveModelID = usePrevious(activeModelID);
   const [open, setOpen] = useState(false)
   const [output, setOutput] = useState('// No styles were generated') // TODO: remove default here
-  const isFirstMount = useFirstMountState()
 
   const dialogRef = useRef(null)
   const fieldsetRef = useRef(null)

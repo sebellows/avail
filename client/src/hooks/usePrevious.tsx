@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react'
 
 /**
  * From react-restart/hooks <https://github.com/react-restart/hooks>
@@ -23,9 +23,9 @@ import { useEffect, useRef } from 'react';
  * @param value the value to track
  */
 export function usePrevious<T>(value: T): T | null {
-  const ref = useRef<T | null>(null);
+  const ref = useRef<T | null>(null)
   useEffect(() => {
-    ref.current = value;
-  });
-  return ref.current;
+    ref.current = value
+  })
+  return ref.current
 }

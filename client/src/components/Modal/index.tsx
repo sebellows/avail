@@ -1,20 +1,23 @@
-import React, { forwardRef, Ref, useEffect, useState, useRef } from 'react';
-import { ESCAPE, listen, noScroll } from '../../core/utils';
-import { useEventCallback } from '../../hooks/useEventCallback';
-import { useWillUnmount } from '../../hooks/useWillUnmount';
-import { ModalTrigger } from './ModalTrigger';
-import { ModalContent } from './ModalContent';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, { forwardRef, Ref, useEffect, useState, useRef } from 'react'
+import { ESCAPE, listen, noScroll } from '../../core/utils'
+import { useEventCallback } from '../../hooks/useEventCallback'
+import { useWillUnmount } from '../../hooks/useWillUnmount'
+import { ModalTrigger } from './ModalTrigger'
+import { ModalContent } from './ModalContent'
+import { useFirstMountState } from '../../hooks'
+import { usePrevious } from '../../hooks/usePrevious'
 
 function ignoreSiblings(siblings: NodeList | string[], fn: (el: HTMLElement) => void) {
   if (siblings && siblings.length) {
     siblings.forEach((selector: string | Node) => {
       if (typeof selector == 'string') {
-        const el = document.querySelector(selector) as HTMLElement;
-        fn(el);
+        const el = document.querySelector(selector) as HTMLElement
+        fn(el)
       } else {
-        fn(selector as HTMLElement);
+        fn(selector as HTMLElement)
       }
-    });
+    })
   }
 }
 
@@ -36,74 +39,87 @@ const Modal = forwardRef<{}, any>(
     },
     ref: Ref<any>,
   ) => {
-    const [exited, setExited] = useState(!show);
+    // const [exited, setExited] = useState(!show)
 
-    const focalRef = useRef(null);
-    const prevShow = useRef(!show);
-    const removeKeyDownListenerRef = useRef(null);
+    const isFirstMount = useFirstMountState()
+
+    const focalRef = useRef(null)
+    const prevShow = usePrevious(show)
+    const removeKeyDownListenerRef = useRef(null)
 
     const handleShow = useEventCallback(() => {
       setTimeout(() => {
-        ignoreSiblings(ignore, (el) => el.setAttribute('aria-hidden', 'true'));
-      });
+        ignoreSiblings(ignore, (el) => el.setAttribute('aria-hidden', 'true'))
+      })
 
-      removeKeyDownListenerRef.current = listen(document.documentElement, 'keydown', handleKeyUp);
+      removeKeyDownListenerRef.current = listen(document.documentElement, 'keydown', handleKeyUp)
 
-      onShow?.();
+      onShow?.()
 
-      noScroll.on();
+      noScroll.on()
 
-      setExited(false);
-    });
+      // setExited(false)
+    })
 
     const handleClose = useEventCallback((msg?: string) => {
-      onClose?.();
-      console.log('Modal->handleClose', `msg: ${msg}`);
-
-      noScroll.off();
+      onClose?.()
+      console.log('Modal->handleClose', `msg: ${msg}`)
 
       setTimeout(() => {
-        ignoreSiblings(ignore, (el) => el.removeAttribute('aria-hidden'));
-      });
-
-      prevShow.current = true;
-    });
+        ignoreSiblings(ignore, (el) => el.removeAttribute('aria-hidden'))
+        noScroll.off()
+        // prevShow.current = true
+      })
+    })
 
     useEffect(() => {
-      if (!show) return;
+      document.body.addEventListener('close', (e?: any) => {
+        console.log('Modal->addListener', e)
+      })
 
-      handleShow();
+      return function unmount() {
+        document.body.removeEventListener('close', (e?: any) => {
+          console.log('Modal->removeListener', e)
+        })
+      }
+    }, [])
 
-      prevShow.current = show;
+    useEffect(() => {
+      console.log('Modal->show?', show)
+      if (!isFirstMount && !show) {
+        handleClose()
+      } else if (show) {
+        handleShow()
+      }
 
       // return () => handleClose('Modal->useEffect->handleShow');
-    }, [show, handleShow]);
+    }, [isFirstMount, show, handleClose, handleShow])
 
-    useEffect(() => {
-      const { current: wasShown } = prevShow;
-      if (!exited || (exited && wasShown)) return;
+    // useEffect(() => {
+    //   const { current: wasShown } = prevShow
+    //   if (!exited || (exited && wasShown)) return
 
-      handleClose('Modal->useEffect->handleClose');
-    }, [exited, handleClose, prevShow]);
+    //   handleClose('Modal->useEffect->handleClose')
+    // }, [exited, handleClose, prevShow])
 
     useWillUnmount(() => {
-      setExited(true);
+      // setExited(true)
       const closeout = setTimeout(() => {
-        if (!prevShow.current) {
-          handleClose('Modal->useWillUnmount->prevShow.current');
+        if (!prevShow) {
+          handleClose('Modal->useWillUnmount->prevShow.current')
         }
-      });
-      clearTimeout(closeout);
-    });
+      })
+      clearTimeout(closeout)
+    })
 
     const handleKeyUp = (event: any) => {
       // console.log('Modal->handleKeyUp called', event.keyCode, `ESCAPE = ${ESCAPE}`);
       if (event.keyCode === ESCAPE) {
-        handleClose('Modal->handleKeyUp->escape');
+        handleClose('Modal->handleKeyUp->escape')
       } else {
-        onKeyUp?.(event);
+        onKeyUp?.(event)
       }
-    };
+    }
 
     return (
       <>
@@ -118,10 +134,10 @@ const Modal = forwardRef<{}, any>(
           </ModalContent>
         )}
       </>
-    );
+    )
   },
-);
+)
 
-Modal.displayName = 'Modal';
+Modal.displayName = 'Modal'
 
-export { Modal };
+export { Modal }

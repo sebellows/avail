@@ -1,21 +1,21 @@
-export { Button } from './Button';
-export { Dialog } from './Dialog';
-export { Field } from './Field';
-export { Control } from './Control';
-export { FieldDescription } from './FieldDescription';
-export { FieldFeedback } from './FieldFeedback';
-export { FocusTrap } from './FocusTrap';
-export { FormControlResolver } from './formControlResolver';
-export * from './Icon';
-export { Modal } from './Modal';
-export { NumericControl } from './NumericControl';
-export { PillTabs } from './PillTabs';
-export { PillTab } from './PillTabs/PillTab';
-export { RadioGroup } from './RadioGroup';
-export { Repeater } from './Repeater';
-export { SelectControl } from './SelectControl';
-export { Spinner } from './Spinner';
-export { Switch } from './Switch';
-export { Tab, Tabs } from './TabNavigation';
-export { ToggleControl } from './ToggleControl';
-export { Toast } from './Toast';
+export { Button } from './Button'
+export { Dialog } from './Dialog'
+export { Field } from './Field'
+export { Control } from './Control'
+export { FieldDescription } from './FieldDescription'
+export { FieldFeedback } from './FieldFeedback'
+export { FocusTrap } from './FocusTrap'
+export { FormControlResolver } from './ControlResolver'
+export * from './Icon'
+export { Modal } from './Modal'
+export { NumericControl } from './NumericControl'
+export { PillTabs } from './PillTabs'
+export { PillTab } from './PillTabs/PillTab'
+export { RadioGroup } from './RadioGroup'
+export { Repeater } from './Repeater'
+export { SelectControl } from './SelectControl'
+export { Spinner } from './Spinner'
+export { Switch } from './Switch'
+export { Tab, Tabs } from './TabNavigation'
+export { ToggleControl } from './ToggleControl'
+export { Toast } from './Toast'
