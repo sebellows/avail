@@ -6,10 +6,14 @@ import styled from 'styled-components'
 import { zIndexes, spacers, toREM } from './core/style'
 import { SettingsForm } from './containers/SettingsForm'
 import { UtilitiesForm } from './containers/UtilitiesForm'
-import { Button, Spinner, Tabs, Tab, Toast } from './components'
+import { Button, Spinner, Tabs, Tab, Toast, Icon, Switch } from './components'
 
 import './App.scss'
 import 'react-toastify/dist/ReactToastify.css'
+import { Logo } from './Logo'
+import { classNames } from './core/utils'
+
+const ThemeContext = React.createContext('light')
 
 const SubmitButton = styled(Button)`
   position: fixed;
@@ -19,6 +23,7 @@ const SubmitButton = styled(Button)`
 `
 
 export default function App() {
+  const [theme, setTheme] = useState('light')
   const [activeTab, setActiveTab] = useState('settings')
   const [loading, setLoading] = useState(false)
   const [addExitClass, setExitClass] = useState(false)
@@ -51,40 +56,56 @@ export default function App() {
   }
 
   return (
-    <div
-      id="App"
-      className="container"
-      style={{
-        position: 'relative',
-        overflow: 'hidden',
-      }}
-    >
-      <h1>Avail</h1>
+    <ThemeContext.Provider value={theme}>
+      <div
+        id="App"
+        className={classNames(`theme-${theme}`)}
+        style={{
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        <header className="container">
+          <div className="hgroup">
+            <h1>
+              <Logo width={40} />
+              <span>Avail</span>
+            </h1>
 
-      <h2>CSS Utility Class Generator</h2>
+            <h2>CSS Utility Class Generator</h2>
+          </div>
 
-      {loading && <Spinner exit={addExitClass} onAnimationEnd={handleLoad} />}
+          <Switch value={theme} onChange={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
+            Mode
+          </Switch>
+        </header>
 
-      {/* <Store> */}
-      <form ref={formRef} onSubmit={handleSubmit}>
-        <Tabs
-          id="avail-config"
-          activeKey={activeTab}
-          onSelect={(target: string) => setActiveTab(target)}
-        >
-          <Tab target="settings" title="Global Settings">
-            <SettingsForm />
-          </Tab>
-          <Tab target="utilities" title="Utility Class Configuration">
-            <UtilitiesForm id="avail-utilities" />
-          </Tab>
-        </Tabs>
-        <SubmitButton type="submit" variant="primary">
-          Submit
-        </SubmitButton>
-      </form>
-      {/* </Store> */}
-      <Toast autoClose={5000} />
-    </div>
+        <div className="container">
+          {loading && <Spinner exit={addExitClass} onAnimationEnd={handleLoad} />}
+
+          {/* <Store> */}
+          <form ref={formRef} onSubmit={handleSubmit}>
+            <Tabs
+              id="avail-config"
+              activeKey={activeTab}
+              onSelect={(target: string) => setActiveTab(target)}
+            >
+              <Tab target="settings" title="Global Settings">
+                <SettingsForm />
+              </Tab>
+              <Tab target="utilities" title="Utility Class Configuration">
+                <UtilitiesForm id="avail-utilities" />
+              </Tab>
+            </Tabs>
+            <SubmitButton fab type="submit" variant="primary">
+              <span className="sr-only">Submit</span>
+              <Icon name="download" />
+            </SubmitButton>
+          </form>
+          {/* </Store> */}
+          <Toast autoClose={5000} />
+        </div>
+      </div>
+    </ThemeContext.Provider>
   )
 }

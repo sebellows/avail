@@ -36,7 +36,6 @@ export interface AvailSettingField {
   legend?: string
   items?: OptionProps[] // used on repeater fields
   options?: OptionProps[] // used on select and radiogroup fields
-  // presets?: string[] | Record<string, any>;
   attrs?: Record<string, any>
   readOnly?: boolean
   validators?: Record<string, any>
@@ -58,7 +57,6 @@ export interface AvailUtility extends AvailConfigRecord {
   options?: string[] | OptionProps[]
   subitems?: OptionProps[]
   subproperties?: Record<string, any>
-  // values?: Record<string, any> | string[]; // TODO: remove, part of old build.ts
   items?: OptionProps[] // used on repeater fields
 }
 
@@ -72,20 +70,11 @@ export interface AvailState {
 }
 export type AvailStateType = keyof AvailState
 
-// export interface AvailConfig<T extends AvailSetting | AvailUtility> {
-//   [key: string]: T;
-// }
-// [keyof JSX.IntrinsicElements]
 export type AvailConfigType = AvailSetting | AvailUtility
-// export type AvailConfig<AvailConfigType> = Record<string, AvailConfigType>
+
 export type AvailConfig<P = any> = {
   [K in AvailStateType]: P extends AvailState[K] ? K : AvailState[K]
 }[AvailStateType]
-
-// export interface AvailState<T = AvailSetting | AvailUtility> {
-//   config: AvailConfig<T>
-//   inProgress?: boolean
-// }
 
 export interface StateConfig {
   name: string
