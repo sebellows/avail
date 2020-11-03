@@ -1,7 +1,7 @@
-import styled from 'styled-components';
-import { color, mixin, radius, transition } from '../../core/style';
-import { Switch } from '../Switch';
-import { Button } from '../Button';
+import styled from 'styled-components'
+import { color, mixin, radius, shadow, transition } from '../../core/style'
+import { Switch } from '../Switch'
+import { Button } from '../Button'
 
 /** Utility Tabs */
 export const Styled = {
@@ -20,12 +20,14 @@ export const Styled = {
     width: 100%;
     background-color: ${color.bg.body};
     border-radius: ${radius.lg};
-    ${mixin.shadow(0, 1)}
+    // ${mixin.shadow(0, 1)}
+    box-shadow: ${shadow.elevation(1)};
     transition: box-shadow ${transition.duration.easeIn} ${transition.timing.fastOutSlowIn};
 
     &:hover {
       background-color: ${color.bg.light};
-      ${mixin.shadow(2, 3)}
+      // ${mixin.shadow(2, 3)}
+      box-shadow: ${shadow.elevation(2)};
     }
   `,
   TabContent: styled.div`
@@ -43,4 +45,4 @@ export const Styled = {
       outline: none;
     }
   `,
-};
+}

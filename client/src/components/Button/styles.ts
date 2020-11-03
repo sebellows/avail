@@ -1,17 +1,19 @@
-import styled, { css } from 'styled-components';
-import { color, mixin, isUnit, toREM, transition } from '../../core/style';
-import { ButtonProps } from './props';
+import styled, { css } from 'styled-components'
+import { color, mixin, isUnit, toREM, transition, shadow } from '../../core/style'
+import { ButtonProps } from './props'
 
 const ButtonShadowStyles = css`
-  ${mixin.shadow(0, 1)}
+  // ${mixin.shadow(0, 1)}
+  box-shadow: ${shadow.elevation(1)};
 
   &:hover {
-    ${mixin.shadow('depth1')}
+    // ${mixin.shadow('depth1')}
+    box-shadow: ${shadow.elevation(2)};
   }
   &:focus {
     outline: none;
   }
-`;
+`
 // ${mixin.shadow(focusShadow.depth2)}
 
 /** Buttons */
@@ -42,13 +44,13 @@ const BaseButton = styled.button<ButtonProps>`
   }
 
   &:focus::after {
-    opacity: .375;
+    opacity: 0.375;
   }
 
   * {
     pointer-events: none;
   }
-`;
+`
 
 const BaseIconButton = styled(BaseButton)<ButtonProps>`
   flex-direction: column;
@@ -56,7 +58,7 @@ const BaseIconButton = styled(BaseButton)<ButtonProps>`
   border: 0;
   padding: 0;
   ${({ size }) => mixin.size(size ? (isUnit(size) ? size : toREM(+size)) : toREM(54))}
-`;
+`
 
 export const Styled = {
   Button: styled(BaseButton)<ButtonProps>`
@@ -70,4 +72,4 @@ export const Styled = {
     ${ButtonShadowStyles}
   `,
   Icon: BaseIconButton,
-};
+}

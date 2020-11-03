@@ -1,13 +1,13 @@
-import styled from 'styled-components';
-import { Control } from '../Control';
-import { color, font, mixin, radius, toREM } from '../../core/style';
-import { SwitchProps } from './props';
+import styled from 'styled-components'
+import { Control } from '../Control'
+import { color, font, mixin, radius, shadow, toREM } from '../../core/style'
+import { SwitchProps } from './props'
 
-const SWITCH_BAR_WIDTH = 40;
-const SWITCH_BAR_HEIGHT = 16;
-const TOGGLE_SIZE = 24;
-const TOGGLE_ICON_SIZE = 16;
-const TOGGLE_OFFSET = TOGGLE_SIZE - TOGGLE_ICON_SIZE; // ~8
+const SWITCH_BAR_WIDTH = 40
+const SWITCH_BAR_HEIGHT = 16
+const TOGGLE_SIZE = 24
+const TOGGLE_ICON_SIZE = 16
+const TOGGLE_OFFSET = TOGGLE_SIZE - TOGGLE_ICON_SIZE // ~8
 
 export const Styled = {
   Wrapper: styled.div`
@@ -49,7 +49,7 @@ export const Styled = {
     ${mixin.inlineFlexCenter}
     background-color: ${({ checked }) => (checked ? color.magenta : color.light)};
     ${mixin.borderRadius('circle')}
-    ${mixin.shadow('depth1')}
+    box-shadow: ${shadow.elevation(1)};
     color: ${({ checked }) => (checked ? color.light : color.text.body)};
     ${mixin.size(toREM(TOGGLE_SIZE))}
     transform: ${({ checked }) => (checked ? 'translate3d(1rem, 0, 0)' : 'translate3d(0, 0, 0)')};
@@ -66,4 +66,4 @@ export const Styled = {
     font-size: ${font.sizes.sm};
     line-height: 1.5;
   `,
-};
+}

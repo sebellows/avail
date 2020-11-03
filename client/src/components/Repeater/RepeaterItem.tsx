@@ -1,11 +1,11 @@
-import React, { forwardRef, Ref } from 'react';
+import React, { forwardRef, Ref } from 'react'
 
-import { Button } from '../Button';
-import { MinusIcon, PlusIcon } from '../Icon';
-import { classNames, isNil } from '../../core/utils';
-import { FormGroupProps } from '../../core/contracts';
+import { Button } from '../Button'
+import { MinusIcon, PlusIcon } from '../Icon'
+import { classNames, isNil } from '../../core/utils'
+import { FormGroupProps } from '../../core/contracts'
 
-import { StyledItem } from './styles';
+import { StyledItem } from './styles'
 
 const RepeaterItem = forwardRef<{}, FormGroupProps>(
   (
@@ -27,6 +27,7 @@ const RepeaterItem = forwardRef<{}, FormGroupProps>(
         ref={ref}
         className={classNames('repeater-item', className, { 'is-first': first })}
       >
+        <StyledItem.Skein className="repeater-item-skein" />
         {!isNil(before) && (
           <StyledItem.Prepend className="repeater-item-prepend">{before}</StyledItem.Prepend>
         )}
@@ -48,10 +49,10 @@ const RepeaterItem = forwardRef<{}, FormGroupProps>(
           </button> */}
         </StyledItem.Append>
       </StyledItem.Wrapper>
-    );
+    )
   },
-);
+)
 
-RepeaterItem.displayName = 'RepeaterItem';
+RepeaterItem.displayName = 'RepeaterItem'
 
-export { RepeaterItem };
+export { RepeaterItem }

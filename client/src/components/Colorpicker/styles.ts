@@ -1,4 +1,4 @@
-import styled, { keyframes, css } from 'styled-components';
+import styled, { keyframes, css } from 'styled-components'
 import {
   calcControlHeight,
   color,
@@ -9,9 +9,9 @@ import {
   zIndexes,
   transition,
   toREM,
-} from '../../core/style';
-import { FormControlProps } from '../../core/contracts';
-import { StyledControl, StyledBaseInput } from '../Control';
+} from '../../core/style'
+import { FormControlProps } from '../../core/contracts'
+import { StyledControl, StyledBaseInput } from '../Control'
 
 const dropdownEnter = keyframes`
   from {
@@ -23,7 +23,7 @@ const dropdownEnter = keyframes`
     transform: translate3d(0, -16px, 0);
     opacity: 1;
   }
-`;
+`
 
 const dropdownLeave = keyframes`
   from {
@@ -35,17 +35,17 @@ const dropdownLeave = keyframes`
     transform: translate3d(0, -50px, 0);
     opacity: 0;
   }
-`;
+`
 
 const DialogControl = styled.div`
   display: block;
   position: absolute;
   top: 0;
   padding: 0.375rem;
-`;
+`
 
 interface WrapperProps {
-  open?: boolean;
+  open?: boolean
 }
 
 /**
@@ -107,7 +107,7 @@ export const Styled = {
     border: 1px solid ${control.borderColor};
     border-radius: ${radius.sm} 0 0 ${radius.sm};
     box-shadow: inset 0 0 0 5px ${color.bg.body}, inset 0 0 0 6px ${mixin.rgba(color.black, 0.2)},
-      1px 0 1px 0 ${mixin.rgba(color.black, 0.12)};
+      1px 0 1px 0 ${color.compute(color.black).alpha(0.12).string()};
     box-sizing: content-box;
     z-index: 1;
     pointer-events: none;
@@ -130,7 +130,8 @@ export const Styled = {
   /* Options */
   Panel: styled.div`
     border-radius: ${radius.base};
-    box-shadow: ${shadow[1]}, ${shadow[2]}, ${shadow[3]};
+    // box-shadow: ${shadow[1]}, ${shadow[2]}, ${shadow[3]};
+    box-shadow: ${shadow.elevation(4)};
     position: absolute;
     top: calc(1.5em + 0.75rem + 2px);
     left: 0;
@@ -184,7 +185,7 @@ export const Styled = {
   /* Display the value of an option in `colorpicker`. */
   PreviewBox: styled.div`
     border: 1px solid ${control.borderColor};
-    box-shadow: ${shadow[0]};
+    ${mixin.shadow(0)};
     display: none;
     line-height: 1;
     ${mixin.margin.right(2)}
@@ -198,7 +199,8 @@ export const Styled = {
     }
     &[style*='background-color'] {
       background-clip: content-box;
-      box-shadow: inset 0 0 0 5px var(--white), inset 0 0 0 6px rgba(0, 0, 0, 0.2), ${shadow[0]};
+      box-shadow: inset 0 0 0 5px var(--white), inset 0 0 0 6px rgba(0, 0, 0, 0.2),
+        ${shadow.levels[0]};
       box-sizing: content-box;
       border-radius: 50%;
       height: 1rem;
@@ -212,7 +214,7 @@ export const Styled = {
       top: 100%;
       z-index: 1040;
       border-radius: 0.5rem;
-      box-shadow: rgba(0, 0, 0, 0.2) 0px 15px 15px 0px;
+      box-shadow: 0px 15px 15px 0px rgba(0, 0, 0, 0.2);
     `,
     Inner: styled.div`
       display: flex;
@@ -308,4 +310,4 @@ export const Styled = {
       cursor: pointer;
     `,
   },
-};
+}

@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-import { font, mixin, color, control, toREM } from '../../core/style'
+import { font, mixin, color, control, toREM, shadow } from '../../core/style'
 
 import { Field } from '../Field'
 
@@ -60,23 +60,30 @@ const StyledItemAddon = styled.span`
   flex-direction: column;
   ${mixin.padding.all(1)}
   min-width: 2rem;
-  background-color: ${color.compute(color.bg.light).alpha(0.5).string()};
+  position: relative;
+
+  &::before {
+    content: '';
+    ${mixin.cover}
+    background-color: ${color.alpha(color.bg.body, 0.5)};
+    mix-blend-mode: overlay;
+  }
 `
 
 // RepeaterItem styles
 export const StyledItem = {
   Wrapper: styled.div`
-    background-color: ${color.compute(color.white).alpha(0.5).string()};
-    border: solid ${color.border.base};
-    border-width: 1px 1px 0 1px;
+    // background-color: ${color.alpha(color.white, 0.5)};
+    // border: solid ${color.border.base};
+    // border-width: 1px 1px 0 1px;
+    border: 1px solid ${color.border.base};
     border-radius: 0.325rem;
-    box-shadow: inset 1px 1px 2px 0 rgba(255, 255, 255, 0.5),
-      inset -1px -1px 2px 0 rgba(0, 0, 0, 0.25);
-    overflow: hidden;
 
     display: flex;
     align-items: stretch;
+    position: relative;
     width: 100%;
+    overflow: hidden;
 
     &:last-of-type {
       border-bottom-width: 1px;
@@ -84,12 +91,22 @@ export const StyledItem = {
   `,
   Group: styled.div`
     // background-color: ${color.bg.body};
-    border: solid ${color.border.base};
-    border-width: 0 ${control.borderWidth};
+    border: 0 solid ${color.border.base};
+    // border-width: 0 ${control.borderWidth};
     display: flex;
     flex: 1;
     align-items: center;
     ${mixin.padding.all(1, 2)}
+  `,
+  Skein: styled.div`
+    ${mixin.cover}
+    background-color: ${color.bg.body};
+    mix-blend-mode: overlay;
+    box-shadow: ${shadow.bevel(1)};
+    border: 2px solid;
+    border-color: ${color.white} ${color.black} ${color.black} ${color.white};
+    filter: blur(4px) opacity(0.25);
+    pointer-events: none;
   `,
   Prepend: StyledItemAddon,
   Append: styled(StyledItemAddon)`
