@@ -29,7 +29,6 @@ import {
   LINE_HEIGHT_SM,
   LINE_HEIGHT_BASE,
   LINE_HEIGHT_LG,
-  BLACK,
 } from './constants'
 import { isNumber } from './utils'
 // set in px units
@@ -160,6 +159,8 @@ export const color = {
       focusBorder: Color(COLORS.magenta).hsl().string(),
     },
   },
+
+  compute: (c: string) => Color(c),
 }
 
 export const font = {
@@ -222,39 +223,72 @@ export const radius = {
   circle: '50%',
 }
 
-const SHADOW_UMBRA = Color(BLACK).alpha(0.2).string()
-const SHADOW_PENUMBRA = Color(BLACK).alpha(0.14).string()
-const SHADOW_AMBIENCE = Color(BLACK).alpha(0.12).string()
+// const SHADOW_UMBRA = Color(BLACK).alpha(0.2).string()
+// const SHADOW_PENUMBRA = Color(BLACK).alpha(0.14).string()
+// const SHADOW_AMBIENCE = Color(BLACK).alpha(0.12).string()
 
 const FOCUS_SHADOW_UMBRA = Color(COLORS.magenta).alpha(0.5).string()
 const FOCUS_SHADOW_PENUMBRA = Color(COLORS.magenta).alpha(0.3).string()
 const FOCUS_SHADOW_AMBIENCE = Color(COLORS.magenta).alpha(0.18).string()
 
-export const shadow = {
-  0: `0 1px 2px 0px ${SHADOW_AMBIENCE}`,
-  1: `0 2px 4px -1px ${SHADOW_UMBRA}`,
-  2: `0 4px 5px 0 ${SHADOW_PENUMBRA}`,
-  3: `0 1px 10px 0 ${SHADOW_AMBIENCE}`,
-  depth1: `0 2px 1px -1px ${SHADOW_UMBRA}, 0 1px 1px 0 ${SHADOW_PENUMBRA}, 0 1px 3px 0 ${SHADOW_AMBIENCE}`,
-  depth2: `0 1px 5px 0 ${SHADOW_UMBRA}, 0 2px 2px 0 ${SHADOW_PENUMBRA}, 0 3px 1px -2px ${SHADOW_AMBIENCE}`,
-  depth3: `0 1px 8px 0 ${SHADOW_UMBRA}, 0 3px 4px 0 ${SHADOW_PENUMBRA}, 0 3px 3px -2px ${SHADOW_AMBIENCE}`,
-  depth4: `0 2px 4px -1px ${SHADOW_UMBRA}, 0 4px 5px 0 ${SHADOW_PENUMBRA}, 0 1px 10px 0 ${SHADOW_AMBIENCE}`,
-  depth5: `0 3px 5px -1px ${SHADOW_UMBRA}, 0 5px 8px 0 ${SHADOW_PENUMBRA}, 0 1px 14px 0 ${SHADOW_AMBIENCE}`,
-  depth6: `0 3px 5px -1px ${SHADOW_UMBRA}, 0 6px 10px 0 ${SHADOW_PENUMBRA}, 0 1px 18px 0 ${SHADOW_AMBIENCE}`,
+const DEFAULT_SHADOW_SETTINGS = { umbra: 0.2, penumbra: 0.14, ambience: 0.12 }
+const FOCUS_SHADOW_SETTINGS = { umbra: 0.5, penumbra: 0.3, ambience: 0.18 }
+
+type ShadowFactoryParams = {
+  ambience?: number
+  umbra?: number
+  penumbra?: number
 }
 
-export const focusShadow = {
-  0: `0 1px 2px 0px ${FOCUS_SHADOW_PENUMBRA}`,
-  1: `0 2px 4px -1px ${FOCUS_SHADOW_UMBRA}`,
-  2: `0 4px 5px 0 ${FOCUS_SHADOW_PENUMBRA}`,
-  3: `0 1px 10px 0 ${FOCUS_SHADOW_UMBRA}`,
-  depth1: `0 2px 1px -1px ${FOCUS_SHADOW_UMBRA}, 0 1px 1px 0 ${FOCUS_SHADOW_PENUMBRA}, 0 1px 3px 0 ${FOCUS_SHADOW_AMBIENCE}`,
-  depth2: `0 1px 5px 0 ${FOCUS_SHADOW_UMBRA}, 0 2px 2px 0 ${FOCUS_SHADOW_PENUMBRA}, 0 3px 1px -2px ${FOCUS_SHADOW_AMBIENCE}`,
-  depth3: `0 1px 8px 0 ${FOCUS_SHADOW_UMBRA}, 0 3px 4px 0 ${FOCUS_SHADOW_PENUMBRA}, 0 3px 3px -2px ${FOCUS_SHADOW_AMBIENCE}`,
-  depth4: `0 2px 4px -1px ${FOCUS_SHADOW_UMBRA}, 0 4px 5px 0 ${FOCUS_SHADOW_PENUMBRA}, 0 1px 10px 0 ${FOCUS_SHADOW_AMBIENCE}`,
-  depth5: `0 3px 5px -1px ${FOCUS_SHADOW_UMBRA}, 0 5px 8px 0 ${FOCUS_SHADOW_PENUMBRA}, 0 1px 14px 0 ${FOCUS_SHADOW_AMBIENCE}`,
-  depth6: `0 3px 5px -1px ${FOCUS_SHADOW_UMBRA}, 0 6px 10px 0 ${FOCUS_SHADOW_PENUMBRA}, 0 1px 18px 0 ${FOCUS_SHADOW_AMBIENCE}`,
+// const umbraFactory = (d: number) => `0 ${d}px`
+const shadowFactory = (
+  hue: string = color.black,
+  params: ShadowFactoryParams = DEFAULT_SHADOW_SETTINGS,
+) => {
+  params = { ambience: 0, umbra: 0, penumbra: 0, ...params }
+  const umbra = Color(hue).alpha(params.umbra).string()
+  const penumbra = Color(hue).alpha(params.penumbra).string()
+  const ambience = Color(hue).alpha(params.ambience).string()
+
+  return {
+    0: `0 1px 2px 0px ${ambience}`,
+    1: `0 2px 4px -1px ${umbra}`,
+    2: `0 4px 5px 0 ${penumbra}`,
+    3: `0 1px 10px 0 ${ambience}`,
+    depth1: `0 2px 1px -1px ${umbra}, 0 1px 1px 0 ${penumbra}, 0 1px 3px 0 ${ambience}`,
+    depth2: `0 1px 5px 0 ${umbra}, 0 2px 2px 0 ${penumbra}, 0 3px 1px -2px ${ambience}`,
+    depth3: `0 1px 8px 0 ${umbra}, 0 3px 4px 0 ${penumbra}, 0 3px 3px -2px ${ambience}`,
+    depth4: `0 2px 4px -1px ${umbra}, 0 4px 5px 0 ${penumbra}, 0 1px 10px 0 ${ambience}`,
+    depth5: `0 3px 5px -1px ${umbra}, 0 5px 8px 0 ${penumbra}, 0 1px 14px 0 ${ambience}`,
+    depth6: `0 3px 5px -1px ${umbra}, 0 6px 10px 0 ${penumbra}, 0 1px 18px 0 ${ambience}`,
+  }
 }
+
+const shadowLevels = shadowFactory()
+
+export const shadow = {
+  levels: shadowLevels,
+  get: (...depths: any[]) =>
+    depths
+      .reduce((acc, depth) => {
+        if (shadowLevels[depth]) {
+          acc.push(shadowLevels[depth])
+        } else {
+          acc.push(depth)
+        }
+        return acc
+      }, [])
+      .join(', '),
+  bevel: ({ highlight = 0.5, shadow = 0.25, depth: d = 1 }) => {
+    return (
+      `inset ${d}px ${d}px ${d + 1}px 0 ${color.compute(color.white).alpha(highlight).string()}, ` +
+      `inset -${d}px -${d}px ${d + 1}px 0 ${color.compute(color.white).alpha(shadow).string()}`
+    )
+  },
+  focusShadow: shadowFactory(color.magenta, FOCUS_SHADOW_SETTINGS),
+}
+
+export const focusShadow = shadow.focusShadow
 
 export const focusDropShadow = {
   0: `0 0px 2px ${FOCUS_SHADOW_PENUMBRA}`,
@@ -457,8 +491,8 @@ export const mixin = {
   shadow: (...levels: (number | string)[]) => css`
     box-shadow: ${levels
       .reduce((acc, depth) => {
-        if (shadow[depth]) {
-          acc.push(shadow[depth])
+        if (shadow.levels[depth]) {
+          acc.push(shadow.levels[depth])
         } else {
           acc.push(depth)
         }

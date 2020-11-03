@@ -20,7 +20,7 @@ const ToggleControl = React.forwardRef<{}, ToggleControlProps>(
     const [checked, setChecked] = useState(initialChecked)
 
     const inputRef = useRef(null)
-    const htmlProps = containerProps(props, { exclude: ['checked'] })
+    const htmlProps = containerProps(props, { exclude: ['checked', 'label'] })
     const formProps = validFormProps(props)
     const inputType = type === 'radio' ? type : 'checkbox'
 

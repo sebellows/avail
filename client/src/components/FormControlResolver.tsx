@@ -3,13 +3,13 @@ import React, { useMemo } from 'react'
 
 import { FormControlProps } from '../core/contracts'
 
+import { Control } from './Control'
 import { Repeater } from './Repeater'
 import { RadioGroup } from './RadioGroup'
 import { Colorpicker } from './Colorpicker'
 import { ColorControl } from './ColorControl'
 import { SelectControl } from './SelectControl'
 import { ToggleControl } from './ToggleControl'
-import { Control } from './Control'
 import { NumericControl } from './NumericControl'
 
 interface FormControlResolverProps extends FormControlProps {
@@ -40,7 +40,7 @@ const FormControlResolver: React.FC<FormControlResolverProps> = ({
     },
     onBlur: (event: any) => {
       const {
-        target: { name, value, tagName, type },
+        target: { name, value, tagName },
         type: eventType,
       } = event
 
@@ -62,14 +62,11 @@ const FormControlResolver: React.FC<FormControlResolverProps> = ({
   }
 
   const formControl = useMemo(() => {
-    const toggleProps =
-      controlType === 'checkbox' && !!props?.label ? { children: props.label } : {}
-
     switch (controlType) {
       case 'checkbox':
         return (
           <ToggleControl {...props} {...handlers}>
-            {props?.children}
+            {props?.label}
           </ToggleControl>
         )
       case 'radiogroup':

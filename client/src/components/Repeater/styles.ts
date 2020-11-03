@@ -60,14 +60,20 @@ const StyledItemAddon = styled.span`
   flex-direction: column;
   ${mixin.padding.all(1)}
   min-width: 2rem;
-  background-color: ${color.bg.light};
+  background-color: ${color.compute(color.bg.light).alpha(0.5).string()};
 `
 
 // RepeaterItem styles
 export const StyledItem = {
   Wrapper: styled.div`
+    background-color: ${color.compute(color.white).alpha(0.5).string()};
     border: solid ${color.border.base};
     border-width: 1px 1px 0 1px;
+    border-radius: 0.325rem;
+    box-shadow: inset 1px 1px 2px 0 rgba(255, 255, 255, 0.5),
+      inset -1px -1px 2px 0 rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+
     display: flex;
     align-items: stretch;
     width: 100%;
@@ -77,7 +83,7 @@ export const StyledItem = {
     }
   `,
   Group: styled.div`
-    background-color: ${color.bg.body};
+    // background-color: ${color.bg.body};
     border: solid ${color.border.base};
     border-width: 0 ${control.borderWidth};
     display: flex;

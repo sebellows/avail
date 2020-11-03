@@ -1,31 +1,31 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React from 'react';
-import { COLORS, DIRECTIONS, GRAYS, GRID_BREAKPOINTS, THEME_COLORS } from './constants';
-import { toOptions } from './models/Option';
-import { CSS_VALUE_PRESETS } from './presets';
-import { AvailConfig, AvailSetting } from './contracts';
+import React from 'react'
+import { COLORS, DIRECTIONS, GRAYS, GRID_BREAKPOINTS, THEME_COLORS } from './constants'
+import { toOptions } from './models/Option'
+import { CSS_VALUE_PRESETS } from './presets'
+import { AvailConfig, AvailSetting } from './contracts'
 
 const AVAIL_COLOR_SCHEMES = {
   colors: COLORS,
   grays: GRAYS,
   variants: THEME_COLORS,
-};
+}
 
 function updateColorScheme(settings: Record<string, any>) {
-  const schemes = ['colors', 'grays', 'variants'];
+  const schemes = ['colors', 'grays', 'variants']
   for (const scheme of schemes) {
-    if (!settings[scheme]) continue;
-    AVAIL_COLOR_SCHEMES[scheme] = { ...AVAIL_COLOR_SCHEMES[scheme], ...settings[scheme] };
+    if (!settings[scheme]) continue
+    AVAIL_COLOR_SCHEMES[scheme] = { ...AVAIL_COLOR_SCHEMES[scheme], ...settings[scheme] }
   }
-  return AVAIL_COLOR_SCHEMES;
+  return AVAIL_COLOR_SCHEMES
 }
 
 export const Settings = (settings: AvailConfig<AvailSetting>): AvailConfig<AvailSetting> => {
-  const colorSchemes = updateColorScheme(settings);
-  const colors = toOptions(colorSchemes.colors);
-  const grays = toOptions(colorSchemes.grays);
-  const variants = toOptions(colorSchemes.variants);
-  const allColors = [...colors, ...grays, ...variants];
+  const colorSchemes = updateColorScheme(settings)
+  const colors = toOptions(colorSchemes.colors)
+  const grays = toOptions(colorSchemes.grays)
+  const variants = toOptions(colorSchemes.variants)
+  const allColors = [...colors, ...grays, ...variants]
 
   return {
     export: {
@@ -58,7 +58,7 @@ export const Settings = (settings: AvailConfig<AvailSetting>): AvailConfig<Avail
           },
           legend: 'Exported file type',
           options: toOptions(['CSS', 'SCSS']),
-          value: 'css',
+          value: 'CSS',
           description: 'Select file type to export utility classes as.',
         },
         isImportant: {
@@ -242,16 +242,16 @@ export const Settings = (settings: AvailConfig<AvailSetting>): AvailConfig<Avail
         },
       },
     },
-  };
-};
+  }
+}
 
 export function generateSettings(
   config: AvailConfig<AvailSetting> = {},
 ): AvailConfig<AvailSetting> {
-  const settings = Settings(config);
+  const settings = Settings(config)
 
   return Object.entries(settings).reduce((acc, [key, value]) => {
-    acc[key] = { id: key, ...value } as AvailSetting;
-    return acc;
-  }, {});
+    acc[key] = { id: key, ...value } as AvailSetting
+    return acc
+  }, {})
 }

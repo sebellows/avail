@@ -148,6 +148,10 @@ const Colorpicker = forwardRef<HTMLDivElement, ColorpickerProps>(
 
       props?.onChange(changeEvent)
 
+      if (event.target.type === 'color') {
+        props?.onBlur(changeEvent)
+      }
+
       handleClose()
     }
 
@@ -157,7 +161,7 @@ const Colorpicker = forwardRef<HTMLDivElement, ColorpickerProps>(
       props?.onFocus?.(event)
     }
 
-    function handleBlur(event: any) {
+    function handleBlur(event?: any) {
       event.persist()
 
       checkValidity()
