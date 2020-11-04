@@ -1,15 +1,15 @@
-import React, { Ref } from 'react';
-import styled from 'styled-components';
+import React, { Ref } from 'react'
+import styled from 'styled-components'
 
-import { classNames } from '../core/utils/classNames';
+import { classNames } from '../core/utils/classNames'
 
 export interface IconProps {
-  fill?: string;
-  filled?: boolean;
-  focusable?: boolean;
-  name: string;
-  size?: number | string;
-  [key: string]: any;
+  fill?: string
+  filled?: boolean
+  focusable?: boolean
+  name: string
+  size?: number | string
+  [key: string]: any
 }
 
 const StyledIcon = styled.svg`
@@ -17,7 +17,7 @@ const StyledIcon = styled.svg`
     position: relative;
     top: -1px;
   }
-`;
+`
 
 export const Icon = React.forwardRef<SVGSVGElement, IconProps>(
   (
@@ -32,11 +32,11 @@ export const Icon = React.forwardRef<SVGSVGElement, IconProps>(
     },
     ref: Ref<SVGSVGElement>,
   ) => {
-    let iconClassName = `icon-${name}`;
+    let iconClassName = `icon-${name}`
 
     if (ICON_MAP[name]) {
-      iconClassName = ICON_MAP[name].className;
-      children = ICON_MAP[name].children;
+      iconClassName = ICON_MAP[name].className
+      children = ICON_MAP[name].children
     }
 
     return (
@@ -58,11 +58,17 @@ export const Icon = React.forwardRef<SVGSVGElement, IconProps>(
         <title>{name}</title>
         {children}
       </StyledIcon>
-    );
+    )
   },
-);
+)
 
 const ICON_MAP = {
+  bucket: {
+    className: 'icon-bucket',
+    children: (
+      <path d="M19,11.5C19,11.5 17,13.67 17,15A2,2 0 0,0 19,17A2,2 0 0,0 21,15C21,13.67 19,11.5 19,11.5M5.21,10L10,5.21L14.79,10M16.56,8.94L7.62,0L6.21,1.41L8.59,3.79L3.44,8.94C2.85,9.5 2.85,10.47 3.44,11.06L8.94,16.56C9.23,16.85 9.62,17 10,17C10.38,17 10.77,16.85 11.06,16.56L16.56,11.06C17.15,10.47 17.15,9.5 16.56,8.94Z" />
+    ),
+  },
   crosshair: {
     className: 'icon-crosshair',
     children: (
@@ -215,40 +221,40 @@ const ICON_MAP = {
       </>
     ),
   },
-};
+}
 
 export const CheckIcon = ({ ref = null, ...props }) => (
   <Icon ref={ref} name="check" {...props}>
     {/* <polyline points="20 6 9 17 4 12" /> */}
     <path className="check-icon-path" d="M4.1,12.7 9,17.6 20.3,6.3" />
   </Icon>
-);
+)
 
 export const ChevronLeftIcon = ({ ref = null, ...props }) => (
   <Icon ref={ref} name="plus" {...props}>
     <polyline points="15 18 9 12 15 6" />
   </Icon>
-);
+)
 
 export const ChevronRightIcon = ({ ref = null, ...props }) => (
   <Icon ref={ref} name="plus" {...props}>
     <polyline points="9 18 15 12 9 6" />
   </Icon>
-);
+)
 
 export const ClipboardIcon = ({ ref = null, ...props }) => (
   <Icon ref={ref} name="copy" {...props}>
     <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
     <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
   </Icon>
-);
+)
 
 export const CloseIcon = ({ ref = null, ...props }) => (
   <Icon ref={ref} name="close" {...props}>
     <line x1="18" y1="6" x2="6" y2="18"></line>
     <line x1="6" y1="6" x2="18" y2="18"></line>
   </Icon>
-);
+)
 
 export const DownloadIcon = ({ ref = null, ...props }) => (
   <Icon ref={ref} name="download" {...props}>
@@ -256,19 +262,19 @@ export const DownloadIcon = ({ ref = null, ...props }) => (
     <polyline points="7 10 12 15 17 10" />
     <line x1="12" y1="15" x2="12" y2="3" />
   </Icon>
-);
+)
 
 export const DropletIcon = ({ ref = null, ...props }) => (
   <Icon ref={ref} name="droplet" {...props}>
     <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
   </Icon>
-);
+)
 
 export const GitHubIcon = ({ ref = null, ...props }) => (
   <Icon ref={ref} name="github" {...props}>
     <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
   </Icon>
-);
+)
 
 export const InfoIcon = ({ ref = null, ...props }) => (
   <Icon ref={ref} name="info" {...props}>
@@ -276,13 +282,13 @@ export const InfoIcon = ({ ref = null, ...props }) => (
     <line x1="12" y1="16" x2="12" y2="12" />
     <line x1="12" y1="8" x2="12.01" y2="8" />
   </Icon>
-);
+)
 
 export const MinusIcon = ({ ref = null, ...props }) => (
   <Icon ref={ref} name="remove" {...props}>
     <line x1="5" y1="12" x2="19" y2="12" />
   </Icon>
-);
+)
 
 export const MoreIcon = ({ ref = null, ...props }) => (
   <Icon ref={ref} name="more" {...props}>
@@ -290,7 +296,7 @@ export const MoreIcon = ({ ref = null, ...props }) => (
     <circle cx="12" cy="5" r="1" />
     <circle cx="12" cy="19" r="1" />
   </Icon>
-);
+)
 
 export const MoveIcon = ({ ref = null, ...props }) => (
   <Icon ref={ref} name="move" {...props}>
@@ -301,14 +307,14 @@ export const MoveIcon = ({ ref = null, ...props }) => (
     <line x1="2" y1="12" x2="22" y2="12" />
     <line x1="12" y1="2" x2="12" y2="22" />
   </Icon>
-);
+)
 
 export const PlusIcon = ({ ref = null, ...props }) => (
   <Icon ref={ref} name="add" {...props}>
     <line x1="12" y1="5" x2="12" y2="19" />
     <line x1="5" y1="12" x2="19" y2="12" />
   </Icon>
-);
+)
 
 export const RefreshIcon = ({ ref = null, ...props }) => (
   <Icon ref={ref} name="refresh" {...props}>
@@ -316,7 +322,7 @@ export const RefreshIcon = ({ ref = null, ...props }) => (
     <polyline points="1 20 1 14 7 14" />
     <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
   </Icon>
-);
+)
 
 export const SaveIcon = ({ ref = null, ...props }) => (
   <Icon ref={ref} name="save" {...props}>
@@ -324,7 +330,7 @@ export const SaveIcon = ({ ref = null, ...props }) => (
     <polyline points="17 21 17 13 7 13 7 21" />
     <polyline points="7 3 7 8 15 8" />
   </Icon>
-);
+)
 
 export const SettingsIcon: React.FC<Partial<IconProps>> = ({ ref = null, ...props }) => (
   <Icon ref={ref} name="settings" {...props}>
@@ -338,11 +344,11 @@ export const SettingsIcon: React.FC<Partial<IconProps>> = ({ ref = null, ...prop
     <line x1="9" y1="8" x2="15" y2="8" />
     <line x1="17" y1="16" x2="23" y2="16" />
   </Icon>
-);
+)
 
 export const SlashIcon = ({ ref = null, ...props }) => (
   <Icon ref={ref} name="disabled" {...props}>
     <circle cx="12" cy="12" r="10" />
     <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
   </Icon>
-);
+)

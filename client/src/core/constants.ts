@@ -55,6 +55,7 @@ export const BLACK_12 = Color(BLACK).alpha(0.12).string()
 export const BLACK_20 = Color(BLACK).alpha(0.2).string()
 export const BLACK_40 = Color(BLACK).alpha(0.4).string()
 export const BLACK_50 = Color(BLACK).alpha(0.5).string()
+export const WHITE_12 = Color(WHITE).alpha(0.12).string()
 export const WHITE_50 = Color(WHITE).alpha(0.5).string()
 
 export const GRAYS = {
@@ -130,18 +131,20 @@ export const SPACERS = {
   5: 40,
 }
 
-// Body
-//
-// Settings for the `<body>` element.
-
+/**
+ * Body
+ *
+ * Settings for the `<body>` element.
+ */
 export const BODY_BG = WHITE
 export const BODY_COLOR = GRAY_900
 export const BODY_TEXT_ALIGN = null
 
-// Links
-//
-// Style anchor elements.
-
+/**
+ * Links
+ *
+ * Style anchor elements.
+ */
 export const LINK_COLOR = PRIMARY
 export const LINK_DECORATION = 'underline'
 export const LINK_HOVER_COLOR = Color(LINK_COLOR).darken(0.15).string()
@@ -149,11 +152,12 @@ export const LINK_HOVER_DECORATION = null
 // Darken percentage for links with `.text-*` class (e.g. `.text-success`)
 export const EMPHASIZED_LINK_HOVER_DARKEN_PERCENTAGE = 0.15
 
-// Grid breakpoints
-//
-// Define the minimum dimensions at which your layout will change,
-// adapting to different screen sizes, for use in media queries.
-
+/**
+ * Grid breakpoints
+ *
+ * Define the minimum dimensions at which your layout will change,
+ * adapting to different screen sizes, for use in media queries.
+ */
 export const GRID_BREAKPOINTS = {
   xs: { value: 0, readOnly: true },
   sm: 576,
@@ -162,10 +166,11 @@ export const GRID_BREAKPOINTS = {
   xl: 1200,
 }
 
-// Grid containers
-//
-// Define the maximum width of `.container` for different screen sizes.
-
+/**
+ * Grid containers
+ *
+ * Define the maximum width of `.container` for different screen sizes.
+ */
 export const CONTAINER_MAX_WIDTHS = {
   sm: 540,
   md: 720,
@@ -173,24 +178,25 @@ export const CONTAINER_MAX_WIDTHS = {
   xl: 1140,
 }
 
-// Grid columns
-//
-// Set the number of columns and specify the width of the gutters.
-
+/**
+ * Grid columns
+ *
+ * Set the number of columns and specify the width of the gutters.
+ */
 export const GRID_COLUMNS = 12
 export const GRID_GUTTER_WIDTH = 24
 export const GRID_ROW_COLUMNS = 6
 
 export const GUTTERS = SPACERS
 
-// Container padding
-
+/** Container padding */
 export const CONTAINER_PADDING_X = SPACER
 
-// Components
-//
-// Define common padding and border radius sizes and more.
-
+/**
+ * Components
+ *
+ * Define common padding and border radius sizes and more.
+ */
 export const BORDER_WIDTH = 1
 export const BORDER_COLOR = GRAY_300
 
@@ -233,20 +239,21 @@ export const EMBED_RESPONSIVE_ASPECT_RATIOS = {
   },
 }
 
-// Typography
-//
-// Font, line-height, and color for body text, headings, and more.
-
-// stylelint-disable value-keyword-case
+/**
+ * Typography
+ *
+ * Font, line-height, and color for body text, headings, and more.
+ */
 export const FONT_FAMILY_SANS_SERIF =
   '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"'
 export const FONT_FAMILY_MONOSPACE =
   'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace'
 export const FONT_FAMILY_BASE = FONT_FAMILY_SANS_SERIF
-// stylelint-enable value-keyword-case
 
-// FONT_SIZE_ROOT effects the value of `rem`, which is used for as well font sizes, paddings and margins
-// FONT_SIZE_BASE effects the font size of the body text
+/**
+ * FONT_SIZE_ROOT effects the value of `rem`, which is used for as well font sizes, paddings and margins
+ * FONT_SIZE_BASE effects the font size of the body text
+ */
 export const FONT_SIZE_ROOT = 16
 export const FONT_SIZE_BASE = 16 // Assumes the browser default, typically `16px`
 export const FONT_SIZE_SM = 14
@@ -320,8 +327,9 @@ export const LIST_INLINE_PADDING = 8
 
 export const MARK_BG = '#fcf8e3'
 
-// Paragraphs
-//
-// Style p element.
-
+/**
+ * Paragraphs
+ *
+ * Style p element.
+ */
 export const PARAGRAPH_MARGIN_BOTTOM = FONT_SIZE_BASE

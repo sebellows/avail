@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-import { font, mixin, color, control, toREM, shadow } from '../../core/style'
+import { font, mixin, color, toREM, shadow } from '../../core/style'
 
 import { Field } from '../Field'
 
@@ -65,7 +65,7 @@ const StyledItemAddon = styled.span`
   &::before {
     content: '';
     ${mixin.cover}
-    background-color: ${color.alpha(color.bg.body, 0.5)};
+    background-color: ${({ theme }) => color.alpha(theme.bg, 0.5)};
     mix-blend-mode: overlay;
   }
 `
@@ -73,9 +73,6 @@ const StyledItemAddon = styled.span`
 // RepeaterItem styles
 export const StyledItem = {
   Wrapper: styled.div`
-    // background-color: ${color.alpha(color.white, 0.5)};
-    // border: solid ${color.border.base};
-    // border-width: 1px 1px 0 1px;
     border: 1px solid ${color.border.base};
     border-radius: 0.325rem;
 
@@ -90,9 +87,7 @@ export const StyledItem = {
     }
   `,
   Group: styled.div`
-    // background-color: ${color.bg.body};
     border: 0 solid ${color.border.base};
-    // border-width: 0 ${control.borderWidth};
     display: flex;
     flex: 1;
     align-items: center;
@@ -100,7 +95,7 @@ export const StyledItem = {
   `,
   Skein: styled.div`
     ${mixin.cover}
-    background-color: ${color.bg.body};
+    background-color: ${({ theme }) => theme.bg};
     mix-blend-mode: overlay;
     box-shadow: ${shadow.bevel(1)};
     border: 2px solid;

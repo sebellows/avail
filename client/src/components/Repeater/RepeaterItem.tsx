@@ -6,6 +6,7 @@ import { classNames, isNil } from '../../core/utils'
 import { FormGroupProps } from '../../core/contracts'
 
 import { StyledItem } from './styles'
+import { useTheme } from '../../ThemeContext'
 
 const RepeaterItem = forwardRef<{}, FormGroupProps>(
   (
@@ -22,19 +23,23 @@ const RepeaterItem = forwardRef<{}, FormGroupProps>(
     },
     ref: Ref<any>,
   ) => {
+    const theme = useTheme()
+
     return (
       <StyledItem.Wrapper
         ref={ref}
         className={classNames('repeater-item', className, { 'is-first': first })}
       >
-        <StyledItem.Skein className="repeater-item-skein" />
+        <StyledItem.Skein className="repeater-item-skein" theme={theme} />
         {!isNil(before) && (
-          <StyledItem.Prepend className="repeater-item-prepend">{before}</StyledItem.Prepend>
+          <StyledItem.Prepend className="repeater-item-prepend" theme={theme}>
+            {before}
+          </StyledItem.Prepend>
         )}
 
         <StyledItem.Group className="repeater-item-group">{children}</StyledItem.Group>
 
-        <StyledItem.Append className="repeater-item-append">
+        <StyledItem.Append className="repeater-item-append" theme={theme}>
           <Button fab variant="white" size={20} className="add" onClick={onAdd}>
             <PlusIcon size="12" />
           </Button>
