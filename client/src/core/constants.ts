@@ -9,6 +9,9 @@ export const INDENT_LEVEL = 0
 export const INDENT_AMOUNT = 2
 export const INDENT = range(2).reduce((str: string, curr: number) => (str += ' '), '')
 
+export const BASE_FONT_SIZE = 16
+export const BASE_LINE_HEIGHT = 1.5
+
 export const BORDER_STYLES = {
   solid: 'solid',
   dashed: 'dashed',
