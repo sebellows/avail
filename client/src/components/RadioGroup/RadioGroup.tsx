@@ -1,10 +1,10 @@
-import React, { forwardRef, Ref, SyntheticEvent } from 'react';
-import { classNames } from '../../core/utils';
-import { FormGroupProps, OptionProps } from '../../core/contracts';
-import { ToggleControl } from '../ToggleControl';
-import { FieldFeedback } from '../FieldFeedback';
-import { FieldDescription } from '../FieldDescription';
-import { Styled } from './styles';
+import React, { forwardRef, Ref, SyntheticEvent } from 'react'
+import { classNames } from '../../core/utils'
+import { FormGroupProps, OptionProps } from '../../core/contracts'
+import { ToggleControl } from '../ToggleControl/ToggleControl'
+import { FieldFeedback } from '../FieldFeedback'
+import { FieldDescription } from '../FieldDescription'
+import { Styled } from './styles'
 
 const RadioGroup = forwardRef<{}, FormGroupProps>(
   (
@@ -26,7 +26,7 @@ const RadioGroup = forwardRef<{}, FormGroupProps>(
     ref: Ref<any>,
   ) => {
     function handleChange(event: SyntheticEvent<HTMLInputElement>) {
-      onChange?.(event);
+      onChange?.(event)
     }
 
     return (
@@ -53,10 +53,10 @@ const RadioGroup = forwardRef<{}, FormGroupProps>(
         {description && <FieldDescription>{description}</FieldDescription>}
         {props?.isInvalid && error && <FieldFeedback type="invalid">{error[id]}</FieldFeedback>}
       </Styled.Wrapper>
-    );
+    )
   },
-);
+)
 
-RadioGroup.displayName = 'RadioGroup';
+RadioGroup.displayName = 'RadioGroup'
 
-export { RadioGroup };
+export { RadioGroup }

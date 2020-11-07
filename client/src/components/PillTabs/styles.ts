@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { color, mixin, radius, shadow, transition } from '../../core/style'
-import { Switch } from '../Switch'
+import { Switch } from '../Switch/Switch'
 import { Button } from '../Button'
 
 /** Utility Tabs */

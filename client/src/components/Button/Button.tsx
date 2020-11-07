@@ -1,15 +1,15 @@
-import React, { Ref } from 'react';
-import { classNames } from '../../core/utils';
+import React, { Ref } from 'react'
+import { classNames } from '../../core/utils'
 
-import { Styled } from './styles';
-import { ButtonProps } from './props';
+import { Styled } from './styles'
+import { ButtonProps } from './props'
 
 export const Button = React.forwardRef<{}, ButtonProps>(
   (
     { children, size = null, fab = false, icon = false, type = 'button', variant, ...props },
     ref: Ref<any>,
   ) => {
-    const btnStyle = fab ? 'fab' : icon ? 'icon' : 'base';
+    const btnStyle = fab ? 'fab' : icon ? 'icon' : 'base'
 
     return (
       <>
@@ -49,6 +49,6 @@ export const Button = React.forwardRef<{}, ButtonProps>(
           </Styled.Icon>
         )}
       </>
-    );
+    )
   },
-);
+)

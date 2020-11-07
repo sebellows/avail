@@ -8,7 +8,7 @@ import { OptionProps, FormGroupProps } from '../../core/contracts'
 import { Control } from '../Control'
 import { FieldFeedback } from '../FieldFeedback'
 import { FieldDescription } from '../FieldDescription'
-import { FormControlResolver } from '../FormControlResolver'
+import { FormControlResolver } from '../ControlResolver'
 
 import { Styled } from './styles'
 import { RepeaterItem } from './RepeaterItem'
