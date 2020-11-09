@@ -7,7 +7,6 @@ import {
   radius,
   shadow,
   zIndexes,
-  transition,
   toREM,
 } from '../../core/style'
 import { FormControlProps } from '../../core/contracts'
@@ -104,10 +103,13 @@ export const Styled = {
     line-height: 1;
     background-clip: content-box;
     background-color: ${({ value }) => value};
-    border: 1px solid ${control.borderColor};
+    border: 1px solid ${({ theme }) => theme.control.borderColor};
     border-radius: ${radius.sm} 0 0 ${radius.sm};
-    box-shadow: inset 0 0 0 5px ${color.bg.body}, inset 0 0 0 6px ${mixin.rgba(color.black, 0.2)},
-      1px 0 1px 0 ${color.compute(color.black).alpha(0.12).string()};
+    box-shadow: ${({ theme }) => `inset 0 0 0 5px ${theme.bg}, inset 0 0 0 6px ${mixin.rgba(
+      theme.fg,
+      0.2,
+    )},
+      1px 0 1px 0 ${color.compute(theme.fg).alpha(0.12).string()}`};
     box-sizing: content-box;
     z-index: 1;
     pointer-events: none;
@@ -151,10 +153,10 @@ export const Styled = {
     }
 
     &.colorpicker-panel-enter {
-      animation: ${dropdownEnter} ${transition.duration.easeIn} ${transition.timing.easeIn};
+      ${mixin.animation({ property: dropdownEnter, duration: 'easeIn', timing: 'easeIn' })}
     }
     &.colorpicker-panel-leave {
-      animation: ${dropdownLeave} ${transition.duration.easeOut} ${transition.timing.easeOut};
+      ${mixin.animation({ property: dropdownLeave, duration: 'easeIn', timing: 'easeIn' })}
     }
   `,
 
@@ -172,19 +174,19 @@ export const Styled = {
 
     &:hover,
     &.is-focused {
-      background-color: ${color.bg.hovered};
+      background-color: ${({ theme }) => theme.hover.bg};
     }
 
     /* Selected "option" */
     &.is-selected {
-      background-color: ${color.bg.hovered};
-      color: ${color.text.medium};
+      background-color: ${({ theme }) => theme.hover.bg};
+      color: ${({ theme }) => theme.muted};
     }
   `,
 
   /* Display the value of an option in `colorpicker`. */
   PreviewBox: styled.div`
-    border: 1px solid ${control.borderColor};
+    border: 1px solid ${({ theme }) => theme.control.borderColor};
     ${mixin.shadow(0)};
     display: none;
     line-height: 1;

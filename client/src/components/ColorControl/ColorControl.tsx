@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { forwardRef, Ref, useState, ChangeEvent } from 'react';
+import React, { forwardRef, Ref, useState, ChangeEvent } from 'react'
 
-import { DropletIcon } from '../Icon';
-import { FormControlProps } from '../../core/contracts';
-import { validFormProps } from '../../core/utils';
-import { Styled } from './styles';
+import { Icon } from '../Icon'
+import { FormControlProps } from '../../core/contracts'
+import { validFormProps } from '../../core/utils'
+import { Styled } from './styles'
 
 const ColorControl = forwardRef<{}, FormControlProps>(
   ({ showLabel = true, ...props }, ref: Ref<any>) => {
-    const [color, setColor] = useState(props?.value ?? '#000000');
+    const [color, setColor] = useState(props?.value ?? '#000000')
 
-    const formProps = validFormProps(props);
+    const formProps = validFormProps(props)
 
     function handleChange(event: ChangeEvent<HTMLInputElement>) {
-      setColor(event.target.value);
-      props?.onChange?.(event);
+      setColor(event.target.value)
+      props?.onChange?.(event)
     }
 
     return (
@@ -26,15 +26,15 @@ const ColorControl = forwardRef<{}, FormControlProps>(
             colorValue={color as string}
             aria-hidden="true"
           >
-            <DropletIcon className="mr-2" size={16} />
+            <Icon name="droplet" className="mr-2" size={16} />
             {color}
           </Styled.Overlay>
         )}
       </>
-    );
+    )
   },
-);
+)
 
-ColorControl.displayName = 'ColorControl';
+ColorControl.displayName = 'ColorControl'
 
-export { ColorControl };
+export { ColorControl }

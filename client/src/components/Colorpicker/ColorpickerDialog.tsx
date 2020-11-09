@@ -1,18 +1,20 @@
-import React, { forwardRef, Ref } from 'react';
-import { ComponentProps } from '../../core/contracts';
-import { Icon } from '../Icon';
-import { classNames } from '../../core/utils';
-import { Styled } from './styles';
+import React, { forwardRef, Ref } from 'react'
+import { ComponentProps } from '../../core/contracts'
+import { Icon } from '../Icon/Icon'
+import { classNames } from '../../core/utils'
+import { Styled } from './styles'
+import { useTheme } from '../../ThemeContext'
 
 interface ColorpickerDialogProps extends ComponentProps {
-  hue?: number;
-  lightness?: number;
-  alpha?: number;
-  open?: boolean;
+  hue?: number
+  lightness?: number
+  alpha?: number
+  open?: boolean
 }
 
 const ColorpickerDialog = forwardRef<HTMLDivElement, ColorpickerDialogProps>(
   ({ className, hue, lightness, alpha, open = false }, ref: Ref<HTMLDivElement>) => {
+    const theme = useTheme()
     return (
       <Styled.Dialog.Wrapper
         ref={ref}
@@ -29,7 +31,10 @@ const ColorpickerDialog = forwardRef<HTMLDivElement, ColorpickerDialogProps>(
               <Icon name="crosshair" size="18" />
             </Styled.Dialog.Crosshair>
 
-            <Styled.Dialog.Skein className="colorpicker-control-skein"></Styled.Dialog.Skein>
+            <Styled.Dialog.Skein
+              className="colorpicker-control-skein"
+              theme={theme}
+            ></Styled.Dialog.Skein>
           </Styled.Dialog.HueControl>
 
           <Styled.Dialog.LightnessControl className="colorpicker-control colorpicker-lightness-control">
@@ -61,10 +66,10 @@ const ColorpickerDialog = forwardRef<HTMLDivElement, ColorpickerDialogProps>(
           </Styled.Dialog.Close>
         </Styled.Dialog.Inner>
       </Styled.Dialog.Wrapper>
-    );
+    )
   },
-);
+)
 
-ColorpickerDialog.displayName = 'ColorpickerDialog';
+ColorpickerDialog.displayName = 'ColorpickerDialog'
 
-export { ColorpickerDialog };
+export { ColorpickerDialog }

@@ -18,7 +18,7 @@ import {
 } from '../core/contracts'
 import { useStore } from '../store/useStore'
 // import { SettingsContext, ADD_ITEM, REMOVE_ITEM, SET_CONFIG } from '../store'
-import { Field, FieldDescription, FormControlResolver, InfoIcon } from '../components'
+import { Field, FieldDescription, FormControlResolver, Icon } from '../components'
 
 export interface SettingsFormProps extends ComponentProps {
   settings?: AvailConfig<AvailSetting>
@@ -116,7 +116,8 @@ const SettingsForm: FC<SettingsFormProps> = React.memo(() => {
                           {field.description && (
                             <Fragment>
                               &nbsp;
-                              <InfoIcon
+                              <Icon
+                                name="info"
                                 data-tip={field.description}
                                 data-for={`${field.id}-info`}
                                 size={16}

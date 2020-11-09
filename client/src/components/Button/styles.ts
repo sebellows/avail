@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components'
-import { color, mixin, isUnit, toREM, transition, shadow } from '../../core/style'
+import { color, mixin, isUnit, toREM, shadow } from '../../core/style'
 import { ButtonProps } from './props'
 
 const ButtonShadowStyles = css`
@@ -25,7 +25,7 @@ const BaseButton = styled.button<ButtonProps>`
   color: ${({ variant }) => (variant ? mixin.invert(color[variant]) : color.dark)};
   overflow: hidden;
   ${mixin.appearanceNone}
-  transition: all ${transition.duration.easeInOut} ${transition.timing.easeInOut};
+  ${mixin.transition('easeInOut')}
 
   &::after {
     content: '';
@@ -39,7 +39,7 @@ const BaseButton = styled.button<ButtonProps>`
     ${mixin.borderRadius('base')}
     opacity: 0;
     transform: translate(-50%, -50%);
-    transition: opacity ${transition.duration.easeInOut} ${transition.timing.easeInOut};
+    ${mixin.transition({ property: 'opactity', duration: 'easeInOut', timing: 'easeInOut' })}
     pointer-events: none;
   }
 

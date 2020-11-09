@@ -1,7 +1,7 @@
 import React, { forwardRef, Ref } from 'react'
 
 import { Button } from '../Button'
-import { MinusIcon, PlusIcon } from '../Icon'
+import { Icon } from '../Icon'
 import { classNames, isNil } from '../../core/utils'
 import { FormGroupProps } from '../../core/contracts'
 
@@ -19,7 +19,6 @@ const RepeaterItem = forwardRef<{}, FormGroupProps>(
       before = null,
       onAdd,
       onRemove,
-      ...props
     },
     ref: Ref<any>,
   ) => {
@@ -37,21 +36,17 @@ const RepeaterItem = forwardRef<{}, FormGroupProps>(
           </StyledItem.Prepend>
         )}
 
-        <StyledItem.Group className="repeater-item-group">{children}</StyledItem.Group>
+        <StyledItem.Group className="repeater-item-group" theme={theme}>
+          {children}
+        </StyledItem.Group>
 
         <StyledItem.Append className="repeater-item-append" theme={theme}>
           <Button fab variant="white" size={20} className="add" onClick={onAdd}>
-            <PlusIcon size="12" />
+            <Icon name="plus" size="12" />
           </Button>
           <Button fab variant="white" size={20} className="remove" onClick={onRemove}>
-            <MinusIcon size="12" />
+            <Icon name="minus" size="12" />
           </Button>
-          {/* <button type="button" className="btn fab mini-fab btn-default add" onClick={onAdd}>
-            <PlusIcon size="12" />
-          </button> */}
-          {/* <button type="button" className="btn fab mini-fab btn-default remove" onClick={onRemove}>
-            <MinusIcon size="12" />
-          </button> */}
         </StyledItem.Append>
       </StyledItem.Wrapper>
     )

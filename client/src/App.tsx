@@ -2,24 +2,29 @@
 import React, { AnimationEvent, useEffect, useState, SyntheticEvent, useRef } from 'react'
 import styled from 'styled-components'
 
-// import { Store } from './store'
 import { zIndexes, spacers, toREM } from './core/style'
 import { SettingsForm } from './containers/SettingsForm'
 import { UtilitiesForm } from './containers/UtilitiesForm'
 import { Button, Spinner, Tabs, Tab, Toast, Icon, Switch } from './components'
 
-import './App.scss'
-import 'react-toastify/dist/ReactToastify.css'
 import { Logo } from './Logo'
 import { capitalize, classNames } from './core/utils'
 import { AVAIL_THEME, ThemeContext } from './ThemeContext'
-import { usePrevious } from './hooks'
+
+import './App.scss'
+import 'react-toastify/dist/ReactToastify.css'
+import { Collapse } from './components/Collapse/Collapse'
 
 const SubmitButton = styled(Button)`
   position: fixed;
   top: 90vh;
   right: ${toREM(spacers.base * 2)};
   z-index: ${zIndexes.submitBtn};
+`
+
+const StyledDropdownMenu = styled.div`
+  width: 240px;
+  display: none;
 `
 
 export default function App() {
@@ -31,7 +36,6 @@ export default function App() {
   const [themeMenuOpen, setThemeMenuOpen] = useState(false)
 
   const formRef = useRef(null)
-  const activeTheme = useRef('light')
 
   useEffect(() => {
     if (loading) {
@@ -41,12 +45,6 @@ export default function App() {
       return () => clearTimeout(fadeSpinner)
     }
   }, [loading])
-
-  useEffect(() => {
-    if (activeTheme.current !== theme) {
-      activeTheme.current = theme
-    }
-  }, [theme])
 
   function handleLoad(event: AnimationEvent) {
     event.persist()
@@ -62,12 +60,6 @@ export default function App() {
       return obj
     }, {})
     console.log('submitted', values)
-  }
-
-  function invertTheme() {
-    const next = activeTheme.current !== 'light' ? 'light' : 'dark'
-    setTheme(next)
-    setThemeColors(AVAIL_THEME.get(next))
   }
 
   function selectTheme(selected: string) {
@@ -101,7 +93,8 @@ export default function App() {
             <Button icon onClick={() => setThemeMenuOpen(!themeMenuOpen)}>
               <Icon name="bucket" />
             </Button>
-            <div className={classNames('dropdown-menu', { 'd-none': !themeMenuOpen })}>
+            <Collapse open={themeMenuOpen}>
+              {/* <div className={classNames('dropdown-menu', { 'd-none': !themeMenuOpen })}> */}
               {Array.from(AVAIL_THEME.keys()).map((key) => (
                 <Button key={key} onClick={() => selectTheme(key)}>
                   {key
@@ -110,12 +103,13 @@ export default function App() {
                     .join(' ')}
                 </Button>
               ))}
-            </div>
+            </Collapse>
+            {/* </div> */}
           </div>
 
-          <Switch value={theme} onChange={() => invertTheme()}>
+          {/* <Switch value={theme} onChange={() => invertTheme()}>
             Mode
-          </Switch>
+          </Switch> */}
         </header>
 
         <div className="container">

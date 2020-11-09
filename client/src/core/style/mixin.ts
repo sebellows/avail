@@ -4,7 +4,7 @@ import { Color } from '../utils'
 import { maybeApplyUnit } from './units'
 import { buttonVariant } from './buttons'
 import { dropShadowMixin, shadowMixin } from './shadows'
-import { transitionMixin } from './transition'
+import { animationMixin, transitionMixin } from './transition'
 import { generateSpacer, spacerMixin } from './spacers'
 import { radiusMixin } from './radius'
 
@@ -14,6 +14,7 @@ export const mixin = {
   rgba: (colorValue: string, opacity: number) => Color(colorValue).alpha(opacity).string(),
   invert: (hue: string) => (Color(hue).isDark() ? WHITE : DARK),
   buttonVariant,
+  animation: animationMixin,
   transition: transitionMixin,
   shadow: shadowMixin,
   dropShadow: dropShadowMixin,

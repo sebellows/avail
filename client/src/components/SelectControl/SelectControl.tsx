@@ -3,6 +3,7 @@ import React, { forwardRef, Ref, useEffect, useMemo, useRef } from 'react'
 import { FormControlProps, OptionProps } from '../../core/contracts'
 import { isOption, toOptions } from '../../core/models/Option'
 import { classNames, validFormProps, containerProps, typeOf } from '../../core/utils'
+import { useTheme } from '../../ThemeContext'
 import { Styled } from './styles'
 
 const SelectControl = forwardRef<{}, FormControlProps>(
@@ -19,6 +20,7 @@ const SelectControl = forwardRef<{}, FormControlProps>(
     },
     ref: Ref<any>,
   ) => {
+    const theme = useTheme()
     const options = useMemo(() => {
       if (Array.isArray(initialOptions) && initialOptions.some(isOption)) {
         return initialOptions
@@ -51,6 +53,7 @@ const SelectControl = forwardRef<{}, FormControlProps>(
           as="select"
           ref={ref}
           {...formProps}
+          theme={theme}
           className={classNames('control', controlClass)}
           aria-label={arialabel}
           onChange={handleChange}

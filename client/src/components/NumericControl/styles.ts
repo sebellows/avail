@@ -1,17 +1,17 @@
-import styled from 'styled-components';
-import { StyledControl } from '../Control';
-import { color, control, font, mixin, normalizeUnit, toRatio, toREM } from '../../core/style';
+import styled from 'styled-components'
+import { StyledControl } from '../Control'
+import { control, font, mixin, normalizeUnit, toRatio, toREM } from '../../core/style'
 
-const controlBorderWidth = normalizeUnit(control.borderWidth);
-const controlInnerHeight = normalizeUnit(control.height) - controlBorderWidth;
-const numberSpinnerHeight = toREM(normalizeUnit(control.height));
-const buttonBorderRadius = toREM(normalizeUnit(control.borderRadius) - 1);
+const controlBorderWidth = normalizeUnit(control.borderWidth)
+const controlInnerHeight = normalizeUnit(control.height) - controlBorderWidth
+const numberSpinnerHeight = toREM(normalizeUnit(control.height))
+const buttonBorderRadius = toREM(normalizeUnit(control.borderRadius) - 1)
 
 const StyledButton = styled.button`
   position: relative;
   ${mixin.inlineFlexCenter}
   ${mixin.size(numberSpinnerHeight)}
-  ${mixin.buttonVariant(color.primary)}
+  ${({ theme }) => mixin.buttonVariant(theme.primary)}
   padding: 0;
   border-radius: 0;
   flex: none;
@@ -35,7 +35,7 @@ const StyledButton = styled.button`
       box-shadow: ${control.active.boxShadow};
     }
   }
-`;
+`
 
 export const Styled = {
   Wrapper: styled.div`
@@ -75,4 +75,4 @@ export const Styled = {
     border-bottom-left-radius: ${buttonBorderRadius};
     left: ${control.borderWidth};
   `,
-};
+}

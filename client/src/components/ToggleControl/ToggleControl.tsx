@@ -1,7 +1,7 @@
 import React, { Ref, useRef, useState } from 'react'
 import { control } from '../../core/style'
 import { validFormProps, containerProps } from '../../core/utils'
-import { CheckIcon } from '../Icon'
+import { Icon } from '../Icon'
 import { Styled } from './styles'
 import { ToggleControlProps } from './props'
 
@@ -46,7 +46,8 @@ const ToggleControl = React.forwardRef<{}, ToggleControlProps>(
           <Styled.Outer className="toggle-outer" inputType={inputType} />
           <Styled.Inner className="toggle-inner" inputType={inputType}>
             {inputType === 'checkbox' && (
-              <CheckIcon
+              <Icon
+                name="check"
                 fill={checked ? control.active.bg : control.bg}
                 strokeDashoffset="22.91026"
                 strokeDasharray="22.91026"

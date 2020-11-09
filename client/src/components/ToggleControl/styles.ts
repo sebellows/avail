@@ -1,6 +1,6 @@
 import styled, { keyframes, css } from 'styled-components'
 import { Control } from '../Control'
-import { mixin, control, transition } from '../../core/style'
+import { mixin, control } from '../../core/style'
 import { ToggleControlProps } from './props'
 
 const checkStrokeDashOffset = '22.910259'
@@ -34,9 +34,6 @@ const toCheckedPath = keyframes`
   50% {
     stroke-dashoffset: ${checkStrokeDashOffset};
   }
-  50% {
-    animation-timing-function: ${transition.timing.linearOutSlowIn};
-  }
   100% {
     stroke-dashoffset: 0;
   }
@@ -44,10 +41,8 @@ const toCheckedPath = keyframes`
 /* Hides the checkmark when the checkbox goes from checked -> unchecked. */
 const toUncheckedPath = keyframes`
   from {
-    animation-timing-function: ${transition.timing.fastOutSlowIn};
     stroke-dashoffset: 0;
   }
-
   to {
     stroke-dashoffset: ${checkStrokeDashOffset};
   }
@@ -62,10 +57,10 @@ const ToggleUI = styled.div<{ inputType }>`
   border-radius: ${({ inputType }) => (inputType === 'radio' ? '50%' : '0.25em')};
   width: 1rem;
   height: 1rem;
-  transition: ${({ inputType }) =>
+  ${({ inputType }) =>
     inputType === 'radio'
-      ? 'border-color ease 280ms'
-      : `border-color 150ms ${transition.timing.linearOutSlowIn}`};
+      ? mixin.transition({ property: 'border-color', duration: 280, timing: 'ease' })
+      : mixin.transition({ property: 'border-color', duration: 150, timing: [0, 0, 0.2, 0.1] })}
 `
 export const Styled = {
   Wrapper: styled.label`
@@ -102,25 +97,19 @@ export const Styled = {
         `}
       ${({ type }) =>
         type === 'checkbox' &&
-        css`
-          animation: ${transition.duration.easeIn} linear 0ms ${fadeInBg};
-        `}
-    }
+        mixin.animation({ property: fadeInBg, duration: 'easeIn', timing: 'linear' })}
     &:not(:checked) ~ .toggle-container .toggle-inner {
       ${({ type }) =>
         type === 'checkbox' &&
-        css`
-          animation: ${transition.duration.easeIn} linear 0ms ${fadeOutBg};
-        `}
-    }
+        mixin.animation({ property: fadeOutBg, duration: 'easeIn', timing: 'linear' })}
     &:checked ~ .toggle-container .toggle-inner .icon {
       stroke-dashoffset: 0;
     }
     &:checked ~ .toggle-container .toggle-inner .icon .check-icon-path {
-      animation: ${transition.duration.easeIn} linear 0ms ${toCheckedPath};
+      ${mixin.animation({ property: toCheckedPath, duration: 'easeIn', timing: 'linearOutSlowIn' })}
     }
     &:not(:checked) ~ .toggle-container .toggle-inner .icon .check-icon-path {
-      animation: ${transition.duration.easeIn} linear 0ms ${toUncheckedPath};
+      ${mixin.animation({ property: toUncheckedPath, duration: 'easeIn', timing: 'fastOutSlowIn' })}
     }
   `,
   Container: styled.div`
@@ -144,10 +133,14 @@ export const Styled = {
   Outer: ToggleUI,
   Inner: styled(ToggleUI)`
     border-color: transparent;
-    transition: ${({ inputType }) =>
+    ${({ inputType }) =>
       inputType === 'radio'
-        ? 'transform ease 280ms, background-color ease 280ms'
-        : `background-color 150ms cubic-bezier(0, 0, 0.2, 0.1), opacity 150ms ${transition.timing.linearOutSlowIn}`};
+        ? mixin.transition({ property: 'background-color', duration: 280, timing: 'ease' })
+        : mixin.transition(
+            { duration: 150, timing: 'linearOutSlowIn' },
+            'background-color',
+            'opacity',
+          )}
     transform: ${({ inputType }) => (inputType === 'radio' ? 'scale(0.001)' : 'none')};
   `,
   Content: styled.div`

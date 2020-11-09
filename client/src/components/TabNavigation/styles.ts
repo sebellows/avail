@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import { control, mixin } from '../../core/style';
+import styled from 'styled-components'
+import { control, mixin } from '../../core/style'
 
 export const Styled = {
   Tabs: styled.nav`
@@ -14,7 +14,7 @@ export const Styled = {
     text-align: center;
     text-decoration: none;
     ${mixin.padding.all(2, 3)}
-    transition: background-color var(--ease-in-duratin) var(--ease-in-timing);
+    ${mixin.transition({ property: 'background-color', duration: 'easeIn', timing: 'easeIn' })}
 
     &:hover,
     &[aria-selected='true'] {
@@ -32,4 +32,4 @@ export const Styled = {
       visibility: visible;
     }
   `,
-};
+}

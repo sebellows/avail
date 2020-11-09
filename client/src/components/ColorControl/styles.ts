@@ -1,12 +1,12 @@
-import styled from 'styled-components';
-import { Color } from '../../core/utils';
+import styled from 'styled-components'
+import { Color } from '../../core/utils'
 
-import { Control } from '../Control';
-import { FormControlProps } from '../../core/contracts';
-import { color, control, mixin, transition } from '../../core/style';
+import { Control } from '../Control'
+import { FormControlProps } from '../../core/contracts'
+import { color, control, mixin } from '../../core/style'
 
 interface StyledProps {
-  colorValue?: string;
+  colorValue?: string
 }
 
 export const Styled = {
@@ -31,6 +31,6 @@ export const Styled = {
     z-index: 1;
     color: ${({ colorValue }) => (Color(colorValue).isDark() ? color.text.light : color.text.dark)};
     pointer-events: none;
-    transition: mix-blend-mode ${transition.duration.easeIn} ${transition.timing.easeIn};
+    ${mixin.transition({ property: 'mix-blend-mode', duration: 'easeIn', timing: 'easeIn' })}
   `,
-};
+}

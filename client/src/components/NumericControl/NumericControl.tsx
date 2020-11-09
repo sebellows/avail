@@ -1,11 +1,12 @@
-import React, { forwardRef, Ref, useEffect, useState, useRef } from 'react';
-import { FormControlProps } from '../../core/contracts';
-import { MinusIcon, PlusIcon } from '../Icon';
-import { DOWN, UP, containerProps, validFormProps, classNames } from '../../core/utils';
-import { Styled } from './styles';
+import React, { forwardRef, Ref, useEffect, useState, useRef } from 'react'
+import { FormControlProps } from '../../core/contracts'
+import { Icon } from '../Icon'
+import { DOWN, UP, containerProps, validFormProps, classNames } from '../../core/utils'
+import { Styled } from './styles'
+import { useTheme } from '../../ThemeContext'
 
 interface NumericControlProps extends FormControlProps {
-  step?: number;
+  step?: number
 }
 
 const NumericControl = forwardRef<{}, NumericControlProps>(
@@ -21,61 +22,62 @@ const NumericControl = forwardRef<{}, NumericControlProps>(
     },
     ref: Ref<any>,
   ) => {
-    const [value, setValue] = useState(initialValue);
-    const [disabled, setDisabled] = useState(initialDisabled);
+    const theme = useTheme()
+    const [value, setValue] = useState(initialValue)
+    const [disabled, setDisabled] = useState(initialDisabled)
 
-    const inputRef = useRef(null);
+    const inputRef = useRef(null)
 
     useEffect(() => {
       if (readOnly) {
-        setDisabled(true);
+        setDisabled(true)
       }
-    }, [readOnly]);
+    }, [readOnly])
 
     useEffect(() => {
       if (+value <= min) {
-        setValue(`${min}`);
+        setValue(`${min}`)
       }
       if (+value >= max) {
-        setValue(`${max}`);
+        setValue(`${max}`)
       }
-    }, [min, max, value, setValue]);
+    }, [min, max, value, setValue])
 
     function increment(event: any) {
-      event.preventDefault();
-      event.stopPropagation();
+      event.preventDefault()
+      event.stopPropagation()
 
-      if (disabled || +value >= max) return;
+      if (disabled || +value >= max) return
 
-      setValue(`${+value + 1 * step}`);
+      setValue(`${+value + 1 * step}`)
     }
 
     function decrement(event: any) {
-      event.preventDefault();
-      event.stopPropagation();
+      event.preventDefault()
+      event.stopPropagation()
 
-      if (disabled || +value <= min) return;
+      if (disabled || +value <= min) return
 
-      setValue(`${+value + -1 * step}`);
+      setValue(`${+value + -1 * step}`)
     }
 
     function handleKeyUp(event: any) {
-      event.preventDefault();
+      event.preventDefault()
 
       if (event.keyCode === UP) {
-        increment(event);
+        increment(event)
       }
       if (event.keyCode === DOWN) {
-        decrement(event);
+        decrement(event)
       }
     }
 
     function handleChange(event: any) {
-      if (props.onChange) props.onChange(event);
+      if (props.onChange) props.onChange(event)
     }
 
-    const _containerProps = containerProps(props, { exclude: ['type'] });
-    const _controlProps = validFormProps(props);
+    const _containerProps = containerProps(props, { exclude: ['type'] })
+    const _controlProps = validFormProps(props)
 
     return (
       <Styled.Wrapper
@@ -87,6 +89,7 @@ const NumericControl = forwardRef<{}, NumericControlProps>(
           ref={inputRef}
           {..._controlProps}
           type="number"
+          theme={theme}
           disabled={disabled}
           readOnly={readOnly}
           min={min}
@@ -97,25 +100,27 @@ const NumericControl = forwardRef<{}, NumericControlProps>(
         />
         <Styled.IncrementButton
           type="button"
+          theme={theme}
           className="decrement-btn"
           disabled={disabled || value >= max}
           onClick={increment}
         >
-          <PlusIcon size={20} />
+          <Icon name="plus" size={20} />
         </Styled.IncrementButton>
         <Styled.DecrementButton
           type="button"
+          theme={theme}
           className="decrement-btn"
           disabled={disabled || value <= min}
           onClick={decrement}
         >
-          <MinusIcon size={20} />
+          <Icon name="minus" size={20} />
         </Styled.DecrementButton>
       </Styled.Wrapper>
-    );
+    )
   },
-);
+)
 
-NumericControl.displayName = 'NumericControl';
+NumericControl.displayName = 'NumericControl'
 
-export { NumericControl };
+export { NumericControl }

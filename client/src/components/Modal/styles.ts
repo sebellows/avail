@@ -1,8 +1,8 @@
-import styled from 'styled-components';
-import { mixin, transition, zIndexes, toREM, spacers } from '../../core/style';
-import { FocusTrap } from '../FocusTrap';
+import styled from 'styled-components'
+import { mixin, zIndexes, toREM, spacers } from '../../core/style'
+import { FocusTrap } from '../FocusTrap'
 
-const NAV_ITEM_WIDTH = 60;
+const NAV_ITEM_WIDTH = 60
 
 const ModalBase = styled.div`
   position: fixed;
@@ -11,7 +11,7 @@ const ModalBase = styled.div`
   width: 100%;
   height: 100%;
   overflow-y: scroll;
-`;
+`
 
 const NavItem = styled.a`
   position: absolute;
@@ -24,14 +24,12 @@ const NavItem = styled.a`
   padding: 0;
   opacity: 0.5;
   pointer-events: auto;
-`;
+`
 
 export const Styled = {
   Backdrop: styled(ModalBase)`
     background: rgba(255, 255, 255, 0.9);
-    animation: fade-in;
-    animation-duration: ${transition.duration.easeOut};
-    animation-timing-function: ${transition.timing.easeOut};
+    ${mixin.animation({ property: 'fade-in', duration: 'easeOut', timing: 'easeOut' })}
   `,
   Modal: styled(ModalBase)`
     display: flex;
@@ -49,7 +47,7 @@ export const Styled = {
     width: calc(100% - ${toREM(spacers.base * 2)});
     z-index: ${zIndexes.modal + 1};
     transform: translate3d(0, 0, 0);
-    ${mixin.transition({ dur: 'easeIn', timing: 'easeIn' })}
+    ${mixin.transition({ duration: 'easeIn', timing: 'easeIn' })}
 
     @media (min-width: 600px) {
       max-width: calc(100% - ${toREM(NAV_ITEM_WIDTH * 2)});
@@ -86,4 +84,4 @@ export const Styled = {
   Next: styled(NavItem)`
     right: 0;
   `,
-};
+}

@@ -1,11 +1,11 @@
-import styled, { keyframes } from 'styled-components';
-import { color, mixin, transition } from '../../core/style';
+import styled, { keyframes } from 'styled-components'
+import { color, mixin } from '../../core/style'
 
 const containerRotate = keyframes`
   to {
     transform: rotate(360deg);
   }
-`;
+`
 
 const fillUnfillRotate = keyframes`
   12.5% {
@@ -32,7 +32,7 @@ const fillUnfillRotate = keyframes`
   to {
     transform: rotate(1080deg);
   } // 4 * ARCSIZE
-`;
+`
 
 const leftSpin = keyframes`
   from {
@@ -44,7 +44,7 @@ const leftSpin = keyframes`
   to {
     transform: rotate(130deg);
   }
-`;
+`
 
 const rightSpin = keyframes`
   from {
@@ -56,7 +56,7 @@ const rightSpin = keyframes`
   to {
     transform: rotate(-130deg);
   }
-`;
+`
 
 export const fadeIn = keyframes`
   from {
@@ -65,7 +65,7 @@ export const fadeIn = keyframes`
   to {
     opacity: 1;
   }
-`;
+`
 
 export const fadeOut = keyframes`
   from {
@@ -74,7 +74,7 @@ export const fadeOut = keyframes`
   to {
     opacity: 0;
   }
-`;
+`
 
 const StyledCircle = styled.div`
   ${mixin.cover}
@@ -84,7 +84,7 @@ const StyledCircle = styled.div`
   border-color: inherit;
   border-bottom-color: transparent !important;
   border-radius: 50%;
-`;
+`
 
 export const Styled = {
   Wrapper: styled.div`
@@ -95,7 +95,12 @@ export const Styled = {
     border-color: ${color.primary};
     &.spinner-out {
       // duration: SHRINK_TIME
-      animation: ${fadeOut} ${transition.duration.easeOut} ${transition.timing.fastOutSlowIn} both;
+      ${mixin.animation({
+        property: fadeOut,
+        duration: 'easeOut',
+        timing: 'easeOut',
+        fillMode: 'both',
+      })}
     }
   `,
   Container: styled.div`
@@ -103,7 +108,12 @@ export const Styled = {
     height: 100%;
     border-color: inherit;
     // duration: 360 * ARCTIME / (ARCSTARTROT + (360-ARCSIZE))
-    animation: ${containerRotate} 1568ms linear infinite;
+    ${mixin.animation({
+      property: containerRotate,
+      duration: 1568,
+      timing: 'linear',
+      iterationCount: 'infinite',
+    })}
   `,
 
   Layer: styled.div`
@@ -115,7 +125,13 @@ export const Styled = {
     white-space: nowrap;
     font-size: 0px;
     /* durations: 4 * ARCTIME */
-    animation: ${fillUnfillRotate} 5332ms ${transition.timing.fastOutSlowIn} infinite both;
+    ${mixin.animation({
+      property: fillUnfillRotate,
+      duration: 5332,
+      timing: 'fastOutSlowIn',
+      iterationCount: 'infinite',
+      fillMode: 'both',
+    })}
   `,
   // Patch the gap that appear between the two adjacent div.circle-clipper while the
   // spinner is rotating (appears on Chrome 38, Safari 7.1, and IE 11).
@@ -143,12 +159,24 @@ export const Styled = {
   LeftMaskCircle: styled(StyledCircle)`
     border-right-color: transparent !important;
     transform: rotate(129deg);
-    animation: ${leftSpin} 1333ms ${transition.timing.fastOutSlowIn} infinite both;
+    ${mixin.animation({
+      property: leftSpin,
+      duration: 1333,
+      timing: 'fastOutSlowIn',
+      iterationCount: 'infinite',
+      fillMode: 'both',
+    })}
   `,
   RightMaskCircle: styled.div`
     left: -100%;
     border-left-color: transparent !important;
     transform: rotate(-129deg);
-    animation: ${rightSpin} 1333ms ${transition.timing.fastOutSlowIn} infinite both;
+    ${mixin.animation({
+      property: rightSpin,
+      duration: 1333,
+      timing: 'fastOutSlowIn',
+      iterationCount: 'infinite',
+      fillMode: 'both',
+    })}
   `,
-};
+}

@@ -1,32 +1,33 @@
-import React, { forwardRef, Ref, ChangeEvent, useState } from 'react';
-import styled from 'styled-components';
+import React, { forwardRef, Ref, ChangeEvent, useState } from 'react'
+import styled from 'styled-components'
 
-import { FormControlProps } from '../core/contracts';
-import { validFormProps, classNames } from '../core/utils';
-import { control, transition, radius, mixin } from '../core/style';
+import { FormControlProps } from '../core/contracts'
+import { validFormProps, classNames } from '../core/utils'
+import { control, radius, mixin } from '../core/style'
+import { useTheme } from '../ThemeContext'
 
 function isToggle(type: string) {
-  return type === 'checkbox' || type === 'radio';
+  return type === 'checkbox' || type === 'radio'
 }
 
 export const StyledBaseInput = styled.input<FormControlProps>`
-  background-color: ${({ disabled, isInvalid }: FormControlProps) => {
-    return isInvalid ? control.invalid.bg : disabled ? control.disabled.bg : control.bg;
+  background-color: ${({ isInvalid, disabled, theme }: FormControlProps) => {
+    return isInvalid ? theme.invalid.bg : disabled ? theme.disabled.bg : theme.control.bg
   }};
   background-clip: padding-box;
-  border-width: ${control.borderWidth};
+  border-width: 1px;
   border-style: solid;
-  border-color: ${({ disabled, isInvalid }: FormControlProps) => {
+  border-color: ${({ disabled, isInvalid, theme }: FormControlProps) => {
     return isInvalid
-      ? control.invalid.borderColor
+      ? theme.invalid.borderColor
       : disabled
-      ? control.disabled.borderColor
-      : control.borderColor;
+      ? theme.disabled.borderColor
+      : theme.control.borderColor
   }};
   border-radius: ${radius.base};
   box-shadow: none;
-  color: ${({ disabled, isInvalid }: FormControlProps) => {
-    return isInvalid ? control.invalid.color : disabled ? control.disabled.color : control.color;
+  color: ${({ disabled, isInvalid, theme }: FormControlProps) => {
+    return isInvalid ? theme.invalid.fg : disabled ? theme.disabled.fg : theme.control.fg
   }};
   display: block;
   width: 100%;
@@ -37,24 +38,21 @@ export const StyledBaseInput = styled.input<FormControlProps>`
   font-weight: 400;
   line-height: ${control.lineHeight};
   outline: none;
-  transition: background-color ${transition.duration.easeIn} ${transition.timing.easeIn},
-    outline ${transition.duration.easeIn} ${transition.timing.easeIn},
-    color ${transition.duration.easeIn} ${transition.timing.easeIn},
-    box-shadow ${transition.duration.easeIn} ${transition.timing.easeIn};
-`;
+  ${mixin.transition('easeIn', 'background-color', 'outline', 'color', 'box-shadow')}
+`
 
 export const StyledControl = styled(StyledBaseInput)<FormControlProps>`
   &:hover,
   &:focus {
-    color: ${control.active.color};
+    color: ${({ theme }) => theme.control.fg};
     background-color: ${control.active.bg};
-    box-shadow: ${control.active.boxShadow};
+    box-shadow: ${({ theme }) => theme.focus.boxShadow};
   }
   &:hover {
-    border-color: ${control.active.borderColor};
+    border-color: ${({ theme }) => theme.control.borderColor};
   }
   &:focus {
-    border-color: ${control.focus.borderColor};
+    border-color: ${({ theme }) => theme.focus.borderColor};
   }
 
   &:disabled {
@@ -62,11 +60,11 @@ export const StyledControl = styled(StyledBaseInput)<FormControlProps>`
   }
 
   &.is-invalid {
-    background-color: ${control.invalid.bg};
-    border-color: ${control.invalid.borderColor};
-    color: ${control.invalid.color};
+    background-color: ${({ theme }) => theme.invalid.bg};
+    border-color: ${({ theme }) => theme.invalid.borderColor};
+    color: ${({ theme }) => theme.invalid.fg};
   }
-`;
+`
 
 const Control = forwardRef<HTMLInputElement, FormControlProps>(
   (
@@ -85,18 +83,19 @@ const Control = forwardRef<HTMLInputElement, FormControlProps>(
     },
     ref: Ref<HTMLInputElement>,
   ) => {
-    const [value, setValue] = useState(initialValue);
-    const formProps = validFormProps(props, { exclude: ['onChange'] });
+    const theme = useTheme()
+    const [value, setValue] = useState(initialValue)
+    const formProps = validFormProps(props, { exclude: ['onChange'] })
 
     function handleChange(event: ChangeEvent<HTMLInputElement>) {
-      event.persist();
-      setValue(event.target.value);
-      onChange?.(event);
+      event.persist()
+      setValue(event.target.value)
+      onChange?.(event)
     }
 
     function handleBlur(event: any) {
-      event.persist();
-      props?.onBlur?.(event);
+      event.persist()
+      props?.onBlur?.(event)
     }
 
     return (
@@ -106,16 +105,17 @@ const Control = forwardRef<HTMLInputElement, FormControlProps>(
         type={type}
         id={id ?? name}
         name={name ?? id}
+        theme={theme}
         value={value}
         disabled={readOnly ?? disabled}
         className={classNames('control', { 'is-invalid': !!isInvalid }, className)}
         onChange={handleChange}
         onBlur={handleBlur}
       />
-    );
+    )
   },
-);
+)
 
-Control.displayName = 'Control';
+Control.displayName = 'Control'
 
-export { Control };
+export { Control }

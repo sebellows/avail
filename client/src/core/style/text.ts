@@ -16,24 +16,20 @@ import {
 } from '../constants'
 import { maybeApplyUnit } from './units'
 
-export enum PresetFontSize {
-  base = FONT_SIZE_BASE,
-  sm = FONT_SIZE_SM,
-  lg = FONT_SIZE_LG,
-  h1 = H1_FONT_SIZE,
-  h2 = H2_FONT_SIZE,
-  h3 = H3_FONT_SIZE,
-  h4 = H4_FONT_SIZE,
-  h5 = H5_FONT_SIZE,
-  h6 = H6_FONT_SIZE,
-}
+export const PresetFontSizes = Object.freeze({
+  base: FONT_SIZE_BASE,
+  sm: FONT_SIZE_SM,
+  lg: FONT_SIZE_LG,
+  h1: H1_FONT_SIZE,
+  h2: H2_FONT_SIZE,
+  h3: H3_FONT_SIZE,
+  h4: H4_FONT_SIZE,
+  h5: H5_FONT_SIZE,
+  h6: H6_FONT_SIZE,
+})
 
-export type PresetFontSizeKey = keyof PresetFontSize
-
-export const PRESET_FONT_SIZES = Object.entries(PresetFontSize).reduce((acc, [k, v]) => {
-  acc[k] = v
-  return acc
-}, {})
+export type PresetFontSizeKey = keyof typeof PresetFontSizes
+export type PresetFontSizeValue = typeof PresetFontSizes[PresetFontSizeKey]
 
 export const font = {
   family: {
@@ -50,10 +46,10 @@ export const font = {
     }
     return `font-weight: normal;`
   },
-  sizes: PRESET_FONT_SIZES,
+  sizes: PresetFontSizes,
   size: (size: number | PresetFontSizeKey, unit = 'px') => {
     const fontSize =
-      typeof size === 'string' && size in PRESET_FONT_SIZES ? PresetFontSize[size] : size
+      typeof size === 'string' && size in PresetFontSizes ? PresetFontSizes[size] : size
     return `font-size: ${maybeApplyUnit(fontSize, unit)};`
   },
 }

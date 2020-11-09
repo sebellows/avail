@@ -1,10 +1,10 @@
-import React, { forwardRef, Ref } from 'react';
-import { classNames } from '../../core/utils';
+import React, { forwardRef, Ref } from 'react'
+import { classNames } from '../../core/utils'
 
-import { SettingsIcon } from '../Icon';
+import { Icon } from '../Icon'
 
-import { Styled } from './styles';
-import { PillTabProps } from './props';
+import { Styled } from './styles'
+import { PillTabProps } from './props'
 
 const PillTab = forwardRef<{}, PillTabProps>(
   (
@@ -37,13 +37,13 @@ const PillTab = forwardRef<{}, PillTabProps>(
           aria-controls={id}
           aria-expanded={selected}
         >
-          <SettingsIcon />
+          <Icon name="settings" />
         </Styled.Toggle>
       </Styled.Tab>
-    );
+    )
   },
-);
+)
 
-PillTab.displayName = 'PillTab';
+PillTab.displayName = 'PillTab'
 
-export { PillTab };
+export { PillTab }

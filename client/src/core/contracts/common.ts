@@ -22,4 +22,5 @@ export interface ComponentProps {
   className?: string
   children?: React.ReactNode
   id?: string
+  theme?: Record<string, any>
 }

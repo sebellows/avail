@@ -35,7 +35,12 @@ export const Styled = {
     box-shadow: inset 1px 1px 1px 0 rgba(0, 0, 0, 0.12),
       inset -1px -1px 0 0 rgba(255, 255, 255, 0.2);
     margin-bottom: 0;
-    ${mixin.transition({ dur: '80ms', timing: 'linear', delay: '50ms' }, 'background-color')}
+    ${mixin.transition({
+      property: 'background-color',
+      duration: '80ms',
+      timing: 'linear',
+      delay: '50ms',
+    })}
   `,
   Control: styled(Control)`
     position: absolute;
@@ -53,7 +58,12 @@ export const Styled = {
     color: ${({ checked }) => (checked ? color.light : color.text.body)};
     ${mixin.size(toREM(TOGGLE_SIZE))}
     transform: ${({ checked }) => (checked ? 'translate3d(1rem, 0, 0)' : 'translate3d(0, 0, 0)')};
-    ${mixin.transition({ dur: '80ms', timing: 'linear', delay: '50ms' }, 'transform')}
+    ${mixin.transition({
+      property: 'transform',
+      duration: '80ms',
+      timing: 'linear',
+      delay: '50ms',
+    })}
     pointer-events: none;
   `,
   ToggleInner: styled.span`

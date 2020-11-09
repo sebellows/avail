@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { color, mixin, radius, shadow, transition } from '../../core/style'
+import { color, mixin, radius, shadow } from '../../core/style'
 import { Switch } from '../Switch/Switch'
 import { Button } from '../Button'
 
@@ -22,7 +22,7 @@ export const Styled = {
     border-radius: ${radius.lg};
     // ${mixin.shadow(0, 1)}
     box-shadow: ${shadow.elevation(1)};
-    transition: box-shadow ${transition.duration.easeIn} ${transition.timing.fastOutSlowIn};
+    ${mixin.transition({ property: 'box-shadow', duration: 'easeIn', timing: 'fastOutSlowIn' })}
 
     &:hover {
       background-color: ${color.bg.light};

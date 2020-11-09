@@ -73,7 +73,7 @@ const StyledItemAddon = styled.span`
 // RepeaterItem styles
 export const StyledItem = {
   Wrapper: styled.div`
-    border: 1px solid ${color.border.base};
+    border: 1px solid ${({ theme }) => theme.borderColor};
     border-radius: 0.325rem;
 
     display: flex;
@@ -87,7 +87,7 @@ export const StyledItem = {
     }
   `,
   Group: styled.div`
-    border: 0 solid ${color.border.base};
+    border: 0 solid ${({ theme }) => theme.borderColor};
     display: flex;
     flex: 1;
     align-items: center;

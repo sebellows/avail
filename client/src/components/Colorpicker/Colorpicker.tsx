@@ -23,6 +23,7 @@ import { FormControlProps, OptionProps } from '../../core/contracts'
 import { useClickOutside } from '../../hooks/useClickOutside'
 import { Styled } from './styles'
 import { useEnsuredRef } from '../../hooks'
+import { useTheme } from '../../ThemeContext'
 
 function coerceToHexColor(value: string) {
   if (Color.isHexColor(value)) {
@@ -50,6 +51,7 @@ const Colorpicker = forwardRef<HTMLDivElement, ColorpickerProps>(
     },
     ref,
   ) => {
+    const theme = useTheme()
     const [isOpen, setOpen] = useState(false)
     const [value, setValue] = useState(initialValue)
     const [color, setColor] = useState(initialValue)
@@ -232,11 +234,12 @@ const Colorpicker = forwardRef<HTMLDivElement, ColorpickerProps>(
         className={classNames('colorpicker', className, isOpen && 'is-open')}
         {...htmlProps}
       >
-        <Styled.Field as="div" className="colorpicker-form-group">
+        <Styled.Field as="div" className="colorpicker-form-group" theme={theme}>
           <Styled.ColorControl className="colorpicker-control">
             <Styled.ColorTarget
               value={Color.isColor(value as string) ? color : 'transparent'}
               className="colorpicker-target"
+              theme={theme}
             />
             <Styled.ColorInput
               type="color"
@@ -248,6 +251,7 @@ const Colorpicker = forwardRef<HTMLDivElement, ColorpickerProps>(
           <Styled.Control
             ref={inputRef}
             {...formProps}
+            theme={theme}
             value={modelValue}
             data-value={value}
             isInvalid={isInvalid}
@@ -271,6 +275,7 @@ const Colorpicker = forwardRef<HTMLDivElement, ColorpickerProps>(
               (options as OptionProps[]).map(({ name, value: colorValue }, i: number) => (
                 <Styled.Option
                   key={name}
+                  theme={theme}
                   className={classNames(
                     'colorpicker-option',
                     focusedIndex === i && 'is-focused',
@@ -281,6 +286,7 @@ const Colorpicker = forwardRef<HTMLDivElement, ColorpickerProps>(
                 >
                   <Styled.PreviewBox
                     className="preview-box"
+                    theme={theme}
                     style={{ backgroundColor: colorValue as string }}
                   />
                   <span className="colorpicker-option-name">{name}</span>

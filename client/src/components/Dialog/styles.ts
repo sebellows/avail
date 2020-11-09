@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import { mixin, zIndexes, color, radius } from '../../core/style';
+import styled from 'styled-components'
+import { mixin, zIndexes, color, radius } from '../../core/style'
 
 export const Styled = {
   Wrapper: styled.div`
@@ -17,7 +17,7 @@ export const Styled = {
     color: ${color.dark};
     opacity: 0.5;
     filter: drop-shadow(0 0 0 ${color.bg.body});
-    ${mixin.transition({ dur: 'easeIn', timing: 'easeIn' }, 'opacity', 'filter')}
+    ${mixin.transition({ duration: 'easeIn', timing: 'easeIn' }, 'opacity', 'filter')}
     ${mixin.appearanceNone}
 
     &:hover {
@@ -65,4 +65,4 @@ export const Styled = {
     border-bottom-right-radius: calc(${radius.base} - 1px);
     border-bottom-left-radius: calc(${radius.base} - 1px);
   `,
-};
+}
