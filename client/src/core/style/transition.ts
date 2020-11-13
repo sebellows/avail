@@ -15,16 +15,19 @@ interface TransitionParams {
   playState?: 'paused' | 'running'
 }
 
-const durations = {
+const _durations = {
   linear: 80,
   enter: 300,
   leave: 300,
   easeIn: 300,
   easeOut: 400,
   easeInOut: 500,
+  fastOutSlowIn: 500,
+  fastOutLinearIn: 500,
+  linearOutSlowIn: 500,
 }
 
-const timings = {
+const _timings = {
   enter: [0, 0, 0.2, 0.1], // linearOutSlowIn
   leave: [0.4, 0, 1, 1], // fastOutLinearIn
   easeIn: [0.55, 0, 0.55, 0.2],
@@ -35,17 +38,37 @@ const timings = {
   linearOutSlowIn: [0, 0, 0.2, 0.1],
 }
 
-const toMS = (dur: number | string, choices?: Record<string, any>) => {
-  if (typeof dur === 'string' && choices && dur in choices) {
-    dur = durations[dur]
+const toMS = (dur: number | string) => {
+  if (typeof dur === 'string') {
+    if (dur in _durations) {
+      return _durations[dur]
+    } else if (dur.endsWith('ms') || dur.endsWith('s')) {
+      return dur
+    }
   }
-
-  return typeof dur === 'string' && (dur.endsWith('ms') || dur.endsWith('s'))
-    ? dur
-    : `${parseInt('' + dur, 10)}ms`
+  return `${parseInt('' + dur, 10)}ms`
 }
 
-const ensureTiming = (val: number[] | string) => {
+const durations = {
+  ..._durations,
+  ms: toMS,
+  seconds: (dur: number | string) => {
+    if (typeof dur === 'string') {
+      if (dur in _durations) {
+        return _durations[dur] / 1000
+      }
+      if (dur.endsWith('ms')) {
+        return parseInt(dur, 10) / 1000
+      }
+      if (dur.endsWith('s')) {
+        return parseInt(dur, 10)
+      }
+    }
+    return parseInt('' + dur, 10)
+  },
+}
+
+const toCubicBezier = (val: number[] | string) => {
   if (typeof val === 'string') {
     if (val in timings) {
       return `cubic-bezier(${timings[val]})`
@@ -60,18 +83,21 @@ const ensureTiming = (val: number[] | string) => {
   }
 }
 
+const timings = {
+  ..._timings,
+  cubicBezier: toCubicBezier,
+}
+
 export const transition = (params: TransitionParams) => {
   const { property = 'all ', ...props } = params
   const propsStr = Object.entries(props).reduce((acc, [k, v]) => {
     switch (k) {
       case 'duration':
-        acc += ` ${toMS(v, durations)}`
-        break
       case 'delay':
         acc += ` ${toMS(v)}`
         break
       case 'timing':
-        acc += ` ${ensureTiming(v)}`
+        acc += ` ${toCubicBezier(v)}`
         break
       case 'direction':
       case 'fillMode':
@@ -113,6 +139,11 @@ const stringFactory = (params: string | TransitionParams, ...props: string[]) =>
   }
   // console.log('transition:', transition(params))
   return transition(params)
+}
+
+export const transitions = {
+  duration: durations,
+  timing: timings,
 }
 
 export const animationMixin = (params: string | TransitionParams, ...props: string[]) => css`

@@ -33,7 +33,7 @@ const AMBIENCE_DEPTHS = [
   '0px 1px 18px 0px', // depth6
 ]
 
-type ShadowFactoryParams = {
+export type ShadowFactoryParams = {
   hue?: string
   ambience?: number
   umbra?: number

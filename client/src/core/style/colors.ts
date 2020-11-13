@@ -57,6 +57,7 @@ export const color = {
     },
   },
 
+  isColor: (c: string) => Color.isColor(c),
   compute: (c: string) => Color(c),
   alpha: (c: string, opacity: number) => Color(c).alpha(opacity).string(),
 }

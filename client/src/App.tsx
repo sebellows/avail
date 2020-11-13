@@ -5,15 +5,15 @@ import styled from 'styled-components'
 import { zIndexes, spacers, toREM } from './core/style'
 import { SettingsForm } from './containers/SettingsForm'
 import { UtilitiesForm } from './containers/UtilitiesForm'
-import { Button, Spinner, Tabs, Tab, Toast, Icon, Switch } from './components'
+import { Button, Collapse, Spinner, Tabs, Tab, Toast, Icon, Switch } from './components'
 
 import { Logo } from './Logo'
-import { capitalize, classNames } from './core/utils'
+import { capitalize, classNames, hyphenate } from './core/utils'
 import { AVAIL_THEME, ThemeContext } from './ThemeContext'
 
 import './App.scss'
 import 'react-toastify/dist/ReactToastify.css'
-import { Collapse } from './components/Collapse/Collapse'
+import { Dropdown } from './components/Dropdown/Dropdown2'
 
 const SubmitButton = styled(Button)`
   position: fixed;
@@ -33,7 +33,6 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('settings')
   const [loading, setLoading] = useState(false)
   const [addExitClass, setExitClass] = useState(false)
-  const [themeMenuOpen, setThemeMenuOpen] = useState(false)
 
   const formRef = useRef(null)
 
@@ -63,8 +62,18 @@ export default function App() {
   }
 
   function selectTheme(selected: string) {
+    selected = hyphenate(selected)
     setTheme(selected)
-    setThemeColors(AVAIL_THEME.get(selected))
+
+    const newTheme = AVAIL_THEME.get(selected)
+
+    if (newTheme) {
+      setThemeColors(newTheme)
+    }
+  }
+
+  function handleDropdownClick(e: any) {
+    console.log('handleDropdownClick')
   }
 
   return (
@@ -89,23 +98,19 @@ export default function App() {
             <h2>CSS Utility Class Generator</h2>
           </div>
 
-          <div className="position-relative">
-            <Button icon onClick={() => setThemeMenuOpen(!themeMenuOpen)}>
+          <Dropdown
+            items={Array.from(AVAIL_THEME.keys()).map((key) =>
+              key
+                .split('-')
+                .map((k) => capitalize(k))
+                .join(' '),
+            )}
+            onSelect={selectTheme}
+          >
+            <Button icon onClick={handleDropdownClick}>
               <Icon name="bucket" />
             </Button>
-            <Collapse open={themeMenuOpen}>
-              {/* <div className={classNames('dropdown-menu', { 'd-none': !themeMenuOpen })}> */}
-              {Array.from(AVAIL_THEME.keys()).map((key) => (
-                <Button key={key} onClick={() => selectTheme(key)}>
-                  {key
-                    .split('-')
-                    .map((k) => capitalize(k))
-                    .join(' ')}
-                </Button>
-              ))}
-            </Collapse>
-            {/* </div> */}
-          </div>
+          </Dropdown>
 
           {/* <Switch value={theme} onChange={() => invertTheme()}>
             Mode

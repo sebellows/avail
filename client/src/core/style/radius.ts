@@ -12,11 +12,20 @@ export const radius = {
   circle: '50%',
 }
 
-export const radiusMixin = (...keys: string[]) => css`
-  border-radius: ${keys
-    .reduce((acc, key) => {
-      acc.push(radius[key])
-      return acc
-    }, [])
-    .join(' ')};
-`
+export const radiusMixin = (...keys: any[]) => {
+  if (!keys.length) {
+    keys = ['base']
+  }
+  return css`
+    border-radius: ${keys
+      .reduce((acc, key) => {
+        if (typeof key === 'string' && key in radius) {
+          acc.push(radius[key])
+        } else {
+          acc.push(toREM(parseInt(key, 10)))
+        }
+        return acc
+      }, [])
+      .join(' ')};
+  `
+}

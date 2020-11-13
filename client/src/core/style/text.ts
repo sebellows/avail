@@ -47,7 +47,7 @@ export const font = {
     return `font-weight: normal;`
   },
   sizes: PresetFontSizes,
-  size: (size: number | PresetFontSizeKey, unit = 'px') => {
+  size: (size: number | PresetFontSizeKey, unit = 'rem') => {
     const fontSize =
       typeof size === 'string' && size in PresetFontSizes ? PresetFontSizes[size] : size
     return `font-size: ${maybeApplyUnit(fontSize, unit)};`
