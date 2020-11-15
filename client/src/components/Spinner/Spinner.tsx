@@ -1,24 +1,27 @@
-import React, { AnimationEvent, forwardRef, Ref } from 'react';
-import { classNames } from '../../core/utils/classNames';
-import { Styled } from './styles';
+import React, { AnimationEvent, forwardRef, Ref } from 'react'
+import { classNames } from '../../core/utils/classNames'
+import { useTheme } from '../../ThemeContext'
+import { Styled } from './styles'
 
 interface SpinnerProps {
-  className?: string;
-  exit?: boolean;
-  onAnimationEnd?: (event: AnimationEvent) => void;
+  className?: string
+  exit?: boolean
+  onAnimationEnd?: (event: AnimationEvent) => void
 }
 
 export const Spinner = forwardRef<{}, SpinnerProps>(
   ({ className, exit = false, onAnimationEnd = null }, ref: Ref<any>) => {
+    const theme = useTheme()
     function handleAnimationEnd(event: AnimationEvent) {
       if (onAnimationEnd) {
-        onAnimationEnd(event);
+        onAnimationEnd(event)
       }
     }
 
     return (
       <Styled.Wrapper
         ref={ref}
+        theme={theme}
         className={classNames('spinner', className, exit && 'spinner-out')}
         onAnimationEnd={handleAnimationEnd}
       >
@@ -36,6 +39,6 @@ export const Spinner = forwardRef<{}, SpinnerProps>(
           </Styled.Layer>
         </Styled.Container>
       </Styled.Wrapper>
-    );
+    )
   },
-);
+)

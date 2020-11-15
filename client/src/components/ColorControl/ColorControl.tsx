@@ -2,12 +2,14 @@
 import React, { forwardRef, Ref, useState, ChangeEvent } from 'react'
 
 import { Icon } from '../Icon'
-import { FormControlProps } from '../../core/contracts'
+import { useTheme } from '../../ThemeContext'
 import { validFormProps } from '../../core/utils'
+import { FormControlProps } from '../../core/contracts'
 import { Styled } from './styles'
 
 const ColorControl = forwardRef<{}, FormControlProps>(
   ({ showLabel = true, ...props }, ref: Ref<any>) => {
+    const theme = useTheme()
     const [color, setColor] = useState(props?.value ?? '#000000')
 
     const formProps = validFormProps(props)
@@ -23,6 +25,7 @@ const ColorControl = forwardRef<{}, FormControlProps>(
         {showLabel && (
           <Styled.Overlay
             className="color-control-overlay"
+            theme={theme}
             colorValue={color as string}
             aria-hidden="true"
           >

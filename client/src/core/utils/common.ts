@@ -174,6 +174,10 @@ export const hyphenate = memoize((str: string): string => {
     .toLowerCase()
 })
 
+export const pascalize = memoize(
+  (str: string) => str.charAt(0).toUpperCase() + camelize(str).slice(1),
+)
+
 export const stripUnit = (value: string): number =>
   value.match(/\d+/g) ? parseInt(value, 10) : +value
 

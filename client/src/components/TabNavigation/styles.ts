@@ -1,14 +1,14 @@
 import styled from 'styled-components'
-import { control, mixin } from '../../core/style'
+import { mixin } from '../../core/style'
 
 export const Styled = {
   Tabs: styled.nav`
     ${mixin.flexCenter}
   `,
   Tab: styled.a`
-    background-color: ${control.bg};
+    ${({ theme }) => mixin.color(theme.fg)}
+    ${({ theme }) => mixin.bgColor(theme.bg)}
     border: 0;
-    color: ${control.color};
     display: block;
     flex: 1;
     text-align: center;
@@ -18,8 +18,8 @@ export const Styled = {
 
     &:hover,
     &[aria-selected='true'] {
-      background-color: ${control.active.bg};
-      color: ${control.active.color};
+      ${({ theme }) => mixin.color(theme.hover.fg)}
+      ${({ theme }) => mixin.bgColor(theme.hover.bg)}
       text-decoration: none;
     }
   `,

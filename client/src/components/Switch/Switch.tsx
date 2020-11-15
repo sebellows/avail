@@ -1,9 +1,10 @@
-import React, { useState, useRef, Ref } from 'react';
-import { classNames, validFormProps } from '../../core/utils';
+import React, { useState, useRef, Ref } from 'react'
+import { classNames, validFormProps } from '../../core/utils'
 
-import { Styled } from './styles';
-import { SwitchProps } from './props';
-import { SwitchIcon } from './SwitchIcon';
+import { Styled } from './styles'
+import { SwitchProps } from './props'
+import { SwitchIcon } from './SwitchIcon'
+import { useTheme } from '../../ThemeContext'
 
 export const Switch = React.forwardRef<{}, SwitchProps>(
   (
@@ -23,21 +24,22 @@ export const Switch = React.forwardRef<{}, SwitchProps>(
     },
     ref: Ref<any>,
   ) => {
-    const [checked, setCheckedState] = useState(initialChecked);
+    const theme = useTheme()
+    const [checked, setCheckedState] = useState(initialChecked)
 
-    const inputRef = useRef(null);
+    const inputRef = useRef(null)
 
     function handleChange(event: any) {
-      event.persist();
+      event.persist()
 
-      setCheckedState(!checked);
+      setCheckedState(!checked)
 
       if (onChange) {
-        onChange(event);
+        onChange(event)
       }
     }
 
-    const formProps = validFormProps(props);
+    const formProps = validFormProps(props)
 
     return (
       <Styled.Wrapper
@@ -51,7 +53,7 @@ export const Switch = React.forwardRef<{}, SwitchProps>(
         )}
       >
         <Styled.Label htmlFor={formProps.name ?? formProps.id} className="switch-label">
-          <Styled.Bar checked={checked}>
+          <Styled.Bar checked={checked} theme={theme}>
             <Styled.Control
               {...formProps}
               ref={inputRef}
@@ -59,7 +61,7 @@ export const Switch = React.forwardRef<{}, SwitchProps>(
               checked={checked}
               onChange={handleChange}
             />
-            <Styled.Toggle className="on" checked={checked}>
+            <Styled.Toggle className="on" checked={checked} theme={theme}>
               <Styled.ToggleInner>
                 <SwitchIcon checked={checked} size={16} />
               </Styled.ToggleInner>
@@ -70,6 +72,6 @@ export const Switch = React.forwardRef<{}, SwitchProps>(
           )}
         </Styled.Label>
       </Styled.Wrapper>
-    );
+    )
   },
-);
+)

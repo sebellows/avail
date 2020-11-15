@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { Control } from '../Control'
-import { color, font, mixin, radius, shadow, toREM } from '../../core/style'
+import { mixin, toREM } from '../../core/style'
 import { SwitchProps } from './props'
 
 const SWITCH_BAR_WIDTH = 40
@@ -29,9 +29,9 @@ export const Styled = {
     width: ${toREM(SWITCH_BAR_WIDTH)};
     height: ${toREM(SWITCH_BAR_HEIGHT)};
     flex-shrink: 0;
-    background-color: ${({ checked }) =>
-      checked ? mixin.rgba(color.magenta, 0.54) : mixin.rgba(color.black, 0.4)};
-    border-radius: ${radius.pill};
+    ${({ checked, theme }) =>
+      mixin.bgColor(checked ? mixin.rgba(theme.primary, 0.54) : mixin.rgba(theme.fg, 0.4))}
+    ${mixin.borderRadius('pill')}
     box-shadow: inset 1px 1px 1px 0 rgba(0, 0, 0, 0.12),
       inset -1px -1px 0 0 rgba(255, 255, 255, 0.2);
     margin-bottom: 0;
@@ -52,10 +52,12 @@ export const Styled = {
     left: 0;
     z-index: 1;
     ${mixin.inlineFlexCenter}
-    background-color: ${({ checked }) => (checked ? color.magenta : color.light)};
+    ${({ checked, theme }) =>
+      mixin.bgColor(checked ? mixin.rgba(theme.primary, 0.54) : mixin.rgba(theme.bg, 0.4))}
+    ${({ checked, theme }) =>
+      mixin.color(checked ? mixin.rgba(theme.bg, 0.54) : mixin.rgba(theme.fg, 0.4))}
     ${mixin.borderRadius('circle')}
-    box-shadow: ${shadow.elevation(1)};
-    color: ${({ checked }) => (checked ? color.light : color.text.body)};
+    ${mixin.boxShadow.elevation(1)}
     ${mixin.size(toREM(TOGGLE_SIZE))}
     transform: ${({ checked }) => (checked ? 'translate3d(1rem, 0, 0)' : 'translate3d(0, 0, 0)')};
     ${mixin.transition({
@@ -73,7 +75,7 @@ export const Styled = {
   Content: styled.div<SwitchProps>`
     order: ${({ alignLabel }) => (alignLabel === 'right' ? '1' : '2')};
     ${mixin.margin.x(2)}
-    font-size: ${font.sizes.sm};
+    ${mixin.font.size('sm')}
     line-height: 1.5;
   `,
 }

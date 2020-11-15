@@ -42,6 +42,7 @@ const SelectControl = forwardRef<{}, FormControlProps>(
       <Styled.Wrapper
         {...htmlProps}
         as={Component}
+        theme={theme}
         className={classNames(
           'select',
           isValid && `is-valid`,

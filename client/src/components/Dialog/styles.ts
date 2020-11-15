@@ -8,13 +8,13 @@ export const Styled = {
     width: auto;
   `,
   Close: styled.button`
+    border: none;
+    padding: 0.1875rem;
     ${mixin.inlineFlexCenter}
     ${mixin.size('2rem')}
-    padding: 0.1875rem;
-    background: ${color.bg.body};
-    border: none;
+    ${({ theme }) => mixin.bgColor(theme.bg)}
+    ${({ theme }) => mixin.color(theme.fg)}
     ${mixin.borderRadius('circle')}
-    color: ${color.dark};
     opacity: 0.5;
     filter: drop-shadow(0 0 0 ${color.bg.body});
     ${mixin.transition({ duration: 'easeIn', timing: 'easeIn' }, 'opacity', 'filter')}
@@ -33,10 +33,10 @@ export const Styled = {
     flex-direction: column;
     position: relative;
     width: 100%;
-    background-color: ${color.bg.body};
+    ${({ theme }) => mixin.bgColor(theme.bg)}
     background-clip: padding-box;
     ${mixin.borderRadius('lg')}
-    ${mixin.shadow(2, 3)};
+    ${mixin.boxShadow.elevation(2)};
     outline: 0;
     pointer-events: auto;
     z-index: ${zIndexes.dialog};
@@ -46,7 +46,7 @@ export const Styled = {
     align-items: flex-start;
     justify-content: space-between;
     padding: 1rem 1.5rem;
-    border-bottom: 1px solid ${color.border.base};
+    border-bottom: 1px solid ${({ theme }) => theme.border.base};
     border-top-left-radius: calc(${radius.base} - 1px);
     border-top-right-radius: calc(${radius.base} - 1px);
   `,
@@ -61,7 +61,7 @@ export const Styled = {
     align-items: center;
     justify-content: flex-end;
     padding: 0.75rem;
-    border-top: 1px solid ${color.border.base};
+    border-bottom: 1px solid ${({ theme }) => theme.border.base};
     border-bottom-right-radius: calc(${radius.base} - 1px);
     border-bottom-left-radius: calc(${radius.base} - 1px);
   `,

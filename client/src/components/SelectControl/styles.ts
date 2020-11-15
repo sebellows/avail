@@ -1,6 +1,6 @@
-import styled from 'styled-components';
-import { StyledControl } from '../Control';
-import { control, mixin } from '../../core/style';
+import styled from 'styled-components'
+import { StyledControl } from '../Control'
+import { mixin } from '../../core/style'
 
 export const Styled = {
   Wrapper: styled.div`
@@ -18,7 +18,7 @@ export const Styled = {
       height: 0;
       margin-top: -0.15625rem; // ~2.75px
       border: 0.34375rem solid transparent; // ~5.5px
-      border-top-color: ${control.color};
+      ${({ theme }) => `border-top-color: ${theme.control.fg}`}
       pointer-events: none;
     }
   `,
@@ -27,4 +27,4 @@ export const Styled = {
     padding-right: calc(${mixin.spacer('controlX')} + 1.25rem);
     ${mixin.appearanceNone}
   `,
-};
+}

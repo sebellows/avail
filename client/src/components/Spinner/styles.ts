@@ -1,5 +1,5 @@
 import styled, { keyframes } from 'styled-components'
-import { color, mixin } from '../../core/style'
+import { mixin } from '../../core/style'
 
 const containerRotate = keyframes`
   to {
@@ -92,7 +92,7 @@ export const Styled = {
     position: relative;
     width: 28px;
     height: 28px;
-    border-color: ${color.primary};
+    ${({ theme }) => `border-color: ${theme.primary}`}
     &.spinner-out {
       // duration: SHRINK_TIME
       ${mixin.animation({

@@ -28,6 +28,9 @@ function getColor(val: string | ColorValue, defaultValue = 'text.body') {
     const colorValue = getColor((val as ColorValue).color, defaultValue)
     return Color(colorValue).alpha((val as ColorValue).opacity)
   }
+  if (val === 'currentColor') {
+    return val
+  }
   const preset = get(color, val as string)
   if (preset) {
     return preset

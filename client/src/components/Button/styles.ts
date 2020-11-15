@@ -22,7 +22,8 @@ const BaseButton = styled.button<ButtonProps>`
   position: relative;
   text-align: center;
   background: ${({ variant }) => color[variant] ?? 'transparent'};
-  color: ${({ variant }) => (variant ? mixin.invert(color[variant]) : color.dark)};
+  ${({ variant }) => mixin.bgColor(variant ? color[variant] : 'transparent')}
+  ${({ theme, variant }) => mixin.color(variant ? mixin.invert(color[variant]) : theme.fg)}
   overflow: hidden;
   ${mixin.appearanceNone}
   ${mixin.transition('easeInOut')}
@@ -35,7 +36,7 @@ const BaseButton = styled.button<ButtonProps>`
     left: 50%;
     width: 200%;
     height: 200%;
-    background-color: ${color.black};
+    ${({ theme }) => mixin.bgColor(theme.fg)}
     ${mixin.borderRadius('base')}
     opacity: 0;
     transform: translate(-50%, -50%);
@@ -63,7 +64,7 @@ const BaseIconButton = styled(BaseButton)<ButtonProps>`
 export const Styled = {
   Button: styled(BaseButton)<ButtonProps>`
     padding: 0.375rem 0.75rem;
-    border: 1px solid ${({ variant }) => color[variant] ?? 'currentColor'};
+    ${({ variant }) => mixin.border({ color: color[variant] ?? 'currentColor' })}
     ${mixin.borderRadius('base')}
     ${ButtonShadowStyles}
   `,

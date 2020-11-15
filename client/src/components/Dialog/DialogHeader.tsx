@@ -3,9 +3,11 @@ import { Icon } from '../Icon'
 import { classNames } from '../../core/utils'
 import { Styled } from './styles'
 import { DialogHeaderProps } from './props'
+import { useTheme } from '../../ThemeContext'
 
 const DialogHeader = forwardRef<{}, DialogHeaderProps>(
   ({ className = null, children, onClose }, ref: Ref<any>) => {
+    const theme = useTheme()
     const buttonRef = useRef(null)
 
     function handleClick(event: React.SyntheticEvent) {
@@ -17,11 +19,12 @@ const DialogHeader = forwardRef<{}, DialogHeaderProps>(
       typeof children == 'string' ? <h3 className="dialog-title">{children}</h3> : children
 
     return (
-      <Styled.Header ref={ref} className={classNames('dialog-header', className)}>
+      <Styled.Header ref={ref} theme={theme} className={classNames('dialog-header', className)}>
         {headerContent}
         <Styled.Close
           ref={buttonRef}
           type="button"
+          theme={theme}
           className="close"
           aria-label="Close"
           onClick={handleClick}

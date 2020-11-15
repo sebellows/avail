@@ -3,12 +3,14 @@ import { classNames } from '../../core/utils'
 
 import { Styled } from './styles'
 import { ButtonProps } from './props'
+import { useTheme } from '../../ThemeContext'
 
 export const Button = React.forwardRef<{}, ButtonProps>(
   (
     { children, size = null, fab = false, icon = false, type = 'button', variant, ...props },
     ref: Ref<any>,
   ) => {
+    const theme = useTheme()
     const btnStyle = fab ? 'fab' : icon ? 'icon' : 'base'
 
     return (
@@ -18,6 +20,7 @@ export const Button = React.forwardRef<{}, ButtonProps>(
             {...props}
             ref={ref}
             type={type}
+            theme={theme}
             className={classNames('btn', props.className)}
             variant={variant}
           >
@@ -29,6 +32,7 @@ export const Button = React.forwardRef<{}, ButtonProps>(
             {...props}
             ref={ref}
             type={type}
+            theme={theme}
             className={classNames('fab', props.className)}
             variant={variant}
             size={size}
@@ -41,6 +45,7 @@ export const Button = React.forwardRef<{}, ButtonProps>(
             {...props}
             ref={ref}
             type={type}
+            theme={theme}
             className={classNames('icon-btn', props.className)}
             variant={variant}
             size={size}

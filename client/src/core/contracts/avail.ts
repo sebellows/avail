@@ -70,8 +70,6 @@ export interface AvailState {
 }
 export type AvailStateType = keyof AvailState
 
-export type AvailConfigType = AvailSetting | AvailUtility
-
 export type AvailConfig<P = any> = {
   [K in AvailStateType]: P extends AvailState[K] ? K : AvailState[K]
 }[AvailStateType]
@@ -79,10 +77,4 @@ export type AvailConfig<P = any> = {
 export interface StateConfig {
   name: string
   value: string | boolean
-}
-
-export interface StateActionConfig {
-  type: string
-  config: StateConfig
-  inProgress?: boolean
 }

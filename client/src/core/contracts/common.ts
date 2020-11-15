@@ -13,9 +13,9 @@ export type LiteralToPrimitive<T extends any> = T extends string
   ? boolean
   : T
 
-export type CollectionObj = Record<string, any>
-export type CollectionArray = CollectionObj[]
-export type Collection = CollectionObj | CollectionArray
+export type CollectionObj<T> = Record<string, T>
+export type CollectionArray<T> = CollectionObj<T>[]
+export type Collection<T> = CollectionObj<T> | CollectionArray<T>
 
 export interface ComponentProps {
   as?: keyof JSX.IntrinsicElements | React.ComponentType<any>
@@ -24,3 +24,18 @@ export interface ComponentProps {
   id?: string
   theme?: Record<string, any>
 }
+
+export interface BsPrefixAndClassNameOnlyProps {
+  className?: string
+}
+
+export interface DynamicComponentProps<As extends React.ElementType = React.ElementType>
+  extends BsPrefixAndClassNameOnlyProps {
+  as?: As
+  theme?: Record<string, any>
+}
+
+export type DynamicComponentPropsWithChildren<
+  As extends React.ElementType = React.ElementType
+> = React.PropsWithChildren<DynamicComponentProps<As>>
+// ComponentPropsWithRef<T extends ElementType>
