@@ -7,7 +7,6 @@
     "build": "cd ./client && yarn build",
     "test": "cd ./client && yarn test"
   },
-  "devDependencies": {
-    "simple-zustand-devtools": "^1.0.0"
-  }
+  "devDependencies": {},
+  "dependencies": {}
 }

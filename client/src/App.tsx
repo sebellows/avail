@@ -8,18 +8,20 @@ import { UtilitiesForm } from './containers/UtilitiesForm'
 import { Button, Collapse, Spinner, Tabs, Tab, Toast, Icon, Switch } from './components'
 
 import { Logo } from './Logo'
+import { mixin } from './core/style'
 import { capitalize, classNames, hyphenate } from './core/utils'
 import { AVAIL_THEME, ThemeContext } from './ThemeContext'
 
 import './App.scss'
 import 'react-toastify/dist/ReactToastify.css'
 import { Dropdown } from './components/Dropdown/Dropdown2'
+import { Draggable } from './components/Draggable'
 
 const SubmitButton = styled(Button)`
   position: fixed;
   top: 90vh;
-  right: ${toREM(spacers.base * 2)};
-  z-index: ${zIndexes.submitBtn};
+  left: calc(100vw - 5.5rem);
+  ${mixin.zIndex('submitBtn')}
 `
 
 const StyledDropdownMenu = styled.div`
@@ -134,10 +136,12 @@ export default function App() {
                 <UtilitiesForm id="avail-utilities" />
               </Tab>
             </Tabs>
-            <SubmitButton fab type="submit" variant="primary">
-              <span className="sr-only">Submit</span>
-              <Icon name="download" />
-            </SubmitButton>
+            <Draggable>
+              <SubmitButton fab type="submit" variant="primary">
+                <span className="sr-only">Submit</span>
+                <Icon name="download" />
+              </SubmitButton>
+            </Draggable>
           </form>
           {/* </Store> */}
           <Toast autoClose={5000} />
