@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   DARK,
   LIGHT,
@@ -11,7 +11,33 @@ import {
   COLORS,
   VARIANTS,
 } from './core/constants'
-import { Color } from './core/utils'
+import { capitalize, Color } from './core/utils'
+
+export interface ThemeProps {
+  bg?: string
+  fg?: string
+  borderColor?: string
+  boxShadow?: string
+  hoverColor?: string
+}
+
+export interface Theme {
+  name: string
+  bg: string
+  fg: string
+  primary: string
+  accent: string
+  link: ThemeProps
+  borderColor: string
+  control: ThemeProps
+  disabled: ThemeProps
+  focus: ThemeProps
+  hover: ThemeProps
+  invalid: ThemeProps
+  muted: string
+}
+
+export type ThemeOptions = Record<string, Theme>
 
 const themeCommon = {
   focus: {
@@ -26,7 +52,7 @@ const themeCommon = {
   },
 }
 
-const setLightTheme = (name = 'light', primary = COLORS.blue, accent = COLORS.orange) => ({
+const setLightTheme = (name = 'light', primary = COLORS.blue, accent = COLORS.orange): Theme => ({
   name,
   bg: LIGHT,
   fg: DARK,
@@ -55,7 +81,7 @@ const setLightTheme = (name = 'light', primary = COLORS.blue, accent = COLORS.or
   ...themeCommon,
 })
 
-const setDarkTheme = (name = 'dark', primary = COLORS.blue, accent = COLORS.orange) => ({
+const setDarkTheme = (name = 'dark', primary = COLORS.blue, accent = COLORS.orange): Theme => ({
   name,
   bg: GRAY_800,
   fg: WHITE,
@@ -84,15 +110,54 @@ const setDarkTheme = (name = 'dark', primary = COLORS.blue, accent = COLORS.oran
   ...themeCommon,
 })
 
-const themeMap = {
+const themeMap: ThemeOptions = {
   light: setLightTheme(),
   'magenta-teal': setLightTheme('magenta-light', COLORS.magenta, COLORS.teal),
   dark: setDarkTheme(),
   'magenta-dark': setDarkTheme('dark-magenta-cyan', COLORS.magenta, COLORS.cyan),
 }
 
-export const AVAIL_THEME = new Map(Object.entries(themeMap))
+const THEME_NAMES = Object.freeze(
+  Object.keys(themeMap).reduce((acc, theme) => {
+    acc[theme] = theme
+      .split('-')
+      .map((str) => capitalize(str))
+      .join(' ')
+    return acc
+  }, {}),
+)
 
-export const ThemeContext = React.createContext<Record<string, any>>(null)
+export const AVAIL_THEME = new Map<string, Theme>(Object.entries(themeMap))
+
+export interface ThemeContextProps {
+  activeTheme: string
+  setActiveTheme: React.Dispatch<React.SetStateAction<string>>
+  theme: Theme
+  setTheme: React.Dispatch<React.SetStateAction<Theme>>
+  themes: Map<keyof typeof themeMap, typeof themeMap[keyof typeof themeMap]>
+  themeNames: Record<keyof typeof themeMap, string>
+}
+
+export const ThemeContext = React.createContext<ThemeContextProps>(null)
+
+export const ThemeProvider = ({ children }) => {
+  const [activeTheme, setActiveTheme] = useState('light')
+  const [theme, setTheme] = useState(AVAIL_THEME.get(activeTheme) as Theme)
+
+  return (
+    <ThemeContext.Provider
+      value={{
+        theme,
+        setTheme,
+        activeTheme,
+        setActiveTheme,
+        themes: AVAIL_THEME,
+        themeNames: THEME_NAMES,
+      }}
+    >
+      {children}
+    </ThemeContext.Provider>
+  )
+}
 
 export const useTheme = () => React.useContext(ThemeContext)

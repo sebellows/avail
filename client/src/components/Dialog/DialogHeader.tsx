@@ -7,7 +7,7 @@ import { useTheme } from '../../ThemeContext'
 
 const DialogHeader = forwardRef<{}, DialogHeaderProps>(
   ({ className = null, children, onClose }, ref: Ref<any>) => {
-    const theme = useTheme()
+    const { theme } = useTheme()
     const buttonRef = useRef(null)
 
     function handleClick(event: React.SyntheticEvent) {

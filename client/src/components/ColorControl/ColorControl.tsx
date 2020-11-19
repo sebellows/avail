@@ -9,7 +9,7 @@ import { Styled } from './styles'
 
 const ColorControl = forwardRef<{}, FormControlProps>(
   ({ showLabel = true, ...props }, ref: Ref<any>) => {
-    const theme = useTheme()
+    const { theme } = useTheme()
     const [color, setColor] = useState(props?.value ?? '#000000')
 
     const formProps = validFormProps(props)

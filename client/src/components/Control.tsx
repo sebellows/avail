@@ -83,7 +83,7 @@ const Control = forwardRef<HTMLInputElement, FormControlProps>(
     },
     ref: Ref<HTMLInputElement>,
   ) => {
-    const theme = useTheme()
+    const { theme } = useTheme()
     const [value, setValue] = useState(initialValue)
     const formProps = validFormProps(props, { exclude: ['onChange'] })
 

@@ -10,7 +10,7 @@ export const Button = React.forwardRef<{}, ButtonProps>(
     { children, size = null, fab = false, icon = false, type = 'button', variant, ...props },
     ref: Ref<any>,
   ) => {
-    const theme = useTheme()
+    const { theme } = useTheme()
     const btnStyle = fab ? 'fab' : icon ? 'icon' : 'base'
 
     return (

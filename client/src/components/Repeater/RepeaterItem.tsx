@@ -22,7 +22,7 @@ const RepeaterItem = forwardRef<{}, FormGroupProps>(
     },
     ref: Ref<any>,
   ) => {
-    const theme = useTheme()
+    const { theme } = useTheme()
 
     return (
       <StyledItem.Wrapper

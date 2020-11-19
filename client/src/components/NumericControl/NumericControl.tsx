@@ -22,7 +22,7 @@ const NumericControl = forwardRef<{}, NumericControlProps>(
     },
     ref: Ref<any>,
   ) => {
-    const theme = useTheme()
+    const { theme } = useTheme()
     const [value, setValue] = useState(initialValue)
     const [disabled, setDisabled] = useState(initialDisabled)
 

@@ -11,7 +11,7 @@ const noopEvent = (event: React.SyntheticEvent) => {}
 
 const Dialog = forwardRef<{}, DialogProps>(
   ({ className, size, title, onClose = noopEvent, children }, ref: Ref<any>) => {
-    const theme = useTheme()
+    const { theme } = useTheme()
 
     return (
       <Styled.Wrapper

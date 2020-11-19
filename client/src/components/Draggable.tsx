@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { forwardRef, useCallback, useEffect, useRef, useState } from 'react'
 import { ComponentProps } from '../core/contracts'
+import { throttle } from '../core/utils'
 import { isFastEqual } from '../core/utils/isEqual'
 import { useEnsuredRef, useFirstMountState, useLifecycles, usePrevious } from '../hooks'
 
@@ -15,64 +16,75 @@ interface DraggableProps extends ComponentProps {
 
 type ItemsWithLength<T> = T & { length: number }
 
-function getDefinedSelection<T, U = unknown>(
+const getDefinedSelection = <T, U = unknown>(
   optsA: ItemsWithLength<T>,
   optsB?: ItemsWithLength<U>,
   defaultRet: any = false,
-) {
+) => {
   if (optsA && optsA.length) return optsA
   if (optsB && optsB.length) return optsB
   return defaultRet
 }
 
+const getCurrentCordinates = (e: any): { pageX: number; pageY: number } => {
+  const { pageX, pageY } = e
+
+  let coords = { pageX, pageY }
+
+  const touches = getDefinedSelection(e.targetTouches, e.changedTouches)
+  if (touches) {
+    coords = touches[0]
+  } else if (e.clientX) {
+    coords = { pageX: e.clientX, pageY: e.clientY }
+  }
+
+  if (coords.pageX < 0) coords.pageX = 0
+  if (coords.pageY < 0) coords.pageY = 0
+
+  return coords
+}
+
 const Draggable = forwardRef<HTMLDivElement, DraggableProps>(
   ({ children, draggable = true, position: initialPosition, target = document.body }, ref) => {
     const [isDragging, setIsDragging] = useState(false)
-    const [offsetX, setOffsetX] = useState(initialPosition?.x ?? 0)
-    const [offsetY, setOffsetY] = useState(initialPosition?.y ?? 0)
-
-    // const prevPosition = useRef<Coordinates>(initialPosition)
+    const [offsetX, setOffsetX] = useState(initialPosition?.x)
+    const [offsetY, setOffsetY] = useState(initialPosition?.y)
 
     const containerRef = useEnsuredRef<HTMLElement>(ref)
-
-    // const rect = useRef<DOMRect>(null)
-    const prevRect = useRef<DOMRect>(null)
-
-    const mirror = useRef<Element>(null)
-
     const container = React.Children.only(children) as React.ReactElement
-
-    useEffect(() => {
-      if (containerRef.current && !offsetX) {
-        const { left: x, top: y } = containerRef.current.getBoundingClientRect()
-        setOffsetX(x)
-        setOffsetY(y)
-        // const { left: x, top: y } = prevRect.current
-        //
-      }
-    }, [])
-
-    const onDrop = (e: any) => {
-      prevRect.current = containerRef.current?.getBoundingClientRect()
-      const { left, top, width, height } = prevRect.current
-      const { pageX, pageY } = getCurrentCordinates(e)
-      const x = left <= 0 ? pageX : pageX - width / 2
-      const y = top <= 0 ? pageY : pageY - height / 2
-      setOffsetX(x)
-      setOffsetY(y)
-      console.log('onDrop', x, y, pageX, pageY)
-      containerRef.current.parentElement.removeChild(mirror.current)
-      mirror.current = null
-    }
 
     useLifecycles(
       () => {
+        if (containerRef.current && !offsetX) {
+          const { left: x, top: y } = containerRef.current.getBoundingClientRect()
+          setOffsetX(x)
+          setOffsetY(y)
+        }
         target.addEventListener('drop', onDrop)
       },
       () => {
         target.removeEventListener('drop', onDrop)
+        updateCoords.cancel()
       },
     )
+
+    const updateCoords = throttle((e: any) => {
+      const target = e.target === containerRef.current ? e.target : containerRef.current
+
+      const { width, height } = target.getBoundingClientRect()
+
+      let { pageX, pageY } = getCurrentCordinates(e)
+
+      const x = pageX - width / 2
+      const y = pageY - height / 2
+
+      setOffsetX(x)
+      setOffsetY(y)
+    })
+
+    const onDrop = (e: any) => {
+      updateCoords(e)
+    }
 
     useEffect(() => {
       if (container?.props?.children) {
@@ -89,71 +101,29 @@ const Draggable = forwardRef<HTMLDivElement, DraggableProps>(
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [draggable])
 
-    // function getRect() {
-    //   const currentRect = containerRef.current?.getBoundingClientRect()
-    //   if (!isFastEqual(rect.current, currentRect)) {
-    //     return currentRect
-    //   }
-    //   return currentRect
-    // }
-
-    function createMirror() {
-      const clone = containerRef.current.cloneNode() as HTMLElement
-      const computedStyle = window.getComputedStyle(containerRef.current)
-      clone.style.opacity = '0.3'
-      clone.style.zIndex = `${
-        computedStyle.getPropertyValue('z-index')
-          ? +computedStyle.getPropertyValue('z-index') - 1
-          : 0
-      }`
-      clone.setAttribute('id', 'mirror')
-      clone.removeAttribute('draggable')
-      const nextSib = containerRef.current.nextSibling
-      const parent = containerRef.current.parentElement
-      if (nextSib) {
-        parent.insertBefore(nextSib, clone)
-      } else {
-        parent.appendChild(clone)
-      }
-      return parent.querySelector('#mirror')
-    }
-
-    function getCurrentCordinates(e: any) {
-      const touches = getDefinedSelection(e.targetTouches, e.changedTouches)
-      if (touches) {
-        return touches[0]
-      }
-      return e
-    }
-
-    function onDragStart(e: any) {
+    const onDragStart = (e: any) => {
       if (!isDragging) {
         setIsDragging(true)
-        mirror.current = createMirror()
-        prevRect.current = e.target.getBoundingClientRect()
       }
     }
 
-    function onDragEnd(e: any) {
+    const onDragOver = (e: any) => {
+      // Otherwise `onDrop` event never fires
+      e.preventDefault()
+    }
+
+    const onDragEnd = (e: any) => {
       if (isDragging) {
+        e.persist()
+        updateCoords(e)
         setIsDragging(false)
-        containerRef.current.parentElement.removeChild(mirror.current)
-        mirror.current = null
       }
     }
 
-    function onDrag(e: any) {
-      const rect = e.target.getBoundingClientRect()
-      prevRect.current = rect
-      const { left, top, width, height } = rect
-      const { pageX, pageY } = getCurrentCordinates(e)
-      if (pageX !== 0 && pageY !== 0) {
-        const x = left <= 0 ? pageX : pageX - width / 2
-        const y = top <= 0 ? pageY : pageY - height / 2
-        setOffsetX(x)
-        setOffsetY(y)
-        console.log('onDrag', x, y, pageX, pageY, e.target)
-      }
+    const onDrag = (e: any) => {
+      e.persist()
+      e.preventDefault()
+      updateCoords(e)
     }
 
     return (
@@ -166,6 +136,7 @@ const Draggable = forwardRef<HTMLDivElement, DraggableProps>(
               style: { ...container.props.style, left: offsetX, top: offsetY },
               onDragStart,
               onDrag,
+              onDragOver,
               onDragEnd,
             })
           : children}

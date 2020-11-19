@@ -51,7 +51,7 @@ const Colorpicker = forwardRef<HTMLDivElement, ColorpickerProps>(
     },
     ref,
   ) => {
-    const theme = useTheme()
+    const { theme } = useTheme()
     const [isOpen, setOpen] = useState(false)
     const [value, setValue] = useState(initialValue)
     const [color, setColor] = useState(initialValue)

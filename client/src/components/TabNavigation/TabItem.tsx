@@ -9,7 +9,7 @@ import { useTheme } from '../../ThemeContext'
  * Navigation controllers for the Tabs component.
  */
 const TabItem = forwardRef<{}, any>(({ target, children, disabled, ...props }, ref: Ref<any>) => {
-  const theme = useTheme()
+  const { theme } = useTheme()
   const { isActive, onSelect, tabID } = useTabContext({ target })
 
   function handleClick(event: any) {

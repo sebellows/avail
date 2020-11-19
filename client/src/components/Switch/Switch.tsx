@@ -24,7 +24,7 @@ export const Switch = React.forwardRef<{}, SwitchProps>(
     },
     ref: Ref<any>,
   ) => {
-    const theme = useTheme()
+    const { theme } = useTheme()
     const [checked, setCheckedState] = useState(initialChecked)
 
     const inputRef = useRef(null)

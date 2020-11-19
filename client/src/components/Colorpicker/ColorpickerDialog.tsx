@@ -14,7 +14,7 @@ interface ColorpickerDialogProps extends ComponentProps {
 
 const ColorpickerDialog = forwardRef<HTMLDivElement, ColorpickerDialogProps>(
   ({ className, hue, lightness, alpha, open = false }, ref: Ref<HTMLDivElement>) => {
-    const theme = useTheme()
+    const { theme } = useTheme()
     return (
       <Styled.Dialog.Wrapper
         ref={ref}

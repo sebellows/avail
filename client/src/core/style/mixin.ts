@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { css } from 'styled-components'
-import { DARK, GRID_BREAKPOINTS, LINK_COLOR, VARIANTS, WHITE } from '../constants'
+import { DARK, GRID_BREAKPOINTS, LINK_COLOR, SPACERS, VARIANTS, WHITE } from '../constants'
 import { Color, get, isNil, isNumber, isPlainObject } from '../utils'
-import { maybeApplyUnit, toEM } from './units'
+import { maybeApplyUnit, toEM, toREM } from './units'
 import { buttonVariant } from './buttons'
 import { dropShadowMixin, shadow, shadowMixin, ShadowFactoryParams } from './shadows'
 import { animationMixin, transitionMixin } from './transition'
-import { generateSpacer, spacerMixin } from './spacers'
+import { generateSpacer, spacers, spacerMixin } from './spacers'
 import { radiusMixin } from './radius'
 import { zIndexes } from './zindex'
 import { font } from './text'
@@ -23,7 +23,7 @@ type ColorValue = {
   opacity: number
 }
 
-function getColor(val: string | ColorValue, defaultValue = 'text.body') {
+function getColor(val: string | ColorValue, defaultValue = DARK) {
   if (isPlainObject(val)) {
     const colorValue = getColor((val as ColorValue).color, defaultValue)
     return Color(colorValue).alpha((val as ColorValue).opacity)
@@ -37,6 +37,7 @@ function getColor(val: string | ColorValue, defaultValue = 'text.body') {
   } else if (Color.isColor(val as string)) {
     return Color(val).string()
   }
+  console.log('getColor', val)
   return defaultValue
 }
 
@@ -95,6 +96,11 @@ export const mixin = {
         })
         .filter((bpUnit) => bpUnit.length > 0)
         .join(' and ')
+    return css`
+      ${queries} {
+        ${content}
+      }
+    `
   },
   border: (props?: { width?: string; style?: string; color?: string | ColorValue }) => {
     const width = props?.width ?? '1px'
@@ -145,7 +151,7 @@ export const mixin = {
   }) => css`
     display: ${inline ? 'inline-' : ''}flex;
     justify-content: ${center ? 'center' : justify ? justify : 'flex-start'};
-    align-items: ${center ? 'center' : justify ? justify : 'flex-start'};
+    align-items: ${center ? 'center' : align ? align : 'flex-start'};
     ${() => {
       if (direction) {
         return css`
@@ -159,6 +165,26 @@ export const mixin = {
     justify-content: center;
     align-items: center;
   `,
+  grid: {
+    container: css`
+      padding: ${toREM(spacers.base)};
+    `,
+    row: css`
+      display: flex;
+      flex-wrap: wrap;
+      margin-left: -${toREM(spacers.base / 2)};
+      margin-right: -${toREM(spacers.base / 2)};
+    `,
+    col: css`
+      display: block;
+      flex-basis: 0;
+      flex-grow: 1;
+      padding-left: ${toREM(spacers.base / 2)};
+      padding-right: ${toREM(spacers.base / 2)};
+      position: relative;
+      max-width: 100%;
+    `,
+  },
   inlineFlexCenter: css`
     display: flex;
     justify-content: center;

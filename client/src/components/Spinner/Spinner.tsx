@@ -11,7 +11,7 @@ interface SpinnerProps {
 
 export const Spinner = forwardRef<{}, SpinnerProps>(
   ({ className, exit = false, onAnimationEnd = null }, ref: Ref<any>) => {
-    const theme = useTheme()
+    const { theme } = useTheme()
     function handleAnimationEnd(event: AnimationEvent) {
       if (onAnimationEnd) {
         onAnimationEnd(event)

@@ -20,7 +20,7 @@ const SelectControl = forwardRef<{}, FormControlProps>(
     },
     ref: Ref<any>,
   ) => {
-    const theme = useTheme()
+    const { theme } = useTheme()
     const options = useMemo(() => {
       if (Array.isArray(initialOptions) && initialOptions.some(isOption)) {
         return initialOptions
