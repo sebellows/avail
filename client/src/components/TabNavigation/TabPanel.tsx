@@ -1,46 +1,50 @@
-import React, { forwardRef, Ref, useEffect, ReactChildren } from 'react';
+import React, { forwardRef, useEffect } from 'react'
+import { ComponentProps } from '../../core/contracts'
 
-import { classNames, fadeIn, getNode } from '../../core/utils';
+import { classNames, fadeIn, getNode } from '../../core/utils'
+import { SelectableContext, TabContext, useTabContext } from './TabContext'
 
-import { Styled } from './styles';
-import { useTabContext } from './useTabContext';
+import { Styled } from './styles'
 
-export interface TabPanelProps {
-  target: string;
-  children: ReactChildren;
+export interface TabPanelProps extends ComponentProps {
+  eventKey?: string
+  active?: boolean
 }
 
-const TabPanel = forwardRef<{}, TabPanelProps>(({ target, children }, ref: Ref<any>) => {
-  const { isActive, tabID } = useTabContext({ target });
+const TabPanel = forwardRef<HTMLDivElement, TabPanelProps>((props: TabPanelProps, ref) => {
+  const { active, tabID, eventKey: _, ...rest } = useTabContext(props)
 
   if (!ref) {
-    ref = React.createRef();
+    ref = React.createRef()
   }
 
   useEffect(() => {
-    const el = getNode(ref);
+    const el = getNode(ref)
 
     if (el) {
-      (el as HTMLElement).style.opacity = '0';
-      if (isActive) {
-        fadeIn(el as HTMLElement);
+      ;(el as HTMLElement).style.opacity = '0'
+      if (active) {
+        fadeIn(el as HTMLElement)
       }
     }
-  }, [isActive, ref]);
+  }, [active, ref])
 
   return (
-    <Styled.Panel
-      ref={ref}
-      role="tabpanel"
-      id={target}
-      aria-labelledby={tabID}
-      className={classNames('tab-panel', isActive && 'active')}
-    >
-      {children}
-    </Styled.Panel>
-  );
-});
+    <TabContext.Provider value={null}>
+      <SelectableContext.Provider value={null}>
+        <Styled.Panel
+          {...rest}
+          ref={ref}
+          role="tabpanel"
+          aria-hidden={!active}
+          aria-labelledby={tabID}
+          className={classNames('tab-panel', active && 'active')}
+        />
+      </SelectableContext.Provider>
+    </TabContext.Provider>
+  )
+})
 
-TabPanel.displayName = 'TabPanel';
+TabPanel.displayName = 'TabPanel'
 
-export { TabPanel };
+export { TabPanel }

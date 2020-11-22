@@ -1,32 +1,28 @@
 import styled, { css } from 'styled-components'
-import { color, mixin, isUnit, toREM, shadow } from '../../core/style'
-import { ButtonProps } from './props'
+import { color, mixin, isUnit, toREM } from '../../core/style'
+import { isNil } from '../../core/utils'
+import { ButtonProps, ToggleButtonProps } from './props'
 
 const ButtonShadowStyles = css`
-  // ${mixin.shadow(0, 1)}
-  box-shadow: ${shadow.elevation(1)};
+  ${mixin.boxShadow.elevation(1)}
 
   &:hover {
-    // ${mixin.shadow('depth1')}
-    box-shadow: ${shadow.elevation(2)};
-  }
-  &:focus {
-    outline: none;
+    ${mixin.boxShadow.elevation(2)}
   }
 `
-// ${mixin.shadow(focusShadow.depth2)}
 
 /** Buttons */
 const BaseButton = styled.button<ButtonProps>`
-  ${mixin.inlineFlexCenter}
   position: relative;
-  text-align: center;
-  background: ${({ variant }) => color[variant] ?? 'transparent'};
   ${({ variant }) => mixin.bgColor(variant ? color[variant] : 'transparent')}
   ${({ theme, variant }) => mixin.color(variant ? mixin.invert(color[variant]) : theme.fg)}
-  overflow: hidden;
+  ${mixin.truncateText}
   ${mixin.appearanceNone}
   ${mixin.transition('easeInOut')}
+
+  &:focus {
+    outline: none;
+  }
 
   &::after {
     content: '';
@@ -53,24 +49,36 @@ const BaseButton = styled.button<ButtonProps>`
   }
 `
 
-const BaseIconButton = styled(BaseButton)<ButtonProps>`
+const StyledButton = styled(BaseButton)<ButtonProps>`
+  ${mixin.inlineFlexCenter}
+  text-align: center;
+`
+
+const BaseIconButton = styled(StyledButton)<ButtonProps>`
   flex-direction: column;
   flex: none;
   border: 0;
   padding: 0;
-  ${({ size }) => mixin.size(size ? (isUnit(size) ? size : toREM(+size)) : toREM(54))}
+  ${({ size }) => mixin.size(!isNil(size) ? (isUnit(size) ? size : toREM(+size)) : toREM(54))}
+
+  &:focus {
+    ${mixin.boxShadow.elevation(1)}
+  }
 `
 
 export const Styled = {
-  Button: styled(BaseButton)<ButtonProps>`
+  Button: styled(StyledButton)`
     padding: 0.375rem 0.75rem;
     ${({ variant }) => mixin.border({ color: color[variant] ?? 'currentColor' })}
     ${mixin.borderRadius('base')}
     ${ButtonShadowStyles}
   `,
-  FAB: styled(BaseIconButton)<ButtonProps>`
+  FAB: styled(BaseIconButton)`
     ${mixin.borderRadius('circle')}
     ${ButtonShadowStyles}
   `,
   Icon: BaseIconButton,
+  Toggle: styled(BaseButton)<ToggleButtonProps>`
+    ${mixin.flex({ inline: true, align: 'center', justify: 'start' })}
+  `,
 }

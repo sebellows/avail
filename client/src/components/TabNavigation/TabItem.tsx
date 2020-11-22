@@ -10,7 +10,7 @@ import { useTheme } from '../../ThemeContext'
  */
 const TabItem = forwardRef<{}, any>(({ target, children, disabled, ...props }, ref: Ref<any>) => {
   const { theme } = useTheme()
-  const { isActive, onSelect, tabID } = useTabContext({ target })
+  const { active, onSelect, tabID } = useTabContext({ target })
 
   function handleClick(event: any) {
     event.preventDefault()
@@ -26,7 +26,7 @@ const TabItem = forwardRef<{}, any>(({ target, children, disabled, ...props }, r
       role="tab"
       id={tabID}
       className={classNames('tab', props?.className, disabled && 'disabled')}
-      aria-selected={isActive}
+      aria-selected={active}
       onClick={handleClick}
     >
       {children}

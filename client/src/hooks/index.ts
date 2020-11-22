@@ -1,6 +1,7 @@
 export * from './useClickOutside'
 export * from './useEnsuredRef'
 export * from './useEventCallback'
+export * from './useFocused'
 export * from './useLifecycles'
 export * from './useMounted'
 export * from './usePrevious'

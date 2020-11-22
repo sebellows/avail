@@ -19,6 +19,7 @@ export interface ThemeProps {
   borderColor?: string
   boxShadow?: string
   hoverColor?: string
+  checked?: string
 }
 
 export interface Theme {
@@ -66,16 +67,19 @@ const setLightTheme = (name = 'light', primary = COLORS.blue, accent = COLORS.or
   control: {
     bg: Color(BLACK).alpha(0.04).string(),
     borderColor: Color(BLACK).alpha(0.06).string(),
+    checked: Color(primary).string(),
     fg: Color(BLACK).alpha(0.87).string(),
   },
   disabled: {
     bg: Color(BLACK).alpha(0.075).string(),
     borderColor: Color(BLACK).alpha(0.12).string(),
+    checked: Color(BLACK).alpha(0.075).string(),
     fg: Color(BLACK).alpha(0.8).string(),
   },
   hover: {
     bg: GRAY_200,
     borderColor: Color(BLACK).alpha(0.2).string(),
+    fg: DARK,
   },
   muted: GRAY_500,
   ...themeCommon,
@@ -95,16 +99,19 @@ const setDarkTheme = (name = 'dark', primary = COLORS.blue, accent = COLORS.oran
   control: {
     bg: Color(BLACK).alpha(0.01).string(),
     borderColor: Color(WHITE).alpha(0.06).string(),
+    checked: Color(primary).string(),
     fg: WHITE,
   },
   disabled: {
     bg: Color(WHITE).alpha(0.075).string(),
     borderColor: Color(WHITE).alpha(0.12).string(),
+    checked: Color(WHITE).alpha(0.075).string(),
     fg: Color(WHITE).alpha(0.8).string(),
   },
   hover: {
     bg: GRAY_700,
     borderColor: Color(WHITE).alpha(0.2).string(),
+    fg: WHITE,
   },
   muted: GRAY_500,
   ...themeCommon,

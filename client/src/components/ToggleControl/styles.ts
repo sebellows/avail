@@ -1,31 +1,32 @@
 import styled, { keyframes, css } from 'styled-components'
 import { Control } from '../Control'
-import { mixin, control } from '../../core/style'
+import { mixin } from '../../core/style'
+import { Theme } from '../../ThemeContext'
 import { ToggleControlProps } from './props'
 
 const checkStrokeDashOffset = '22.910259'
 
 /* Fades in the background of the checkbox when it goes from unchecked -> checked. */
-const fadeInBg = keyframes`
+const fadeInBg = (theme: Theme) => keyframes`
   0% {
     opacity: 0;
-    background-color: ${control.bg};
+    ${mixin.bgColor(theme.control.bg)}
   }
   50% {
     opacity: 1;
-    background-color: ${control.checked.bg};
+    ${mixin.bgColor(theme.control.checked)}
   }
 `
 /* Fades out the background of the checkbox when it goes from checked -> unchecked. */
-const fadeOutBg = keyframes`
+const fadeOutBg = (theme) => keyframes`
   0%,
   50% {
     opacity: 1;
-    background-color: ${control.checked.bg};
+    ${mixin.bgColor(theme.control.checked)}
   }
   100% {
     opacity: 0;
-    background-color: ${control.bg};
+    ${mixin.bgColor(theme.control.bg)}
   }
 `
 /* "Draws" in the checkmark when the checkbox goes from unchecked -> checked. */
@@ -48,34 +49,37 @@ const toUncheckedPath = keyframes`
   }
 `
 
-const ToggleUI = styled.div<{ inputType }>`
+const ToggleUI = styled.div<ToggleControlProps>`
   ${mixin.cover}
   background-color: transparent;
-  border-width: 2px;
-  border-style: solid;
-  border-color: rgba(0, 0, 0, 0.54);
-  border-radius: ${({ inputType }) => (inputType === 'radio' ? '50%' : '0.25em')};
-  width: 1rem;
-  height: 1rem;
+  ${mixin.border({ width: '2px', color: mixin.rgba('#000000', 0.54) })}
+  ${({ inputType }) =>
+    inputType === 'radio' ? mixin.borderRadius('circle') : mixin.borderRadius('base')}
+  ${({ size }) => mixin.size(size)}
   ${({ inputType }) =>
     inputType === 'radio'
       ? mixin.transition({ property: 'border-color', duration: 280, timing: 'ease' })
       : mixin.transition({ property: 'border-color', duration: 150, timing: [0, 0, 0.2, 0.1] })}
 `
 export const Styled = {
-  Wrapper: styled.label`
+  Wrapper: styled.label<ToggleControlProps>`
     position: relative;
-    display: inline-flex;
-    align-items: center;
+    ${mixin.flex({ inline: true, align: 'center' })}
     vertical-align: middle;
     margin-bottom: 0;
     white-space: nowrap;
     cursor: pointer;
     user-select: none;
 
-    :not(:last-of-type) {
-      ${mixin.margin.right(2)}
-    }
+    ${({ inline }) => {
+      if (inline) {
+        return css`
+          :not(:last-of-type) {
+            ${mixin.margin.right(2)}
+          }
+        `
+      }
+    }}
   `,
   Control: styled(Control)<ToggleControlProps>`
     opacity: 0;
@@ -85,23 +89,26 @@ export const Styled = {
     // animation
     &:checked ~ .toggle-container .toggle-outer {
       background-color: transparent;
-      border-color: ${(props) =>
-        props?.type === 'radio' ? control.checked.borderColor : control.borderColor};
+      ${({ theme, type }) =>
+        mixin.border({
+          width: '2px',
+          color: type === 'radio' ? theme.control.checked : theme.control.borderColor,
+        })}
     }
     &:checked ~ .toggle-container .toggle-inner {
-      background-color: ${control.checked.bg};
+      ${({ theme }) => mixin.bgColor(theme.control.checked)}
       ${({ type }) =>
         type === 'radio' &&
         css`
           transform: scale(0.5);
         `}
-      ${({ type }) =>
+      ${({ theme, type }) =>
         type === 'checkbox' &&
-        mixin.animation({ property: fadeInBg, duration: 'easeIn', timing: 'linear' })}
+        mixin.animation({ property: fadeInBg(theme), duration: 'easeIn', timing: 'linear' })}
     &:not(:checked) ~ .toggle-container .toggle-inner {
-      ${({ type }) =>
+      ${({ theme, type }) =>
         type === 'checkbox' &&
-        mixin.animation({ property: fadeOutBg, duration: 'easeIn', timing: 'linear' })}
+        mixin.animation({ property: fadeOutBg(theme), duration: 'easeIn', timing: 'linear' })}
     &:checked ~ .toggle-container .toggle-inner .icon {
       stroke-dashoffset: 0;
     }
@@ -112,11 +119,10 @@ export const Styled = {
       ${mixin.animation({ property: toUncheckedPath, duration: 'easeIn', timing: 'fastOutSlowIn' })}
     }
   `,
-  Container: styled.div`
+  Container: styled.div<Pick<ToggleControlProps, 'size'>>`
     display: inline-block;
     flex-shrink: 0;
-    height: 1rem;
-    width: 1rem;
+    ${({ size }) => mixin.size(size)}
     line-height: 0;
     margin-right: 0.3125rem;
     order: 0;

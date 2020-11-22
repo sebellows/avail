@@ -139,7 +139,7 @@ export const mixin = {
   flex: ({
     direction,
     inline = false,
-    center = true,
+    center,
     align,
     justify,
   }: {
@@ -148,18 +148,26 @@ export const mixin = {
     center?: boolean
     align?: string
     justify?: string
-  }) => css`
-    display: ${inline ? 'inline-' : ''}flex;
-    justify-content: ${center ? 'center' : justify ? justify : 'flex-start'};
-    align-items: ${center ? 'center' : align ? align : 'flex-start'};
-    ${() => {
-      if (direction) {
-        return css`
-          flex-direction: ${direction};
-        `
-      }
-    }}
-  `,
+  }) => {
+    const normalizeProp = (str: string) =>
+      str.startsWith('flex-') ? str : str === 'start' || str === 'end' ? `flex-${str}` : str
+    center = !isNil(center) ? center : !align && !justify
+    align = align ? normalizeProp(align) : center ? 'center' : 'flex-start'
+    justify = justify ? normalizeProp(justify) : center ? 'center' : 'flex-start'
+
+    return css`
+      display: ${inline ? 'inline-' : ''}flex;
+      align-items: ${align};
+      justify-content: ${justify};
+      ${() => {
+        if (direction) {
+          return css`
+            flex-direction: ${direction};
+          `
+        }
+      }}
+    `
+  },
   flexCenter: css`
     display: flex;
     justify-content: center;
@@ -200,20 +208,26 @@ export const mixin = {
   center: {
     x: (percent = 50) => css`
       position: absolute;
-      left: ${percent}%;
-      transform: translateX(-${percent}%);
+      left: ${typeof percent === 'number' ? `${percent}%` : percent};
+      transform: ${typeof percent === 'number'
+        ? `translateX(${percent}%)`
+        : `translateX(${percent})`};
     `,
     y: (percent = 50) => css`
       position: absolute;
-      top: ${percent}%;
-      transform: translateY(-${percent}%);
+      left: ${typeof percent === 'number' ? `${percent}%` : percent};
+      transform: ${typeof percent === 'number'
+        ? `translateY(${percent}%)`
+        : `translateY(${percent})`};
     `,
-    abs: (yPercent = 50, xPercenter = yPercent) => {
+    abs: (yPercent = 50, xPercent = yPercent) => {
+      const y = typeof yPercent === 'number' ? `${yPercent}%` : yPercent
+      const x = typeof xPercent === 'number' ? `${xPercent}%` : xPercent
       return css`
         position: absolute;
-        top: ${yPercent}%;
-        left: ${xPercenter}%;
-        transform: translate(-${yPercent}%, -${xPercenter}%);
+        top: ${y};
+        left: ${x};
+        transform: translate(${y}, ${x});
       `
     },
   },

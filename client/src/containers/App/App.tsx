@@ -4,7 +4,8 @@ import styled from 'styled-components'
 
 import { SettingsForm } from '../SettingsForm'
 import { UtilitiesForm } from '../UtilitiesForm'
-import { Button, Dropdown, Spinner, Tabs, Tab, Toast, Icon } from '../../components'
+import { Tabs, Tab } from '../../components/Tabs'
+import { Button, Dropdown, Spinner, Toast, Icon } from '../../components'
 
 import { Logo } from '../../Logo'
 import { mixin } from '../../core/style'
@@ -65,13 +66,13 @@ export default function App() {
         <form ref={formRef} onSubmit={handleSubmit}>
           <Tabs
             id="avail-config"
-            activeKey={activeTab}
+            defaultActiveTab={activeTab}
             onSelect={(target: string) => setActiveTab(target)}
           >
-            <Tab target="settings" title="Global Settings">
+            <Tab id="settings" title="Global Settings">
               <SettingsForm />
             </Tab>
-            <Tab target="utilities" title="Utility Class Configuration">
+            <Tab id="utilities" title="Utility Class Configuration">
               <UtilitiesForm id="avail-utilities" />
             </Tab>
           </Tabs>

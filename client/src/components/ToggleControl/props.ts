@@ -1,6 +1,7 @@
-import { FormControlProps } from '../../core/contracts';
+import { FormControlProps } from '../../core/contracts'
 
 export interface ToggleControlProps extends FormControlProps {
-  inline?: boolean;
-  child?: any;
+  inline?: boolean
+  child?: any
+  size?: number
 }

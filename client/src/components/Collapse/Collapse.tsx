@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { forwardRef } from 'react'
-import { m as motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { ComponentProps } from '../../core/contracts'
 import { transitions } from '../../core/style'
 
@@ -24,6 +24,9 @@ const Collapse = forwardRef<HTMLDivElement, CollapseProps>(
     },
     ref,
   ) => {
+    React.useEffect(() => {
+      console.log('Collapse=>open', open)
+    }, [open])
     // By using `AnimatePresence` to mount and unmount the contents, we can animate
     // them in and out while also only rendering the contents of open accordions
     return (

@@ -1,110 +1,44 @@
-import React, { useState, useEffect, forwardRef, ComponentPropsWithRef } from 'react'
-import styled from 'styled-components'
-import { motion } from 'framer-motion'
-// import { spring } from "popmotion";
-import { useClickOutside, useEnsuredRef, useLifecycles } from '../../hooks'
-import { mixin } from '../../core/style'
-import { classNames } from '../../core/utils'
+import React, { useState, useEffect, forwardRef, useMemo } from 'react'
+import { useClickOutside, useEnsuredRef, useFocused, useLifecycles } from '../../hooks'
+import styled, { css } from 'styled-components'
+import { classNames, isPlainObject } from '../../core/utils'
 import { Collapse } from '../Collapse'
-import { ComponentProps } from '../../core/contracts'
-import { useTheme } from '../../ThemeContext'
+import { DropdownProps } from './props'
+import { DropdownItem } from './DropdownItem'
 
-export const useFocused = (ref: any) => {
-  const [active, setActive] = useState(false)
+import { mixin } from '../../core/style'
 
-  const handleFocusIn = (e: any) => {
-    if (ref?.current === document.activeElement) setActive(true)
-    else setActive(false)
-  }
+export const StyledDropdown = styled.div<DropdownProps>`
+  position: relative;
+  ${mixin.flex({ direction: 'column', inline: true })}
 
-  useLifecycles(
-    () => {
-      document.addEventListener('focusin', handleFocusIn)
-    },
-    () => {
-      document.removeEventListener('focusin', handleFocusIn)
-    },
-  )
-
-  return active
-}
-
-interface DropdownItemProps extends Pick<ComponentProps, 'theme'>, ComponentPropsWithRef<'button'> {
-  isActive?: boolean
-  width?: number | string
-  onHoverStart?: (e?: any) => void
-  onHoverEnd?: (e?: any) => void
-}
-
-interface DropdownProps<T = string>
-  extends Omit<ComponentPropsWithRef<'div'>, 'onSelect'>,
-    Pick<ComponentProps, 'theme'> {
-  // Update toggle label to selected item text (like a pseudo-select form control)
-  asSelect?: boolean
-  carat?: boolean
-  items?: T[]
-  width?: number | string
-  onSelect?: (selection: any, e: any) => void
-}
-
-export const Styled = {
-  Container: styled.div<DropdownProps>`
-    width: 100%;
-    position: relative;
-    ${({ width }) => mixin.maxWidth(width)}
+  // Collapse
+  .dropdown-menu {
+    top: 100%;
+    padding: 0;
+    overflow: hidden;
+    ${(props) => mixin.minWidth(props?.width ?? 160)}
     ${mixin.flex({ direction: 'column' })}
-
-    // Collapse
-    .dropdown-menu {
-      top: 100%;
-      padding: 0;
-      overflow: hidden;
-      ${({ width }) => mixin.minWidth(width)}
-      ${mixin.flex({ direction: 'column' })}
-      ${mixin.borderRadius('lg')}
-      ${mixin.boxShadow.elevation(1)}
-      ${mixin.margin.bottom(3)}
-      ${mixin.center.x()}
-      ${mixin.zIndex('dropdown')}
-    }
-  `,
-}
-const StyledItem = styled(motion.button)`
-  height: auto;
-  width: 100%;
-  ${({ theme }) => mixin.bgColor(theme.bg)}
-  ${mixin.padding.all(2)}
-  ${mixin.border()}
-  ${mixin.userSelect}
-  overflow-wrap: break-word;
-  cursor: pointer;
-  &:last-of-type {
-    border: none;
+    ${mixin.borderRadius('lg')}
+    ${mixin.boxShadow.elevation(1)}
+    ${mixin.margin.bottom(3)}
+    ${({ alignMenu }) => {
+      switch (alignMenu) {
+        case 'left':
+          return mixin.center.x(0)
+        case 'right':
+          return css`
+            position: absolute;
+            left: auto;
+            right: 0;
+          `
+        default:
+          return mixin.center.x()
+      }
+    }}
+    ${mixin.zIndex('dropdown')}
   }
 `
-
-const DropdownItem = forwardRef<HTMLButtonElement, DropdownItemProps>(
-  ({ children, className, onClick, onHoverStart, onHoverEnd, ...props }, ref) => {
-    const { theme } = useTheme()
-
-    return (
-      <StyledItem
-        ref={ref}
-        className={className}
-        theme={theme}
-        animate={
-          props?.isActive ? { backgroundColor: theme.hover.bg } : { backgroundColor: theme.bg }
-        }
-        whileTap={{ backgroundColor: theme.hover.bg }}
-        onHoverStart={onHoverStart}
-        onHoverEnd={onHoverEnd}
-        onClick={onClick}
-      >
-        {children}
-      </StyledItem>
-    )
-  },
-)
 
 type Toggle = React.ReactElement<
   any,
@@ -116,7 +50,10 @@ type Toggle = React.ReactElement<
 >
 
 const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
-  ({ asSelect = false, items, width = 160, onSelect, ...props }, ref) => {
+  (
+    { asSelect = false, items, itemAs = 'button', itemProps = {}, onSelect, selected, ...props },
+    ref,
+  ) => {
     const [open, toggle] = useState(false)
     const [activeIndex, setActiveIndex] = useState(-1)
     const containerRef = useEnsuredRef(ref)
@@ -128,10 +65,25 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       ...(firstChild?.props || {}),
       className: classNames('dropdown-toggle', firstChild?.props?.className),
       onClick: (e: any) => {
+        e.preventDefault()
         toggle(!open)
+        console.log('toggle', open)
         props?.onClick?.(e)
       },
     })
+
+    const computedItems = useMemo(() => {
+      if (isPlainObject(items)) {
+        return Object.entries(items).reduce((acc, [k, v]) => {
+          acc.push([k, v])
+          return acc
+        }, [])
+      }
+      return (items as string[]).reduce((acc, item) => {
+        acc.push([item, item])
+        return acc
+      }, [])
+    }, [items])
 
     useClickOutside(containerRef, () => {
       toggle(false)
@@ -147,6 +99,14 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
         document.removeEventListener('keydown', onKeydown)
       },
     )
+
+    useEffect(() => {
+      if (selected && activeIndex === -1) {
+        // console.log('Dropdown->selected', selected, items)
+        setActiveIndex(computedItems.findIndex((item) => item[0] === selected))
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [computedItems])
 
     useEffect(() => {
       if (dropdownFocused) {
@@ -178,7 +138,7 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
         // Up arrowkey is pressed
       } else if (e.keyCode === 38) {
         if (activeIndex - 1 > -1) setActiveIndex(activeIndex - 1)
-        else setActiveIndex(items.length - 1)
+        else setActiveIndex(computedItems.length - 1)
       }
     }
 
@@ -191,29 +151,30 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
     }
 
     return (
-      <Styled.Container
+      <StyledDropdown
         ref={containerRef}
         {...props}
-        width={width}
         className={classNames('dropdown', !!props?.className && props.className)}
       >
         {toggleEl}
 
         <Collapse className="dropdown-menu" open={open}>
-          {items.map((item, i) => (
+          {computedItems.map((item, i) => (
             <DropdownItem
               key={`dropdown-item-${i + 1}`}
+              {...itemProps}
+              as={itemAs}
               isActive={activeIndex === i}
-              width={width}
-              onClick={(e: any) => handleSelect(item, e)}
+              value={computedItems[i][0]}
+              onChange={(e: any) => handleSelect(item, e)}
               onHoverStart={(e: any) => handleHoverStart(e, i)}
               onHoverEnd={(e: any) => handleHoverEnd(e, -1)}
             >
-              {item}
+              {computedItems[i][1]}
             </DropdownItem>
           ))}
         </Collapse>
-      </Styled.Container>
+      </StyledDropdown>
     )
   },
 )

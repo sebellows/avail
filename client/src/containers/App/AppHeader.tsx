@@ -6,6 +6,7 @@ import { Button, Dropdown, Icon } from '../../components'
 import { mixin } from '../../core/style'
 import { useTheme } from '../../ThemeContext'
 import { hyphenate } from '../../core/utils'
+import { ToggleButton } from '../../components/Button'
 
 const StyledHeader = styled.header`
   ${({ theme }) => mixin.bgColor(theme.primary)}
@@ -25,13 +26,14 @@ const StyledHeader = styled.header`
 `
 
 const AppHeader = () => {
-  const { setActiveTheme, setTheme, theme, themes, themeNames } = useTheme()
+  const { activeTheme, setActiveTheme, setTheme, theme, themes, themeNames } = useTheme()
 
-  function selectTheme(selected: string) {
-    selected = hyphenate(selected)
-    setActiveTheme(selected)
+  function selectTheme(selected: string | string[]) {
+    console.log('selectTheme', selected)
+    const selectedTheme = Array.isArray(selected) ? selected[0] : selected
+    setActiveTheme(hyphenate(selectedTheme))
 
-    const newTheme = themes.get(selected)
+    const newTheme = themes.get(selectedTheme)
 
     if (newTheme) {
       setTheme(newTheme)
@@ -54,7 +56,14 @@ const AppHeader = () => {
       </div>
 
       <div className="hmenu">
-        <Dropdown items={Object.values(themeNames)} onSelect={selectTheme}>
+        <Dropdown
+          items={themeNames}
+          itemAs={ToggleButton}
+          itemProps={{ size: 24 }}
+          selected={activeTheme}
+          onSelect={selectTheme}
+          alignMenu="right"
+        >
           <Button icon onClick={handleDropdownClick}>
             <Icon name="bucket" />
           </Button>
