@@ -16,6 +16,7 @@ export interface IconProps extends React.SVGAttributes<SVGSVGElement> {
   focusable?: boolean
   name: string
   size?: number | string
+  strokeWidth?: number
 }
 
 const Icon = React.forwardRef<SVGSVGElement, IconProps>(
@@ -27,6 +28,7 @@ const Icon = React.forwardRef<SVGSVGElement, IconProps>(
       filled = false,
       focusable = false,
       size = 24,
+      strokeWidth = 2,
       ...props
     },
     ref,
@@ -56,7 +58,7 @@ const Icon = React.forwardRef<SVGSVGElement, IconProps>(
         viewBox="0 0 24 24"
         fill={filled ? fill : 'none'}
         stroke={filled ? 'none' : fill}
-        strokeWidth={filled ? '0' : '2'}
+        strokeWidth={filled ? '0' : strokeWidth}
         strokeLinecap="round"
         strokeLinejoin="round"
         className={iconClassName}

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import styled, { keyframes, css } from 'styled-components'
 import { Control } from '../Control'
 import { mixin } from '../../core/style'
@@ -83,42 +84,46 @@ export const Styled = {
   `,
   Control: styled(Control)<ToggleControlProps>`
     opacity: 0;
-    z-index: 1;
     ${mixin.cover}
-
-    // animation
-    &:checked ~ .toggle-container .toggle-outer {
-      background-color: transparent;
-      ${({ theme, type }) =>
-        mixin.border({
-          width: '2px',
-          color: type === 'radio' ? theme.control.checked : theme.control.borderColor,
-        })}
-    }
-    &:checked ~ .toggle-container .toggle-inner {
-      ${({ theme }) => mixin.bgColor(theme.control.checked)}
-      ${({ type }) =>
-        type === 'radio' &&
-        css`
-          transform: scale(0.5);
-        `}
-      ${({ theme, type }) =>
-        type === 'checkbox' &&
-        mixin.animation({ property: fadeInBg(theme), duration: 'easeIn', timing: 'linear' })}
-    &:not(:checked) ~ .toggle-container .toggle-inner {
-      ${({ theme, type }) =>
-        type === 'checkbox' &&
-        mixin.animation({ property: fadeOutBg(theme), duration: 'easeIn', timing: 'linear' })}
-    &:checked ~ .toggle-container .toggle-inner .icon {
-      stroke-dashoffset: 0;
-    }
-    &:checked ~ .toggle-container .toggle-inner .icon .check-icon-path {
-      ${mixin.animation({ property: toCheckedPath, duration: 'easeIn', timing: 'linearOutSlowIn' })}
-    }
-    &:not(:checked) ~ .toggle-container .toggle-inner .icon .check-icon-path {
-      ${mixin.animation({ property: toUncheckedPath, duration: 'easeIn', timing: 'fastOutSlowIn' })}
-    }
   `,
+  // Control: styled(Control)<ToggleControlProps>`
+  //   opacity: 0;
+  //   // z-index: 1;
+  //   ${mixin.cover}
+
+  //   // animation
+  //   &:checked ~ .toggle-container .toggle-outer {
+  //     background-color: transparent;
+  //     ${({ theme, type }) =>
+  //       mixin.border({
+  //         width: '2px',
+  //         color: type === 'radio' ? theme.control.checked : theme.control.borderColor,
+  //       })}
+  //   }
+  //   &:checked ~ .toggle-container .toggle-inner {
+  //     ${({ theme }) => mixin.bgColor(theme.control.checked)}
+  //     ${({ type }) =>
+  //       type === 'radio' &&
+  //       css`
+  //         transform: scale(0.5);
+  //       `}
+  //     ${({ theme, type }) =>
+  //       type === 'checkbox' &&
+  //       mixin.animation({ property: fadeInBg(theme), duration: 'easeIn', timing: 'linear' })}
+  //   &:not(:checked) ~ .toggle-container .toggle-inner {
+  //     ${({ theme, type }) =>
+  //       type === 'checkbox' &&
+  //       mixin.animation({ property: fadeOutBg(theme), duration: 'easeIn', timing: 'linear' })}
+  //   &:checked ~ .toggle-container .toggle-inner .icon {
+  //     stroke-dashoffset: 0;
+  //   }
+  //   &:checked ~ .toggle-container .toggle-inner .icon .check-icon-path {
+  //     ${mixin.animation({ property: toCheckedPath, duration: 'easeIn', timing: 'linearOutSlowIn' })}
+  //   }
+  //   &:not(:checked) ~ .toggle-container .toggle-inner .icon .check-icon-path {
+  //     ${mixin.animation({ property: toUncheckedPath, duration: 'easeIn', timing: 'fastOutSlowIn' })}
+  //   }
+  // `,
   Container: styled.div<Pick<ToggleControlProps, 'size'>>`
     display: inline-block;
     flex-shrink: 0;
@@ -129,7 +134,7 @@ export const Styled = {
     position: relative;
     vertical-align: middle;
     white-space: nowrap;
-    pointer-events: none;
+    // pointer-events: none;
 
     .icon {
       width: 100%;

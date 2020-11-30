@@ -20,7 +20,7 @@ import {
  * @example {@link https://github.com/streamich/react-use/blob/master/docs/useEnsuredForwardedRef.md}
  */
 
-export type EnsuredRef<T> = ((instance: HTMLDivElement) => void) | MutableRefObject<T>
+export type EnsuredRef<T> = ((instance: T | null) => void) | MutableRefObject<T>
 
 export function useEnsuredRef<T>(forwardedRef: EnsuredRef<T>): MutableRefObject<T> {
   const ensuredRef = useRef(forwardedRef && (forwardedRef as MutableRefObject<T>).current)

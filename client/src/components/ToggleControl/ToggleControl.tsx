@@ -1,10 +1,11 @@
 import React, { Ref, useRef, useState } from 'react'
-import { control } from '../../core/style'
 import { validFormProps, containerProps } from '../../core/utils'
-import { Icon } from '../Icon'
+// import { Icon } from '../Icon'
 import { Styled } from './styles'
 import { ToggleControlProps } from './props'
 import { useTheme } from '../../ThemeContext'
+import { CheckboxIcon } from '../Icon/CheckboxIcon'
+import { RadioIcon } from '../Icon/RadioIcon'
 
 const ToggleControl = React.forwardRef<{}, ToggleControlProps>(
   (
@@ -13,7 +14,7 @@ const ToggleControl = React.forwardRef<{}, ToggleControlProps>(
       checked: initialChecked,
       inline = false,
       children,
-      size = 16,
+      size = 24,
       type = 'checkbox',
       onChange,
       ...props
@@ -53,7 +54,26 @@ const ToggleControl = React.forwardRef<{}, ToggleControlProps>(
           onChange={handleChange}
         />
         <Styled.Container className="toggle-container" size={size}>
-          <Styled.Outer className="toggle-outer" inputType={inputType} />
+          {inputType === 'radio' ? (
+            <RadioIcon
+              name="radio"
+              checked={checked}
+              fill={checked ? theme.control.checked : theme.control.borderColor}
+              size={size}
+              stroke={theme.control.borderColor}
+              onClick={handleChange}
+            />
+          ) : (
+            <CheckboxIcon
+              name="check"
+              checked={checked}
+              fill={checked ? theme.control.checked : theme.control.borderColor}
+              size={size}
+              stroke="#ffffff"
+              onClick={handleChange}
+            />
+          )}
+          {/* <Styled.Outer className="toggle-outer" inputType={inputType} />
           <Styled.Inner className="toggle-inner" inputType={inputType}>
             {inputType === 'checkbox' && (
               <Icon
@@ -64,7 +84,7 @@ const ToggleControl = React.forwardRef<{}, ToggleControlProps>(
                 strokeDasharray="22.91026"
               />
             )}
-          </Styled.Inner>
+          </Styled.Inner> */}
         </Styled.Container>
         {children && (
           <Styled.Content {...(children as React.ReactElement)?.props}>{children}</Styled.Content>

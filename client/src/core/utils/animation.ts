@@ -1,7 +1,33 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import {
+  ComponentProps,
+  ComponentType,
+  ForwardRefExoticComponent,
+  ReactNode,
+  RefAttributes,
+} from 'react'
+import { motion, MotionProps } from 'framer-motion'
 import { styles } from './dom'
 import { Listener } from '../contracts'
 import { listen } from './listen'
+
+/**
+ * Utility to create a type-safe motion.custom
+ * @see {@link https://github.com/framer/motion/issues/290#issuecomment-532228205}
+ *
+ * @example
+ * const AnimatedBox = animated(Box)
+ */
+type OmitMotionProps<Props> = Omit<Props, keyof MotionProps>
+export function animated<Props = {}>(Component: ComponentType<Props>) {
+  return (motion.custom(Component) as unknown) as ForwardRefExoticComponent<
+    MotionProps &
+      RefAttributes<Element> &
+      OmitMotionProps<ComponentProps<typeof Component>> & {
+        children: ReactNode
+      }
+  >
+}
 
 // Fade in over 2000 ms = 2 seconds.
 const FADE_DURATION = 1.0 * 1000

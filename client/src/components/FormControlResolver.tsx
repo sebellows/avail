@@ -10,6 +10,7 @@ import { Colorpicker } from './Colorpicker'
 import { ColorControl } from './ColorControl'
 import { SelectControl } from './SelectControl'
 import { ToggleControl } from './ToggleControl'
+import { Checkbox } from './ToggleControl/Checkbox'
 import { NumericControl } from './NumericControl'
 
 interface FormControlResolverProps extends FormControlProps {
@@ -65,9 +66,9 @@ const FormControlResolver: React.FC<FormControlResolverProps> = ({
     switch (controlType) {
       case 'checkbox':
         return (
-          <ToggleControl {...props} {...handlers}>
+          <Checkbox {...props} {...handlers}>
             {props?.label}
-          </ToggleControl>
+          </Checkbox>
         )
       case 'radiogroup':
         return <RadioGroup {...props} {...handlers} />

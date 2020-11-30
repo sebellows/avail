@@ -50,7 +50,7 @@ const Draggable = forwardRef<HTMLDivElement, DraggableProps>(
     const [offsetX, setOffsetX] = useState(initialPosition?.x)
     const [offsetY, setOffsetY] = useState(initialPosition?.y)
 
-    const containerRef = useEnsuredRef<HTMLElement>(ref)
+    const containerRef = useEnsuredRef<HTMLDivElement>(ref)
     const container = React.Children.only(children) as React.ReactElement
 
     useLifecycles(
