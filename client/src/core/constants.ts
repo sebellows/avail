@@ -39,19 +39,20 @@ export const CORNERS = {
   bottomRight: 'bottom-right',
 }
 
+const BLACK_100 = '#000000'
 /**
  * Default Style Values
  */
 export const WHITE = '#ffffff'
-export const GRAY_100 = '#f8f9fa'
-export const GRAY_200 = '#e9ecef'
-export const GRAY_300 = '#dee2e6'
-export const GRAY_400 = '#ced4da'
-export const GRAY_500 = '#adb5bd'
-export const GRAY_600 = '#6c757d'
-export const GRAY_700 = '#495057'
-export const GRAY_800 = '#343a40'
-export const GRAY_900 = '#212529'
+export const GRAY_100 = '#f8f9fa' // #f8f9fa | hsl(210deg 17% 98%)
+export const GRAY_200 = '#e9ecef' // #e9ecef | hsl(210deg 16% 93%)
+export const GRAY_300 = '#dee2e6' // #dce0e5 | hsl(210deg 15% 88%)
+export const GRAY_400 = '#ced4da' // #ced4da | hsl(210deg 14% 83%)
+export const GRAY_500 = '#adb5bd' // #adb5bd | hsl(210deg 11% 71%)
+export const GRAY_600 = '#6c757d' // #6c757d | hsl(208deg 7% 46%)
+export const GRAY_700 = '#495057' // #495057 | hsl(210deg 9% 31%)
+export const GRAY_800 = '#343a40' // #343a40 | hsl(210deg 10% 23%)
+export const GRAY_900 = '#212529' // #212529 | hsl(210deg 11% 15%)
 export const BLACK = '#000000'
 export const BLACK_06 = Color(BLACK).alpha(0.06).string()
 export const BLACK_12 = Color(BLACK).alpha(0.12).string()

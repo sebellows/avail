@@ -1,123 +1,30 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { ChangeEvent, forwardRef, Ref, useRef, useState } from 'react'
-import styled, { css } from 'styled-components'
-// import { Icon } from '../Icon'
-import {
-  motion,
-  MotionProps,
-  MotionStyle,
-  MotionValue,
-  useMotionValue,
-  useTransform,
-} from 'framer-motion'
+import React, { forwardRef, useRef, useState } from 'react'
+import { motion, useMotionValue, useTransform } from 'framer-motion'
 
-import { useTheme } from '../../ThemeContext'
-// import { Styled } from './styles'
-import { color, mixin } from '../../core/style'
-import { validFormProps, containerProps } from '../../core/utils'
-import { ComponentProps, FormControlType } from '../../core/contracts'
-
-import { ToggleControlProps } from './props'
-import { Control } from '../Control'
 import { useEnsuredRef } from '../../hooks'
+import { Theme, useTheme } from '../../ThemeContext'
+import { validFormProps, containerProps } from '../../core/utils'
 
-export interface CheckmarkIconProps
-  extends React.InputHTMLAttributes<FormControlType>,
-    ComponentProps,
-    Pick<MotionStyle, 'pathLength'> {
-  as?: keyof JSX.IntrinsicElements | React.ComponentType<any>
-  checked?: boolean
-  inline?: boolean
-  child?: any
-  size?: number
-  opacity?: MotionValue<number>
-  pathLength?: MotionValue<number>
-  strokeWidth?: number | string
-}
+import { Styled } from './styles'
+import { CheckmarkIconProps } from './props'
 
-const Styled = {
-  Wrapper: styled(motion.label)<ToggleControlProps>`
-    position: relative;
-    ${mixin.flex({ inline: true, align: 'center' })}
-    vertical-align: middle;
-    margin-bottom: 0;
-    white-space: nowrap;
-    cursor: pointer;
-    user-select: none;
-
-    ${({ inline }) => {
-      if (inline) {
-        return css`
-          :not(:last-of-type) {
-            ${mixin.margin.right(2)}
-          }
-        `
-      }
-    }}
-  `,
-  Control: styled(Control)<ToggleControlProps>`
-    opacity: 0;
-    ${mixin.cover}
-  `,
-  Container: styled.div<Pick<ToggleControlProps, 'size'>>`
-    display: inline-block;
-    flex-shrink: 0;
-    ${({ size }) => mixin.size(size)}
-    line-height: 0;
-    margin-right: 0.3125rem;
-    order: 0;
-    position: relative;
-    vertical-align: middle;
-    white-space: nowrap;
-    // pointer-events: none;
-  `,
-  Content: styled.div`
-    font-weight: normal;
-    position: relative;
-    user-select: auto;
-  `,
-}
-
-const tickVariants = {
-  pressed: (isChecked: boolean) => {
-    console.log('tickVariants', isChecked)
-    return {
-      pathLength: isChecked ? 0.85 : 0.2,
-      opacity: 1,
-      fill: '#ff0000',
-      scale: 2,
-    }
-  },
-  checked: { pathLength: 1, fill: '#ffffff' },
-  unchecked: { pathLength: 0, fill: 'rgba(255, 255, 255, 0.5)' },
-}
-
-const boxVariants = {
-  hover: { scale: 1.05, strokeWidth: 5 },
-  pressed: (isChecked: boolean) => ({
-    scale: 0.95,
-    strokeWidth: 1.5,
-    stroke: color.primary,
-    fill: isChecked ? color.primary : mixin.rgba(color.primary, 0.5),
-    opacity: 1,
-  }),
-  checked: {
-    stroke: color.primary,
-    fill: color.primary,
-  },
+const configureBoxVariants = (theme: Theme, strokeWidth: number) => ({
+  hover: { scale: 1.05, strokeWidth: Math.floor(strokeWidth * 1.2) },
+  pressed: { scale: 0.95, strokeWidth: Math.floor(strokeWidth * 0.7) },
+  checked: { stroke: theme.accent },
   unchecked: {
-    stroke: color.border.base,
-    strokeWidth: 2,
-    fill: mixin.rgba(color.primary, 0),
+    stroke: theme.control.borderColor,
+    strokeWidth,
   },
-}
+})
 
 const Checkbox = forwardRef<SVGSVGElement, CheckmarkIconProps>(
   (
     {
       as: Component = 'label',
       checked: initialChecked,
-      strokeWidth = 2,
+      strokeWidth = 2.75,
       size = 24,
       inline = false,
       children,
@@ -129,8 +36,9 @@ const Checkbox = forwardRef<SVGSVGElement, CheckmarkIconProps>(
   ) => {
     const { theme } = useTheme()
     const pathLength = useMotionValue(0)
+    const stroke = useMotionValue(0)
     const [isChecked, setIsChecked] = useState(initialChecked)
-    const opacity = useTransform(pathLength, [0.05, 0.15], [Number(isChecked), Number(isChecked)])
+    const opacity = useTransform(stroke, [0.05, 0.15], [Number(isChecked), Number(isChecked)])
 
     const componentRef = useEnsuredRef<SVGSVGElement>(ref)
 
@@ -166,28 +74,43 @@ const Checkbox = forwardRef<SVGSVGElement, CheckmarkIconProps>(
       // onChange?.(changeEvent)
     }
 
-    const offset = +strokeWidth * 3
-    const transparent = mixin.rgba(theme.control.borderColor, 0)
+    const calcProp = (num = 0) => ((+strokeWidth + num) / +size) * 440 // if '0', equals ~0.08333(∞)
+    const computedStrokeWidth = Math.floor(calcProp()) // ~50px
+    const offset = computedStrokeWidth * 2
 
-    const boxProps = {
-      width: Number(+size - offset),
-      height: Number(+size - offset),
-      x: strokeWidth,
-      y: strokeWidth,
-      rx: +strokeWidth * 2,
-      fill: isChecked ? theme.control.checked : transparent,
-      stroke: isChecked ? theme.control.checked : theme.control.borderColor,
-      strokeWidth,
-      pointerEvents: 'none',
+    const boxVariants = configureBoxVariants(theme, computedStrokeWidth)
+    const boxVariants2 = {
+      checked: { stroke: 'url(#gradient)', strokeDasharray: 0, strokeDashoffset: 0 },
+      unchecked: { stroke: 'none', strokeDasharray: size * 4, strokeDashoffset: size * 4 },
     }
-    const checkmarkProps: any = {
-      d: 'm20.75,6.705l-12,12l-5.5,-5.5l1.41,-1.41l4.09,4.08l10.59,-10.58l1.41,1.41z',
-      fill: isChecked ? '#ffffff' : transparent,
-      stroke: 'none',
-      strokeWidth: 0,
+    const tickVariants = {
+      pressed: { pathLength: isChecked ? 0.85 : 0.2 },
+      checked: { pathLength: 1 },
+      unchecked: { pathLength: 0 },
+    }
+    console.log('computedStrokeWidth', computedStrokeWidth)
+    const tickVariants2 = {
+      checked: {
+        stroke: 'url(#gradient)',
+        strokeDasharray: 0,
+        strokeDashoffset: 0,
+      },
+      unchecked: {
+        stroke: 'none',
+        strokeDasharray: size,
+        strokeDashoffset: size,
+      },
+    }
+
+    const tickProps = {
+      d: 'M 0 128.666 L 128.658 257.373 L 341.808 0',
+      fill: 'transparent',
+      strokeWidth: computedStrokeWidth,
       strokeLinecap: 'round' as any,
       strokeLinejoin: 'round' as any,
-      pointerEvents: 'none',
+      variants: tickVariants,
+      style: { pathLength, opacity },
+      custom: isChecked,
     }
 
     return (
@@ -196,11 +119,7 @@ const Checkbox = forwardRef<SVGSVGElement, CheckmarkIconProps>(
         {...htmlProps}
         as={Component}
         inline={inline}
-        initial={false}
-        animate={isChecked ? 'checked' : 'unchecked'}
-        whileHover="hover"
-        whileTap="pressed"
-        onClick={handleChange}
+        // onClick={handleChange}
       >
         <Styled.Control
           ref={inputRef}
@@ -216,32 +135,72 @@ const Checkbox = forwardRef<SVGSVGElement, CheckmarkIconProps>(
           <motion.svg
             width={size}
             height={size}
-            // onClick={() => setIsChecked(!isChecked)}
+            viewBox="0 0 440 440"
+            initial={false}
+            animate={isChecked ? 'checked' : 'unchecked'}
+            whileHover="hover"
+            whileTap="pressed"
+            onClick={handleChange}
           >
+            <defs>
+              <linearGradient id="gradient" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#ff8a00"></stop>
+                <stop offset="100%" stopColor="#da1b60"></stop>
+              </linearGradient>
+            </defs>
             <motion.rect
               id="checkbox-box"
-              {...boxProps}
-              variants={boxVariants}
+              width={440 - offset}
+              height={440 - offset}
+              x={computedStrokeWidth}
+              y={computedStrokeWidth}
+              rx={computedStrokeWidth * 2}
+              fill="transparent"
+              stroke={theme.control.borderColor}
+              strokeWidth={computedStrokeWidth}
+              pointerEvents="none"
+              // variants={boxVariants}
+              // transition={{ duration: 0.5 }}
+              // custom={isChecked}
+            />
+            <motion.rect
+              id="checkbox-outline"
+              width={440 - offset}
+              height={440 - offset}
+              x={computedStrokeWidth / 2}
+              y={computedStrokeWidth / 2}
+              rx={computedStrokeWidth}
+              fill="transparent"
+              stroke="none"
+              // stroke="url(#gradient)"
+              strokeWidth={computedStrokeWidth}
+              strokeDasharray={size * 4}
+              pointerEvents="none"
+              variants={boxVariants2}
+              transition={{ duration: 0.5 }}
               custom={isChecked}
             />
-            <motion.filter id="svg_blur_1">
-              <motion.feGaussianBlur stdDeviation="0.5" in="SourceGraphic" />
-            </motion.filter>
+            <motion.polyline
+              // points="9,22 18,30 32,9"
+              points="110,218.888 195,306.666 316.111,120"
+              fill="none"
+              strokeLinecap="round"
+              strokeWidth={computedStrokeWidth}
+              transition={{ duration: 0.5 }}
+              // stroke="url(#gradient)"
+              strokeDasharray={size}
+              variants={tickVariants2}
+            />
+            {/* <motion.path
+              {...tickProps}
+              transform={`translate(${calcProp(1)} ${calcProp(3.5)}) rotate(4 170.904 128.687)`}
+              stroke={theme.bg}
+            />
             <motion.path
-              {...checkmarkProps}
-              filter="url(#svg_blur_1"
-              fill="rgba(0, 0, 0, .4)"
-              transform="translate(0 1)"
-              variants={tickVariants}
-              style={{ pathLength, opacity }}
-              custom={isChecked}
-            />
-            <motion.path
-              {...checkmarkProps}
-              variants={tickVariants}
-              style={{ pathLength, opacity }}
-              custom={isChecked}
-            />
+              {...tickProps}
+              transform={`translate(${calcProp(1)} ${calcProp(2)}) rotate(4 170.904 128.687)`}
+              stroke={theme.control.checked}
+            /> */}
           </motion.svg>
         </Styled.Container>
         {children && (

@@ -1,7 +1,7 @@
-import React, { forwardRef, Ref, SyntheticEvent } from 'react'
+import React, { ChangeEvent, forwardRef, Ref } from 'react'
 import { classNames } from '../../core/utils'
 import { FormGroupProps, OptionProps } from '../../core/contracts'
-import { ToggleControl } from '../ToggleControl/ToggleControl'
+import { Radio } from '../ToggleControl'
 import { FieldFeedback } from '../FieldFeedback'
 import { FieldDescription } from '../FieldDescription'
 import { Styled } from './styles'
@@ -25,7 +25,8 @@ const RadioGroup = forwardRef<{}, FormGroupProps>(
     },
     ref: Ref<any>,
   ) => {
-    function handleChange(event: SyntheticEvent<HTMLInputElement>) {
+    function handleChange(event: ChangeEvent<HTMLInputElement>) {
+      console.log('RadioGroup=>handleChange', event.target, value)
       onChange?.(event)
     }
 
@@ -34,20 +35,19 @@ const RadioGroup = forwardRef<{}, FormGroupProps>(
         <Styled.Legend className={classNames(classMap?.legend)}>{legend}</Styled.Legend>
         <Styled.FormGroup className="radio-group">
           {options.map((option: OptionProps, i: number) => (
-            <ToggleControl
+            <Radio
               key={`${option.name}-${i}`}
               type="radio"
               id={`${option.name}-${i}`}
-              name={id}
+              name={props?.name ?? id}
               value={option.value}
               checked={value === option.value}
-              label={option.name}
-              inline={inline ? 1 : 0}
+              inline={inline ? true : false}
               className={classNames(classMap?.control)}
               onChange={handleChange}
             >
               <span>{option.name}</span>
-            </ToggleControl>
+            </Radio>
           ))}
         </Styled.FormGroup>
         {description && <FieldDescription>{description}</FieldDescription>}

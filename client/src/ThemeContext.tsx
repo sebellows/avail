@@ -53,6 +53,9 @@ const themeCommon = {
   },
 }
 
+// hsl(210deg 16% 93%)
+const shade = (l = 93) => Color(BLACK).hue(210).saturationl(12).lightness(l).string()
+
 const setLightTheme = (name = 'light', primary = COLORS.blue, accent = COLORS.orange): Theme => ({
   name,
   bg: LIGHT,
@@ -65,10 +68,11 @@ const setLightTheme = (name = 'light', primary = COLORS.blue, accent = COLORS.or
   },
   borderColor: Color(BLACK).alpha(0.12).string(),
   control: {
-    bg: Color(BLACK).alpha(0.04).string(),
-    borderColor: Color(BLACK).alpha(0.06).string(),
-    checked: Color(primary).string(),
-    fg: Color(BLACK).alpha(0.87).string(),
+    // bg: Color(BLACK).alpha(0.04).string(),
+    bg: shade(93),
+    borderColor: shade(89),
+    checked: Color(primary).hsl().string(),
+    fg: shade(15),
   },
   disabled: {
     bg: Color(BLACK).alpha(0.075).string(),
