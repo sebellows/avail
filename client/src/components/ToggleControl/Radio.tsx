@@ -1,29 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { forwardRef, useRef, useState } from 'react'
-import styled, { css } from 'styled-components'
-import { motion, useMotionValue, useTransform } from 'framer-motion'
+import React, { forwardRef, useRef } from 'react'
+import { motion } from 'framer-motion'
 
 import { useEnsuredRef } from '../../hooks'
-import { Theme, useTheme } from '../../ThemeContext'
+import { useTheme } from '../../ThemeContext'
 import { validFormProps, containerProps, classNames, Color, uuid } from '../../core/utils'
 
 import { Styled } from './styles'
 import { CheckmarkIconProps } from './props'
 
-const configureBoxVariants = (theme: Theme, strokeWidth: number) => ({
-  hover: { scale: 1.05, strokeWidth: Math.floor(strokeWidth * 1.2) },
-  pressed: { scale: 0.95, strokeWidth: Math.floor(strokeWidth * 0.7) },
-  checked: { stroke: theme.accent },
-  unchecked: {
-    stroke: theme.control.borderColor,
-    strokeWidth,
-  },
-})
-
-const Radio = forwardRef<SVGSVGElement, CheckmarkIconProps>(
+const Radio = forwardRef<HTMLLabelElement, CheckmarkIconProps>(
   (
     {
-      as: Component = 'label',
       checked: isChecked,
       strokeWidth = 2.75,
       size = 24,
@@ -36,9 +24,10 @@ const Radio = forwardRef<SVGSVGElement, CheckmarkIconProps>(
     ref,
   ) => {
     const { theme } = useTheme()
-    // const [isChecked, setIsChecked] = useState(initialChecked)
 
-    const componentRef = useEnsuredRef<SVGSVGElement>(ref)
+    const componentRef = useEnsuredRef<HTMLLabelElement>(ref)
+    const inputID = props?.id ?? props?.name ?? 'avail-radio'
+    const labelID = uuid(5, `${inputID}-`)
     const inputRef = useRef(null)
 
     React.useEffect(() => {
@@ -50,24 +39,14 @@ const Radio = forwardRef<SVGSVGElement, CheckmarkIconProps>(
     const formProps = validFormProps(props)
     const inputType = type === 'radio' ? type : 'checkbox'
 
-    if (Component === 'label') {
-      htmlProps['htmlFor'] = formProps?.name || formProps?.id
-    }
-
     function handleChange(event: any) {
-      event.preventDefault()
-      // setIsChecked(!isChecked)
+      // event.preventDefault()
       onChange?.(event)
     }
 
-    const computedStrokeWidth = parseFloat('' + strokeWidth)
     const computedSize = +size / 2
-    const computedRadius = computedSize - computedStrokeWidth
-    const computedOffset = computedSize - computedStrokeWidth * 2
-
-    const filterID = uuid(5, 'shadow-')
-    const innerShadowID = `inner-${filterID}`
-    const dropShadowID = `drop-${filterID}`
+    const computedRadius = computedSize - strokeWidth
+    const computedOffset = computedSize - strokeWidth * 2
 
     const variants = {
       hover: { scale: 1.05 },
@@ -76,8 +55,8 @@ const Radio = forwardRef<SVGSVGElement, CheckmarkIconProps>(
 
     const baseVariants = {
       ...variants,
-      checked: { filter: `url(#${dropShadowID})` },
-      unchecked: { filter: `url(#${innerShadowID})` },
+      checked: { filter: 'url(#dropShadow)' },
+      unchecked: { filter: 'url(#innerShadow)' },
     }
 
     const outlineVariants = {
@@ -85,7 +64,6 @@ const Radio = forwardRef<SVGSVGElement, CheckmarkIconProps>(
       checked: { stroke: theme.control.checked },
       unchecked: { stroke: theme.control.borderColor },
     }
-    console.log('unchecked', theme.control.borderColor)
 
     const tickVariants = {
       pressed: {
@@ -97,17 +75,20 @@ const Radio = forwardRef<SVGSVGElement, CheckmarkIconProps>(
     }
 
     return (
-      <Styled.Wrapper
+      <Styled.Label
         ref={componentRef}
         {...htmlProps}
-        as={Component}
         inline={inline}
-        // onClick={handleChange}
+        initial={false}
+        animate={isChecked ? 'checked' : 'unchecked'}
+        whileHover="hover"
+        whileTap="pressed"
       >
         <Styled.Control
           ref={inputRef}
           {...formProps}
           type={inputType}
+          aria-labelledby={labelID}
           aria-checked={isChecked}
           theme={theme}
           checked={isChecked}
@@ -115,7 +96,6 @@ const Radio = forwardRef<SVGSVGElement, CheckmarkIconProps>(
         />
         <Styled.Container className="toggle-container" size={size}>
           <motion.svg
-            ref={ref}
             className={classNames(
               'icon',
               `icon-radio-button`,
@@ -123,23 +103,29 @@ const Radio = forwardRef<SVGSVGElement, CheckmarkIconProps>(
             )}
             width={size}
             height={size}
-            initial={false}
-            animate={isChecked ? 'checked' : 'unchecked'}
-            whileHover="hover"
-            whileTap="pressed"
-            // onClick={handleChange}
+            pointerEvents="none"
           >
             <defs>
-              <motion.filter id={innerShadowID}>
-                <feFlood floodColor="white" />
+              <motion.filter id="innerShadow">
+                <feFlood floodColor={Color(theme.control.fg).alpha(0.3).string()} />
                 <feComposite in2="SourceAlpha" operator="out" />
                 <feGaussianBlur stdDeviation="3" result="blur" />
                 <feComposite operator="atop" in2="SourceGraphic" />
               </motion.filter>
 
-              <motion.filter id={dropShadowID}>
-                <feDropShadow dx="0" dy="0" stdDeviation="0.5" floodColor="black" />
+              <motion.filter id="dropShadow">
+                <feDropShadow
+                  dx="0"
+                  dy="0"
+                  stdDeviation="0.5"
+                  floodColor={Color(theme.control.fg).alpha(0.8).string()}
+                />
               </motion.filter>
+
+              <radialGradient id="radialGradient">
+                <stop offset="10%" stopColor={theme.control.bg} />
+                <stop offset="95%" stopColor={Color(theme.control.bg).darken(0.03).string()} />
+              </radialGradient>
             </defs>
 
             <motion.circle
@@ -147,13 +133,11 @@ const Radio = forwardRef<SVGSVGElement, CheckmarkIconProps>(
               cx={computedSize}
               cy={computedSize}
               r={computedRadius}
-              fill={theme.control.bg}
-              filter={`url(#${innerShadowID})`}
+              fill="url(#radialGradient)"
+              filter="url(#innerShadow)"
               stroke="none"
-              strokeWidth={0}
               pointerEvents="none"
               variants={baseVariants}
-              custom={isChecked}
             />
 
             <motion.circle
@@ -163,14 +147,12 @@ const Radio = forwardRef<SVGSVGElement, CheckmarkIconProps>(
               r={computedRadius}
               fill="none"
               stroke={theme.control.borderColor}
-              strokeWidth={computedStrokeWidth}
+              strokeWidth={strokeWidth}
               pointerEvents="none"
               variants={outlineVariants}
               transition={{
-                delay: 0.25,
-                stroke: { type: 'spring', stiffness: 100, duration: 0.05 },
+                stroke: { duration: 0.5 },
               }}
-              custom={isChecked}
             ></motion.circle>
 
             <motion.circle
@@ -180,20 +162,20 @@ const Radio = forwardRef<SVGSVGElement, CheckmarkIconProps>(
               r={computedOffset}
               fill={theme.control.checked}
               stroke="none"
-              strokeWidth={0}
               pointerEvents="none"
               variants={tickVariants}
               transition={{
-                scale: { type: 'spring', stiffness: 100, duration: 0.1 },
+                scale: { type: 'spring', duration: 0.5 },
               }}
-              custom={isChecked}
             />
           </motion.svg>
         </Styled.Container>
         {children && (
-          <Styled.Content {...(children as React.ReactElement)?.props}>{children}</Styled.Content>
+          <Styled.Content {...(children as React.ReactElement)?.props} aria-label={labelID}>
+            {children}
+          </Styled.Content>
         )}
-      </Styled.Wrapper>
+      </Styled.Label>
     )
   },
 )

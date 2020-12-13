@@ -12,6 +12,7 @@ import { SelectControl } from './SelectControl'
 import { ToggleControl } from './ToggleControl'
 import { Checkbox } from './ToggleControl/Checkbox'
 import { NumericControl } from './NumericControl'
+import { Switch } from './Switch'
 
 interface FormControlResolverProps extends FormControlProps {
   type: string
@@ -69,6 +70,12 @@ const FormControlResolver: React.FC<FormControlResolverProps> = ({
           <Checkbox {...props} {...handlers}>
             {props?.label}
           </Checkbox>
+        )
+      case 'switch':
+        return (
+          <Switch {...props} {...handlers}>
+            {props?.label}
+          </Switch>
         )
       case 'radiogroup':
         return <RadioGroup {...props} {...handlers} />

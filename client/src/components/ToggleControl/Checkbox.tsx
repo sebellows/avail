@@ -1,28 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { forwardRef, useRef, useState } from 'react'
-import { motion, useMotionValue, useTransform } from 'framer-motion'
+import { motion } from 'framer-motion'
 
 import { useEnsuredRef } from '../../hooks'
 import { Theme, useTheme } from '../../ThemeContext'
-import { validFormProps, containerProps } from '../../core/utils'
+import { validFormProps, containerProps, Color, uuid } from '../../core/utils'
 
 import { Styled } from './styles'
 import { CheckmarkIconProps } from './props'
 
-const configureBoxVariants = (theme: Theme, strokeWidth: number) => ({
-  hover: { scale: 1.05, strokeWidth: Math.floor(strokeWidth * 1.2) },
-  pressed: { scale: 0.95, strokeWidth: Math.floor(strokeWidth * 0.7) },
-  checked: { stroke: theme.accent },
-  unchecked: {
-    stroke: theme.control.borderColor,
-    strokeWidth,
-  },
-})
-
-const Checkbox = forwardRef<SVGSVGElement, CheckmarkIconProps>(
+const Checkbox = forwardRef<HTMLLabelElement, CheckmarkIconProps>(
   (
     {
-      as: Component = 'label',
       checked: initialChecked,
       strokeWidth = 2.75,
       size = 24,
@@ -35,178 +24,130 @@ const Checkbox = forwardRef<SVGSVGElement, CheckmarkIconProps>(
     ref,
   ) => {
     const { theme } = useTheme()
-    const pathLength = useMotionValue(0)
-    const stroke = useMotionValue(0)
     const [isChecked, setIsChecked] = useState(initialChecked)
-    const opacity = useTransform(stroke, [0.05, 0.15], [Number(isChecked), Number(isChecked)])
 
-    const componentRef = useEnsuredRef<SVGSVGElement>(ref)
+    const inputID = props?.id ?? props?.name ?? 'avail-checkbox'
+    const labelID = uuid(5, `${inputID}-`)
 
-    React.useEffect(() => {
-      componentRef.current.addEventListener('change', (event: any) => {
-        if (event.target === inputRef.current) {
-          onChange?.(event)
-        }
-      })
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
-
-    React.useEffect(() => {
-      console.log('Checkbox', props?.id, props?.name, isChecked)
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isChecked])
+    const componentRef = useEnsuredRef<HTMLLabelElement>(ref)
 
     const inputRef = useRef(null)
-    const htmlProps = containerProps(props, { exclude: ['label'] })
+
+    const htmlProps = containerProps(props)
     const formProps = validFormProps(props)
     const inputType = type === 'radio' ? type : 'checkbox'
 
-    if (Component === 'label') {
-      htmlProps['htmlFor'] = formProps?.name || formProps?.id
-    }
-
     function handleChange(event: any) {
-      event.preventDefault()
       setIsChecked(!isChecked)
-      console.log('handleChange', event.target)
-      const changeEvent = new Event('change', { bubbles: true })
-      inputRef.current.dispatchEvent(changeEvent)
-      // onChange?.(changeEvent)
+      onChange?.(event)
+      console.log('checkbox-handleChange', event.target.checked)
     }
 
-    const calcProp = (num = 0) => ((+strokeWidth + num) / +size) * 440 // if '0', equals ~0.08333(∞)
-    const computedStrokeWidth = Math.floor(calcProp()) // ~50px
-    const offset = computedStrokeWidth * 2
+    const offset = strokeWidth * 2
+    const computedSize = size - offset
 
-    const boxVariants = configureBoxVariants(theme, computedStrokeWidth)
-    const boxVariants2 = {
-      checked: { stroke: 'url(#gradient)', strokeDasharray: 0, strokeDashoffset: 0 },
-      unchecked: { stroke: 'none', strokeDasharray: size * 4, strokeDashoffset: size * 4 },
-    }
-    const tickVariants = {
-      pressed: { pathLength: isChecked ? 0.85 : 0.2 },
-      checked: { pathLength: 1 },
-      unchecked: { pathLength: 0 },
-    }
-    console.log('computedStrokeWidth', computedStrokeWidth)
-    const tickVariants2 = {
+    const variants = {
       checked: {
-        stroke: 'url(#gradient)',
-        strokeDasharray: 0,
+        stroke: theme.control.checked,
         strokeDashoffset: 0,
       },
       unchecked: {
-        stroke: 'none',
-        strokeDasharray: size,
-        strokeDashoffset: size,
+        stroke: Color(theme.control.checked).alpha(0).string(),
+        strokeDashoffset: computedSize * 4,
       },
     }
-
-    const tickProps = {
-      d: 'M 0 128.666 L 128.658 257.373 L 341.808 0',
-      fill: 'transparent',
-      strokeWidth: computedStrokeWidth,
-      strokeLinecap: 'round' as any,
-      strokeLinejoin: 'round' as any,
-      variants: tickVariants,
-      style: { pathLength, opacity },
-      custom: isChecked,
+    const boxVariants = {
+      hover: { scale: 1.05, strokeWidth: Math.floor(strokeWidth * 1.2) },
+      pressed: {
+        scale: 0.95,
+        stroke: theme.control.checked,
+        strokeDashoffset: computedSize * 2,
+        strokeWidth: Math.floor(strokeWidth * 0.9),
+      },
+      ...variants,
     }
 
     return (
-      <Styled.Wrapper
+      <Styled.Label
         ref={componentRef}
         {...htmlProps}
-        as={Component}
         inline={inline}
-        // onClick={handleChange}
+        initial={false}
+        animate={isChecked ? 'checked' : 'unchecked'}
+        whileHover="hover"
+        whileTap="pressed"
       >
         <Styled.Control
           ref={inputRef}
           {...formProps}
           type={inputType}
-          aria-describedby={props?.id ?? props?.name}
+          aria-labelledby={labelID}
           aria-checked={isChecked}
-          theme={theme}
           checked={isChecked}
-          // onChange={handleChange}
+          onChange={handleChange}
         />
         <Styled.Container className="toggle-container" size={size}>
           <motion.svg
             width={size}
             height={size}
-            viewBox="0 0 440 440"
-            initial={false}
-            animate={isChecked ? 'checked' : 'unchecked'}
-            whileHover="hover"
-            whileTap="pressed"
-            onClick={handleChange}
+            viewBox={`0 0 ${size} ${size}`}
+            pointerEvents="none"
           >
             <defs>
-              <linearGradient id="gradient" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stopColor="#ff8a00"></stop>
-                <stop offset="100%" stopColor="#da1b60"></stop>
-              </linearGradient>
+              <radialGradient id="radialGradient">
+                <stop offset="10%" stopColor={theme.control.bg} />
+                <stop offset="95%" stopColor={Color(theme.control.bg).darken(0.03).string()} />
+              </radialGradient>
             </defs>
             <motion.rect
               id="checkbox-box"
-              width={440 - offset}
-              height={440 - offset}
-              x={computedStrokeWidth}
-              y={computedStrokeWidth}
-              rx={computedStrokeWidth * 2}
-              fill="transparent"
+              width={computedSize}
+              height={computedSize}
+              x={strokeWidth}
+              y={strokeWidth}
+              rx={strokeWidth * 2}
+              fill="url(#radialGradient)"
               stroke={theme.control.borderColor}
-              strokeWidth={computedStrokeWidth}
+              strokeWidth={strokeWidth}
               pointerEvents="none"
-              // variants={boxVariants}
-              // transition={{ duration: 0.5 }}
-              // custom={isChecked}
             />
             <motion.rect
               id="checkbox-outline"
-              width={440 - offset}
-              height={440 - offset}
-              x={computedStrokeWidth / 2}
-              y={computedStrokeWidth / 2}
-              rx={computedStrokeWidth}
+              width={computedSize}
+              height={computedSize}
+              x={strokeWidth / 2}
+              y={strokeWidth / 2}
+              rx={strokeWidth}
               fill="transparent"
-              stroke="none"
-              // stroke="url(#gradient)"
-              strokeWidth={computedStrokeWidth}
-              strokeDasharray={size * 4}
+              stroke={theme.control.checked}
+              strokeWidth={strokeWidth}
+              strokeDasharray={computedSize * 4}
               pointerEvents="none"
-              variants={boxVariants2}
-              transition={{ duration: 0.5 }}
-              custom={isChecked}
+              variants={boxVariants}
+              transition={{ strokeDashoffset: { type: 'spring', duration: 1 } }}
             />
             <motion.polyline
-              // points="9,22 18,30 32,9"
-              points="110,218.888 195,306.666 316.111,120"
+              points="6,11.939 10.636,16.727 17.242,6.545"
               fill="none"
               strokeLinecap="round"
-              strokeWidth={computedStrokeWidth}
-              transition={{ duration: 0.5 }}
-              // stroke="url(#gradient)"
-              strokeDasharray={size}
-              variants={tickVariants2}
-            />
-            {/* <motion.path
-              {...tickProps}
-              transform={`translate(${calcProp(1)} ${calcProp(3.5)}) rotate(4 170.904 128.687)`}
-              stroke={theme.bg}
-            />
-            <motion.path
-              {...tickProps}
-              transform={`translate(${calcProp(1)} ${calcProp(2)}) rotate(4 170.904 128.687)`}
+              strokeWidth={strokeWidth}
               stroke={theme.control.checked}
-            /> */}
+              strokeDasharray={computedSize * 4}
+              variants={variants}
+              transition={{
+                strokeDashoffset: { type: 'spring', duration: 1 },
+                stroke: { type: 'spring', duration: 1 },
+              }}
+              pointerEvents="none"
+            />
           </motion.svg>
         </Styled.Container>
         {children && (
-          <Styled.Content {...(children as React.ReactElement)?.props}>{children}</Styled.Content>
+          <Styled.Content {...(children as React.ReactElement)?.props} aria-label={labelID}>
+            {children}
+          </Styled.Content>
         )}
-      </Styled.Wrapper>
+      </Styled.Label>
     )
   },
 )

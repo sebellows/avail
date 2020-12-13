@@ -29,6 +29,9 @@ const FORM_CONTROL_PROPS = [
   'onFocus',
   'onKeyDown',
   'onKeyUp',
+  'aria-checked',
+  'aria-describedby',
+  'aria-labelledby',
 ]
 
 const COMPONENT_PROPS = ['children', 'className', 'style']

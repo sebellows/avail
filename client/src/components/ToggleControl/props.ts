@@ -13,7 +13,7 @@ export interface CheckmarkIconProps
   size?: number
   opacity?: MotionValue<number>
   pathLength?: MotionValue<number>
-  strokeWidth?: number | string
+  strokeWidth?: number
 }
 
 export interface ToggleControlProps extends FormControlProps {

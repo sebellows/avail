@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import styled, { css } from 'styled-components'
-import { Control } from '../Control'
+import { motion } from 'framer-motion'
 import { mixin } from '../../core/style'
+import { Control } from '../Control'
 import { CheckmarkIconProps } from './props'
 
 export const Styled = {
-  Wrapper: styled.label<CheckmarkIconProps>`
+  Label: styled(motion.label)<CheckmarkIconProps>`
     position: relative;
     ${mixin.flex({ inline: true, align: 'center' })}
     vertical-align: middle;
@@ -25,9 +26,10 @@ export const Styled = {
     }}
   `,
   Control: styled(Control)<CheckmarkIconProps>`
+    position: absolute;
+    width: 0;
+    height: 0;
     opacity: 0;
-    ${mixin.cover}
-    z-index: ${({ type }) => (type === 'radio' ? 1 : 'initial')};
   `,
   Container: styled.div<Pick<CheckmarkIconProps, 'size'>>`
     display: inline-block;
@@ -39,7 +41,6 @@ export const Styled = {
     position: relative;
     vertical-align: middle;
     white-space: nowrap;
-    // pointer-events: none;
   `,
   Content: styled.div`
     font-weight: normal;

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { css } from 'styled-components'
 import { DARK, GRID_BREAKPOINTS, LINK_COLOR, SPACERS, VARIANTS, WHITE } from '../constants'
-import { Color, get, isNil, isNumber, isPlainObject } from '../utils'
+import { camelize, Color, get, isNil, isNumber, isPlainObject, typeOf } from '../utils'
 import { maybeApplyUnit, toEM, toREM } from './units'
 import { buttonVariant } from './buttons'
 import { dropShadowMixin, shadow, shadowMixin, ShadowFactoryParams } from './shadows'
@@ -11,6 +11,7 @@ import { radiusMixin } from './radius'
 import { zIndexes } from './zindex'
 import { font } from './text'
 import { color } from './colors'
+import { CSSProperties } from 'react'
 
 type CSSUnit = 'px' | 'em' | 'rem' | '%' | 'vh' | 'vw'
 
@@ -37,11 +38,23 @@ function getColor(val: string | ColorValue, defaultValue = DARK) {
   } else if (Color.isColor(val as string)) {
     return Color(val).string()
   }
-  console.log('getColor', val)
   return defaultValue
 }
 
-const colorOptions = color
+export const cssTextToParams = (cssString: string): CSSProperties => {
+  if (!cssString) return {}
+  const rules = cssString.split(';').map((rule) => rule.trim())
+  return rules.reduce((acc, rule) => {
+    if (rule.length > 0) {
+      let [key, value] = rule.split(': ,').map((r) => r.trim())
+      if (value.endsWith(',')) {
+        value = value.slice(0, -1)
+      }
+      acc[camelize(key)] = value
+    }
+    return acc
+  }, {})
+}
 
 export const mixin = {
   darken: (colorValue: string, amount: number) => Color(colorValue).darken(amount).string(),
@@ -105,7 +118,7 @@ export const mixin = {
   border: (props?: { width?: string; style?: string; color?: string | ColorValue }) => {
     const width = props?.width ?? '1px'
     const style = props?.style ?? 'solid'
-    const borderColor = props?.color ?? colorOptions.border.base
+    const borderColor = props?.color ?? color.border.base
 
     return css`
       border: ${width} ${style} ${getColor(borderColor)};

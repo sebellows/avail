@@ -1,68 +1,60 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
-  BLACK_50,
   BODY_COLOR,
-  BORDER_COLOR,
-  BORDER_WIDTH,
   BORDER_RADIUS,
   BORDER_RADIUS_SM,
   BORDER_RADIUS_LG,
   BOX_SHADOW,
   BOX_SHADOW_SM,
   BOX_SHADOW_LG,
-  FONT_FAMILY_MONOSPACE,
   FONT_WEIGHT_BOLD,
   FONT_WEIGHT_BOLDER,
   FONT_WEIGHT_LIGHT,
   FONT_WEIGHT_LIGHTER,
   FONT_WEIGHT_NORMAL,
-  LINE_HEIGHT_BASE,
   LINE_HEIGHT_SM,
   LINE_HEIGHT_LG,
   ROUNDED_PILL,
   SPACERS,
   TEXT_MUTED,
-  THEME_COLORS,
-  WHITE,
-  WHITE_50,
-} from './constants';
-import { toOptions } from './models/Option';
-import { toREM, toPX, toEM } from './style';
-import { AvailConfig, AvailUtility, AvailSetting } from './contracts';
-import { CSS_VALUE_PRESETS } from './presets';
-import { get } from './utils';
+} from './constants'
+import { toOptions } from './models/Option'
+import { toREM, toPX, toEM } from './style'
+import { AvailConfig, AvailUtility, AvailSetting } from './contracts'
+import { CSS_VALUE_PRESETS } from './presets'
+import { get } from './utils'
 
 const createSpacers = (prefix = '', unitFn = toREM) =>
   Object.entries(SPACERS).reduce((acc, [k, v]) => {
-    acc[`${prefix}${k}`] = unitFn(v);
-    return acc;
-  }, {});
+    acc[`${prefix}${k}`] = unitFn(v)
+    return acc
+  }, {})
 
 function getSettingValues(settings: AvailConfig<AvailSetting>, path: string): Record<string, any> {
   return Object.entries(get(settings, path, {})).reduce(
     (acc, [k, config]: [string, Record<string, any>]) => {
-      acc[k] = config.value;
-      return acc;
+      acc[k] = config.value
+      return acc
     },
     {},
-  );
+  )
 }
 
 const Config = (
   settings: AvailConfig<AvailSetting> = {},
   utils: AvailConfig<AvailUtility> = {},
 ): AvailConfig<AvailUtility> => {
-  const prefix = get(settings, 'export.fields.prefix.value', '');
-  const unit = get(settings, 'export.fields.sizingUnit.value', '');
-  const variants = get(settings, 'colorSchemes.fields.variants.items', []);
-  const globals = getSettingValues(settings, 'global.fields');
-  const borderSettings = getSettingValues(settings, 'border.fields');
+  const prefix = get(settings, 'export.fields.prefix.value', '')
+  const unit = get(settings, 'export.fields.sizingUnit.value', '')
+  const variants = get(settings, 'colorSchemes.fields.variants.items', [])
+  const globals = getSettingValues(settings, 'global.fields')
+  const borderSettings = getSettingValues(settings, 'border.fields')
   // const breakpoints = get(settings, 'mediaQuery.fields.breakpoints.items', {});
   // const directions = get(settings, 'nameGeneration.fields.directions.items', []);
 
-  const unitFn = unit === 'px' ? toPX : unit === 'em' ? toEM : toREM;
-  const spacerUnits = toOptions(createSpacers('', unitFn), 'auto', { none: 0 });
-  const negativeSpacerUnits = toOptions(createSpacers('n', unitFn));
+  const unitFn = unit === 'px' ? toPX : unit === 'em' ? toEM : toREM
+  const spacerUnits = toOptions(createSpacers('', unitFn), 'auto', { none: 0 })
+  const negativeSpacerUnits = toOptions(createSpacers('n', unitFn))
 
   return {
     backgroundColor: {
@@ -946,17 +938,17 @@ const Config = (
       items: [{ name: 'break', value: 'break-word' }],
     },
     ...utils,
-  };
-};
+  }
+}
 
 export function generateConfig(
   settings: AvailConfig<AvailSetting>,
   utils: AvailConfig<AvailUtility> = {},
 ): AvailConfig<AvailUtility> {
-  const config = Config(settings, utils);
+  const config = Config(settings, utils)
 
   return Object.entries(config).reduce((form, [key, value]) => {
-    form[key] = { id: key, ...value };
-    return form;
-  }, {});
+    form[key] = { id: key, ...value }
+    return form
+  }, {})
 }

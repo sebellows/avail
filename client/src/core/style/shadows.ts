@@ -41,6 +41,7 @@ export type ShadowFactoryParams = {
 }
 
 const DEFAULT_SHADOW_SETTINGS = { hue: color.black, umbra: 0.2, penumbra: 0.14, ambience: 0.12 }
+const DROP_SHADOW_SETTINGS = { hue: color.black, umbra: 0.5, penumbra: 0.3, ambience: 0.18 }
 const FOCUS_SHADOW_SETTINGS = { hue: color.magenta, umbra: 0.5, penumbra: 0.3, ambience: 0.18 }
 
 const shadowColor = (hue: string, opacity: number) =>
@@ -113,11 +114,13 @@ export const focusDropShadow = {
   1: `0px 0px 4px ${shadowColor(FOCUS_SHADOW_SETTINGS.hue, FOCUS_SHADOW_SETTINGS.umbra)}`,
   2: `0px 0px 5px ${shadowColor(FOCUS_SHADOW_SETTINGS.hue, FOCUS_SHADOW_SETTINGS.penumbra)}`,
   3: `0px 0px 10px ${shadowColor(FOCUS_SHADOW_SETTINGS.hue, FOCUS_SHADOW_SETTINGS.umbra)}`,
-  // depth1: `0px 0px 2px ${shadowColor(FOCUS_SHADOW_SETTINGS.hue, FOCUS_SHADOW_SETTINGS.ambience)}`,
-  // depth2: `0px 0px 2px ${shadowColor(FOCUS_SHADOW_SETTINGS.hue, FOCUS_SHADOW_SETTINGS.penumbra)}`,
-  // depth3: `0px 0px 4px ${shadowColor(FOCUS_SHADOW_SETTINGS.hue, FOCUS_SHADOW_SETTINGS.umbra)}`,
-  // depth4: `0px 0px 5px ${shadowColor(FOCUS_SHADOW_SETTINGS.hue, FOCUS_SHADOW_SETTINGS.penumbra)}`,
-  // depth5: `0px 0px 10px ${shadowColor(FOCUS_SHADOW_SETTINGS.hue, FOCUS_SHADOW_SETTINGS.umbra)}`,
+}
+
+export const dropShadow = {
+  0: `0px 0px 2px ${shadowColor(DROP_SHADOW_SETTINGS.hue, DROP_SHADOW_SETTINGS.penumbra)}`,
+  1: `0px 0px 4px ${shadowColor(DROP_SHADOW_SETTINGS.hue, DROP_SHADOW_SETTINGS.umbra)}`,
+  2: `0px 0px 5px ${shadowColor(DROP_SHADOW_SETTINGS.hue, DROP_SHADOW_SETTINGS.penumbra)}`,
+  3: `0px 0px 10px ${shadowColor(DROP_SHADOW_SETTINGS.hue, DROP_SHADOW_SETTINGS.umbra)}`,
 }
 
 export const shadowMixin = (...levels: (number | string)[]) => css`
@@ -136,8 +139,8 @@ export const shadowMixin = (...levels: (number | string)[]) => css`
 export const dropShadowMixin = (...levels: number[]) => css`
   filter: ${levels
     .reduce((acc, depth) => {
-      if (shadow[depth]) {
-        acc.push(`drop-shadow(${shadow[depth]})`)
+      if (dropShadow[depth]) {
+        acc.push(`drop-shadow(${dropShadow[depth]})`)
       } else {
         acc.push(`drop-shadow(${depth})`)
       }

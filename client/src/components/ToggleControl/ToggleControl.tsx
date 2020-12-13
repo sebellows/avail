@@ -44,7 +44,7 @@ const ToggleControl = React.forwardRef<{}, ToggleControlProps>(
     }
 
     return (
-      <Styled.Wrapper ref={ref} {...htmlProps} as={Component} inline={inline}>
+      <Styled.Label ref={ref} {...htmlProps} as={Component} inline={inline}>
         <Styled.Control
           ref={inputRef}
           {...formProps}
@@ -89,7 +89,7 @@ const ToggleControl = React.forwardRef<{}, ToggleControlProps>(
         {children && (
           <Styled.Content {...(children as React.ReactElement)?.props}>{children}</Styled.Content>
         )}
-      </Styled.Wrapper>
+      </Styled.Label>
     )
   },
 )

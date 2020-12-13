@@ -62,7 +62,7 @@ export const Settings = (settings: AvailConfig<AvailSetting>): AvailConfig<Avail
           description: 'Select file type to export utility classes as.',
         },
         isImportant: {
-          type: 'checkbox',
+          type: 'switch',
           id: 'export_fields_isImportant_checked',
           classMap: {
             container: 'fullwidth',

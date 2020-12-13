@@ -2,10 +2,10 @@ import React, { useState } from 'react'
 import {
   DARK,
   LIGHT,
-  GRAY_200,
-  GRAY_500,
-  GRAY_700,
-  GRAY_800,
+  // GRAY_200,
+  // GRAY_500,
+  // GRAY_700,
+  // GRAY_800,
   BLACK,
   WHITE,
   COLORS,
@@ -81,17 +81,17 @@ const setLightTheme = (name = 'light', primary = COLORS.blue, accent = COLORS.or
     fg: Color(BLACK).alpha(0.8).string(),
   },
   hover: {
-    bg: GRAY_200,
-    borderColor: Color(BLACK).alpha(0.2).string(),
+    bg: shade(89), // GRAY_200
+    borderColor: shade(84), // Color(BLACK).alpha(0.2).string()
     fg: DARK,
   },
-  muted: GRAY_500,
+  muted: shade(71), // GRAY_500
   ...themeCommon,
 })
 
 const setDarkTheme = (name = 'dark', primary = COLORS.blue, accent = COLORS.orange): Theme => ({
   name,
-  bg: GRAY_800,
+  bg: shade(23), // GRAY_800
   fg: WHITE,
   primary,
   accent,
@@ -113,11 +113,11 @@ const setDarkTheme = (name = 'dark', primary = COLORS.blue, accent = COLORS.oran
     fg: Color(WHITE).alpha(0.8).string(),
   },
   hover: {
-    bg: GRAY_700,
+    bg: shade(31), // GRAY_700
     borderColor: Color(WHITE).alpha(0.2).string(),
     fg: WHITE,
   },
-  muted: GRAY_500,
+  muted: shade(71),
   ...themeCommon,
 })
 

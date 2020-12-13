@@ -18,7 +18,7 @@ import {
 } from '../core/contracts'
 import { useStore } from '../store/useStore'
 // import { SettingsContext, ADD_ITEM, REMOVE_ITEM, SET_CONFIG } from '../store'
-import { Field, FieldDescription, FormControlResolver, Icon } from '../components'
+import { Field, FieldDescription, FormControlResolver, Icon, Switch } from '../components'
 
 export interface SettingsFormProps extends ComponentProps {
   settings?: AvailConfig<AvailSetting>
@@ -40,9 +40,6 @@ const Styled = {
 }
 
 const SettingsForm: FC<SettingsFormProps> = React.memo(() => {
-  // const { initializeSettings, updateSettings, addSetting, removeSetting } = useStore(
-  //   (state) => state,
-  // )
   const settings = useStore((state) => state.settings)
   const updateSettings = useStore((state) => state.updateSettings)
   const addSetting = useStore((state) => state.addSetting)
@@ -107,7 +104,7 @@ const SettingsForm: FC<SettingsFormProps> = React.memo(() => {
                         field.type === 'repeater' && 'fullwidth',
                       )}
                     >
-                      {field?.label && field.type !== 'checkbox' && (
+                      {field?.label && !['checkbox', 'switch'].includes(field.type) && (
                         <label
                           htmlFor={field.id}
                           className={classNames('mb-2', field?.classMap?.label)}
