@@ -42,7 +42,7 @@ export type ShadowFactoryParams = {
 
 const DEFAULT_SHADOW_SETTINGS = { hue: color.black, umbra: 0.2, penumbra: 0.14, ambience: 0.12 }
 const DROP_SHADOW_SETTINGS = { hue: color.black, umbra: 0.5, penumbra: 0.3, ambience: 0.18 }
-const FOCUS_SHADOW_SETTINGS = { hue: color.magenta, umbra: 0.5, penumbra: 0.3, ambience: 0.18 }
+const FOCUS_SHADOW_SETTINGS = { hue: color.primary, umbra: 0.5, penumbra: 0.3, ambience: 0.18 }
 
 const shadowColor = (hue: string, opacity: number) =>
   Color.isColor(hue) ? Color(hue).alpha(opacity).string() : hue

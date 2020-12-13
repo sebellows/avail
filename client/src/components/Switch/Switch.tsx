@@ -55,11 +55,10 @@ export const Switch = React.forwardRef<HTMLLabelElement, SwitchProps>(
     /** Shared line properties for the SVG lines that compose the "✕" and "✓" icons. */
     const lineProps = {
       rotate: 0,
-      stroke: theme.control.fg,
+      stroke: Color(theme.control.fg).lighten(0.2).string(),
       strokeWidth,
       strokeLinecap: 'round' as any,
       strokeLinejoin: 'round' as any,
-      opacity: 0.5,
       pointerEvents: 'none',
       vectorEffect: 'non-scaling-stroke',
     }
@@ -78,9 +77,6 @@ export const Switch = React.forwardRef<HTMLLabelElement, SwitchProps>(
       y2: size * 0.6875, // 22
     }
     const leftVariants = {
-      hover: {
-        opacity: 0.75,
-      },
       checked: {
         rotate: -360,
         stroke: theme.control.bg,
@@ -96,9 +92,6 @@ export const Switch = React.forwardRef<HTMLLabelElement, SwitchProps>(
       },
     }
     const rightVariants = {
-      hover: {
-        opacity: 0.75,
-      },
       checked: {
         rotate: -360,
         stroke: theme.control.bg,

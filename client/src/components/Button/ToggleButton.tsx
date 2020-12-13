@@ -1,28 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useCallback, useState } from 'react'
-import { classNames } from '../../core/utils'
+import { classNames, containerProps, validFormProps } from '../../core/utils'
 import { useTheme } from '../../ThemeContext'
-import { ToggleControl } from '../ToggleControl'
+// import { Control } from '../Control'
 
 import { ToggleButtonProps } from './props'
 import { Styled } from './styles'
 
-const ToggleButton = React.forwardRef<any, ToggleButtonProps>(
+const ToggleButton = React.forwardRef<HTMLLabelElement, ToggleButtonProps>(
   (
-    {
-      as = ToggleControl,
-      children,
-      className,
-      disabled,
-      name,
-      type,
-      value,
-      variant,
-      ...props
-    }: ToggleButtonProps,
+    { children, className, disabled, name, type, value, variant, ...props }: ToggleButtonProps,
     ref,
   ) => {
     const { theme } = useTheme()
+
+    const labelProps = containerProps(props)
+    const inputProps = validFormProps(props)
 
     React.useEffect(() => {
       console.log('ToggleButton', name, props)
@@ -30,9 +23,9 @@ const ToggleButton = React.forwardRef<any, ToggleButtonProps>(
 
     return (
       <Styled.Toggle
-        {...props}
+        {...labelProps}
         ref={ref}
-        as={ToggleControl}
+        as="label"
         type={type}
         theme={theme}
         className={classNames(
@@ -43,6 +36,7 @@ const ToggleButton = React.forwardRef<any, ToggleButtonProps>(
         )}
         variant={variant}
       >
+        <Styled.ToggleControl type={type} {...inputProps} />
         {children}
       </Styled.Toggle>
     )

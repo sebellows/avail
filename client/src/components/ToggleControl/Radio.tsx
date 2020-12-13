@@ -30,17 +30,11 @@ const Radio = forwardRef<HTMLLabelElement, CheckmarkIconProps>(
     const labelID = uuid(5, `${inputID}-`)
     const inputRef = useRef(null)
 
-    React.useEffect(() => {
-      console.log('Radio', props?.id, props?.name, isChecked)
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isChecked])
-
     const htmlProps = containerProps(props, { exclude: ['label'] })
     const formProps = validFormProps(props)
     const inputType = type === 'radio' ? type : 'checkbox'
 
     function handleChange(event: any) {
-      // event.preventDefault()
       onChange?.(event)
     }
 
@@ -61,17 +55,17 @@ const Radio = forwardRef<HTMLLabelElement, CheckmarkIconProps>(
 
     const outlineVariants = {
       ...variants,
-      checked: { stroke: theme.control.checked },
-      unchecked: { stroke: theme.control.borderColor },
+      checked: { opacity: 1 },
+      unchecked: { opacity: 0 },
     }
 
     const tickVariants = {
       pressed: {
         scale: 0.5,
-        fill: Color(theme.control.checked).alpha(0.4).string(),
+        opacity: 0.5,
       },
-      checked: { scale: 1, fill: theme.control.checked },
-      unchecked: { scale: 0, fill: theme.control.checked },
+      checked: { scale: 1, opacity: 1 },
+      unchecked: { scale: 0, opacity: 0 },
     }
 
     return (
@@ -94,7 +88,7 @@ const Radio = forwardRef<HTMLLabelElement, CheckmarkIconProps>(
           checked={isChecked}
           onChange={handleChange}
         />
-        <Styled.Container className="toggle-container" size={size}>
+        <Styled.Container className="toggle-container">
           <motion.svg
             className={classNames(
               'icon',
@@ -138,6 +132,9 @@ const Radio = forwardRef<HTMLLabelElement, CheckmarkIconProps>(
               stroke="none"
               pointerEvents="none"
               variants={baseVariants}
+              transition={{
+                scale: { type: 'spring', duration: 0.3 },
+              }}
             />
 
             <motion.circle
@@ -146,12 +143,13 @@ const Radio = forwardRef<HTMLLabelElement, CheckmarkIconProps>(
               cy={computedSize}
               r={computedRadius}
               fill="none"
-              stroke={theme.control.borderColor}
+              stroke={theme.control.checked}
+              opacity={0}
               strokeWidth={strokeWidth}
               pointerEvents="none"
               variants={outlineVariants}
               transition={{
-                stroke: { duration: 0.5 },
+                scale: { type: 'spring', duration: 0.3 },
               }}
             ></motion.circle>
 
@@ -165,7 +163,7 @@ const Radio = forwardRef<HTMLLabelElement, CheckmarkIconProps>(
               pointerEvents="none"
               variants={tickVariants}
               transition={{
-                scale: { type: 'spring', duration: 0.5 },
+                scale: { type: 'spring', duration: 0.3 },
               }}
             />
           </motion.svg>

@@ -32,7 +32,7 @@ export const StyledBaseInput = styled.input<FormControlProps>`
   display: block;
   width: 100%;
   height: ${({ type }) => (isToggle(type) ? '100%' : control.height)};
-  ${mixin.padding.all('controlY', 'controlX')}
+  ${mixin.padding.all('0.375rem', 'sm')}
   font-family: ${control.fontFamily};
   font-size: ${control.fontSize};
   font-weight: 400;
@@ -42,17 +42,12 @@ export const StyledBaseInput = styled.input<FormControlProps>`
 `
 
 export const StyledControl = styled(StyledBaseInput)<FormControlProps>`
-  &:hover,
-  &:focus {
-    color: ${({ theme }) => theme.control.fg};
-    background-color: ${control.active.bg};
-    box-shadow: ${({ theme }) => theme.focus.boxShadow};
-  }
   &:hover {
+    background-color: ${({ theme }) => theme.control.hoverColor};
     border-color: ${({ theme }) => theme.control.borderColor};
   }
   &:focus {
-    border-color: ${({ theme }) => theme.focus.borderColor};
+    box-shadow: 0 0 0 3px ${({ theme }) => theme.focus.borderColor};
   }
 
   &:disabled {

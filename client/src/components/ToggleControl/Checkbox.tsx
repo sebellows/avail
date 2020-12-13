@@ -86,7 +86,7 @@ const Checkbox = forwardRef<HTMLLabelElement, CheckmarkIconProps>(
           checked={isChecked}
           onChange={handleChange}
         />
-        <Styled.Container className="toggle-container" size={size}>
+        <Styled.Container className="toggle-container">
           <motion.svg
             width={size}
             height={size}

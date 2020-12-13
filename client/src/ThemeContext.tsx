@@ -41,11 +41,6 @@ export interface Theme {
 export type ThemeOptions = Record<string, Theme>
 
 const themeCommon = {
-  focus: {
-    bg: Color(COLORS.magenta).alpha(0.25).hsl().string(),
-    borderColor: Color(COLORS.magenta).hsl().string(),
-    boxShadow: `0 0 0 0.25rem ${Color(COLORS.magenta).alpha(0.25).hsl().string()}`,
-  },
   invalid: {
     bg: Color(VARIANTS.danger).alpha(0.2).string(),
     borderColor: VARIANTS.danger,
@@ -80,6 +75,11 @@ const setLightTheme = (name = 'light', primary = COLORS.blue, accent = COLORS.or
     checked: Color(BLACK).alpha(0.075).string(),
     fg: Color(BLACK).alpha(0.8).string(),
   },
+  focus: {
+    bg: Color(COLORS.yellow).alpha(0.25).hsl().string(),
+    borderColor: Color(COLORS.yellow).hsl().string(),
+    boxShadow: `0 0 0 0.25rem ${Color(COLORS.yellow).alpha(0.25).hsl().string()}`,
+  },
   hover: {
     bg: shade(89), // GRAY_200
     borderColor: shade(84), // Color(BLACK).alpha(0.2).string()
@@ -111,6 +111,11 @@ const setDarkTheme = (name = 'dark', primary = COLORS.blue, accent = COLORS.oran
     borderColor: Color(WHITE).alpha(0.12).string(),
     checked: Color(WHITE).alpha(0.075).string(),
     fg: Color(WHITE).alpha(0.8).string(),
+  },
+  focus: {
+    bg: Color(COLORS.yellow).alpha(0.25).hsl().string(),
+    borderColor: Color(COLORS.yellow).hsl().string(),
+    boxShadow: `0 0 0 0.25rem ${Color(COLORS.yellow).alpha(0.25).hsl().string()}`,
   },
   hover: {
     bg: shade(31), // GRAY_700

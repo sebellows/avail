@@ -25,16 +25,15 @@ export const Styled = {
       }
     }}
   `,
-  Control: styled(Control)<CheckmarkIconProps>`
+  Control: styled(Control)`
     position: absolute;
     width: 0;
     height: 0;
     opacity: 0;
   `,
-  Container: styled.div<Pick<CheckmarkIconProps, 'size'>>`
+  Container: styled.div`
     display: inline-block;
     flex-shrink: 0;
-    ${({ size }) => mixin.size(size)}
     line-height: 0;
     margin-right: 0.3125rem;
     order: 0;

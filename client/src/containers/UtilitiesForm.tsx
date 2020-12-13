@@ -2,33 +2,16 @@
 import React, { useState, useEffect, useRef, Fragment, FC, useContext, useCallback } from 'react'
 import Prism from 'prismjs'
 
-import { usePrevious } from '../hooks/usePrevious'
 import { useClickOutside } from '../hooks/useClickOutside'
-import {
-  AvailUtility,
-  AvailUtilities,
-  ComponentProps,
-  StateConfig,
-  AvailConfig,
-} from '../core/contracts'
+import { AvailUtility, AvailUtilities, ComponentProps, StateConfig } from '../core/contracts'
 import { generateUtility, generateResponsiveUtility } from '../core/build'
-import { classNames, get } from '../core/utils'
+import { classNames } from '../core/utils'
 
-import {
-  Control,
-  Dialog,
-  Field,
-  Modal,
-  PillTab,
-  PillTabs,
-  Repeater,
-  ToggleControl,
-} from '../components'
+import { Control, Dialog, Field, Modal, PillTab, PillTabs, Repeater, Switch } from '../components'
 
 import '../styles/prism.css'
 import { useStore } from '../store/useStore'
 import { generateConfig } from '../core/config'
-import { useFirstMountState } from '../hooks'
 
 const DialogTitle = ({ children }) => (
   <h3 className="font-size-lg font-weight-bold mb-0">
@@ -179,7 +162,7 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
                     required
                   />
                 </Field>
-                <ToggleControl
+                <Switch
                   name={`${activeModelID}_responsive`}
                   className="mb-3"
                   value={`${activeModelID}-responsive`}
@@ -189,12 +172,12 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
                   }}
                 >
                   <span>Make responsive classes?</span>
-                </ToggleControl>
+                </Switch>
                 {(utilities[activeModelID] as AvailUtility).subproperties && (
                   <div className="d-flex align-items-center mb-3">
                     {Object.entries((utilities[activeModelID] as AvailUtility).subproperties).map(
                       ([prop, val]) => (
-                        <ToggleControl
+                        <Switch
                           key={`${activeModelID}-${prop}`}
                           name={`${activeModelID}_subproperties_${prop}`}
                           value={prop}
@@ -204,7 +187,7 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
                           }}
                         >
                           <span>Make utility classes for {prop}?</span>
-                        </ToggleControl>
+                        </Switch>
                       ),
                     )}
                   </div>

@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components'
 import { color, mixin, isUnit, toREM } from '../../core/style'
 import { isNil } from '../../core/utils'
+import { Control } from '../Control'
 import { ButtonProps, ToggleButtonProps } from './props'
 
 const ButtonShadowStyles = css`
@@ -80,5 +81,11 @@ export const Styled = {
   Icon: BaseIconButton,
   Toggle: styled(BaseButton)<ToggleButtonProps>`
     ${mixin.flex({ inline: true, align: 'center', justify: 'start' })}
+  `,
+  ToggleControl: styled(Control)`
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0;
   `,
 }

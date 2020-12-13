@@ -53,7 +53,7 @@ const ToggleControl = React.forwardRef<{}, ToggleControlProps>(
           checked={checked}
           onChange={handleChange}
         />
-        <Styled.Container className="toggle-container" size={size}>
+        <Styled.Container className="toggle-container">
           {inputType === 'radio' ? (
             <RadioIcon
               name="radio"
