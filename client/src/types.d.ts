@@ -1,176 +1,236 @@
-export type Constructor = new (...args: any[]) => any
-export type Func = (...args: any[]) => any
+import {
+  Booleanish,
+  // IntrinsicElementDef,
+  // valueof
+} from './baseTypes'
 
-export type valueof<T> = typeof T[keyof typeof T] | T[keyof T]
+declare namespace Avail {
+  type ReplaceProps<Inner extends React.ElementType, P> = Omit<
+    React.ComponentPropsWithRef<Inner>,
+    P
+  > &
+    P
 
-export type Primitive = string | boolean | number | symbol | null | undefined
+  // type AvailProps<As extends keyof IntrinsicElementDef> = {
+  //   [K in keyof IntrinsicElementsMap]: React.HTMLProps<valueof<IntrinsicElementsMap[K]>>
+  // }[keyof IntrinsicElementsMap]
 
-export type LiteralToPrimitive<T extends any> = T extends string
-  ? string
-  : T extends number
-  ? number
-  : T extends boolean
-  ? boolean
-  : T
+  // React.HTMLProps<HTMLDivElement>
+  interface Props<As extends React.ElementType = React.ElementType> {
+    as?: As
+    theme?: Theme
+    className?: string
+    children?: React.ReactNode | React.ReactNode[]
+  }
 
-export type CollectionObj<T> = Record<string, T>
-export type CollectionArray<T> = CollectionObj<T>[]
-export type Collection<T> = CollectionObj<T> | CollectionArray<T>
+  type ComponentProps<As extends React.ElementType = React.ElementType> = React.PropsWithChildren<
+    Props<As>
+  >
 
-// declare namespace Avail {
-//   type ReplaceProps<
-//     Inner extends React.ElementType | React.ComponentType<any> = React.ElementType,
-//     P
-//   > = Omit<React.ComponentPropsWithRef<Inner>, P> & P
+  type PropsWithChildren<
+    As extends React.ElementType = React.ElementType
+  > = React.PropsWithChildren<Props<As>>
 
-//   interface ClassNameOnlyProps {
-//     className?: string
-//   }
+  type ComponentPropsWithRef<T extends React.ElementType> = React.PropsWithRef<ComponentProps<T>>
 
-//   interface ComponentProps<
-//     As extends React.ElementType | React.ComponentType<any> = React.ElementType
-//   > extends ClassNameOnlyProps {
-//     as?: As
-//     theme?: Theme
-//   }
+  type ForwardedRef<T> = ((instance: T | null) => void) | MutableRefObject<T | null> | null
 
-//   type ComponentPropsWithChildren<
-//     As extends React.ElementType | React.ComponentType<any> = React.ElementType
-//   > = React.PropsWithChildren<ComponentProps<As>>
+  interface RefForwardingComponent<
+    TInitial extends React.ElementType = React.ElementType,
+    P = any
+  > {
+    <As extends React.ElementType = TInitial>(
+      props: React.PropsWithChildren<ReplaceProps<As, Props<As> & P>>,
+      ref?: any,
+    ): React.ReactElement
+    contextTypes?: any
+    displayName?: string
+  }
 
-//   type ComponentPropsWithRef<T extends React.ElementType> = React.PropsWithRef<ComponentProps<T>>
+  type FieldError = Record<string, string>
 
-//   interface RefForwardingComponent<TInitial extends React.ElementType, P = unknown> {
-//     <As extends React.ElementType | React.ComponentType<TInitial> = TInitial>(
-//       props: React.PropsWithChildren<ReplaceProps<As, ComponentProps<As> & P>>,
-//       ref?: any,
-//     ): React.ReactElement | null
-//     displayName?: string
-//   }
+  type AvailElement<P = any> = {
+    [K in keyof JSX.IntrinsicElements]: P extends JSX.IntrinsicElements[K] ? K : never
+  }[keyof JSX.IntrinsicElements]
 
-//   type Theme = Record<string, Record<string, any>>
+  const AvailOptionElement = {
+    option: HTMLOptionElement,
+    input: HTMLInputElement,
+  }
+  type AvailOptionType = 'option' | 'input'
 
-//   type FieldError = Record<string, string>
+  type OptionProps = {
+    disabled?: boolean
+    label?: string
+    readOnly?: boolean
+    selected?: boolean
+    value?: string | ReadonlyArray<string> | number
+  }
 
-//   interface OptionProps {
-//     disabled?: boolean
-//     name?: string | number
-//     readOnly?: boolean
-//     selected?: boolean
-//     value: string | number
-//   }
+  type Option = string | OptionProps
 
-//   type Option = string | OptionProps
+  type FormElement = HTMLSelectElement | HTMLTextAreaElement | HTMLInputElement | HTMLLabelElement
+  type FormElementType<As extends 'select' | 'textarea' | 'input'> = React.ElementType<As>
+  enum AvailFormElement {
+    input = HTMLInputElement,
+    select = HTMLSelectElement,
+    textarea = HTMLTextAreaElement,
+  }
 
-//   type FormElement = HTMLSelectElement | HTMLTextAreaElement | HTMLInputElement
+  interface Control<As extends React.ElementType = React.ElementType<FormElementType>>
+    extends ComponentProps<As>,
+      React.InputHTMLAttributes<AvailFormElement<As>> {
+    arialabel?: string
+    // disabled?: boolean
+    error?: FieldError
+    // id?: string
+    label?: string | React.ReactNode
+    options?: Option[] // if `select` or `radio-group`
+    // plaintext?: boolean
+    // readOnly?: boolean
+    // type?: string
+    // value?: string | string[] | number
+    isInvalid?: Booleanish
+    isValid?: Booleanish
+    // onBlur?: React.FocusEventHandler<FormElement>
+    // onChange?: React.ChangeEventHandler<FormElement>
+    onAdd?: (e?: any) => void
+    onRemove?: (e?: any) => void
+    onUpdate?: (...args: any[]) => void
+    // catch-all
+    // [key: string]: any;
+  }
 
-//   interface Control extends InputHTMLAttributes<FormElement>, ComponentProps<FormElement> {
-//     arialabel?: string
-//     disabled?: boolean
-//     error?: FieldError
-//     isInvalid?: boolean
-//     isValid?: boolean
-//     // catch-all
-//     // [key: string]: any;
-//   }
+  interface OptionControl<T extends Option = Option> extends Control {
+    defaultOption?: T
+    options?: T[]
+  }
 
-//   interface OptionControl<T extends string | OptionProps> extends Control {
-//     defaultOption?: T
-//     options?: T[]
-//   }
+  interface ControlGroup<As extends React.ElementType = React.ElementType>
+    extends ComponentProps<As> {
+    classMap?: ClassMap
+    description?: string
+    errors?: FieldError
+    id?: string
+    keyLabel?: string
+    valueLabel?: string
+    legend?: string
+    options?: Option[]
+    presets?: string[] | Record<string, any>
+    onAdd?: (e?: any) => void
+    onChange?: React.ChangeEventHandler<As>
+    onRemove?: (e?: any) => void
+    onUpdate?: (...args: any[]) => void
+    after?: string | React.ReactNode // TODO: currently unused
+    before?: string | React.ReactNode // TODO: currently unused
+    // [key: string]: any
+  }
 
-//   interface ControlGroup<
-//     As extends React.ElementType | React.ComponentType<any> = React.ElementType
-//   > extends ComponentProps<As> {
-//     classMap?: ClassMap
-//     description?: string
-//     errors?: FieldError
-//     id?: string
-//     keyLabel?: string
-//     valueLabel?: string
-//     legend?: string
-//     presets?: string[] | Record<string, any>
-//     onAdd?: React.ReactEventHandler<T>
-//     onChange?: React.FormEventHandler<T>
-//     onRemove?: React.ReactEventHandler<T>
-//     after?: string | React.ReactNode // TODO: currently unused
-//     before?: string | React.ReactNode // TODO: currently unused
-//     // [key: string]: any
-//   }
+  type EventHandler<K extends keyof HTMLElementEventMap> = (
+    this: HTMLElement,
+    event: HTMLElementEventMap[K],
+  ) => any
 
-//   interface ClassMap {
-//     control?: string
-//     container?: string
-//     description?: string
-//     error?: string
-//     field?: string
-//     label?: string
-//     legend?: string
-//   }
+  type Listener = (this: HTMLElement, ev: TransitionEvent) => any
 
-//   type ConfigRecord = Record<string | number | symbol, unknown>
+  interface ThemeProps {
+    bg?: string
+    fg?: string
+    borderColor?: string
+    boxShadow?: string
+    hoverColor?: string
+    checked?: string
+  }
 
-//   interface Setting extends ConfigRecord {
-//     id?: string
-//     legend?: string
-//     fields?: Record<string, SettingField>
-//   }
+  interface Theme {
+    name: string
+    bg: string
+    fg: string
+    primary: string
+    accent: string
+    link: ThemeProps
+    borderColor: string
+    control: ThemeProps
+    disabled: ThemeProps
+    focus: ThemeProps
+    hover: ThemeProps
+    invalid: ThemeProps
+    muted: string
+  }
 
-//   interface SettingField {
-//     id: string
-//     type: string
-//     checked?: boolean // used on checkboxes and switches
-//     classMap?: ClassMap
-//     description?: string
-//     inputType?: string
-//     label?: string | React.ReactElement
-//     legend?: string
-//     items?: OptionProps[] // used on repeater fields
-//     options?: OptionProps[] // used on select and radiogroup fields
-//     attrs?: Record<string, any>
-//     readOnly?: boolean
-//     validators?: Record<string, any>
-//     value?: string | number
-//   }
+  interface ClassMap {
+    control?: string
+    container?: string
+    description?: string
+    error?: string
+    field?: string
+    label?: string
+    legend?: string
+  }
 
-//   interface Settings {
-//     [key: string]: Setting
-//   }
+  type ConfigRecord = Record<string | number | symbol, unknown>
 
-//   interface Utility extends ConfigRecord {
-//     id?: string
-//     class?: string
-//     description?: string
-//     enabled?: boolean
-//     inputType?: string
-//     property?: string
-//     responsive?: boolean
-//     options?: string[] | OptionProps[]
-//     subitems?: OptionProps[]
-//     subproperties?: Record<string, any>
-//     items?: OptionProps[] // used on repeater fields
-//   }
+  interface Setting extends ConfigRecord {
+    id?: string
+    legend?: string
+    fields?: Record<string, SettingField>
+  }
 
-//   interface Utilities {
-//     [key: string]: Utility
-//   }
+  interface SettingField {
+    id: string
+    type: string
+    checked?: boolean // used on checkboxes and switches
+    classMap?: ClassMap
+    description?: string
+    inputType?: string
+    label?: string | React.ReactElement
+    legend?: string
+    items?: OptionProps[] // used on repeater fields
+    options?: OptionProps[] // used on select and radiogroup fields
+    attrs?: Record<string, any>
+    readOnly?: boolean
+    validators?: Record<string, any>
+    value?: string | number
+  }
 
-//   interface State {
-//     settings: Record<string, Setting>
-//     utilities: Record<string, Utility>
-//   }
+  interface Settings {
+    [key: string]: Setting
+  }
 
-//   type StateType = keyof State
+  interface Utility extends ConfigRecord {
+    id?: string
+    class?: string
+    description?: string
+    enabled?: boolean
+    inputType?: string
+    property?: string
+    responsive?: boolean
+    options?: string[] | OptionProps[]
+    subitems?: OptionProps[]
+    subproperties?: Record<string, any>
+    items?: OptionProps[] // used on repeater fields
+  }
 
-//   type Config<P = any> = {
-//     [K in StateType]: P extends State[K] ? K : State[K]
-//   }[StateType]
+  interface Utilities {
+    [key: string]: Utility
+  }
 
-//   interface StateConfig {
-//     name: string
-//     value: string | boolean
-//   }
-// }
+  interface State {
+    settings: Record<string, Setting>
+    utilities: Record<string, Utility>
+  }
 
-// export = Avail
-// export as namespace Avail
+  type StateType = keyof State
+
+  type Config<P = any> = {
+    [K in StateType]: P extends State[K] ? K : State[K]
+  }[StateType]
+
+  interface StateConfig {
+    name: string
+    value: string | boolean
+  }
+}
+
+export = Avail
+export as namespace Avail

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { css } from 'styled-components'
+import { css, FlattenSimpleInterpolation } from 'styled-components'
 import { DARK, GRID_BREAKPOINTS, LINK_COLOR, SPACERS, VARIANTS, WHITE } from '../constants'
 import { camelize, Color, get, isNil, isNumber, isPlainObject, typeOf } from '../utils'
 import { maybeApplyUnit, toEM, toREM } from './units'
@@ -41,13 +41,14 @@ function getColor(val: string | ColorValue, defaultValue = DARK) {
   return defaultValue
 }
 
-export const cssTextToParams = (cssString: string): CSSProperties => {
+export const cssTextToParams = (cssString: string | FlattenSimpleInterpolation): CSSProperties => {
   if (!cssString) return {}
-  const rules = cssString.split(';').map((rule) => rule.trim())
+  const parseStr = typeof cssString === 'string' ? cssString : cssString.toString()
+  const rules = parseStr.split(';').map((rule) => rule.trim())
   return rules.reduce((acc, rule) => {
     if (rule.length > 0) {
       let [key, value] = rule.split(': ,').map((r) => r.trim())
-      if (value.endsWith(',')) {
+      if (value?.endsWith(',')) {
         value = value.slice(0, -1)
       }
       acc[camelize(key)] = value
@@ -115,13 +116,22 @@ export const mixin = {
       }
     `
   },
-  border: (props?: { width?: string; style?: string; color?: string | ColorValue }) => {
+  border: (props?: {
+    width?: string
+    style?: string
+    color?: string | ColorValue
+    dir?: string
+  }) => {
     const width = props?.width ?? '1px'
     const style = props?.style ?? 'solid'
     const borderColor = props?.color ?? color.border.base
+    let propName = 'border'
+    if (props?.dir) {
+      propName += `-${props?.dir}`
+    }
 
     return css`
-      border: ${width} ${style} ${getColor(borderColor)};
+      ${propName}: ${width} ${style} ${getColor(borderColor)};
     `
   },
   borderRadius: radiusMixin,

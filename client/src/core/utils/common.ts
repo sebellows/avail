@@ -1,6 +1,8 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable no-useless-escape */
 
+export const noop = () => {}
+
 export const isNil = (obj: any): boolean => obj === undefined || obj === null
 export const isDefined = (obj: any): boolean => obj !== undefined && obj !== null
 

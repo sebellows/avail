@@ -8,7 +8,6 @@ import {
 } from 'react'
 import { motion, MotionProps } from 'framer-motion'
 import { styles } from './dom'
-import { Listener } from '../contracts'
 import { listen } from './listen'
 
 /**
@@ -93,7 +92,7 @@ export const onAnimationEnd = (el: HTMLElement, fn: Function): void => {
 
 export function onTransitionEnd(
   el: HTMLElement,
-  handler: Listener,
+  handler: Avail.Listener,
   duration?: number | null,
   padding?: number,
 ) {

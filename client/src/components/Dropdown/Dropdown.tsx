@@ -1,14 +1,24 @@
 import React, { useState, useEffect, forwardRef, useMemo } from 'react'
-import { useClickOutside, useEnsuredRef, useFocused, useLifecycles } from '../../hooks'
 import styled, { css } from 'styled-components'
+
+import { mixin } from '../../core/style'
 import { classNames, isPlainObject } from '../../core/utils'
+import { useClickOutside, useEnsuredRef, useFocused, useLifecycles } from '../../hooks'
+
 import { Collapse } from '../Collapse'
 import { DropdownProps } from './props'
 import { DropdownItem } from './DropdownItem'
 
-import { mixin } from '../../core/style'
+type Toggle = React.ReactElement<
+  any,
+  | string
+  | ((
+      props: any,
+    ) => React.ReactElement<any, string | (new (props: any) => React.Component<any, any, any>)>)
+  | (new (props: any) => React.Component<any>)
+>
 
-export const StyledDropdown = styled.div<DropdownProps>`
+const StyledDropdown = styled.div<DropdownProps>`
   position: relative;
   ${mixin.flex({ direction: 'column', inline: true })}
 
@@ -40,24 +50,15 @@ export const StyledDropdown = styled.div<DropdownProps>`
   }
 `
 
-type Toggle = React.ReactElement<
-  any,
-  | string
-  | ((
-      props: any,
-    ) => React.ReactElement<any, string | (new (props: any) => React.Component<any, any, any>)>)
-  | (new (props: any) => React.Component<any>)
->
-
-const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
+const Dropdown: Avail.RefForwardingComponent<'div', DropdownProps> = forwardRef(
   (
-    { asSelect = false, items, itemAs = 'button', itemProps = {}, onSelect, selected, ...props },
+    { as: Component = 'div', asSelect, items, itemAs, itemProps = {}, onClick, selected, ...props },
     ref,
   ) => {
     const [open, toggle] = useState(false)
     const [activeIndex, setActiveIndex] = useState(-1)
-    const containerRef = useEnsuredRef(ref)
-    const dropdownFocused = useFocused(containerRef)
+    const containerRef = useEnsuredRef<HTMLDivElement>(ref)
+    const dropdownFocused = useFocused(ref)
 
     const children = React.Children.toArray(props?.children)
     const firstChild = children.shift() as Toggle
@@ -116,10 +117,10 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dropdownFocused])
 
-    const handleSelect = (item: any, e?: any) => {
+    const handleSelect = (selection: any, e?: any) => {
       console.log('handleSelect')
       toggle(!open)
-      onSelect?.(item, e)
+      onClick?.(selection, e)
     }
 
     const onKeypress = (e: any) => {
@@ -152,6 +153,7 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
 
     return (
       <StyledDropdown
+        as={Component}
         ref={containerRef}
         {...props}
         className={classNames('dropdown', !!props?.className && props.className)}
@@ -166,7 +168,7 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
               as={itemAs}
               isActive={activeIndex === i}
               value={computedItems[i][0]}
-              onChange={(e: any) => handleSelect(item, e)}
+              onClick={(e?: any) => handleSelect(item, e)}
               onHoverStart={(e: any) => handleHoverStart(e, i)}
               onHoverEnd={(e: any) => handleHoverEnd(e, -1)}
             >

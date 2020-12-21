@@ -1,25 +1,28 @@
-import React, { Ref } from 'react';
-import styled from 'styled-components';
-import { color, toREM, font } from '../core/style';
-import { ComponentProps } from '../core/contracts';
+import React from 'react'
+import styled from 'styled-components'
+import { color, mixin } from '../core/style'
 
-interface FeedbackProps extends ComponentProps {
-  type: 'valid' | 'invalid'; // Specify whether the validity of the form fields
+interface FeedbackProps extends Avail.ComponentProps {
+  type: 'valid' | 'invalid' // Specify whether the validity of the form fields
 }
 
-const StyledFieldFeedback = styled.small`
+const FieldFeedbackComponent: Avail.RefForwardingComponent<
+  'small',
+  FeedbackProps
+> = React.forwardRef(({ as: Component = 'small', type, ...props }, ref) => {
+  return <Component {...props} ref={ref} />
+})
+
+const FieldFeedback = styled(FieldFeedbackComponent)<FeedbackProps>`
   display: block;
-  color: ${(props: FeedbackProps) => (props.type === 'invalid' ? color.danger : color.success)};
-  font-size: ${toREM(font.sizes.sm)};
+  ${({ type }) => mixin.color(type === 'invalid' ? color.danger : color.success)}
+  ${mixin.font.size('sm')}
   line-height: 1.3;
-`;
+`
 
-const FieldFeedback = React.forwardRef<{}, FeedbackProps>(
-  ({ type = 'valid', ...props }, ref: Ref<any>) => {
-    return <StyledFieldFeedback {...props} ref={ref} />;
-  },
-);
+FieldFeedback.defaultProps = {
+  type: 'valid',
+}
+FieldFeedback.displayName = 'FieldFeedback'
 
-FieldFeedback.displayName = 'FieldFeedback';
-
-export { FieldFeedback };
+export { FieldFeedback }

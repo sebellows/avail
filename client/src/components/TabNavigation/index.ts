@@ -1,6 +1,0 @@
-export * from './Tabs'
-export * from './TabItem'
-export * from './TabPanel'
-export * from './TabContainer'
-export * from './useParam'
-export * from './useTabContext'

@@ -3,7 +3,7 @@ import React, { forwardRef, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 
 import { useEnsuredRef } from '../../hooks'
-import { Theme, useTheme } from '../../ThemeContext'
+import { useTheme } from '../../ThemeContext'
 import { validFormProps, containerProps, Color, uuid } from '../../core/utils'
 
 import { Styled } from './styles'

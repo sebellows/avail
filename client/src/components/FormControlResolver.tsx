@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useMemo } from 'react'
 
-import { FormControlProps } from '../core/contracts'
+import { noop } from '../core/utils'
 
 import { Control } from './Control'
 import { Repeater } from './Repeater'
@@ -13,16 +13,16 @@ import { Checkbox } from './ToggleControl/Checkbox'
 import { NumericControl } from './NumericControl'
 import { Switch } from './Switch'
 
-interface FormControlResolverProps extends FormControlProps {
-  type: string
-}
+// interface FormControlResolverProps extends Omit<Avail.Control, 'label'> {
+//   label?: string | React.ReactNode
+// }
 
-const FormControlResolver: React.FC<FormControlResolverProps> = ({
+const FormControlResolver: React.FC<Avail.Control> = ({
   children,
   type: controlType,
   onAdd = null,
   onRemove = null,
-  onUpdate = (...args: any[]) => {},
+  onUpdate = noop,
   ...props
 }) => {
   const handlers = {
@@ -73,7 +73,7 @@ const FormControlResolver: React.FC<FormControlResolverProps> = ({
       case 'switch':
         return (
           <Switch {...props} {...handlers}>
-            {props?.label}
+            <>{props?.label}</>
           </Switch>
         )
       case 'radiogroup':

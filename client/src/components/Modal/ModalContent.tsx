@@ -1,25 +1,30 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { forwardRef, Ref, useEffect } from 'react'
+import React, { forwardRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
+// import { IntrinsicElementDef } from '../../baseTypes'
 import { classNames, LEFT, RIGHT, listen } from '../../core/utils'
+import { useEnsuredRef } from '../../hooks'
 import { Icon } from '../Icon'
 import { Styled } from './styles'
 
-const ModalContent = forwardRef<{}, any>(
+const ModalContent: Avail.RefForwardingComponent<'div', Avail.ComponentProps> = forwardRef<{}, any>(
   (
     {
+      as: Component = 'div',
       ariaLabel,
       children,
       className = '',
-      focalRef,
+      focalRef: initialFocalRef,
       role = 'dialog',
-      onKeyUp = (event: any) => {},
-      onClickPrev = (event: any) => {},
-      onClickNext = (event: any) => {},
+      onKeyUp,
+      onClickPrev,
+      onClickNext,
+      ...props
     },
-    ref: Ref<any>,
+    ref,
   ) => {
+    const focalRef = useEnsuredRef<HTMLDivElement>(initialFocalRef)
+
     useEffect(() => {
       listen(document.body, 'keyup', (event: any) => {
         event.preventDefault()
@@ -46,7 +51,7 @@ const ModalContent = forwardRef<{}, any>(
     }
 
     return createPortal(
-      <Styled.Modal ref={ref} className="modal">
+      <Styled.Modal {...props} as={Component} ref={ref} className="modal">
         <Styled.Backdrop aria-hidden="true" className="modal-backdrop" />
         <Styled.Nav className="modal-navigation">
           <Styled.Prev href="#" className="prev" onClick={handleClickPrev}>

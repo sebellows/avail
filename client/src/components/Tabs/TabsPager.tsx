@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react'
 import { motion } from 'framer-motion'
 import styled from 'styled-components'
-import { ComponentProps } from '../../core/contracts'
 import { TabPanel } from './TabPanel'
+import { toPercent, transitions } from '../../core/style'
+import { usePrevious } from '../../hooks'
 
 const Styled = {
   Pager: styled.div`
@@ -32,7 +34,7 @@ const Styled = {
   `,
 }
 
-export interface TabsPagerProps extends ComponentProps {
+export interface TabsPagerProps extends Avail.ComponentProps {
   activeTab?: string
   activeTabIndex?: number
   transition?: {
@@ -48,36 +50,46 @@ const defaultTransition = {
   mass: 0.4,
 }
 
-const TabsPager = ({ activeTabIndex, children, transition = {} }: TabsPagerProps) => {
-  const slidingTransition = { ...defaultTransition, ...transition }
+const TabsPager: Avail.RefForwardingComponent<'div', TabsPagerProps> = React.forwardRef(
+  ({ as: Component = 'div', activeTabIndex, children }: TabsPagerProps, ref) => {
+    const tabCount = React.Children.count(children)
 
-  return (
-    <Styled.Pager>
-      <Styled.Container
-        transition={slidingTransition}
-        initial={false}
-        animate={{ x: `${activeTabIndex * -100}%` }}
-      >
-        {React.Children.map(children, (child: any, i: number) => {
-          const {
-            title,
-            disabled,
-            tabClassName,
-            id: tabID,
-            children: panelChildren,
-            ...childProps
-          } = child.props
+    const calcPosition = React.useCallback(
+      () => (tabCount && activeTabIndex > 0 ? `-${(activeTabIndex / tabCount) * 100}%` : '0'),
+      [activeTabIndex, tabCount],
+    )
 
-          return (
-            <TabPanel key={tabID} {...childProps} active={activeTabIndex === i} id={tabID}>
-              {panelChildren}
-            </TabPanel>
-          )
-        })}
-      </Styled.Container>
-    </Styled.Pager>
-  )
-}
+    return (
+      <Styled.Pager as={Component} ref={ref}>
+        <Styled.Container
+          initial={{ x: calcPosition() }}
+          animate={{
+            x: calcPosition(),
+          }}
+          style={{ width: `${100 * tabCount}%` }}
+          transition={{
+            duration: transitions.duration.seconds('fastOutSlowIn'),
+            ease: transitions.timing.fastOutSlowIn,
+          }}
+        >
+          {React.Children.map(children, (child: any, i: number) => {
+            const { title, disabled, tabClassName, id: tabID, ...childProps } = child.props
+
+            return (
+              <TabPanel
+                key={tabID}
+                {...childProps}
+                active={activeTabIndex === i}
+                id={tabID}
+                style={{ width: toPercent(1, tabCount) }}
+              />
+            )
+          })}
+        </Styled.Container>
+      </Styled.Pager>
+    )
+  },
+)
 
 TabsPager.displayName = 'TabsPager'
 export { TabsPager }

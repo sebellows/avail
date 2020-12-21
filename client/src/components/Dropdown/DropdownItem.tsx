@@ -22,18 +22,17 @@ export const StyledItem = styled(motion.label)<DropdownItemProps>`
   }
 `
 
-const DropdownItem = forwardRef<HTMLButtonElement, DropdownItemProps>(
+const DropdownItem: Avail.RefForwardingComponent<'button', DropdownItemProps> = forwardRef(
   (
     {
-      as,
+      as: Component = 'button',
       checked,
       children,
       className,
       disabled,
       name,
-      type = 'radio',
+      // type = 'radio',
       value,
-      onChange,
       onHoverStart,
       onHoverEnd,
       ...props
@@ -59,8 +58,8 @@ const DropdownItem = forwardRef<HTMLButtonElement, DropdownItemProps>(
       <StyledItem
         ref={ref}
         {...props}
-        as={as}
-        type="radio"
+        as={Component}
+        // type="radio"
         checked={!!props?.isActive}
         className={classNames(className, focused && 'focus', disabled && 'disabled')}
         theme={theme}
@@ -68,7 +67,6 @@ const DropdownItem = forwardRef<HTMLButtonElement, DropdownItemProps>(
           props?.isActive ? { backgroundColor: theme.hover.bg } : { backgroundColor: theme.bg }
         }
         whileTap={{ backgroundColor: theme.hover.bg }}
-        onChange={onChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
       >

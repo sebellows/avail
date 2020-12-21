@@ -1,22 +1,22 @@
-import React, { forwardRef, Ref } from 'react'
-import { ComponentProps } from '../../core/contracts'
+import React, { forwardRef } from 'react'
 import { Icon } from '../Icon/Icon'
 import { classNames } from '../../core/utils'
 import { Styled } from './styles'
 import { useTheme } from '../../ThemeContext'
 
-interface ColorpickerDialogProps extends ComponentProps {
-  hue?: number
-  lightness?: number
-  alpha?: number
+interface ColorpickerDialogProps extends Avail.ComponentProps {
+  // hue?: number
+  // lightness?: number
+  // alpha?: number
   open?: boolean
 }
 
-const ColorpickerDialog = forwardRef<HTMLDivElement, ColorpickerDialogProps>(
-  ({ className, hue, lightness, alpha, open = false }, ref: Ref<HTMLDivElement>) => {
+const ColorpickerDialog: Avail.RefForwardingComponent<'div', ColorpickerDialogProps> = forwardRef(
+  ({ as: Component = 'div', className, open = false }, ref) => {
     const { theme } = useTheme()
     return (
       <Styled.Dialog.Wrapper
+        as={Component}
         ref={ref}
         className={classNames('colorpicker-dialog', className, { 'is-open': open })}
         style={{ width: '375px', height: '180px' }}

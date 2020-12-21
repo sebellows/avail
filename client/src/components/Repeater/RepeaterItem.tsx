@@ -1,33 +1,33 @@
-import React, { forwardRef, Ref } from 'react'
+import React, { forwardRef } from 'react'
 
 import { Button } from '../Button'
 import { Icon } from '../Icon'
 import { classNames, isNil } from '../../core/utils'
-import { FormGroupProps } from '../../core/contracts'
 
 import { StyledItem } from './styles'
 import { useTheme } from '../../ThemeContext'
 
-const RepeaterItem = forwardRef<{}, FormGroupProps>(
+const RepeaterItem: Avail.RefForwardingComponent<'div', Avail.ControlGroup> = forwardRef(
   (
     {
-      id = '',
+      as: Component = 'div',
       className = '',
       children = null,
-      first = false,
-      legend = null,
       before = null,
       onAdd,
       onRemove,
+      ...props
     },
-    ref: Ref<any>,
+    ref,
   ) => {
     const { theme } = useTheme()
 
     return (
       <StyledItem.Wrapper
+        {...props}
+        as={Component}
         ref={ref}
-        className={classNames('repeater-item', className, { 'is-first': first })}
+        className={classNames('repeater-item', className)}
       >
         <StyledItem.Skein className="repeater-item-skein" theme={theme} />
         {!isNil(before) && (

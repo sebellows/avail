@@ -28,7 +28,7 @@ const StyledHeader = styled.header`
 const AppHeader = () => {
   const { activeTheme, setActiveTheme, setTheme, theme, themes, themeNames } = useTheme()
 
-  function selectTheme(selected: string | string[]) {
+  function selectTheme(selected: any) {
     console.log('selectTheme', selected)
     const selectedTheme = Array.isArray(selected) ? selected[0] : selected
     setActiveTheme(hyphenate(selectedTheme))
@@ -61,7 +61,7 @@ const AppHeader = () => {
           itemAs={ToggleButton}
           itemProps={{ size: 24 }}
           selected={activeTheme}
-          onSelect={selectTheme}
+          onClick={selectTheme}
           alignMenu="right"
         >
           <Button icon onClick={handleDropdownClick}>

@@ -1,7 +1,5 @@
 import styled from 'styled-components'
-import { color, mixin, radius, shadow } from '../../core/style'
-import { Switch } from '../Switch/Switch'
-import { Button } from '../Button'
+import { mixin } from '../../core/style'
 
 /** Utility Tabs */
 export const Styled = {
@@ -13,36 +11,26 @@ export const Styled = {
     ${mixin.padding.all(3)}
   `,
   Tab: styled.li`
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    ${mixin.padding.all(1, 2)}
     width: 100%;
-    background-color: ${color.bg.body};
-    border-radius: ${radius.lg};
-    // ${mixin.shadow(0, 1)}
-    box-shadow: ${shadow.elevation(1)};
+    ${mixin.flex({ align: 'center', justify: 'space-between' })}
+    ${mixin.padding.all(1, 2)}
+    ${({ theme }) => mixin.bgColor(theme.bg)}
+    ${mixin.borderRadius('lg')}
+    ${mixin.boxShadow.elevation(1)}
     ${mixin.transition({ property: 'box-shadow', duration: 'easeIn', timing: 'fastOutSlowIn' })}
 
     &:hover {
-      background-color: ${color.bg.light};
-      // ${mixin.shadow(2, 3)}
-      box-shadow: ${shadow.elevation(2)};
+      ${({ theme }) => mixin.bgColor(theme.hover.bg)}
+      ${mixin.boxShadow.elevation(2)}
     }
-  `,
-  TabContent: styled.div`
-    display: flex;
-    align-items: flex-end;
-  `,
-  TabSwitch: styled(Switch)`
-    ${mixin.margin.bottom(0)}
-    ${mixin.margin.right(2)}
-  `,
-  Toggle: styled(Button)`
-    &:hover,
-    &:focus {
-      color: ${color.magenta};
-      outline: none;
+
+    .pill-tab-content {
+      ${mixin.flex({ align: 'end' })}
+    }
+
+    .switch {
+      ${mixin.margin.bottom(0)}
+      ${mixin.margin.right(2)}
     }
   `,
 }

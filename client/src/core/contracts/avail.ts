@@ -4,7 +4,6 @@
  *
  **************************************************/
 
-import { OptionProps } from './form'
 import { ReactElement } from 'react'
 
 export interface AvailClassMap {
@@ -34,8 +33,8 @@ export interface AvailSettingField {
   inputType?: string
   label?: string | ReactElement
   legend?: string
-  items?: OptionProps[] // used on repeater fields
-  options?: OptionProps[] // used on select and radiogroup fields
+  items?: Avail.OptionProps[] // used on repeater fields
+  options?: Avail.OptionProps[] // used on select and radiogroup fields
   attrs?: Record<string, any>
   readOnly?: boolean
   validators?: Record<string, any>
@@ -54,10 +53,10 @@ export interface AvailUtility extends AvailConfigRecord {
   inputType?: string
   property?: string
   responsive?: boolean
-  options?: string[] | OptionProps[]
-  subitems?: OptionProps[]
+  options?: string[] | Avail.OptionProps[]
+  subitems?: Avail.OptionProps[]
   subproperties?: Record<string, any>
-  items?: OptionProps[] // used on repeater fields
+  items?: Avail.OptionProps[] // used on repeater fields
 }
 
 export interface AvailUtilities {

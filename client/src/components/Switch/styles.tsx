@@ -1,18 +1,17 @@
 import styled from 'styled-components'
-import { Control } from '../Control'
+import { BaseControl } from '../Control'
 import { mixin } from '../../core/style'
 import { SwitchProps } from './props'
-import { motion } from 'framer-motion'
 
 export const Styled = {
-  Label: styled(motion.label)<SwitchProps>`
+  Label: styled.label<SwitchProps>`
     position: relative;
     ${mixin.flex({ inline: true, align: 'center' })}
     flex: 1;
     white-space: nowrap;
     cursor: pointer;
   `,
-  Bar: styled(motion.div)<SwitchProps>`
+  Bar: styled.div<SwitchProps>`
     order: ${({ alignLabel }) => (alignLabel === 'right' ? '2' : '1')};
     position: relative;
     flex-shrink: 0;
@@ -20,7 +19,7 @@ export const Styled = {
     box-shadow: inset 1px 1px 1px 0 rgba(0, 0, 0, 0.12),
       inset -1px -1px 0 0 rgba(255, 255, 255, 0.2);
   `,
-  Control: styled(Control)`
+  Control: styled(BaseControl)`
     position: absolute;
     width: 0;
     height: 0;

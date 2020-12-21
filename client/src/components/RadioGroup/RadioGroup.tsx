@@ -1,14 +1,14 @@
-import React, { ChangeEvent, forwardRef, Ref } from 'react'
+import React, { forwardRef } from 'react'
 import { classNames } from '../../core/utils'
-import { FormGroupProps, OptionProps } from '../../core/contracts'
 import { Radio } from '../ToggleControl'
 import { FieldFeedback } from '../FieldFeedback'
 import { FieldDescription } from '../FieldDescription'
 import { Styled } from './styles'
 
-const RadioGroup = forwardRef<{}, FormGroupProps>(
+const RadioGroup: Avail.RefForwardingComponent<'fieldset', Avail.ControlGroup> = forwardRef(
   (
     {
+      as: Component = 'fieldset',
       className,
       classMap = {},
       description,
@@ -23,22 +23,22 @@ const RadioGroup = forwardRef<{}, FormGroupProps>(
       inline = true,
       ...props
     },
-    ref: Ref<any>,
+    ref,
   ) => {
-    function handleChange(event: ChangeEvent<HTMLInputElement>) {
-      console.log('RadioGroup=>handleChange', event.target, value)
-      onChange?.(event)
+    function handleChange(e: any) {
+      console.log('RadioGroup=>handleChange', e.target, value)
+      onChange?.(e)
     }
 
     return (
-      <Styled.Wrapper ref={ref} className={className}>
+      <Styled.Wrapper ref={ref} as={Component} className={className}>
         <Styled.Legend className={classNames(classMap?.legend)}>{legend}</Styled.Legend>
         <Styled.FormGroup className="radio-group">
-          {options.map((option: OptionProps, i: number) => (
+          {(options as Avail.OptionProps[]).map((option, i: number) => (
             <Radio
-              key={`${option.name}-${i}`}
+              key={`${option.label}-${i}`}
               type="radio"
-              id={`${option.name}-${i}`}
+              id={`${option.label}-${i}`}
               name={props?.name ?? id}
               value={option.value}
               checked={value === option.value}
@@ -46,7 +46,7 @@ const RadioGroup = forwardRef<{}, FormGroupProps>(
               className={classNames(classMap?.control)}
               onChange={handleChange}
             >
-              <span>{option.name}</span>
+              <span>{option.label}</span>
             </Radio>
           ))}
         </Styled.FormGroup>

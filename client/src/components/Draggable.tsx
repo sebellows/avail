@@ -1,14 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { forwardRef, useCallback, useEffect, useRef, useState } from 'react'
-import { ComponentProps } from '../core/contracts'
+import React, { forwardRef, useEffect, useState } from 'react'
 import { throttle } from '../core/utils'
-import { isFastEqual } from '../core/utils/isEqual'
-import { useEnsuredRef, useFirstMountState, useLifecycles, usePrevious } from '../hooks'
+// import { isFastEqual } from '../core/utils/isEqual'
+import { useEnsuredRef, useLifecycles } from '../hooks'
 
 type Coordinates = { x: number; y: number }
 
-interface DraggableProps extends ComponentProps {
+interface DraggableProps extends Avail.ComponentProps {
   draggable?: boolean
   position?: Coordinates
   target?: Element

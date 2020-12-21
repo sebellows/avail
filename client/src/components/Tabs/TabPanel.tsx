@@ -4,20 +4,17 @@ import { motion } from 'framer-motion'
 
 import { useEnsuredRef } from '../../hooks'
 import { classNames } from '../../core/utils'
-import { ComponentProps } from '../../core/contracts'
 import { transitions } from '../../core/style'
 
 const StyledPanel = styled(motion.section)`
-  display: none;
   visibility: hidden;
 
   &.active {
-    display: block;
     visibility: visible;
   }
 `
 
-export interface TabPanelProps extends ComponentProps {
+export interface TabPanelProps extends Avail.ComponentProps {
   active?: boolean
   duration?: number
   ease?: [number, number, number, number]
@@ -52,7 +49,7 @@ const TabPanel = forwardRef<HTMLDivElement, TabPanelProps>(
         exit="inactive"
         variants={{
           active: { opacity: 1 },
-          inactive: { opacity: 0 },
+          inactive: { opacity: 1 },
         }}
         transition={{ duration, ease }}
       />

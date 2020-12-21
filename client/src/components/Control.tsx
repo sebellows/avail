@@ -1,69 +1,26 @@
-import React, { forwardRef, Ref, ChangeEvent, useState } from 'react'
-import styled from 'styled-components'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, { forwardRef, ChangeEvent, useState } from 'react'
+import styled, { css } from 'styled-components'
 
-import { FormControlProps } from '../core/contracts'
-import { validFormProps, classNames } from '../core/utils'
-import { control, radius, mixin } from '../core/style'
 import { useTheme } from '../ThemeContext'
+import { classNames } from '../core/utils'
+import { control, radius, mixin } from '../core/style'
 
 function isToggle(type: string) {
   return type === 'checkbox' || type === 'radio'
 }
 
-export const StyledBaseInput = styled.input<FormControlProps>`
-  background-color: ${({ isInvalid, disabled, theme }: FormControlProps) => {
-    return isInvalid ? theme.invalid.bg : disabled ? theme.disabled.bg : theme.control.bg
-  }};
-  background-clip: padding-box;
-  border-width: 1px;
-  border-style: solid;
-  border-color: ${({ disabled, isInvalid, theme }: FormControlProps) => {
-    return isInvalid
-      ? theme.invalid.borderColor
-      : disabled
-      ? theme.disabled.borderColor
-      : theme.control.borderColor
-  }};
-  border-radius: ${radius.base};
-  box-shadow: none;
-  color: ${({ disabled, isInvalid, theme }: FormControlProps) => {
-    return isInvalid ? theme.invalid.fg : disabled ? theme.disabled.fg : theme.control.fg
-  }};
-  display: block;
-  width: 100%;
-  height: ${({ type }) => (isToggle(type) ? '100%' : control.height)};
-  ${mixin.padding.all('0.375rem', 'sm')}
-  font-family: ${control.fontFamily};
-  font-size: ${control.fontSize};
-  font-weight: 400;
-  line-height: ${control.lineHeight};
-  outline: none;
-  ${mixin.transition('easeIn', 'background-color', 'outline', 'color', 'box-shadow')}
-`
+export interface ControlProps<As extends React.ElementType = React.ElementType>
+  extends Avail.Control<As> {
+  eventStates?: boolean
+}
 
-export const StyledControl = styled(StyledBaseInput)<FormControlProps>`
-  &:hover {
-    background-color: ${({ theme }) => theme.control.hoverColor};
-    border-color: ${({ theme }) => theme.control.borderColor};
-  }
-  &:focus {
-    box-shadow: 0 0 0 3px ${({ theme }) => theme.focus.borderColor};
-  }
+type Control = Avail.RefForwardingComponent<'input', ControlProps>
 
-  &:disabled {
-    pointer-events: none;
-  }
-
-  &.is-invalid {
-    background-color: ${({ theme }) => theme.invalid.bg};
-    border-color: ${({ theme }) => theme.invalid.borderColor};
-    color: ${({ theme }) => theme.invalid.fg};
-  }
-`
-
-const Control = forwardRef<HTMLInputElement, FormControlProps>(
+const BaseControl: Control = forwardRef(
   (
     {
+      as: Component = 'input',
       className,
       disabled,
       id,
@@ -72,15 +29,15 @@ const Control = forwardRef<HTMLInputElement, FormControlProps>(
       name,
       onChange,
       readOnly,
-      type = 'text',
       value: initialValue,
+      eventStates = true,
       ...props
-    },
-    ref: Ref<HTMLInputElement>,
+    }: ControlProps,
+    ref,
   ) => {
-    const { theme } = useTheme()
     const [value, setValue] = useState(initialValue)
-    const formProps = validFormProps(props, { exclude: ['onChange'] })
+
+    const type = Component !== 'input' ? null : props?.type ?? 'text'
 
     function handleChange(event: ChangeEvent<HTMLInputElement>) {
       event.persist()
@@ -94,13 +51,12 @@ const Control = forwardRef<HTMLInputElement, FormControlProps>(
     }
 
     return (
-      <StyledControl
-        {...formProps}
+      <Component
+        {...props}
         ref={ref}
         type={type}
         id={id ?? name}
         name={name ?? id}
-        theme={theme}
         value={value}
         disabled={readOnly ?? disabled}
         className={classNames('control', { 'is-invalid': !!isInvalid }, className)}
@@ -111,6 +67,66 @@ const Control = forwardRef<HTMLInputElement, FormControlProps>(
   },
 )
 
+// border-color: ${({ disabled, isInvalid, theme }: ControlProps) => {
+//   return isInvalid
+//     ? theme.invalid.borderColor
+//     : disabled
+//     ? theme.disabled.borderColor
+//     : theme.control.borderColor
+// }};
+// border-color: ${({ theme }) => theme.control.borderColor};
+
+const StyledControl = styled(BaseControl)<ControlProps>`
+  background-color: ${({ isInvalid, disabled, theme }: ControlProps) => {
+    return isInvalid ? theme.invalid.bg : disabled ? theme.disabled.bg : theme.control.bg
+  }};
+  background-clip: padding-box;
+  border: none;
+  border-radius: ${radius.base};
+  box-shadow: inset 1px 1px 2px 0px rgba(0, 0, 0, 0.12), 1px 1px 1px 0 rgba(255, 255, 255, 0.2);
+  color: ${({ disabled, isInvalid, theme }: ControlProps) => {
+    return isInvalid ? theme.invalid.fg : disabled ? theme.disabled.fg : theme.control.fg
+  }};
+  display: block;
+  width: 100%;
+  height: ${({ type }) => (isToggle(type) ? '100%' : control.height)};
+  ${mixin.padding.all('0.375rem', 'sm')}
+  font-family: ${control.fontFamily};
+  font-size: ${control.fontSize};
+  font-weight: 400;
+  line-height: ${control.lineHeight};
+  outline: none;
+  ${mixin.transition('easeIn', 'background-color', 'outline', 'box-shadow', 'color')}
+
+  ${({ eventStates }) =>
+    eventStates &&
+    css`
+      &:hover {
+        ${({ theme }) => mixin.bgColor(theme.control.bg)}
+      }
+      &:focus {
+        box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.05), 1px 1px 2px 2px rgba(0, 0, 0, 0.03);
+        ${({ theme }) => mixin.bgColor(theme.focus.bg)}
+      }
+
+      &:disabled {
+        pointer-events: none;
+      }
+
+      &.is-invalid {
+        ${({ theme }) => mixin.bgColor(theme.invalid.bg)}
+        border-color: ${({ theme }) => theme.invalid.borderColor};
+        ${({ theme }) => mixin.color(theme.invalid.fg)}
+      }
+    `}
+`
+
+const Control: Control = forwardRef((props: ControlProps, ref) => {
+  const { theme } = useTheme()
+
+  return <StyledControl eventStates={true} {...props} ref={ref} theme={theme} />
+})
+
 Control.displayName = 'Control'
 
-export { Control }
+export { BaseControl, Control }

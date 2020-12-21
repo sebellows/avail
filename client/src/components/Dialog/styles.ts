@@ -46,7 +46,7 @@ export const Styled = {
     align-items: flex-start;
     justify-content: space-between;
     padding: 1rem 1.5rem;
-    border-bottom: 1px solid ${({ theme }) => theme.border.base};
+    border-bottom: 1px solid ${({ theme }) => theme.borderColor};
     border-top-left-radius: calc(${radius.base} - 1px);
     border-top-right-radius: calc(${radius.base} - 1px);
   `,
@@ -61,7 +61,7 @@ export const Styled = {
     align-items: center;
     justify-content: flex-end;
     padding: 0.75rem;
-    border-bottom: 1px solid ${({ theme }) => theme.border.base};
+    border-bottom: 1px solid ${({ theme }) => theme.borderColor};
     border-bottom-right-radius: calc(${radius.base} - 1px);
     border-bottom-left-radius: calc(${radius.base} - 1px);
   `,

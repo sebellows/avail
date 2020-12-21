@@ -1,20 +1,17 @@
-import React, { forwardRef, Ref } from 'react'
-import { ComponentProps } from '../core/contracts'
+import React, { forwardRef } from 'react'
 import { classNames } from '../core/utils/classNames'
-import styled from 'styled-components'
-import { mixin } from '../core/style'
+import { cssTextToParams, mixin } from '../core/style'
 
-export const StyledField = styled.div`
-  ${mixin.padding.y(1)}
-`
-
-const Field = forwardRef<{}, ComponentProps>(({ className, children, ...props }, ref: Ref<any>) => {
-  return (
-    <StyledField {...props} ref={ref} className={classNames('field', className)}>
-      {children}
-    </StyledField>
-  )
-})
+const Field: Avail.RefForwardingComponent<'div', Avail.ComponentProps> = forwardRef(
+  ({ as: Component = 'div', className, children, ...props }, ref) => {
+    const styles = cssTextToParams(mixin.padding.y(1))
+    return (
+      <Component {...props} ref={ref} className={classNames('field', className)} style={styles}>
+        {children}
+      </Component>
+    )
+  },
+)
 
 Field.displayName = 'Field'
 

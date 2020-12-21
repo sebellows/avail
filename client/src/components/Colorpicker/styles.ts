@@ -1,16 +1,6 @@
 import styled, { keyframes, css } from 'styled-components'
-import {
-  calcControlHeight,
-  color,
-  control,
-  mixin,
-  radius,
-  shadow,
-  zIndexes,
-  toREM,
-} from '../../core/style'
-import { FormControlProps } from '../../core/contracts'
-import { StyledControl, StyledBaseInput } from '../Control'
+import { calcControlHeight, color, control, mixin, radius, toREM } from '../../core/style'
+import { Control } from '../Control'
 
 const dropdownEnter = keyframes`
   from {
@@ -71,10 +61,8 @@ export const Styled = {
   `,
 
   /** Form group */
-  Field: styled(StyledControl)`
-    display: flex;
-    align-items: stretch;
-    justify-content: space-between;
+  Field: styled(Control)`
+    ${mixin.flex({ align: 'stretch', justify: 'space-between' })}
     position: relative;
     padding: 0;
   `,
@@ -94,17 +82,17 @@ export const Styled = {
       bottom: 6px;
     }
   `,
-  ColorTarget: styled.div<FormControlProps>`
+  ColorTarget: styled.div<Avail.Control>`
     position: absolute;
-    top: -${control.borderWidth};
-    left: -${control.borderWidth};
+    top: -1px;
+    left: -1px;
     width: 100%;
     height: ${toREM(calcControlHeight({ borderWidth: 0 }))};
     line-height: 1;
     background-clip: content-box;
-    background-color: ${({ value }) => value};
+    ${({ value }) => mixin.bgColor(value as string)}
     border: 1px solid ${({ theme }) => theme.control.borderColor};
-    border-radius: ${radius.sm} 0 0 ${radius.sm};
+    ${mixin.borderRadius('sm', 0, 0, 'sm')}
     box-shadow: ${({ theme }) => `inset 0 0 0 5px ${theme.bg}, inset 0 0 0 6px ${mixin.rgba(
       theme.fg,
       0.2,
@@ -122,25 +110,24 @@ export const Styled = {
   `,
 
   /** Form control */
-  Control: styled(StyledBaseInput)` {
+  Control: styled(Control)` {
     background-color: transparent;
     border-color: transparent;
-    border-radius: 0 calc(${radius.base} - 1px) calc(${radius.base} - 1px) 0;
+    ${mixin.borderRadius(0, `calc(${radius.base} - 1px)`, `calc(${radius.base} - 1px)`, 0)}
     flex: 1 1;
   `,
 
   /* Options */
   Panel: styled.div`
-    border-radius: ${radius.base};
-    // box-shadow: ${shadow[1]}, ${shadow[2]}, ${shadow[3]};
-    box-shadow: ${shadow.elevation(4)};
+    ${mixin.borderRadius('base')}
+    ${({ theme }) => mixin.bgColor(theme.bg)}
+    ${mixin.boxShadow.elevation(4)}
     position: absolute;
     top: calc(1.5em + 0.75rem + 2px);
     left: 0;
     right: 0;
     overflow: hidden;
     max-height: 240px;
-    background: ${color.bg.body};
     visibility: hidden;
     transform-origin: 50% 24px 0;
     overflow: hidden;
@@ -148,8 +135,8 @@ export const Styled = {
 
     &.is-active {
       ${mixin.hardwareAccelerate};
+      ${mixin.zIndex('dropdown')}
       visibility: visible;
-      z-index: ${zIndexes.dropdown};
     }
 
     &.colorpicker-panel-enter {
@@ -174,37 +161,39 @@ export const Styled = {
 
     &:hover,
     &.is-focused {
-      background-color: ${({ theme }) => theme.hover.bg};
+      ${({ theme }) => mixin.bgColor(theme.hover.bg)}
     }
 
     /* Selected "option" */
     &.is-selected {
-      background-color: ${({ theme }) => theme.hover.bg};
-      color: ${({ theme }) => theme.muted};
+      ${({ theme }) => mixin.bgColor(theme.hover.bg)}
+      ${({ theme }) => mixin.color(theme.muted)}
     }
   `,
 
   /* Display the value of an option in `colorpicker`. */
   PreviewBox: styled.div`
-    border: 1px solid ${({ theme }) => theme.control.borderColor};
-    ${mixin.shadow(0)};
     display: none;
     line-height: 1;
-    ${mixin.margin.right(2)}
-    ${mixin.padding.all(1)}
     position: relative;
     top: -3px;
     vertical-align: middle;
+    ${({ theme }) => mixin.border({ color: theme.control.borderColor })}
+    ${mixin.boxShadow.elevation(0)}
+    ${mixin.margin.right(2)}
+    ${mixin.padding.all(1)}
 
     &[style] {
       display: inline-block;
     }
     &[style*='background-color'] {
       background-clip: content-box;
-      box-shadow: inset 0 0 0 5px var(--white), inset 0 0 0 6px rgba(0, 0, 0, 0.2),
-        ${shadow.levels[0]};
+      ${({ theme }) => css`
+        box-shadow: inset 0 0 0 5px ${theme.bg}, inset 0 0 0 6px rgba(0, 0, 0, 0.2),
+          0px 1px 3px 0px rgba(0, 0, 0, 0.2);
+      `}
       box-sizing: content-box;
-      border-radius: 50%;
+      ${mixin.borderRadius('circle')}
       height: 1rem;
       width: 1rem;
     }

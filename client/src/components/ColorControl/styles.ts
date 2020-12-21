@@ -2,7 +2,6 @@ import styled from 'styled-components'
 import { Color } from '../../core/utils'
 
 import { Control } from '../Control'
-import { FormControlProps } from '../../core/contracts'
 import { control, mixin } from '../../core/style'
 
 interface StyledProps {
@@ -10,11 +9,11 @@ interface StyledProps {
 }
 
 export const Styled = {
-  Control: styled(Control)<FormControlProps>`
+  Control: styled(Control)<Avail.Control>`
     padding: 0.3125rem;
 
     &::-webkit-color-swatch {
-      border-color: ${control.borderColor};
+      ${({ theme }) => mixin.border({ color: theme.control.borderColor })}
     }
 
     &:hover ~ .color-control-overlay {
@@ -24,7 +23,7 @@ export const Styled = {
   Overlay: styled.div<StyledProps>`
     ${mixin.flexCenter}
     position: absolute;
-    top: 0.25rem;
+    top: 0;
     left: 0;
     width: 100%;
     height: ${control.height};

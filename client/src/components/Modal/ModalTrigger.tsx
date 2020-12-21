@@ -1,23 +1,23 @@
-import React, { forwardRef } from 'react';
-import { classNames } from '../../core/utils';
+import React, { forwardRef } from 'react'
 
-interface ModalTriggerProps {
-  children: any;
-  onOpen?: Function;
-  [key: string]: any;
+interface ModalTriggerProps extends Avail.ComponentProps {
+  children: any
+  [key: string]: any
 }
 
-const ModalTrigger = forwardRef<{}, ModalTriggerProps>(({ children, onOpen, ...props }, ref) => {
-  return (
-    <>
-      {React.cloneElement(children, {
-        className: classNames(children.props.className),
-        ref: ref,
-      })}
-    </>
-  );
-});
+const ModalTrigger = forwardRef<HTMLButtonElement, ModalTriggerProps>(
+  ({ children, ...props }, ref) => {
+    return (
+      <>
+        {React.cloneElement(children, {
+          ref: ref,
+          ...props,
+        })}
+      </>
+    )
+  },
+)
 
-ModalTrigger.displayName = 'ModalTrigger';
+ModalTrigger.displayName = 'ModalTrigger'
 
-export { ModalTrigger };
+export { ModalTrigger }

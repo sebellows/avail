@@ -8,20 +8,12 @@ import { mixin } from '../core/style'
 import { useFirstMountState } from '../hooks'
 import { classNames, set } from '../core/utils'
 import { generateSettings } from '../core/settings'
-import {
-  AvailConfig,
-  AvailSetting,
-  ComponentProps,
-  StateConfig,
-  AvailSettingField,
-  AvailSettings,
-} from '../core/contracts'
 import { useStore } from '../store/useStore'
 // import { SettingsContext, ADD_ITEM, REMOVE_ITEM, SET_CONFIG } from '../store'
 import { Field, FieldDescription, FormControlResolver, Icon, Switch } from '../components'
 
-export interface SettingsFormProps extends ComponentProps {
-  settings?: AvailConfig<AvailSetting>
+export interface SettingsFormProps extends Avail.ComponentProps {
+  settings?: Avail.Config<Avail.Setting>
 }
 
 const Styled = {
@@ -45,20 +37,20 @@ const SettingsForm: FC<SettingsFormProps> = React.memo(() => {
   const addSetting = useStore((state) => state.addSetting)
   const removeSetting = useStore((state) => state.removeSetting)
 
-  const onUpdate = (config: StateConfig, event?: any) => {
+  const onUpdate = (config: Avail.StateConfig, event?: any) => {
     updateSettings(config)
     // console.log('SettingsForm->onUpdate', config, settings)
   }
 
   const onAdd = useCallback(
-    (config: StateConfig) => {
+    (config: Avail.StateConfig) => {
       addSetting(config)
     },
     [addSetting],
   )
 
   const onRemove = useCallback(
-    (config: string | Partial<StateConfig>) => {
+    (config: string | Partial<Avail.StateConfig>) => {
       config = typeof config == 'string' ? { name: config } : config
       console.log('onRemove', config)
       removeSetting(config)
@@ -70,7 +62,7 @@ const SettingsForm: FC<SettingsFormProps> = React.memo(() => {
     <Fragment>
       {settings &&
         Object.entries(settings).map(([id, setting]) => {
-          const { legend, fields: fieldsMap } = setting as AvailSetting
+          const { legend, fields: fieldsMap } = setting as Avail.Setting
           const fields = Object.values(fieldsMap) as any[]
 
           if (fields?.length === 1 && ['radiogroup', 'repeater'].includes(fields[0].type)) {
@@ -89,9 +81,9 @@ const SettingsForm: FC<SettingsFormProps> = React.memo(() => {
           }
           return (
             <Styled.Fieldset id={id} key={id}>
-              <legend className="font-size-lg">{(setting as AvailSetting).legend}</legend>
+              <legend className="font-size-lg">{(setting as Avail.Setting).legend}</legend>
               <Styled.Fields className="fields">
-                {fields.map((field: AvailSettingField) => {
+                {fields.map((field: Avail.SettingField) => {
                   if (field.attrs) {
                     field = { ...field, ...field.attrs }
                     delete field.attrs

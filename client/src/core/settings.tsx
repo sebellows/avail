@@ -3,7 +3,6 @@ import React from 'react'
 import { COLORS, DIRECTIONS, GRAYS, GRID_BREAKPOINTS, THEME_COLORS } from './constants'
 import { toOptions } from './models/Option'
 import { CSS_VALUE_PRESETS } from './presets'
-import { AvailConfig, AvailSetting } from './contracts'
 
 const AVAIL_COLOR_SCHEMES = {
   colors: COLORS,
@@ -20,7 +19,7 @@ function updateColorScheme(settings: Record<string, any>) {
   return AVAIL_COLOR_SCHEMES
 }
 
-export const Settings = (settings: AvailConfig<AvailSetting>): AvailConfig<AvailSetting> => {
+export const Settings = (settings: Avail.Config<Avail.Setting>): Avail.Config<Avail.Setting> => {
   const colorSchemes = updateColorScheme(settings)
   const colors = toOptions(colorSchemes.colors)
   const grays = toOptions(colorSchemes.grays)
@@ -35,7 +34,7 @@ export const Settings = (settings: AvailConfig<AvailSetting>): AvailConfig<Avail
           type: 'text',
           id: 'export_fields_prefix_value',
           label: 'Prefix',
-          attrs: { placeholder: 'app-' },
+          attrs: { placeholder: 'app-', autoComplete: 'off' },
           value: '',
           description: 'Prepend a custom prefix to all generated utility classes?',
         },
@@ -246,12 +245,12 @@ export const Settings = (settings: AvailConfig<AvailSetting>): AvailConfig<Avail
 }
 
 export function generateSettings(
-  config: AvailConfig<AvailSetting> = {},
-): AvailConfig<AvailSetting> {
+  config: Avail.Config<Avail.Setting> = {},
+): Avail.Config<Avail.Setting> {
   const settings = Settings(config)
 
   return Object.entries(settings).reduce((acc, [key, value]) => {
-    acc[key] = { id: key, ...value } as AvailSetting
+    acc[key] = { id: key, ...value } as Avail.Setting
     return acc
   }, {})
 }

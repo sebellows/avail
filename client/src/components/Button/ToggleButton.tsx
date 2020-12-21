@@ -1,15 +1,23 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useCallback, useState } from 'react'
-import { classNames, containerProps, validFormProps } from '../../core/utils'
+import React from 'react'
 import { useTheme } from '../../ThemeContext'
-// import { Control } from '../Control'
+import { classNames, containerProps, validFormProps } from '../../core/utils'
 
-import { ToggleButtonProps } from './props'
 import { Styled } from './styles'
+import { ToggleButtonProps } from './props'
 
-const ToggleButton = React.forwardRef<HTMLLabelElement, ToggleButtonProps>(
+const ToggleButton: Avail.RefForwardingComponent<'label', ToggleButtonProps> = React.forwardRef(
   (
-    { children, className, disabled, name, type, value, variant, ...props }: ToggleButtonProps,
+    {
+      as: Component = 'label',
+      children,
+      className,
+      disabled,
+      name,
+      type,
+      value,
+      variant,
+      ...props
+    }: ToggleButtonProps,
     ref,
   ) => {
     const { theme } = useTheme()
@@ -25,7 +33,7 @@ const ToggleButton = React.forwardRef<HTMLLabelElement, ToggleButtonProps>(
       <Styled.Toggle
         {...labelProps}
         ref={ref}
-        as="label"
+        as={Component}
         type={type}
         theme={theme}
         className={classNames(

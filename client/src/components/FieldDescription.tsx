@@ -1,32 +1,39 @@
-import React, { Ref } from 'react';
+import React from 'react'
 
-import { ComponentProps } from '../core/contracts';
-import styled from 'styled-components';
-import { color, font, toREM, mixin } from '../core/style';
+import styled from 'styled-components'
+import { font, toREM, mixin } from '../core/style'
+import { useTheme } from '../ThemeContext'
 
-interface FieldDescriptionProps extends ComponentProps {
-  /** Add `text-muted` class */
-  muted?: boolean;
+interface FieldDescriptionProps extends Avail.ComponentProps {
+  /** Text color */
+  muted?: boolean
 }
 
-const StyledFieldDescription = styled.small`
+const FieldDescriptionText: Avail.RefForwardingComponent<
+  'small',
+  FieldDescriptionProps
+> = React.forwardRef(({ as: Component = 'small', muted, ...props }, ref) => {
+  const { theme } = useTheme()
+
+  return (
+    <Component {...props} muted={muted} theme={theme} ref={ref}>
+      {props.children}
+    </Component>
+  )
+})
+
+const FieldDescription = styled(FieldDescriptionText)<FieldDescriptionProps>`
   display: inline-block;
   ${mixin.margin.top('xs')}
-  color: ${(props: FieldDescriptionProps) => (props.muted ? color.text.muted : color.text.body)};
+  color: ${({ muted, theme }) => (muted ? theme.muted : theme.fg)};
   font-size: ${toREM(font.sizes.sm)};
   line-height: 1.3;
-`;
+`
 
-const FieldDescription = React.forwardRef<{}, FieldDescriptionProps>(
-  ({ muted = true, ...props }, ref: Ref<any>) => {
-    return (
-      <StyledFieldDescription {...props} as={props.as} muted={muted} ref={ref}>
-        {props.children}
-      </StyledFieldDescription>
-    );
-  },
-);
+FieldDescription.defaultProps = {
+  muted: true,
+}
 
-FieldDescription.displayName = 'FieldDescription';
+FieldDescription.displayName = 'FieldDescription'
 
-export { FieldDescription };
+export { FieldDescription }

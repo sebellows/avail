@@ -1,17 +1,13 @@
-import { ComponentProps } from '../../core/contracts'
-
-export interface ButtonProps extends ComponentProps {
+export interface ButtonProps extends Avail.ComponentProps {
   fab?: boolean
   icon?: boolean
-  size?: string
+  size?: number | string
   type?: 'button' | 'submit'
   variant?: string
   [key: string]: any
 }
 
-export interface ToggleButtonProps
-  extends Omit<ButtonProps, 'type'>,
-    React.PropsWithChildren<ComponentProps> {
+export interface ToggleButtonProps extends Omit<ButtonProps, 'type'> {
   type?: 'checkbox' | 'radio'
   name?: string
   checked?: boolean

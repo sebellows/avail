@@ -6,25 +6,15 @@ import { combine, devtools } from 'zustand/middleware'
 import { clone, get as getValue, set as setValue, toMap, unset } from '../core/utils'
 import { generateConfig } from '../core/config'
 import { generateSettings } from '../core/settings'
-import {
-  AvailConfig,
-  AvailState,
-  AvailStateType,
-  AvailSetting,
-  AvailSettings,
-  AvailUtility,
-  AvailUtilities,
-  StateConfig,
-} from '../core/contracts'
 
 // interface AvailState {
-//   settings: Record<string, AvailSetting>
-//   utilities: Record<string, AvailUtility>
+//   settings: Record<string, Avail.Setting>
+//   utilities: Record<string, Avail.Utility>
 // }
-// type AvailStateType = keyof AvailState
+// type Avail.StateType = keyof AvailState
 // enum AvailType {
-//   settings = 'AvailSetting',
-//   utilities = 'AvailUtility',
+//   settings = 'Avail.Setting',
+//   utilities = 'Avail.Utility',
 // }
 
 type Config<T extends State> = StateCreator<T, (fn: (draft: T) => void) => void>
@@ -64,7 +54,7 @@ const getUpdateItem = (state: any, name: string) => {
  * OR
  * paths: `colorSchemes.fields.colors.items.0.name`
  */
-export function update<T = AvailStateType>(config: T, set): (state: StateConfig) => void {
+export function update<T = Avail.StateType>(config: T, set): (state: Avail.StateConfig) => void {
   return function ({ name, value }) {
     set((state) => {
       const [key, item] = getUpdateItem(state[config], name)
@@ -73,8 +63,11 @@ export function update<T = AvailStateType>(config: T, set): (state: StateConfig)
   }
 }
 
-export function initialize<T>(configType: AvailStateType, set): (fn: () => AvailConfig<T>) => void {
-  return function (fn: () => AvailConfig<T>) {
+export function initialize<T>(
+  configType: Avail.StateType,
+  set,
+): (fn: () => Avail.Config<T>) => void {
+  return function (fn: () => Avail.Config<T>) {
     set((state) => {
       state[configType] = fn()
       console.log(`Avail ${configType} has been initialized`)
@@ -82,7 +75,7 @@ export function initialize<T>(configType: AvailStateType, set): (fn: () => Avail
   }
 }
 
-export function add(config: AvailStateType, set): (config: StateConfig) => void {
+export function add(config: Avail.StateType, set): (config: Avail.StateConfig) => void {
   return function ({ name, value }) {
     // const path = normalizePath(name)
 
@@ -96,7 +89,11 @@ export function add(config: AvailStateType, set): (config: StateConfig) => void 
   }
 }
 
-export function remove(config: AvailStateType, set, get): (config: Partial<StateConfig>) => void {
+export function remove(
+  config: Avail.StateType,
+  set,
+  get,
+): (config: Partial<Avail.StateConfig>) => void {
   return function ({ name }) {
     // const path = normalizePath(name)
     const prevValue = getValue(get()[config], name.split('_'))
@@ -140,4 +137,4 @@ const store = (set, get, api) => {
 }
 
 export const useStore = createStore(store, 'AvailState')
-// export const useUtilities = createStore<AvailUtility>('utilities', 'AvailUtilities')
+// export const useUtilities = createStore<Avail.Utility>('utilities', 'AvailUtilities')

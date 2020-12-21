@@ -1,16 +1,16 @@
-import React, { AnimationEvent, forwardRef, Ref } from 'react'
+import React, { AnimationEvent, forwardRef } from 'react'
 import { classNames } from '../../core/utils/classNames'
 import { useTheme } from '../../ThemeContext'
 import { Styled } from './styles'
 
-interface SpinnerProps {
+interface SpinnerProps extends Avail.ComponentProps {
   className?: string
   exit?: boolean
   onAnimationEnd?: (event: AnimationEvent) => void
 }
 
-export const Spinner = forwardRef<{}, SpinnerProps>(
-  ({ className, exit = false, onAnimationEnd = null }, ref: Ref<any>) => {
+const Spinner: Avail.RefForwardingComponent<'div', SpinnerProps> = forwardRef(
+  ({ as: Component = 'div', className, exit = false, onAnimationEnd = null }, ref) => {
     const { theme } = useTheme()
     function handleAnimationEnd(event: AnimationEvent) {
       if (onAnimationEnd) {
@@ -20,6 +20,7 @@ export const Spinner = forwardRef<{}, SpinnerProps>(
 
     return (
       <Styled.Wrapper
+        as={Component}
         ref={ref}
         theme={theme}
         className={classNames('spinner', className, exit && 'spinner-out')}
@@ -42,3 +43,7 @@ export const Spinner = forwardRef<{}, SpinnerProps>(
     )
   },
 )
+
+Spinner.displayName = 'Spinner'
+
+export { Spinner }

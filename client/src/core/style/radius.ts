@@ -19,10 +19,12 @@ export const radiusMixin = (...keys: any[]) => {
   return css`
     border-radius: ${keys
       .reduce((acc, key) => {
-        if (typeof key === 'string' && key in radius) {
+        if (typeof key === 'number') {
+          acc.push(key > 0 ? toREM(parseInt('' + key, 10)) : 0)
+        } else if (typeof key === 'string' && key in radius) {
           acc.push(radius[key])
         } else {
-          acc.push(toREM(parseInt(key, 10)))
+          acc.push(key)
         }
         return acc
       }, [])

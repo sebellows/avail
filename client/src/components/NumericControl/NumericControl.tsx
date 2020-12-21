@@ -1,17 +1,15 @@
-import React, { forwardRef, Ref, useEffect, useState, useRef } from 'react'
-import { FormControlProps } from '../../core/contracts'
+import React, { forwardRef, useEffect, useState, useRef } from 'react'
+
 import { Icon } from '../Icon'
-import { DOWN, UP, containerProps, validFormProps, classNames } from '../../core/utils'
-import { Styled } from './styles'
 import { useTheme } from '../../ThemeContext'
+import { DOWN, UP, containerProps, validFormProps, classNames } from '../../core/utils'
 
-interface NumericControlProps extends FormControlProps {
-  step?: number
-}
+import { Styled } from './styles'
 
-const NumericControl = forwardRef<{}, NumericControlProps>(
+const NumericControl: Avail.RefForwardingComponent<'div', Avail.Control> = forwardRef(
   (
     {
+      as: Component = 'div',
       min = 0,
       max = Infinity,
       step = 1,
@@ -20,7 +18,7 @@ const NumericControl = forwardRef<{}, NumericControlProps>(
       value: initialValue,
       ...props
     },
-    ref: Ref<any>,
+    ref,
   ) => {
     const { theme } = useTheme()
     const [value, setValue] = useState(initialValue)
@@ -49,7 +47,7 @@ const NumericControl = forwardRef<{}, NumericControlProps>(
 
       if (disabled || +value >= max) return
 
-      setValue(`${+value + 1 * step}`)
+      setValue(`${+value + 1 * +step}`)
     }
 
     function decrement(event: any) {
@@ -58,7 +56,7 @@ const NumericControl = forwardRef<{}, NumericControlProps>(
 
       if (disabled || +value <= min) return
 
-      setValue(`${+value + -1 * step}`)
+      setValue(`${+value + -1 * +step}`)
     }
 
     function handleKeyUp(event: any) {
@@ -82,6 +80,7 @@ const NumericControl = forwardRef<{}, NumericControlProps>(
     return (
       <Styled.Wrapper
         {..._containerProps}
+        as={Component}
         ref={ref}
         className={classNames('numeric', props.className)}
       >

@@ -3,7 +3,6 @@ import { toast } from 'react-toastify'
 
 import { usePrevious } from '../../hooks/usePrevious'
 import { classNames } from '../../core/utils/classNames'
-import { OptionProps, FormGroupProps } from '../../core/contracts'
 
 import { Control } from '../Control'
 import { FieldFeedback } from '../FieldFeedback'
@@ -13,9 +12,10 @@ import { FormControlResolver } from '../FormControlResolver'
 import { Styled } from './styles'
 import { RepeaterItem } from './RepeaterItem'
 
-const Repeater = forwardRef<{}, FormGroupProps>(
+const Repeater: Avail.RefForwardingComponent<'fieldset', Avail.ControlGroup> = forwardRef(
   (
     {
+      as: Component = 'fieldset',
       id,
       className = '',
       errors: initialErrors = {},
@@ -41,7 +41,7 @@ const Repeater = forwardRef<{}, FormGroupProps>(
 
     useEffect(() => {
       if (prevItemsCount !== initialItems.length) {
-        setItems(initialItems as OptionProps[])
+        setItems(initialItems as Avail.OptionProps[])
       }
     }, [initialItems, prevItemsCount])
 
@@ -64,7 +64,7 @@ const Repeater = forwardRef<{}, FormGroupProps>(
 
     function handleAdd() {
       const nextID = items.length === 0 ? 1 : items.length
-      onAdd?.({ name: `${id}_items_${nextID}`, value: '' })
+      onAdd?.({ label: `${id}_items_${nextID}`, value: '' })
     }
 
     function handleRemove(itemID: string) {
@@ -81,7 +81,9 @@ const Repeater = forwardRef<{}, FormGroupProps>(
 
       if (classList.contains('repeater-name')) {
         // Check if the name value already exists.
-        const itemNames = items.filter((item: OptionProps) => item.name === event.target.value)
+        const itemNames = items.filter(
+          (item: Avail.OptionProps) => item.label === event.target.value,
+        )
         if (itemNames.length > 1) {
           setErrors({
             ...errors,
@@ -103,7 +105,12 @@ const Repeater = forwardRef<{}, FormGroupProps>(
     }
 
     return (
-      <Styled.Wrapper ref={ref} id={id} className={classNames('repeater', className)}>
+      <Styled.Wrapper
+        ref={ref}
+        as={Component}
+        id={id}
+        className={classNames('repeater', className)}
+      >
         {legend && (
           <Styled.Legend description={props?.description} isInvalid={props?.isInvalid}>
             {legend}
@@ -112,7 +119,7 @@ const Repeater = forwardRef<{}, FormGroupProps>(
         {props?.description && <FieldDescription>{props?.description}</FieldDescription>}
         {props?.isInvalid && errors && <FieldFeedback type="invalid">{errors[id]}</FieldFeedback>}
         {items.length &&
-          items.map((item: OptionProps, i: number) => {
+          items.map((item: Avail.OptionProps, i: number) => {
             const itemID = `${id}_items_${i}`
             const nameID = `${itemID}_name`
             const valueID = `${itemID}_value`
@@ -120,7 +127,7 @@ const Repeater = forwardRef<{}, FormGroupProps>(
             return (
               <RepeaterItem
                 key={itemID}
-                first={i === 0}
+                className={classNames({ 'is-first': i === 0 })}
                 before={i}
                 id={itemID}
                 onAdd={handleAdd}
@@ -134,11 +141,11 @@ const Repeater = forwardRef<{}, FormGroupProps>(
                     id={nameID}
                     name={nameID}
                     className="repeater-name"
-                    value={item.name}
+                    value={item.label}
                     onBlur={handleBlur}
                     onChange={handleChange}
                     isValid={!errors || !errors[nameID]}
-                    isInvalid={errors && errors[nameID]}
+                    isInvalid={errors && !!errors[nameID]}
                   />
                 </Styled.Field>
 

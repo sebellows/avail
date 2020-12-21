@@ -1,5 +1,5 @@
-import { RefObject, useEffect, MutableRefObject } from 'react';
-import { useLatest } from './useLatest';
+import { useEffect, MutableRefObject } from 'react'
+import { useLatest } from './useLatest'
 
 // const MOUSEDOWN = 'mousedown'
 // const TOUCHSTART = 'touchstart'
@@ -12,8 +12,8 @@ enum HandledEvent {
 // type HandledEvents = [HandledEvent.MOUSEDOWN, HandledEvent.TOUCHSTART];
 // type HandledEventsType = HandledEvents[number]
 type PossibleEvent = {
-  [key in HandledEvent]: HTMLElementEventMap[key];
-}[HandledEvent];
+  [key in HandledEvent]: HTMLElementEventMap[key]
+}[HandledEvent]
 
 /**
  * Allow for `event.preventDefault()`-like behavior on touch events
@@ -23,11 +23,11 @@ type PossibleEvent = {
  */
 export const getOptions = (event: HandledEvent) => {
   if (event !== HandledEvent.TOUCHSTART) {
-    return;
+    return
   }
 
   /* Feature detection */
-  let passiveOption: Record<string, boolean> | boolean = false;
+  let passiveOption: Record<string, boolean> | boolean = false
 
   try {
     window.addEventListener(
@@ -35,64 +35,66 @@ export const getOptions = (event: HandledEvent) => {
       null,
       Object.defineProperty({}, 'passive', {
         get: function () {
-          passiveOption = { passive: false };
-          return passiveOption;
+          passiveOption = { passive: false }
+          return passiveOption
         },
       }),
-    );
+    )
   } catch (err) {}
 
-  return passiveOption as EventListenerOptions;
-};
-
-const events: HandledEvent[] = [HandledEvent.MOUSEDOWN, HandledEvent.TOUCHSTART];
-
-function getElementFromRef(ref: RefObject<HTMLElement> | HTMLElement): HTMLElement | null {
-  if ('contains' in ref) return ref;
-  if (ref.current) {
-    return getElementFromRef(ref.current);
-  }
-  return null;
+  return passiveOption as EventListenerOptions
 }
 
-export const useClickOutside = (
-  ref: RefObject<HTMLElement> | MutableRefObject<HTMLElement>,
+const events: HandledEvent[] = [HandledEvent.MOUSEDOWN, HandledEvent.TOUCHSTART]
+
+function getElementFromRef<T extends HTMLElement = HTMLElement>(
+  ref: MutableRefObject<T> | T,
+): T | null {
+  if ('contains' in ref) return ref as T
+  if ((ref as MutableRefObject<T>).current) {
+    return getElementFromRef((ref as MutableRefObject<T>).current) as T
+  }
+  return null
+}
+
+export function useClickOutside<T extends HTMLElement = HTMLElement>(
+  ref: MutableRefObject<T>,
   onClickOutside: (event: PossibleEvent) => void,
   disabled = false,
-) => {
-  const onClickOutsideRef = useLatest(onClickOutside);
+) {
+  const onClickOutsideRef = useLatest(onClickOutside)
 
   useEffect(() => {
-    const { current: currentClickOutsideRef } = onClickOutsideRef;
+    const { current: currentClickOutsideRef } = onClickOutsideRef
 
-    if (!currentClickOutsideRef || !ref) return;
+    if (!currentClickOutsideRef || !ref) return
 
     const listener = (event: PossibleEvent) => {
       setTimeout(() => {
-        const currentRef = getElementFromRef(ref);
+        const currentRef = getElementFromRef(ref)
 
-        if (!currentRef || currentRef.contains(event.target as Node)) {
-          return;
+        if (!currentRef || (currentRef as T).contains(event.target as Node)) {
+          return
         }
 
-        currentClickOutsideRef(event);
-      });
-    };
+        currentClickOutsideRef(event)
+      })
+    }
 
     events.forEach((event: HandledEvent) => {
       if (!disabled) {
-        document.addEventListener(event, listener, getOptions(event));
+        document.addEventListener(event, listener, getOptions(event))
       } else {
-        document.removeEventListener(event, listener, getOptions(event));
+        document.removeEventListener(event, listener, getOptions(event))
       }
-    });
+    })
 
     return () => {
       events.forEach((event) => {
-        document.removeEventListener(event, listener, getOptions(event));
-      });
-    };
-  }, [disabled, onClickOutsideRef, ref]);
+        document.removeEventListener(event, listener, getOptions(event))
+      })
+    }
+  }, [disabled, onClickOutsideRef, ref])
 
-  return onClickOutsideRef;
-};
+  return onClickOutsideRef
+}

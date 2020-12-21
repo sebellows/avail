@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { forwardRef, Ref } from 'react'
 import { classNames } from '../../core/utils'
 import { Styled } from './styles'
@@ -7,7 +6,7 @@ import { DialogHeader } from './DialogHeader'
 import { toPX } from '../../core/style'
 import { useTheme } from '../../ThemeContext'
 
-const noopEvent = (event: React.SyntheticEvent) => {}
+const noopEvent = (e?: any) => {}
 
 const Dialog = forwardRef<{}, DialogProps>(
   ({ className, size, title, onClose = noopEvent, children }, ref: Ref<any>) => {

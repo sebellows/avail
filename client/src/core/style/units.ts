@@ -43,12 +43,10 @@ export const toPX = (value: string | number) => `${Math.floor(normalizeUnit(valu
 const toRelativeUnit = (value: string | number) => normalizeUnit(value) / FONT_SIZE_ROOT
 
 export const toEM = (value: number) => `${toRelativeUnit(value)}em`
-export const toREM = (value: number, flag?: string) => {
-  if (flag) {
-    console.log(`${flag}->toREM`, value, toRelativeUnit(value))
-  }
-  return `${toRelativeUnit(value)}rem`
-}
+export const toREM = (value: number) => `${toRelativeUnit(value)}rem`
+
+export const toPercent = (num: number, den?: number) =>
+  den ? `${(num / den) * 100}%` : num > 0 && num < 1 ? `${num * 100}%` : `${num}%`
 
 export const maybeApplyUnit = (value: any, unit = 'rem') => {
   if (isUnit(value)) return value
@@ -59,7 +57,7 @@ export const maybeApplyUnit = (value: any, unit = 'rem') => {
     case 'em':
       return toEM(value)
     case '%':
-      return `${value}%`
+      return toPercent(value)
     case 'px':
     default:
       return toPX(value)

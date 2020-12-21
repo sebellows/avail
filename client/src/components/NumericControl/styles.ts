@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { StyledControl } from '../Control'
+import { Control } from '../Control'
 import { control, font, mixin, normalizeUnit, toRatio, toREM } from '../../core/style'
 
 const controlBorderWidth = normalizeUnit(control.borderWidth)
@@ -26,13 +26,12 @@ const StyledButton = styled.button`
 
   &:hover {
     & ~ .input {
-      border-color: ${control.active.borderColor};
-    }
+      border-color: ${({ theme }) => theme.hover.borderColor}
   }
   &:active,
   &:focus {
     & ~ .input {
-      box-shadow: ${control.active.boxShadow};
+      border-color: ${({ theme }) => theme.focus.borderColor};
     }
   }
 `
@@ -46,7 +45,7 @@ export const Styled = {
     border-radius: ${control.borderRadius};
     outline: none;
   `,
-  Control: styled(StyledControl)`
+  Control: styled(Control)`
     order: 2;
     flex: 1;
     border-left-width: 0 !important;

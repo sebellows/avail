@@ -1,13 +1,7 @@
 import { MotionStyle, MotionValue } from 'framer-motion'
-import { ComponentType, InputHTMLAttributes } from 'react'
-import { ComponentProps, FormControlProps, FormControlType } from '../../core/contracts'
 
-export interface CheckmarkIconProps
-  extends InputHTMLAttributes<FormControlType>,
-    ComponentProps,
-    Pick<MotionStyle, 'pathLength'> {
-  as?: keyof JSX.IntrinsicElements | ComponentType<any>
-  checked?: boolean
+export interface CheckmarkIconProps extends Avail.Control, Pick<MotionStyle, 'pathLength'> {
+  // checked?: boolean
   inline?: boolean
   child?: any
   size?: number
@@ -16,7 +10,7 @@ export interface CheckmarkIconProps
   strokeWidth?: number
 }
 
-export interface ToggleControlProps extends FormControlProps {
+export interface ToggleControlProps extends Avail.Control {
   inline?: boolean
   child?: any
   size?: number

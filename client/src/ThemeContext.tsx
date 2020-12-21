@@ -13,32 +13,32 @@ import {
 } from './core/constants'
 import { capitalize, Color } from './core/utils'
 
-export interface ThemeProps {
-  bg?: string
-  fg?: string
-  borderColor?: string
-  boxShadow?: string
-  hoverColor?: string
-  checked?: string
-}
+// export interface ThemeProps {
+//   bg?: string
+//   fg?: string
+//   borderColor?: string
+//   boxShadow?: string
+//   hoverColor?: string
+//   checked?: string
+// }
 
-export interface Theme {
-  name: string
-  bg: string
-  fg: string
-  primary: string
-  accent: string
-  link: ThemeProps
-  borderColor: string
-  control: ThemeProps
-  disabled: ThemeProps
-  focus: ThemeProps
-  hover: ThemeProps
-  invalid: ThemeProps
-  muted: string
-}
+// export interface Theme {
+//   name: string
+//   bg: string
+//   fg: string
+//   primary: string
+//   accent: string
+//   link: ThemeProps
+//   borderColor: string
+//   control: ThemeProps
+//   disabled: ThemeProps
+//   focus: ThemeProps
+//   hover: ThemeProps
+//   invalid: ThemeProps
+//   muted: string
+// }
 
-export type ThemeOptions = Record<string, Theme>
+export type ThemeOptions = Record<string, Avail.Theme>
 
 const themeCommon = {
   invalid: {
@@ -51,7 +51,11 @@ const themeCommon = {
 // hsl(210deg 16% 93%)
 const shade = (l = 93) => Color(BLACK).hue(210).saturationl(12).lightness(l).string()
 
-const setLightTheme = (name = 'light', primary = COLORS.blue, accent = COLORS.orange): Theme => ({
+const setLightTheme = (
+  name = 'light',
+  primary = COLORS.blue,
+  accent = COLORS.orange,
+): Avail.Theme => ({
   name,
   bg: LIGHT,
   fg: DARK,
@@ -76,7 +80,7 @@ const setLightTheme = (name = 'light', primary = COLORS.blue, accent = COLORS.or
     fg: Color(BLACK).alpha(0.8).string(),
   },
   focus: {
-    bg: Color(COLORS.yellow).alpha(0.25).hsl().string(),
+    bg: WHITE,
     borderColor: Color(COLORS.yellow).hsl().string(),
     boxShadow: `0 0 0 0.25rem ${Color(COLORS.yellow).alpha(0.25).hsl().string()}`,
   },
@@ -89,7 +93,11 @@ const setLightTheme = (name = 'light', primary = COLORS.blue, accent = COLORS.or
   ...themeCommon,
 })
 
-const setDarkTheme = (name = 'dark', primary = COLORS.blue, accent = COLORS.orange): Theme => ({
+const setDarkTheme = (
+  name = 'dark',
+  primary = COLORS.blue,
+  accent = COLORS.orange,
+): Avail.Theme => ({
   name,
   bg: shade(23), // GRAY_800
   fg: WHITE,
@@ -143,13 +151,13 @@ const THEME_NAMES = Object.freeze(
   }, {}),
 )
 
-export const AVAIL_THEME = new Map<string, Theme>(Object.entries(themeMap))
+export const AVAIL_THEME = new Map<string, Avail.Theme>(Object.entries(themeMap))
 
 export interface ThemeContextProps {
   activeTheme: string
   setActiveTheme: React.Dispatch<React.SetStateAction<string>>
-  theme: Theme
-  setTheme: React.Dispatch<React.SetStateAction<Theme>>
+  theme: Avail.Theme
+  setTheme: React.Dispatch<React.SetStateAction<Avail.Theme>>
   themes: Map<keyof typeof themeMap, typeof themeMap[keyof typeof themeMap]>
   themeNames: Record<keyof typeof themeMap, string>
 }
@@ -158,7 +166,7 @@ export const ThemeContext = React.createContext<ThemeContextProps>(null)
 
 export const ThemeProvider = ({ children }) => {
   const [activeTheme, setActiveTheme] = useState('light')
-  const [theme, setTheme] = useState(AVAIL_THEME.get(activeTheme) as Theme)
+  const [theme, setTheme] = useState(AVAIL_THEME.get(activeTheme) as Avail.Theme)
 
   return (
     <ThemeContext.Provider

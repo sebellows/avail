@@ -1,11 +1,4 @@
-import React, {
-  forwardRef,
-  useState,
-  useRef,
-  useEffect,
-  useCallback,
-  ComponentPropsWithRef,
-} from 'react'
+import React, { forwardRef, useState, useRef, useEffect, useCallback } from 'react'
 import {
   classNames,
   containerProps,
@@ -19,11 +12,10 @@ import {
   TAB,
   Color,
 } from '../../core/utils'
-import { FormControlProps, OptionProps } from '../../core/contracts'
-import { useClickOutside } from '../../hooks/useClickOutside'
-import { Styled } from './styles'
-import { useEnsuredRef } from '../../hooks'
 import { useTheme } from '../../ThemeContext'
+import { useClickOutside } from '../../hooks/useClickOutside'
+
+import { Styled } from './styles'
 
 function coerceToHexColor(value: string) {
   if (Color.isHexColor(value)) {
@@ -34,14 +26,10 @@ function coerceToHexColor(value: string) {
   return '#000000'
 }
 
-interface ColorpickerProps
-  extends Omit<FormControlProps, 'className' | 'children'>,
-    ComponentPropsWithRef<'div'> {}
-
-// (instance: HTMLDivElement) => void)
-const Colorpicker = forwardRef<HTMLDivElement, ColorpickerProps>(
+const Colorpicker: Avail.RefForwardingComponent<'div', Avail.Control> = forwardRef(
   (
     {
+      as: Component = 'div',
       className,
       isValid,
       isInvalid: initialInvalid,
@@ -57,10 +45,8 @@ const Colorpicker = forwardRef<HTMLDivElement, ColorpickerProps>(
     const [color, setColor] = useState(initialValue)
     const [modelValue, setModelValue] = useState(initialValue)
     const [isInvalid, setInvalid] = useState(initialInvalid)
-    const [options, setOptions] = useState<OptionProps[]>(initialOptions)
+    const [options, setOptions] = useState<Avail.Option[]>(initialOptions)
     const [focusedIndex, setFocusedIndex] = useState(-1)
-
-    const componentRef = useEnsuredRef<HTMLDivElement>(ref)
 
     const inputRef = useRef(null)
     const panelRef = useRef(null)
@@ -99,9 +85,11 @@ const Colorpicker = forwardRef<HTMLDivElement, ColorpickerProps>(
 
         setColor(coerceToHexColor(_value).toLowerCase())
 
-        const currentModel = Object.values(options).find((option) => option.value === _value)
+        const currentModel = Object.values(options as Avail.OptionProps[]).find(
+          (option: Avail.OptionProps) => option.value === _value,
+        )
         const formattedValue = currentModel
-          ? `${currentModel.name} (${currentModel.value})`
+          ? `${currentModel.label} (${currentModel.value})`
           : _value
         setModelValue(formattedValue)
       },
@@ -128,7 +116,7 @@ const Colorpicker = forwardRef<HTMLDivElement, ColorpickerProps>(
       }
     }, [panelRef, isOpen, ref])
 
-    useClickOutside(componentRef, handleClose)
+    useClickOutside(ref as React.RefObject<HTMLDivElement>, handleClose)
 
     function handleChange(event: any) {
       let value
@@ -206,7 +194,7 @@ const Colorpicker = forwardRef<HTMLDivElement, ColorpickerProps>(
         case ENTER:
           const targetValue = event.target.value
           const colorValue =
-            focusedIndex > -1 ? (options[focusedIndex] as OptionProps).value : targetValue
+            focusedIndex > -1 ? (options[focusedIndex] as Avail.OptionProps).value : targetValue
           updateViewModel(colorValue)
           handleClose()
           break
@@ -230,7 +218,8 @@ const Colorpicker = forwardRef<HTMLDivElement, ColorpickerProps>(
 
     return (
       <Styled.Wrapper
-        ref={componentRef}
+        as={Component}
+        ref={ref}
         className={classNames('colorpicker', className, isOpen && 'is-open')}
         {...htmlProps}
       >
@@ -272,9 +261,9 @@ const Colorpicker = forwardRef<HTMLDivElement, ColorpickerProps>(
         >
           <Styled.Options className="colorpicker-options">
             {options?.length &&
-              (options as OptionProps[]).map(({ name, value: colorValue }, i: number) => (
+              (options as Avail.OptionProps[]).map(({ label, value: colorValue }, i: number) => (
                 <Styled.Option
-                  key={name}
+                  key={`${label}`}
                   theme={theme}
                   className={classNames(
                     'colorpicker-option',
@@ -289,7 +278,7 @@ const Colorpicker = forwardRef<HTMLDivElement, ColorpickerProps>(
                     theme={theme}
                     style={{ backgroundColor: colorValue as string }}
                   />
-                  <span className="colorpicker-option-name">{name}</span>
+                  <span className="colorpicker-option-name">{label}</span>
                 </Styled.Option>
               ))}
           </Styled.Options>

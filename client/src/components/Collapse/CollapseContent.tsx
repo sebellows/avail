@@ -1,21 +1,20 @@
 import React, { forwardRef } from 'react'
 import { m as motion } from 'framer-motion'
-import { ComponentProps } from '../../core/contracts'
 import { classNames } from '../../core/utils'
 import { useEnsuredRef } from '../../hooks'
 
-interface CollapseContentProps extends ComponentProps {
+interface CollapseContentProps extends Avail.ComponentProps {
   scaleStart?: number
   scaleEnd?: number
   duration?: number
 }
 
-const CollapseContent = forwardRef<HTMLElement & HTMLDivElement, CollapseContentProps>(
+const CollapseContent: Avail.RefForwardingComponent<'div', CollapseContentProps> = forwardRef(
   (
     { as: Tag = 'div', className, scaleStart = 0.8, scaleEnd = 1, duration = 0.8, ...props },
     ref,
   ) => {
-    const componentRef = useEnsuredRef(ref)
+    const componentRef = useEnsuredRef<HTMLDivElement>(ref)
 
     const child = React.Children.only(props.children)
     const childElem = () =>

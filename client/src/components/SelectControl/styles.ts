@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { StyledControl } from '../Control'
+import { Control } from '../Control'
 import { mixin } from '../../core/style'
 
 export const Styled = {
@@ -22,9 +22,9 @@ export const Styled = {
       pointer-events: none;
     }
   `,
-  Select: styled(StyledControl)`
+  Select: styled(Control)`
     display: inline-block;
-    padding-right: calc(${mixin.spacer('controlX')} + 1.25rem);
+    padding-right: 2rem;
     ${mixin.appearanceNone}
   `,
 }

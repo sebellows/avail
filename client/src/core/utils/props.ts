@@ -1,6 +1,8 @@
+import { noop } from './common'
+
 const FORM_CONTROL_PROPS = [
-  'autofocus',
-  'autocomplete',
+  'autoFocus',
+  'autoComplete',
   'checked',
   'cols',
   'disabled',
@@ -80,8 +82,6 @@ const propsFilter = (filterFn: FilterFn, validProps = FORM_CONTROL_PROPS) => {
 export const validFormProps = propsFilter(validPropsFilter)
 export const containerProps = propsFilter(invalidPropsFilter)
 export const standardComponentProps = propsFilter(validPropsFilter, COMPONENT_PROPS)
-
-const noop = () => {}
 
 function readOnlyPropType(handler: string, name: string) {
   return function (props: any, propName: string) {

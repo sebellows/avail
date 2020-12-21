@@ -1,9 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { forwardRef, Ref, useEffect, useRef } from 'react'
+import React, { forwardRef, useEffect, useRef } from 'react'
 import { ESCAPE, listen, noScroll } from '../../core/utils'
-import { useEventCallback, useFirstMountState, useLifecycles, usePrevious } from '../../hooks'
+import {
+  useEnsuredRef,
+  useEventCallback,
+  useFirstMountState,
+  useLifecycles,
+  usePrevious,
+} from '../../hooks'
 import { ModalTrigger } from './ModalTrigger'
 import { ModalContent } from './ModalContent'
+// import { IntrinsicElementDef } from '../../baseTypes'
 
 function ignoreSiblings(siblings: NodeList | string[], fn: (el: HTMLElement) => void) {
   if (siblings && siblings.length) {
@@ -18,9 +25,18 @@ function ignoreSiblings(siblings: NodeList | string[], fn: (el: HTMLElement) => 
   }
 }
 
-const Modal = forwardRef<{}, any>(
+interface ModalProps extends Avail.ComponentProps {
+  show?: boolean
+  onClose?: (e?: any) => void
+  onShow?: (e?: any) => void
+  onClickPrev?: (e?: any) => void
+  onClickNext?: (e?: any) => void
+}
+
+const Modal: Avail.RefForwardingComponent<'div', ModalProps> = forwardRef(
   (
     {
+      as: Component = 'div',
       ariaLabel,
       children,
       className = '',
@@ -30,15 +46,15 @@ const Modal = forwardRef<{}, any>(
       trigger,
       onClose = null,
       onShow = null,
-      onKeyUp = (event: any) => {},
-      onClickPrev = (event: any) => {},
-      onClickNext = (event: any) => {},
+      onKeyUp,
+      onClickPrev,
+      onClickNext,
     },
-    ref: Ref<any>,
+    ref,
   ) => {
-    // const [exited, setExited] = useState(!show)
-
     const isFirstMount = useFirstMountState()
+
+    const modalRef = useEnsuredRef<HTMLDivElement>(ref)
 
     const focalRef = useRef(null)
     const prevShow = usePrevious(show)
@@ -54,8 +70,6 @@ const Modal = forwardRef<{}, any>(
       onShow?.()
 
       noScroll.on()
-
-      // setExited(false)
     })
 
     const handleClose = useEventCallback((msg?: string) => {
@@ -65,7 +79,6 @@ const Modal = forwardRef<{}, any>(
       setTimeout(() => {
         ignoreSiblings(ignore, (el) => el.removeAttribute('aria-hidden'))
         noScroll.off()
-        // prevShow.current = true
       })
     })
 
@@ -93,7 +106,6 @@ const Modal = forwardRef<{}, any>(
     }, [isFirstMount, show, handleClose, handleShow])
 
     const handleKeyUp = (event: any) => {
-      // console.log('Modal->handleKeyUp called', event.keyCode, `ESCAPE = ${ESCAPE}`);
       if (event.keyCode === ESCAPE) {
         handleClose('Modal->handleKeyUp->escape')
       } else {
@@ -106,8 +118,9 @@ const Modal = forwardRef<{}, any>(
         {trigger && <ModalTrigger>{trigger}</ModalTrigger>}
         {show && (
           <ModalContent
-            ref={ref}
-            focalRef={focalRef}
+            as={Component}
+            ref={modalRef}
+            role={role}
             {...{ className, ariaLabel, onKeyUp: handleKeyUp, onClickNext, onClickPrev }}
           >
             {children}

@@ -6,11 +6,21 @@ import { cssTextToParams, mixin } from '../../core/style'
 import { classNames, Color, validFormProps } from '../../core/utils'
 
 import { Styled } from './styles'
-import { SwitchProps } from './props'
 
-export const Switch = React.forwardRef<HTMLLabelElement, SwitchProps>(
+export interface SwitchProps extends Omit<Avail.Control, 'label'> {
+  alignLabel?: 'left' | 'right'
+  on?: string | React.ReactNode
+  off?: string | React.ReactNode
+  inline?: boolean
+  label?: string | React.ReactNode
+  barLength?: number
+  strokeWidth?: number
+}
+
+const Switch: Avail.RefForwardingComponent<'label', SwitchProps> = React.forwardRef(
   (
     {
+      as: Component = motion.label,
       checked: initialChecked = false,
       children,
       className = null,
@@ -80,10 +90,10 @@ export const Switch = React.forwardRef<HTMLLabelElement, SwitchProps>(
       checked: {
         rotate: -360,
         stroke: theme.control.bg,
-        x1: size / 4, // 8
+        x1: size * 0.296875, // 9
         x2: size * 0.4375, // 14
-        y1: size / 2, // 16
-        y2: size * 0.75, // 24
+        y1: size * 0.546875, // 17.5
+        y2: size * 0.703125, // 22.5
       },
       unchecked: {
         rotate: 0,
@@ -95,10 +105,10 @@ export const Switch = React.forwardRef<HTMLLabelElement, SwitchProps>(
       checked: {
         rotate: -360,
         stroke: theme.control.bg,
-        x1: size * 0.75, // 24
+        x1: size * 0.703125, // 22.5
         x2: size * 0.4375, // 14
         y1: size * 0.3125, // 10
-        y2: size * 0.75, // 24
+        y2: size * 0.703125, // 22.5
       },
       unchecked: {
         rotate: 0,
@@ -117,24 +127,19 @@ export const Switch = React.forwardRef<HTMLLabelElement, SwitchProps>(
      * This is what moves across the bar/track of the Switch.
      */
     const toggleVariants = {
-      hover: {
-        fill: theme.hover.bg,
-      },
-      pressed: {
-        fill: Color(theme.control.checked).lighten(0.3).string(),
-      },
       checked: {
         x: computedOffset,
-        fill: theme.control.bg,
       },
       unchecked: {
         x: 0,
-        fill: theme.control.fg,
       },
     }
 
     /** Framer-Motion variants for the SVG cicle that composes the background of the toggle. */
     const circleVariants = {
+      pressed: {
+        fill: Color(theme.control.checked).lighten(0.3).string(),
+      },
       checked: {
         fill: theme.control.checked,
       },
@@ -146,7 +151,7 @@ export const Switch = React.forwardRef<HTMLLabelElement, SwitchProps>(
     const rippleSize = computedSize * 1.5
     const computedRippleOffset = -(computedSize / 2)
     const rippleDefaults = {
-      fill: theme.control.hoverColor,
+      fill: theme.control.fg,
       opacity: 0,
       scale: 0,
     }
@@ -167,6 +172,7 @@ export const Switch = React.forwardRef<HTMLLabelElement, SwitchProps>(
 
     return (
       <Styled.Label
+        as={Component}
         ref={ref}
         htmlFor={formProps.name ?? formProps.id}
         className={classNames(
@@ -176,7 +182,7 @@ export const Switch = React.forwardRef<HTMLLabelElement, SwitchProps>(
           isValid && 'is-valid',
           isInvalid && 'is-invalid',
         )}
-        style={{ height: size }}
+        style={{ height: size, lineHeight: 1 }}
         initial={false}
         animate={isChecked ? 'checked' : 'unchecked'}
         whileHover="hover"
@@ -190,12 +196,13 @@ export const Switch = React.forwardRef<HTMLLabelElement, SwitchProps>(
           onChange={handleChange}
         />
         <Styled.Bar
+          as={motion.div}
+          variants={barVariants}
           style={{
             width: barLength,
             height: computedSize,
             pointerEvents: 'none',
           }}
-          variants={barVariants}
           transition={{
             backgroundColor: { duration: 0.5 },
           }}
@@ -209,6 +216,7 @@ export const Switch = React.forwardRef<HTMLLabelElement, SwitchProps>(
             variants={toggleVariants}
             transition={{ x: { type: 'spring', duration: 0.5 } }}
             pointerEvents="none"
+            fill={theme.control.bg}
             x={0}
             y={-(size / 4)}
             style={cssTextToParams(mixin.dropShadow(1).toString())}
@@ -231,7 +239,7 @@ export const Switch = React.forwardRef<HTMLLabelElement, SwitchProps>(
               r={rippleSize}
               x={computedRippleOffset}
               y={computedRippleOffset}
-              fill={theme.control.hoverColor}
+              fill={theme.control.fg}
               stroke="none"
               scale={0}
               opacity={0}
@@ -251,3 +259,6 @@ export const Switch = React.forwardRef<HTMLLabelElement, SwitchProps>(
     )
   },
 )
+Switch.displayName = 'Switch'
+
+export { Switch }

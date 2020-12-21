@@ -1,8 +1,7 @@
 import * as CONST from '../constants'
 import { hyphenate, isPlainObject, typeOf } from '../utils'
-import { OptionProps } from '../contracts'
 
-export type AvailOptionType = string | [string, string] | OptionProps
+export type AvailOptionType = string | [string, string] | Avail.OptionProps
 
 export const toOption = (item: AvailOptionType) => {
   function _getValue(value: any) {
@@ -21,26 +20,26 @@ export const toOption = (item: AvailOptionType) => {
     case 'string':
       item = item as string
       return {
-        name: item,
+        label: item,
         value: CONST[item] ?? item,
         readOnly,
       }
     case 'array':
       return {
-        name: item[0],
+        label: item[0],
         value: _getValue(item[1]),
         readOnly,
       }
     case 'object':
-      const { name, readOnly: optionReadOnly = false, value } = item as OptionProps
+      const { label, readOnly: optionReadOnly = false, value } = item as Avail.OptionProps
       return {
-        name: (name ?? value) as string,
+        label: (label ?? value) as string,
         value: _getValue(value),
         readOnly: optionReadOnly,
       }
     default:
       return {
-        name: 'Error',
+        label: 'Error',
         value: 'error',
         readOnly,
       }
@@ -49,9 +48,9 @@ export const toOption = (item: AvailOptionType) => {
 
 // export const toOption = (item: any) => new Option(item);
 
-const optionsFactory = (collection: AvailOptionType | AvailOptionType[]): OptionProps[] => {
+const optionsFactory = (collection: AvailOptionType | AvailOptionType[]): Avail.OptionProps[] => {
   if (Array.isArray(collection) && collection.some((item: any) => item instanceof Option)) {
-    return collection as OptionProps[]
+    return collection as Avail.OptionProps[]
   }
   if (isPlainObject(collection) || Array.isArray(collection)) {
     const items = isPlainObject(collection) ? Object.entries(collection) : collection
@@ -60,14 +59,17 @@ const optionsFactory = (collection: AvailOptionType | AvailOptionType[]): Option
   return [toOption(collection)]
 }
 
-export const toOptions = (...collection: any[]): OptionProps[] => {
-  return collection.reduce((acc: OptionProps[], item: string | OptionProps | [string, string]) => {
-    acc.push(...optionsFactory(item))
-    return acc
-  }, [] as OptionProps[])
+export const toOptions = (...collection: any[]): Avail.OptionProps[] => {
+  return collection.reduce(
+    (acc: Avail.OptionProps[], item: string | Avail.OptionProps | [string, string]) => {
+      acc.push(...optionsFactory(item))
+      return acc
+    },
+    [] as Avail.OptionProps[],
+  )
 }
 
 export const isOption = (option: any): boolean =>
   isPlainObject(option) &&
-  Object.keys(option).includes('name') &&
+  Object.keys(option).includes('label') &&
   Object.keys(option).includes('value')

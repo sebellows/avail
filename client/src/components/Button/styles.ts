@@ -1,6 +1,5 @@
 import styled, { css } from 'styled-components'
 import { color, mixin, isUnit, toREM } from '../../core/style'
-import { isNil } from '../../core/utils'
 import { Control } from '../Control'
 import { ButtonProps, ToggleButtonProps } from './props'
 
@@ -60,7 +59,7 @@ const BaseIconButton = styled(StyledButton)<ButtonProps>`
   flex: none;
   border: 0;
   padding: 0;
-  ${({ size }) => mixin.size(!isNil(size) ? (isUnit(size) ? size : toREM(+size)) : toREM(54))}
+  ${({ size }) => mixin.size(isUnit(size) ? size : toREM(+size))}
 
   &:focus {
     ${mixin.boxShadow.elevation(1)}

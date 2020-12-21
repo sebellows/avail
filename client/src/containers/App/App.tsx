@@ -67,7 +67,7 @@ export default function App() {
           <Tabs
             id="avail-config"
             defaultActiveTab={activeTab}
-            onSelect={(target: string) => setActiveTab(target)}
+            onSelect={(e?: any) => setActiveTab(e)}
           >
             <Tab id="settings" title="Global Settings">
               <SettingsForm />

@@ -20,7 +20,6 @@ import {
 } from './constants'
 import { toOptions } from './models/Option'
 import { toREM, toPX, toEM } from './style'
-import { AvailConfig, AvailUtility, AvailSetting } from './contracts'
 import { CSS_VALUE_PRESETS } from './presets'
 import { get } from './utils'
 
@@ -30,7 +29,10 @@ const createSpacers = (prefix = '', unitFn = toREM) =>
     return acc
   }, {})
 
-function getSettingValues(settings: AvailConfig<AvailSetting>, path: string): Record<string, any> {
+function getSettingValues(
+  settings: Avail.Config<Avail.Setting>,
+  path: string,
+): Record<string, any> {
   return Object.entries(get(settings, path, {})).reduce(
     (acc, [k, config]: [string, Record<string, any>]) => {
       acc[k] = config.value
@@ -41,9 +43,9 @@ function getSettingValues(settings: AvailConfig<AvailSetting>, path: string): Re
 }
 
 const Config = (
-  settings: AvailConfig<AvailSetting> = {},
-  utils: AvailConfig<AvailUtility> = {},
-): AvailConfig<AvailUtility> => {
+  settings: Avail.Config<Avail.Setting> = {},
+  utils: Avail.Config<Avail.Utility> = {},
+): Avail.Config<Avail.Utility> => {
   const prefix = get(settings, 'export.fields.prefix.value', '')
   const unit = get(settings, 'export.fields.sizingUnit.value', '')
   const variants = get(settings, 'colorSchemes.fields.variants.items', [])
@@ -942,9 +944,9 @@ const Config = (
 }
 
 export function generateConfig(
-  settings: AvailConfig<AvailSetting>,
-  utils: AvailConfig<AvailUtility> = {},
-): AvailConfig<AvailUtility> {
+  settings: Avail.Config<Avail.Setting>,
+  utils: Avail.Config<Avail.Utility> = {},
+): Avail.Config<Avail.Utility> {
   const config = Config(settings, utils)
 
   return Object.entries(config).reduce((form, [key, value]) => {

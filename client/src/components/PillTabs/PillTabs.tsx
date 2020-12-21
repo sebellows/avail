@@ -1,25 +1,29 @@
-import React, { forwardRef, Ref } from 'react';
+import React, { forwardRef } from 'react'
 
-import { classNames } from '../../core/utils';
+import { classNames } from '../../core/utils'
+import { useTheme } from '../../ThemeContext'
 
-import { Styled } from './styles';
-import { PillTabsProps } from './props';
+import { Styled } from './styles'
 
-const PillTabs = forwardRef<HTMLOListElement, PillTabsProps>(
-  ({ id, children, ...props }, ref: Ref<HTMLOListElement>) => {
+const PillTabs: Avail.RefForwardingComponent<'ol', Avail.ComponentProps> = forwardRef(
+  ({ as: Component = 'ol', id, children, ...props }, ref) => {
+    const { theme } = useTheme()
+
     return (
       <Styled.Tabs
         {...props}
         ref={ref}
+        as={Component}
         id={id}
         className={classNames('pill-tabs', props.className)}
+        theme={theme}
       >
         {children}
       </Styled.Tabs>
-    );
+    )
   },
-);
+)
 
-PillTabs.displayName = 'PillTabs';
+PillTabs.displayName = 'PillTabs'
 
-export { PillTabs };
+export { PillTabs }

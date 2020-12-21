@@ -1,14 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { forwardRef, Ref, useState, ChangeEvent } from 'react'
+import React, { forwardRef, useState, ChangeEvent } from 'react'
 
 import { Icon } from '../Icon'
 import { useTheme } from '../../ThemeContext'
 import { validFormProps } from '../../core/utils'
-import { FormControlProps } from '../../core/contracts'
 import { Styled } from './styles'
 
-const ColorControl = forwardRef<{}, FormControlProps>(
-  ({ showLabel = true, ...props }, ref: Ref<any>) => {
+const ColorControl: Avail.RefForwardingComponent<'div', Avail.Control> = forwardRef(
+  ({ showLabel = true, ...props }, ref) => {
     const { theme } = useTheme()
     const [color, setColor] = useState(props?.value ?? '#000000')
 
@@ -21,7 +19,13 @@ const ColorControl = forwardRef<{}, FormControlProps>(
 
     return (
       <>
-        <Styled.Control {...formProps} ref={ref} type="color" onChange={handleChange} />
+        <Styled.Control
+          {...formProps}
+          ref={ref}
+          type="color"
+          onChange={handleChange}
+          theme={theme}
+        />
         {showLabel && (
           <Styled.Overlay
             className="color-control-overlay"

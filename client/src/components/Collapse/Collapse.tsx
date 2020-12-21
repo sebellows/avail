@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { forwardRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ComponentProps } from '../../core/contracts'
 import { transitions } from '../../core/style'
 
 type Dimension = 'width' | 'height'
 
-interface CollapseProps extends ComponentProps {
+interface CollapseProps extends Avail.ComponentProps {
   duration?: number
   ease?: [number, number, number, number]
   dimension?: Dimension

@@ -38,10 +38,10 @@ const _timings = {
   linearOutSlowIn: [0, 0, 0.2, 0.1],
 }
 
-const toMS = (dur: number | string) => {
+const toMS = (dur: number | string): string => {
   if (typeof dur === 'string') {
     if (dur in _durations) {
-      return _durations[dur]
+      return `${parseInt('' + _durations[dur], 10)}ms`
     } else if (dur.endsWith('ms') || dur.endsWith('s')) {
       return dur
     }

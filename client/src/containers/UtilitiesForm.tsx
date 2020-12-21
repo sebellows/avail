@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef, Fragment, FC, useContext, useCallba
 import Prism from 'prismjs'
 
 import { useClickOutside } from '../hooks/useClickOutside'
-import { AvailUtility, AvailUtilities, ComponentProps, StateConfig } from '../core/contracts'
 import { generateUtility, generateResponsiveUtility } from '../core/build'
 import { classNames } from '../core/utils'
 
@@ -19,8 +18,9 @@ const DialogTitle = ({ children }) => (
   </h3>
 )
 
-export interface UtilitiesFormProps extends ComponentProps {
-  utilities?: AvailUtilities
+export interface UtilitiesFormProps extends Avail.ComponentProps {
+  id?: string
+  utilities?: Avail.Utilities
 }
 
 const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
@@ -49,7 +49,7 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
   }, [settings])
 
   const onUpdate = useCallback(
-    (config: StateConfig, event?: any) => {
+    (config: Avail.StateConfig, event?: any) => {
       updateUtilities(config)
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -62,10 +62,10 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
 
   useEffect(() => {
     if (activeModelID) {
-      if ((utilities[activeModelID] as AvailUtility).responsive) {
-        setOutput(generateResponsiveUtility(settings, utilities[activeModelID] as AvailUtility))
+      if ((utilities[activeModelID] as Avail.Utility).responsive) {
+        setOutput(generateResponsiveUtility(settings, utilities[activeModelID] as Avail.Utility))
       } else {
-        setOutput(generateUtility(settings, utilities[activeModelID] as AvailUtility))
+        setOutput(generateUtility(settings, utilities[activeModelID] as Avail.Utility))
       }
     }
   }, [activeModelID, settings, utilities])
@@ -103,10 +103,10 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
   }
 
   const repeaterHandlers = {
-    onAdd: (config: StateConfig) => {
+    onAdd: (config: Avail.StateConfig) => {
       addUtility(config)
     },
-    onRemove: (config: string | Partial<StateConfig>) => {
+    onRemove: (config: string | Partial<Avail.StateConfig>) => {
       config = typeof config == 'string' ? { name: config } : config
       removeUtility(config)
     },
@@ -142,19 +142,21 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
         {activeModelID && (
           <Dialog
             ref={dialogRef}
-            title={<DialogTitle>{(utilities[activeModelID] as AvailUtility).property}</DialogTitle>}
+            title={
+              <DialogTitle>{(utilities[activeModelID] as Avail.Utility).property}</DialogTitle>
+            }
             onClose={handleClose}
           >
             <div id={`utility-${activeModelID}`}>
-              {(utilities[activeModelID] as AvailUtility).description && (
-                <p>{(utilities[activeModelID] as AvailUtility).description}</p>
+              {(utilities[activeModelID] as Avail.Utility).description && (
+                <p>{(utilities[activeModelID] as Avail.Utility).description}</p>
               )}
               <fieldset ref={fieldsetRef}>
                 <Field className="mb-3">
                   <label htmlFor={`${activeModelID}_class`}>Root class prefix:</label>
                   <Control
                     name={`${activeModelID}_class`}
-                    value={(utilities[activeModelID] as AvailUtility).class}
+                    value={(utilities[activeModelID] as Avail.Utility).class}
                     aria-label={'Root class prefix'}
                     onBlur={({ target: { name, value } }) => {
                       updateUtilities({ name, value })
@@ -166,16 +168,16 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
                   name={`${activeModelID}_responsive`}
                   className="mb-3"
                   value={`${activeModelID}-responsive`}
-                  checked={!!(utilities[activeModelID] as AvailUtility).responsive}
+                  checked={!!(utilities[activeModelID] as Avail.Utility).responsive}
                   onChange={({ target: { name, checked: value } }) => {
                     updateUtilities({ name, value })
                   }}
                 >
                   <span>Make responsive classes?</span>
                 </Switch>
-                {(utilities[activeModelID] as AvailUtility).subproperties && (
+                {(utilities[activeModelID] as Avail.Utility).subproperties && (
                   <div className="d-flex align-items-center mb-3">
-                    {Object.entries((utilities[activeModelID] as AvailUtility).subproperties).map(
+                    {Object.entries((utilities[activeModelID] as Avail.Utility).subproperties).map(
                       ([prop, val]) => (
                         <Switch
                           key={`${activeModelID}-${prop}`}
