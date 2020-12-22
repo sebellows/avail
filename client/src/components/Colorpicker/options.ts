@@ -1,5 +1,5 @@
 import convert from 'color-convert'
-import { Color, ColorColor, ColorParam, ColorModel } from '../../core/utils/color'
+import { Color, ColorParam, ColorModel } from '../../core/style/libs/color'
 import { capitalize } from '../../core/utils'
 
 export const COLOR_OPTIONS = {
@@ -89,7 +89,7 @@ const DefaultColorOptions: ColorOptions = {
 }
 
 export const colour = <T extends ColorParam>(
-  _color: string | ColorColor<T>,
+  _color: string | Color<T>,
   options: ColorOptions = {},
 ) => {
   let {

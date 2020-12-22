@@ -26,7 +26,7 @@ const Styled = {
     grid-template-columns: repeat(auto-fill, minmax(16.875rem, 1fr));
 
     .fullwidth {
-      grid-column: 1 / 4;
+      grid-column: 1 / 5;
     }
   `,
 }
@@ -82,7 +82,7 @@ const SettingsForm: FC<SettingsFormProps> = React.memo(() => {
           return (
             <Styled.Fieldset id={id} key={id}>
               <legend className="font-size-lg">{(setting as Avail.Setting).legend}</legend>
-              <Styled.Fields className="fields">
+              <Styled.Fields className="fields fullwidth">
                 {fields.map((field: Avail.SettingField) => {
                   if (field.attrs) {
                     field = { ...field, ...field.attrs }

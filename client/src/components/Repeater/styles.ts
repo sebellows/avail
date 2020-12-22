@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-import { font, mixin, color, toREM, shadow } from '../../core/style'
+import { font, mixin, toREM } from '../../core/style'
 
 import { Field } from '../Field'
 
@@ -65,7 +65,7 @@ const StyledItemAddon = styled.span`
   &::before {
     content: '';
     ${mixin.cover}
-    background-color: ${({ theme }) => color.alpha(theme.bg, 0.5)};
+    ${({ theme }) => mixin.color(mixin.alpha(theme.bg, 0.5))}
     mix-blend-mode: overlay;
   }
 `
@@ -73,33 +73,39 @@ const StyledItemAddon = styled.span`
 // RepeaterItem styles
 export const StyledItem = {
   Wrapper: styled.div`
-    border: 1px solid ${({ theme }) => theme.borderColor};
-    border-radius: 0.325rem;
-
-    display: flex;
-    align-items: stretch;
+    ${({ theme }) => mixin.border({ color: theme.borderColor })}
+    border-bottom-width: 0;
+    ${mixin.flex({ align: 'stretch' })}
     position: relative;
     width: 100%;
     overflow: hidden;
+
+    &:first-of-type {
+      ${mixin.borderRadius('base', 'base', 0, 0)}
+    }
+    &:last-of-type {
+      ${mixin.borderRadius(0, 0, 'base', 'base')}
+    }
+
+    &:not(:first-of-type):not(:last-of-type)] {
+      ${mixin.borderRadius(0)}
+    }
 
     &:last-of-type {
       border-bottom-width: 1px;
     }
   `,
   Group: styled.div`
-    border: 0 solid ${({ theme }) => theme.borderColor};
-    display: flex;
+    ${mixin.flex({ align: 'center' })}
     flex: 1;
-    align-items: center;
     ${mixin.padding.all(1, 2)}
   `,
   Skein: styled.div`
     ${mixin.cover}
     background-color: ${({ theme }) => theme.bg};
     mix-blend-mode: overlay;
-    box-shadow: ${shadow.bevel(1)};
-    border: 2px solid;
-    border-color: ${color.white} ${color.black} ${color.black} ${color.white};
+    ${mixin.boxShadow.bevel(1)}
+    ${mixin.border({ width: '2px' })}
     filter: blur(4px) opacity(0.25);
     pointer-events: none;
   `,

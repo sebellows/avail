@@ -31,12 +31,11 @@ const TabsContainer = styled.div`
 interface TabsProps extends Avail.ComponentProps {
   defaultActiveTab?: string
   id?: string
-  sliderOffset?: number
   onSelect?: (tabID: string, event?: any) => void
 }
 
 const Tabs: Avail.RefForwardingComponent<'div', TabsProps> = React.forwardRef(
-  ({ children, defaultActiveTab, onSelect, sliderOffset = 8, ...props }: TabsProps, ref) => {
+  ({ children, defaultActiveTab, onSelect, ...props }: TabsProps, ref) => {
     const { theme } = useTheme()
     const [activeTab, setActiveTab] = useState(defaultActiveTab)
     const [activeTabIndex, setActiveTabIndex] = useState(0)

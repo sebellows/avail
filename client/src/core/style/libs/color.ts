@@ -5,20 +5,31 @@ export type ColorParam = ColorLib | string | ArrayLike<number> | number | Record
 
 export type ColorModel = keyof typeof convert
 
-export interface ColorColor<T extends ColorParam> extends ColorLib<T> {
-  model?: ColorModel
-  isColor?: (value: string) => boolean
-  isHexadecimal?: (strOrCode: string | number) => boolean
-  isHexColor?: (str: string) => boolean
-}
+// export interface ColorColor<T extends ColorParam> extends ColorLib<T> {
+//   model?: ColorModel
+//   isColor?: (value: string) => boolean
+//   isHexadecimal?: (strOrCode: string | number) => boolean
+//   isHexColor?: (str: string) => boolean
+// }
+
+type Color<T extends ColorParam> = T &
+  ColorLib<T> & {
+    (obj: T, model?: ColorModel): Color<T>
+    model?: ColorModel
+    isColor?: (value: string) => boolean
+    isHexadecimal?: (strOrCode: string | number) => boolean
+    isHexColor?: (str: string) => boolean
+  }
+
+// type Color<T extends ColorParam = ColorParam> = (obj: T, model?: ColorModel) => ColorColor<T>
 
 /**
  * Duplicates `ColorConstructor` in `Color` library.
  */
-function Color<T extends ColorParam = ColorParam>(obj: T, model?: ColorModel): ColorColor<T> {
-  let _Color = ColorLib(obj, model) as ColorColor<T>
+function Color<T extends ColorParam = ColorParam>(obj: T, model?: ColorModel): Color<T> {
+  let _Color = ColorLib(obj, model) as Color<T>
   // _Color.model = model
-  return _Color as ColorColor<T>
+  return _Color as Color<T>
 }
 
 /** Static method for checking the validity of a color value. */

@@ -22,6 +22,7 @@ export const radiusMixin = (...keys: any[]) => {
         if (typeof key === 'number') {
           acc.push(key > 0 ? toREM(parseInt('' + key, 10)) : 0)
         } else if (typeof key === 'string' && key in radius) {
+          console.log('radius', key, radius[key])
           acc.push(radius[key])
         } else {
           acc.push(key)

@@ -1,4 +1,24 @@
-export const GLOBAL_CSS_VALUES = ['inherit', 'initial', 'unset'];
+export const GLOBAL_CSS_VALUES = ['inherit', 'initial', 'unset']
+
+// export interface BaseTheme<Styles extends {} = {}> {
+//   avatar: ThemeAvatar
+//   button: {
+//     textWeight: ThemeFontWeightKey
+//   }
+//   color: ThemeColorSchemes
+//   container: number[]
+//   focusRing: {
+//     offset: number
+//     width: number
+//   }
+//   fonts: ThemeFonts
+//   media: number[]
+//   radius: number[]
+//   shadows: Array<ThemeShadow | null>
+//   space: number[]
+//   input: ThemeInput
+//   styles?: Styles
+// }
 
 export const CSS_VALUE_PRESETS = {
   align: ['baseline', 'top', 'middle', 'bottom', 'text-bottom', 'text-top', ...GLOBAL_CSS_VALUES],
@@ -108,4 +128,4 @@ export const CSS_VALUE_PRESETS = {
   userSelect: ['all', 'auto', 'text', 'none'],
   pointerEvents: ['none', 'auto', ...GLOBAL_CSS_VALUES],
   visibility: ['visible', 'hidden', 'collapse', ...GLOBAL_CSS_VALUES],
-};
+}

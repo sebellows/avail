@@ -49,7 +49,7 @@ const TabItem: Avail.RefForwardingComponent<'button', TabItemProps> = forwardRef
   (props: TabItemProps, ref) => {
     const { theme } = useTheme()
 
-    return <StyledItem ref={ref} {...props} theme={theme} />
+    return <StyledItem ref={ref} {...props} theme={theme} aria-selected={!!props?.active} />
   },
 )
 
