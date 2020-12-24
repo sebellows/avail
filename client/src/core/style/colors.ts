@@ -1,4 +1,4 @@
-import { Color } from '../utils'
+import { Color } from './libs'
 import {
   BODY_BG,
   BODY_COLOR,

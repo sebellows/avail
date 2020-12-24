@@ -1,4 +1,4 @@
-import {ThemeFontWeightKey} from '../../theme'
+import { ThemeFontWeightKey } from '../../../../theme'
 
 /**
  * @beta Should not be used in production, as this might change.
@@ -21,3 +21,5 @@ export interface ResponsiveFontProps extends FontWeightProps, ResponsiveFontSize
   accent?: boolean
   muted?: boolean
 }
+
+export type TextAlign = 'left' | 'right' | 'center' | 'justify' | 'initial'

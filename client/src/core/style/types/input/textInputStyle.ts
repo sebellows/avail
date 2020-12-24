@@ -1,8 +1,9 @@
-import {CSSObject} from 'styled-components'
-import {ThemeFontWeightKey} from '../../theme'
-import {focusRingBorderStyle, focusRingStyle} from '../focusRing'
-import {getResponsiveProp, rem, responsive} from '../../helpers'
-import {ThemeProps} from '../types'
+import { CSSObject } from 'styled-components'
+import { focusRingBorderStyle, focusRingStyle } from '../focusRing'
+import { responsiveStyle } from '../../helpers'
+import { ThemeProps } from '../types'
+import { toREM } from '../../units'
+import { ThemeFontWeightKey } from '../../../../theme'
 
 export interface TextInputInputStyleProps {
   fontSize?: number | number[]
@@ -17,7 +18,7 @@ export interface TextInputRepresentationStyleProps {
 
 export const textInputStyle = {
   root: () => [rootStyle],
-  input: () => [inputBaseStyle, inputFontSizeStyle],
+  control: () => [inputBaseStyle, inputFontSize],
   representation: representationStyle,
 }
 
@@ -30,9 +31,9 @@ function rootStyle(): CSSObject {
 }
 
 function inputBaseStyle(props: TextInputInputStyleProps & ThemeProps): CSSObject {
-  const {theme, weight} = props
-  const font = theme.sanity.fonts.text
-  const color = theme.sanity.color.input
+  const { theme, weight } = props
+  const font = theme.fonts.text
+  const color = theme.color.control
 
   return {
     appearance: 'none',
@@ -54,12 +55,12 @@ function inputBaseStyle(props: TextInputInputStyleProps & ThemeProps): CSSObject
       resize: 'none',
     },
 
-    // enabled
+    // active
     '&:not(:invalid):not(:disabled)': {
-      color: color.default.enabled.fg,
+      color: color.default.active.fg,
 
       '&::placeholder': {
-        color: color.default.enabled.placeholder,
+        color: color.default.active.placeholder,
       },
     },
 
@@ -74,33 +75,45 @@ function inputBaseStyle(props: TextInputInputStyleProps & ThemeProps): CSSObject
 
     // invalid
     '&:invalid': {
-      color: color.invalid.enabled.fg,
+      color: color.invalid.active.fg,
 
       '&::placeholder': {
-        color: color.invalid.enabled.placeholder,
+        color: color.invalid.active.placeholder,
       },
     },
   }
 }
 
-function inputFontSizeStyle(props: TextInputInputStyleProps & ThemeProps) {
-  const {theme} = props
-  const {fonts, media} = theme.sanity
-
-  return responsive(media, getResponsiveProp(props.fontSize, [2]), (sizeIndex) => {
+const inputFontSize = responsiveStyle<TextInputInputStyleProps>(
+  ['fontSize', [2]],
+  (sizeIndex: number, { fonts }) => {
     const size = fonts.text.sizes[sizeIndex] || fonts.text.sizes[2]
 
     return {
-      fontSize: rem(size.fontSize),
+      fontSize: toREM(size.fontSize),
       lineHeight: size.lineHeight / size.fontSize,
     }
-  })
-}
+  },
+)
+
+// function inputFontSizeStyle(props: TextInputInputStyleProps & ThemeProps) {
+//   const { theme } = props
+//   const { fonts, media } = theme
+
+//   return responsive(media, getResponsiveProp(props.fontSize, [2]), (sizeIndex: number) => {
+//     const size = fonts.text.sizes[sizeIndex] || fonts.text.sizes[2]
+
+//     return {
+//       fontSize: toREM(size.fontSize),
+//       lineHeight: size.lineHeight / size.fontSize,
+//     }
+//   })
+// }
 
 function representationStyle(props: TextInputRepresentationStyleProps & ThemeProps): CSSObject[] {
-  const {border, hasPrefix, hasSuffix, theme} = props
-  const {focusRing, input} = theme.sanity
-  const color = theme.sanity.color.input
+  const { border, hasPrefix, hasSuffix, theme } = props
+  const { focusRing, control } = theme
+  const color = theme.color.control
 
   return [
     {
@@ -113,19 +126,25 @@ function representationStyle(props: TextInputRepresentationStyleProps & ThemePro
       pointerEvents: 'none',
       zIndex: 0,
 
-      // enabled
-      color: color.default.enabled.fg,
-      backgroundColor: color.default.enabled.bg,
+      // active
+      color: color.default.active.fg,
+      backgroundColor: color.default.active.bg,
       boxShadow: border
-        ? focusRingBorderStyle({color: color.default.enabled.border, width: input.border.width})
+        ? focusRingBorderStyle({
+            color: color.default.active.borderColor,
+            width: control.border.width,
+          })
         : undefined,
 
       // invalid
       '*:not(:disabled):invalid + &': {
-        color: color.invalid.enabled.fg,
-        backgroundColor: color.invalid.enabled.bg,
+        color: color.invalid.active.fg,
+        backgroundColor: color.invalid.active.bg,
         boxShadow: border
-          ? focusRingBorderStyle({color: color.invalid.enabled.border, width: input.border.width})
+          ? focusRingBorderStyle({
+              color: color.invalid.active.borderColor,
+              width: control.border.width,
+            })
           : 'none',
       },
 
@@ -133,7 +152,7 @@ function representationStyle(props: TextInputRepresentationStyleProps & ThemePro
       '*:not(:disabled):focus + &': {
         boxShadow: focusRingStyle({
           border: border
-            ? {color: color.default.enabled.border, width: input.border.width}
+            ? { color: color.default.active.borderColor, width: control.border.width }
             : undefined,
           focusRing,
         }),
@@ -145,8 +164,8 @@ function representationStyle(props: TextInputRepresentationStyleProps & ThemePro
         backgroundColor: color.default.disabled.bg,
         boxShadow: border
           ? focusRingBorderStyle({
-              color: color.default.disabled.border,
-              width: input.border.width,
+              color: color.default.disabled.borderColor,
+              width: control.border.width,
             })
           : 'none',
       },
@@ -161,14 +180,14 @@ function representationStyle(props: TextInputRepresentationStyleProps & ThemePro
         '*:not(:disabled):not(:invalid):not(:focus):hover + &': {
           boxShadow: border
             ? focusRingBorderStyle({
-                color: color.default.hovered.border,
-                width: input.border.width,
+                color: color.default.hovered.borderColor,
+                width: control.border.width,
               })
             : 'none',
         },
       },
     },
-    hasPrefix ? {borderTopLeftRadius: 0, borderBottomLeftRadius: 0} : {},
-    hasSuffix ? {borderTopRightRadius: 0, borderBottomRightRadius: 0} : {},
+    hasPrefix ? { borderTopLeftRadius: 0, borderBottomLeftRadius: 0 } : {},
+    hasSuffix ? { borderTopRightRadius: 0, borderBottomRightRadius: 0 } : {},
   ]
 }

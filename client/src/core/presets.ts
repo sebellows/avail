@@ -16,7 +16,7 @@ export const GLOBAL_CSS_VALUES = ['inherit', 'initial', 'unset']
 //   radius: number[]
 //   shadows: Array<ThemeShadow | null>
 //   space: number[]
-//   input: ThemeInput
+//   input: ThemeControl
 //   styles?: Styles
 // }
 

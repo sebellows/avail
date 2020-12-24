@@ -2,9 +2,10 @@
 import React, { forwardRef, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 
+import { Color } from '../../core/style'
 import { useEnsuredRef } from '../../hooks'
 import { useTheme } from '../../ThemeContext'
-import { validFormProps, containerProps, Color, uuid } from '../../core/utils'
+import { validFormProps, containerProps, uuid } from '../../core/utils'
 
 import { Styled } from './styles'
 import { CheckmarkIconProps } from './props'

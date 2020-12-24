@@ -1,7 +1,7 @@
 import { CSSObject } from 'styled-components'
 
-import { ThemeInput } from './input'
-import { ThemeShadow } from './shadow'
+import { ThemeControl } from './input'
+import { BoxShadow, DropShadow, ShadowProps } from '../../core/style/types/shadow'
 import { ThemeColor, ThemeColorSchemes } from './color'
 import { ThemeFonts, ThemeFontWeightKey } from './fonts'
 
@@ -18,9 +18,10 @@ export interface BaseTheme<Styles extends {} = {}> {
   fonts: ThemeFonts
   media: number[]
   radius: number[]
-  shadows: Array<ThemeShadow | null>
+  dropShadows: (DropShadow | null)[]
+  shadows: (ShadowProps<BoxShadow> | null)[]
   space: number[]
-  input: ThemeInput
+  control: ThemeControl
   styles?: Styles
 }
 
@@ -35,8 +36,6 @@ export interface Styles {
   }
 }
 
-export interface Theme {
-  default: Omit<RootTheme, 'color'> & {
-    color: ThemeColor
-  }
+export interface Theme extends Omit<RootTheme, 'color'> {
+  color: ThemeColor
 }

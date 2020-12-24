@@ -1,14 +1,18 @@
-import {getResponsiveProp, responsive} from '../../helpers'
-import {ThemeProps} from '../types'
-import {ResponsiveFlexItemStyleProps} from './types'
+import { responsiveStyle } from '../../helpers'
+import { ResponsiveFlexItemStyleProps } from './types'
 
 export function flexItemStyle() {
-  return [{minWidth: 0, minHeight: 0}, responsiveFlexItemStyle]
+  return [{ minWidth: 0, minHeight: 0 }, flexItem]
 }
 
-export function responsiveFlexItemStyle(props: ResponsiveFlexItemStyleProps & ThemeProps) {
-  const {theme} = props
-  const {media} = theme.sanity
+export const flexItem = responsiveStyle<ResponsiveFlexItemStyleProps>(
+  'flex',
+  (flex: number | string) => ({ flex }),
+)
 
-  return responsive(media, getResponsiveProp(props.flex), (flex) => ({flex}))
-}
+// export function responsiveFlexItemStyle(props: ResponsiveFlexItemStyleProps & ThemeProps) {
+//   const { theme } = props
+//   const { media } = theme
+
+//   return responsive(media, getResponsiveProp(props.flex), (flex) => ({ flex }))
+// }

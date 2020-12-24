@@ -1,3 +1,42 @@
+export type ColorHueKey =
+  | 'blue'
+  | 'cyan'
+  | 'gray'
+  | 'green'
+  | 'magenta'
+  | 'orange'
+  | 'pink'
+  | 'purple'
+  | 'red'
+  | 'yellow'
+
+export type ColorTintKey =
+  | '50'
+  | '100'
+  | '200'
+  | '300'
+  | '400'
+  | '500'
+  | '600'
+  | '700'
+  | '800'
+  | '900'
+  | '950'
+
+export type ColorTints = { [Key in ColorTintKey]: string }
+export type ColorTintMap = { [Key in ColorHueKey]: ColorTints }
+
+export interface Variantable<T> {
+  neutral: T
+  primary: T
+  accent: T
+  success: T
+  warning: T
+  danger: T
+}
+
+export type VariantTints = Variantable<ColorTints>
+
 export interface ThemeColorSyntax {
   atrule: string
   attrName: string
@@ -39,53 +78,46 @@ export interface ThemeColorSyntax {
 
 export type ThemeColorSchemeKey = 'dark' | 'light'
 
-export type ThemeColorName =
-  | 'default'
-  | 'transparent'
-  | 'primary'
-  | 'success'
-  | 'warning'
-  | 'danger'
+export type ThemeColorKey = ColorHueKey
+
+export type ThemeColorName = 'neutral' | 'primary' | 'accent' | 'success' | 'warning' | 'danger'
+
+export type ThemeColorStateKey = 'active' | 'hovered' | 'pressed' | 'selected' | 'disabled'
+
+export interface ThemeColorTone<T extends ThemeColorBaseSettings = ThemeColorBaseSettings> {
+  active: T
+  hovered: T
+  pressed: T
+  selected: T
+  disabled: T
+}
 
 export type ThemeColorButtonModeKey = 'default' | 'ghost' | 'bleed'
 
-export type ThemeColorToneKey =
-  | 'default'
-  | 'transparent'
-  | 'primary'
-  | 'success'
-  | 'warning'
-  | 'danger'
+export type ThemeColorToneKey = ThemeColorName
 
-export type ThemeColorSpotKey =
-  | 'gray'
-  | 'blue'
-  | 'purple'
-  | 'magenta'
-  | 'red'
-  | 'orange'
-  | 'yellow'
-  | 'green'
-  | 'cyan'
-
-export interface ThemeColorButtonState {
+export interface ThemeColorBaseSettings {
   bg: string
   fg: string
-  border: string
+  borderColor: string
 }
 
-export interface ThemeColorButtonStates {
-  enabled: ThemeColorButtonState
-  hovered: ThemeColorButtonState
-  pressed: ThemeColorButtonState
-  selected: ThemeColorButtonState
-  disabled: ThemeColorButtonState
+export interface ThemeColorElementBase extends ThemeColorBaseSettings {
+  focusRing: string
+  shadow?: {
+    hue: string
+    umbra: string
+    penumbra: string
+    ambience: string
+  }
 }
 
-export interface ThemeColorCardState {
-  bg: string
-  fg: string
-  border: string
+export interface ThemeColorBase<T extends ThemeColorTone = ThemeColorTone> extends Variantable<T> {}
+
+export interface ThemeColorButtonState extends ThemeColorBaseSettings {}
+export interface ThemeColorButtonStates extends ThemeColorTone<ThemeColorButtonState> {}
+
+export interface ThemeColorCardState extends ThemeColorBaseSettings {
   muted: {
     fg: string
   }
@@ -100,96 +132,28 @@ export interface ThemeColorCardState {
     fg: string
   }
 }
+export interface ThemeColorCard extends ThemeColorTone<ThemeColorCardState> {}
 
-export interface ThemeColorCard {
-  enabled: ThemeColorCardState
-  hovered: ThemeColorCardState
-  pressed: ThemeColorCardState
-  selected: ThemeColorCardState
-  disabled: ThemeColorCardState
-}
+export interface ThemeColorSolidTone extends ThemeColorTone<ThemeColorBaseSettings> {}
+export interface ThemeColorSolid extends ThemeColorBase<ThemeColorSolidTone> {}
 
-export interface ThemeColorBase {
-  bg: string
-  fg: string
-  border: string
-  focusRing: string
-  shadow: {
-    outline: string
-    umbra: string
-    penumbra: string
-    ambient: string
-  }
-}
+export interface ThemeColorMutedTone extends ThemeColorTone<ThemeColorBaseSettings> {}
+export interface ThemeColorMuted extends ThemeColorBase<ThemeColorMutedTone> {}
 
-export interface ThemeColorGenericState {
-  bg: string
-  border: string
-  fg: string
-}
-
-export interface ThemeColorSolidTone {
-  enabled: ThemeColorGenericState
-  disabled: ThemeColorGenericState
-  hovered: ThemeColorGenericState
-  pressed: ThemeColorGenericState
-  selected: ThemeColorGenericState
-}
-
-export interface ThemeColorSolid {
-  default: ThemeColorSolidTone
-  transparent: ThemeColorSolidTone
-  primary: ThemeColorSolidTone
-  success: ThemeColorSolidTone
-  warning: ThemeColorSolidTone
-  danger: ThemeColorSolidTone
-}
-
-export interface ThemeColorMutedTone {
-  enabled: ThemeColorGenericState
-  disabled: ThemeColorGenericState
-  hovered: ThemeColorGenericState
-  pressed: ThemeColorGenericState
-  selected: ThemeColorGenericState
-}
-
-export interface ThemeColorMuted {
-  default: ThemeColorMutedTone
-  transparent: ThemeColorMutedTone
-  primary: ThemeColorMutedTone
-  success: ThemeColorMutedTone
-  warning: ThemeColorMutedTone
-  danger: ThemeColorMutedTone
-}
-
-export interface ThemeColorButtonTones {
-  default: ThemeColorButtonStates
-  primary: ThemeColorButtonStates
-  success: ThemeColorButtonStates
-  warning: ThemeColorButtonStates
-  danger: ThemeColorButtonStates
-}
-
+export interface ThemeColorButtonTones extends ThemeColorBase<ThemeColorButtonStates> {}
 export interface ThemeColorButton {
   default: ThemeColorButtonTones
   ghost: ThemeColorButtonTones
   bleed: ThemeColorButtonTones
 }
 
-export interface ThemeColorInputState {
-  bg: string
-  fg: string
-  border: string
+export interface ThemeColorInputState extends ThemeColorBaseSettings {
   placeholder: string
 }
+export interface ThemeColorInputStates
+  extends Omit<ThemeColorTone<ThemeColorInputState>, 'pressed' | 'selected'> {}
 
-export interface ThemeColorInputStates {
-  enabled: ThemeColorInputState
-  disabled: ThemeColorInputState
-  hovered: ThemeColorInputState
-}
-
-export interface ThemeColorInput {
+export interface ThemeColorControl {
   default: ThemeColorInputStates
   invalid: ThemeColorInputStates
 }
@@ -208,69 +172,62 @@ export interface ThemeColorSpot {
 
 export interface ThemeColor {
   dark: boolean
-  base: ThemeColorBase
+  base: ThemeColorElementBase
   button: ThemeColorButton
   card: ThemeColorCard
-  input: ThemeColorInput
+  control: ThemeColorControl
   spot: ThemeColorSpot
   syntax: ThemeColorSyntax
   solid: ThemeColorSolid
   muted: ThemeColorMuted
 }
 
-export interface ThemeColorScheme {
-  default: ThemeColor
-  transparent: ThemeColor
-  primary: ThemeColor
-  success: ThemeColor
-  warning: ThemeColor
-  danger: ThemeColor
-}
+export interface ThemeColorScheme extends Variantable<ThemeColor> {}
 
 export interface ThemeColorSchemes {
   dark: ThemeColorScheme
   light: ThemeColorScheme
 }
 
-export interface ThemeColorBuilderOpts {
-  base: (opts: { dark: boolean; name: ThemeColorName }) => ThemeColorBase
+export interface ThemeColorBuilderOptions {
+  base: (opts: { dark: boolean; name: ThemeColorName }) => ThemeColorElementBase
   solid: (opts: {
-    base: ThemeColorBase
+    base: ThemeColorElementBase
     dark: boolean
-    tone: ThemeColorToneKey
     name: ThemeColorName
-    state: 'enabled' | 'disabled' | 'hovered' | 'pressed' | 'selected'
-  }) => ThemeColorGenericState
+    state: ThemeColorStateKey
+    tone: ThemeColorToneKey
+  }) => ThemeColorBaseSettings
   muted: (opts: {
-    base: ThemeColorBase
+    base: ThemeColorElementBase
     dark: boolean
-    tone: ThemeColorToneKey
     name: ThemeColorName
-    state: 'enabled' | 'disabled' | 'hovered' | 'pressed' | 'selected'
-  }) => ThemeColorGenericState
+    state: ThemeColorStateKey
+    tone: ThemeColorToneKey
+  }) => ThemeColorBaseSettings
   card: (opts: {
-    base: ThemeColorBase
+    base: ThemeColorElementBase
     dark: boolean
     muted: ThemeColorMutedTone
     name: ThemeColorName
     solid: ThemeColorSolidTone
-    state: 'enabled' | 'disabled' | 'hovered' | 'pressed' | 'selected'
+    state: ThemeColorStateKey
   }) => ThemeColorCardState
   button: (opts: {
+    base: ThemeColorElementBase
     dark: boolean
     mode: ThemeColorButtonModeKey
-    base: ThemeColorBase
-    solid: ThemeColorSolidTone
     muted: ThemeColorMutedTone
+    solid: ThemeColorSolidTone
   }) => ThemeColorButtonStates
-  input: (opts: {
-    base: ThemeColorBase
-    solid: ThemeColorSolidTone
-    muted: ThemeColorMutedTone
+  control: (opts: {
+    base: ThemeColorElementBase
     dark: boolean
     mode: 'default' | 'invalid'
-    state: 'enabled' | 'disabled' | 'hovered'
+    muted: ThemeColorMutedTone
+    solid: ThemeColorSolidTone
+    state: ThemeColorStateKey //'active' | 'disabled' | 'hovered'
   }) => ThemeColorInputState
-  syntax: (opts: { base: ThemeColorBase; dark: boolean }) => ThemeColorSyntax
-  spot: (opts: { base: ThemeColorBase; dark: boolean; key: ThemeColorSpotKey }) => string
+  syntax: (opts: { base: ThemeColorElementBase; dark: boolean }) => ThemeColorSyntax
+  spot: (opts: { base: ThemeColorElementBase; dark: boolean; key: ThemeColorKey }) => string
 }

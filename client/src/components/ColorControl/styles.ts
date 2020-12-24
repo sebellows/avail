@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Color } from '../../core/utils'
+import { Color } from '../../core/style'
 
 import { Control } from '../Control'
 import { control, mixin } from '../../core/style'

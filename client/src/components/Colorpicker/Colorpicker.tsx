@@ -10,8 +10,8 @@ import {
   SPACE,
   onAnimationEnd,
   TAB,
-  Color,
 } from '../../core/utils'
+import { Color } from '../../core/style'
 import { useTheme } from '../../ThemeContext'
 import { useClickOutside } from '../../hooks/useClickOutside'
 

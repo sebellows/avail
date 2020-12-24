@@ -1,6 +1,7 @@
 import { CSSObject, FlattenSimpleInterpolation } from 'styled-components'
-import { GRID_BREAKPOINTS } from '../constants'
 import { camelize, variadic } from '../utils'
+import { GRID_BREAKPOINTS } from '../constants'
+import { ThemeProps } from './types'
 import { isUnit, stripUnit, toEM, toREM } from './units'
 
 export function toCSSObject(propKeys: string[], value: any): CSSObject {
@@ -88,4 +89,23 @@ export function getResponsiveSpace(
   return responsive(config.media, spaceIndexes, (spaceIndex: number) =>
     toCSSObject(props, toREM(config.space[spaceIndex] as number)),
   )
+}
+
+export function responsiveStyle<T>(
+  prop: string | [string, any],
+  propValue: any = 'inherit',
+  defaultValue: any = 'inherit',
+) {
+  return (props: T & ThemeProps) => {
+    const { theme } = props
+    const { media, ..._theme } = theme
+    const [propName, propArg] = variadic(prop)
+
+    return responsive(media, getResponsiveProp(props[propName], propArg), (value) => {
+      if (typeof propValue === 'function') {
+        return propValue(value, _theme)
+      }
+      return value ? { '&&': { [propName]: propValue } } : { '&&': { [propName]: defaultValue } }
+    })
+  }
 }

@@ -1,6 +1,6 @@
 export * from './classNames'
 export * from './collection'
-export * from './color'
+// export * from './color'
 export * from './common'
 export * from './keycodes'
 export * from './listen'

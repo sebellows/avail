@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-
-import { Color, range } from './utils'
+import { Color } from './style'
+import { range } from './utils'
 
 /**
  * CSS Output Settings

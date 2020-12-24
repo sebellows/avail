@@ -1,6 +1,6 @@
 import { css } from 'styled-components'
 
-import { Color } from '../utils'
+import { Color } from './libs'
 import { color } from './colors'
 
 const UMBRA_DEPTHS = [

@@ -1,8 +1,8 @@
-import {useContext} from 'react'
-import {useTheme as useStyledTheme} from 'styled-components'
-import {ThemeContext} from './themeContext'
+import { useContext } from 'react'
+import { useTheme as useStyledTheme } from 'styled-components'
+import { ThemeContext } from './ThemeContext'
 
-import {Theme} from './types'
+import { Theme } from './types'
 
 export function useTheme(): Theme {
   return useStyledTheme() as Theme

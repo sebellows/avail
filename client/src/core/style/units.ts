@@ -17,8 +17,9 @@ export const getUnit = (value: number | string): string | null => {
   return numStr.slice(unitStartIndex)
 }
 
-export const stripUnit = (value: number | string): number =>
-  (isUnit(value) ? parseFloat(String(value)) : value) as number
+export function stripUnit<T extends number | string>(value: T): number {
+  return (isUnit(value) ? parseFloat(String(value)) : value) as number
+}
 
 export const normalizeUnit = (value: string | number): number => {
   const unit = getUnit(value)

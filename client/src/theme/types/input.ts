@@ -1,15 +1,14 @@
-export interface ThemeInput {
+export interface ThemeControl {
   checkbox: {
     size: number
   }
   radio: {
     size: number
-    markSize: number
   }
   switch: {
-    width: number
-    height: number
-    padding: number
+    barWidth: number
+    size: number
+    strokeWidth: number
     transitionDurationMs: number
     transitionTimingFunction: string
   }

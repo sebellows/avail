@@ -1,5 +1,5 @@
 import { BLACK, BORDER_RADIUS, FONT_SIZE_ROOT, VARIANTS } from '../constants'
-import { Color } from '../utils'
+import { Color } from './libs'
 import { font } from './text'
 import { color } from './colors'
 import { toEM, toREM } from './units'

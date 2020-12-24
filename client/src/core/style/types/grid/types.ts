@@ -13,13 +13,13 @@ export interface ResponsiveGridStyleProps {
   rows?: number | number[]
 }
 
-type GridItemColumn = 'auto' | 'full' | number
-type GridItemColumnStart = 'auto' | number
-type GridItemColumnEnd = 'auto' | number
+export type GridItemColumn = 'auto' | 'full' | number
+export type GridItemColumnStart = 'auto' | number
+export type GridItemColumnEnd = 'auto' | number
 
-type GridItemRow = 'auto' | 'full' | number
-type GridItemRowStart = 'auto' | number
-type GridItemRowEnd = 'auto' | number
+export type GridItemRow = 'auto' | 'full' | number
+export type GridItemRowStart = 'auto' | number
+export type GridItemRowEnd = 'auto' | number
 
 export interface ResponsiveGridItemStyleProps {
   column?: GridItemColumn | GridItemColumn[]

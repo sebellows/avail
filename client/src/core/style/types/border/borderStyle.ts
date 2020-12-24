@@ -1,6 +1,5 @@
-import {getResponsiveProp, responsive} from '../../helpers'
-import {ThemeProps} from '../types'
-import {ResponsiveBorderStyleProps} from './types'
+import { responsiveStyle } from '../../helpers'
+import { ResponsiveBorderStyleProps } from './types'
 
 const BORDER_VALUE = '1px solid var(--card-border-color)'
 
@@ -8,47 +7,8 @@ export function responsiveBorderStyle() {
   return [border, borderTop, borderRight, borderBottom, borderLeft]
 }
 
-function border(props: ResponsiveBorderStyleProps & ThemeProps) {
-  const {theme} = props
-  const {media} = theme.sanity
-
-  return responsive(media, getResponsiveProp(props.border), (value) =>
-    value ? {'&&': {border: BORDER_VALUE}} : {'&&': {border: 0}}
-  )
-}
-
-function borderTop(props: ResponsiveBorderStyleProps & ThemeProps) {
-  const {theme} = props
-  const {media} = theme.sanity
-
-  return responsive(media, getResponsiveProp(props.borderTop), (value) =>
-    value ? {'&&': {borderTop: BORDER_VALUE}} : {'&&': {borderTop: 0}}
-  )
-}
-
-function borderRight(props: ResponsiveBorderStyleProps & ThemeProps) {
-  const {theme} = props
-  const {media} = theme.sanity
-
-  return responsive(media, getResponsiveProp(props.borderRight), (value) =>
-    value ? {'&&': {borderRight: BORDER_VALUE}} : {'&&': {borderRight: 0}}
-  )
-}
-
-function borderBottom(props: ResponsiveBorderStyleProps & ThemeProps) {
-  const {theme} = props
-  const {media} = theme.sanity
-
-  return responsive(media, getResponsiveProp(props.borderBottom), (value) =>
-    value ? {'&&': {borderBottom: BORDER_VALUE}} : {'&&': {borderBottom: 0}}
-  )
-}
-
-function borderLeft(props: ResponsiveBorderStyleProps & ThemeProps) {
-  const {theme} = props
-  const {media} = theme.sanity
-
-  return responsive(media, getResponsiveProp(props.borderLeft), (value) =>
-    value ? {'&&': {borderLeft: BORDER_VALUE}} : {'&&': {borderLeft: 0}}
-  )
-}
+const border = responsiveStyle<ResponsiveBorderStyleProps>('border', BORDER_VALUE, 0)
+const borderTop = responsiveStyle<ResponsiveBorderStyleProps>('borderTop', BORDER_VALUE, 0)
+const borderRight = responsiveStyle<ResponsiveBorderStyleProps>('borderRight', BORDER_VALUE, 0)
+const borderBottom = responsiveStyle<ResponsiveBorderStyleProps>('borderBottom', BORDER_VALUE, 0)
+const borderLeft = responsiveStyle<ResponsiveBorderStyleProps>('borderLeft', BORDER_VALUE, 0)

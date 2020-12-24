@@ -2,8 +2,8 @@ import React, { useState, useRef } from 'react'
 import { motion } from 'framer-motion'
 
 import { useTheme } from '../../ThemeContext'
-import { cssTextToParams, mixin } from '../../core/style'
-import { classNames, Color, validFormProps } from '../../core/utils'
+import { Color, cssTextToParams, mixin } from '../../core/style'
+import { classNames, validFormProps } from '../../core/utils'
 
 import { Styled } from './styles'
 

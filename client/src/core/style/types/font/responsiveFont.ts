@@ -1,8 +1,9 @@
-import {CSSObject} from 'styled-components'
-import {ThemeFontSize, ThemeFontKey} from '../../theme'
-import {getResponsiveProp, rem, responsive} from '../../helpers'
-import {ThemeProps} from '../types'
-import {ResponsiveFontProps} from './types'
+import { CSSObject } from 'styled-components'
+import { ThemeFontSize, ThemeFontKey } from '../../../../theme'
+import { getResponsiveProp, responsive } from '../../helpers'
+import { toREM } from '../../units'
+import { ThemeProps } from '../types'
+import { ResponsiveFontProps } from './types'
 
 /**
  * A utility function getting responsive font styles.
@@ -10,11 +11,11 @@ import {ResponsiveFontProps} from './types'
  */
 export function responsiveFont(
   fontKey: ThemeFontKey,
-  props: ResponsiveFontProps & ThemeProps
+  props: ResponsiveFontProps & ThemeProps,
 ): CSSObject[] {
-  const {size, theme, weight} = props
-  const {fonts, media} = theme.sanity
-  const {family, sizes, weights} = fonts[fontKey]
+  const { size, theme, weight } = props
+  const { fonts, media } = theme
+  const { family, sizes, weights } = fonts[fontKey]
   const fontWeight = (weight && weights[weight]) || weights.regular
 
   // @todo: make this configurable
@@ -44,8 +45,8 @@ export function responsiveFont(
     },
   } as CSSObject
 
-  const resp = responsive(media, getResponsiveProp(size), (sizeIndex) =>
-    fontSize(sizes[sizeIndex] || defaultSize)
+  const resp = responsive(media, getResponsiveProp(size), (sizeIndex: number) =>
+    fontSize(sizes[sizeIndex] || defaultSize),
   )
 
   return [base, ...resp]
@@ -56,22 +57,22 @@ export function fontSize(size: ThemeFontSize): CSSObject {
   const capHeight = size.lineHeight - negHeight
 
   return {
-    fontSize: rem(size.fontSize),
-    lineHeight: rem(size.lineHeight),
-    letterSpacing: rem(size.letterSpacing),
-    transform: `translateY(${rem(size.descenderHeight)})`,
+    fontSize: toREM(size.fontSize),
+    lineHeight: toREM(size.lineHeight),
+    letterSpacing: toREM(size.letterSpacing),
+    transform: `translateY(${toREM(size.descenderHeight)})`,
 
     '&:before': {
-      marginTop: `calc(${rem(0 - negHeight)} - 1px)`,
+      marginTop: `calc(${toREM(0 - negHeight)} - 1px)`,
     },
 
     '&:after': {
       marginBottom: '-1px',
     },
 
-    '& [data-sanity-icon]': {
-      fontSize: rem(size.iconSize),
-      margin: rem((capHeight - size.iconSize) / 2),
+    '& [data-avail-icon]': {
+      fontSize: toREM(size.iconSize),
+      margin: toREM((capHeight - size.iconSize) / 2),
     },
   }
 }

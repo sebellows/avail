@@ -11,32 +11,8 @@ import {
   COLORS,
   VARIANTS,
 } from './core/constants'
-import { capitalize, Color } from './core/utils'
-
-// export interface ThemeProps {
-//   bg?: string
-//   fg?: string
-//   borderColor?: string
-//   boxShadow?: string
-//   hoverColor?: string
-//   checked?: string
-// }
-
-// export interface Theme {
-//   name: string
-//   bg: string
-//   fg: string
-//   primary: string
-//   accent: string
-//   link: ThemeProps
-//   borderColor: string
-//   control: ThemeProps
-//   disabled: ThemeProps
-//   focus: ThemeProps
-//   hover: ThemeProps
-//   invalid: ThemeProps
-//   muted: string
-// }
+import { Color } from './core/style/libs'
+import { capitalize } from './core/utils'
 
 export type ThemeOptions = Record<string, Avail.Theme>
 

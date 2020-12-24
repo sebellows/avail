@@ -1,5 +1,7 @@
-import {getResponsiveProp, rem, responsive} from '../../helpers'
-import {ThemeProps} from '../types'
+import { toREM } from '../../units'
+import { getResponsiveProp, responsive } from '../../helpers'
+
+import { ThemeProps } from '../types'
 
 export interface TextInputResponsivePaddingStyleProps {
   fontSize?: number | number[]
@@ -10,10 +12,10 @@ export interface TextInputResponsivePaddingStyleProps {
 }
 
 export function responsiveInputPaddingStyle(
-  props: TextInputResponsivePaddingStyleProps & ThemeProps
+  props: TextInputResponsivePaddingStyleProps & ThemeProps,
 ) {
-  const {iconLeft, iconRight, theme} = props
-  const {fonts, media, space: spaceScale} = theme.sanity
+  const { iconLeft, iconRight, theme } = props
+  const { fonts, media, space: spaceScale } = theme
   const padding = getResponsiveProp(props.padding, [0])
   const space = getResponsiveProp(props.space, [0])
   const size = getResponsiveProp(props.fontSize, [0])
@@ -35,14 +37,14 @@ export function responsiveInputPaddingStyle(
     const s = spaceScale[_space[i]]
 
     const styles = {
-      paddingTop: rem(p - fontSize.ascenderHeight),
-      paddingRight: rem(p),
-      paddingBottom: rem(p - fontSize.descenderHeight),
-      paddingLeft: rem(p),
+      paddingTop: toREM(p - fontSize.ascenderHeight),
+      paddingRight: toREM(p),
+      paddingBottom: toREM(p - fontSize.descenderHeight),
+      paddingLeft: toREM(p),
     }
 
-    if (iconRight) styles.paddingRight = rem(p + emSize + s)
-    if (iconLeft) styles.paddingLeft = rem(p + emSize + s)
+    if (iconRight) styles.paddingRight = toREM(p + emSize + s)
+    if (iconLeft) styles.paddingLeft = toREM(p + emSize + s)
 
     return styles
   })
@@ -53,9 +55,9 @@ export function responsiveInputPaddingIconsStyle(
     padding?: number | number[]
     size?: number | number[]
     space?: number | number[]
-  } & ThemeProps
+  } & ThemeProps,
 ) {
-  return responsiveInputPaddingStyle({...props, iconLeft: true, iconRight: true})
+  return responsiveInputPaddingStyle({ ...props, iconLeft: true, iconRight: true })
 }
 
 export function responsiveInputPaddingIconLeftStyle(
@@ -63,9 +65,9 @@ export function responsiveInputPaddingIconLeftStyle(
     padding?: number | number[]
     size?: number | number[]
     space?: number | number[]
-  } & ThemeProps
+  } & ThemeProps,
 ) {
-  return responsiveInputPaddingStyle({...props, iconLeft: true})
+  return responsiveInputPaddingStyle({ ...props, iconLeft: true })
 }
 
 export function responsiveInputPaddingIconRightStyle(
@@ -73,7 +75,7 @@ export function responsiveInputPaddingIconRightStyle(
     padding?: number | number[]
     size?: number | number[]
     space?: number | number[]
-  } & ThemeProps
+  } & ThemeProps,
 ) {
-  return responsiveInputPaddingStyle({...props, iconRight: true})
+  return responsiveInputPaddingStyle({ ...props, iconRight: true })
 }

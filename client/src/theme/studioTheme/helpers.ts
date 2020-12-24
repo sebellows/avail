@@ -1,17 +1,17 @@
-import {parseColor, rgbToHex, screen as _screen, multiply as _multiply} from '../../core/style/libs'
+import { screen as _screen, multiply as _multiply, Color } from '../../core/style/libs'
 
 export function multiply(bg: string, fg: string) {
-  const b = parseColor(bg)
-  const s = parseColor(fg)
-  const hex = rgbToHex(_multiply(b, s))
+  const b = Color(bg).string()
+  const s = Color(fg).string()
+  const hex = Color(_multiply(b, s)).hex()
 
   return hex
 }
 
-export function screen(bg: string, fg: string) {
-  const b = parseColor(bg)
-  const s = parseColor(fg)
-  const hex = rgbToHex(_screen(b, s))
+export function screen(bg: string, fg: string): string {
+  const b = Color(bg).string()
+  const s = Color(fg).string()
+  const hex = Color(_screen(b, s)).hex()
 
   return hex
 }

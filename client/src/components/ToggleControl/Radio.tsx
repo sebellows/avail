@@ -4,7 +4,8 @@ import { motion } from 'framer-motion'
 
 import { useEnsuredRef } from '../../hooks'
 import { useTheme } from '../../ThemeContext'
-import { validFormProps, containerProps, classNames, Color, uuid } from '../../core/utils'
+import { Color } from '../../core/style'
+import { validFormProps, containerProps, classNames, uuid } from '../../core/utils'
 
 import { Styled } from './styles'
 import { CheckmarkIconProps } from './props'

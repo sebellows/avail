@@ -1,7 +1,7 @@
-import styled from 'styled-components';
-import { ToastContainer } from 'react-toastify';
+import styled from 'styled-components'
+import { ToastContainer } from 'react-toastify'
 
-import { toREM, font, color, mixin } from '../core/style';
+import { toREM, font, color, mixin } from '../core/style'
 
 const Toast = styled(ToastContainer).attrs({
   toastClassName: 'toast',
@@ -13,8 +13,8 @@ const Toast = styled(ToastContainer).attrs({
     letter-spacing: ${toREM(0.5)};
     font-size: ${font.sizes.base};
   }
-`;
+`
 
-Toast.displayName = 'Toast';
+Toast.displayName = 'Toast'
 
-export { Toast };
+export { Toast }

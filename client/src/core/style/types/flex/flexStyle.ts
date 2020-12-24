@@ -1,60 +1,67 @@
-import {CSSObject} from 'styled-components'
-import {getResponsiveProp, responsive} from '../../helpers'
-import {ThemeProps} from '../types'
-import {ResponsiveFlexStyleProps} from './types'
+import { responsiveStyle } from '../../helpers'
+import { FlexAlign, FlexDirection, FlexJustify, FlexWrap, ResponsiveFlexStyleProps } from './types'
 
 export function responsiveFlexStyle() {
-  return [
-    flexBaseStyle,
-    responsiveFlexAlignStyle,
-    responsiveFlexWrapStyle,
-    responsiveFlexJustifyStyle,
-    responsiveFlexDirectionStyle,
-  ]
+  return [flexBaseStyle, flexAlign, flexWrap, flexJustify, flexDirection]
 }
 
 function flexBaseStyle() {
-  return {'&:not([hidden])': {display: 'flex'}}
+  return { '&:not([hidden])': { display: 'flex' } }
 }
 
-export function responsiveFlexAlignStyle(
-  props: ResponsiveFlexStyleProps & ThemeProps
-): CSSObject[] {
-  const {theme} = props
-  const {media} = theme.sanity
+const flexAlign = responsiveStyle<ResponsiveFlexStyleProps>('align', (align: FlexAlign) => ({
+  alignItems: align,
+}))
+const flexWrap = responsiveStyle<ResponsiveFlexStyleProps>('wrap', (wrap: FlexWrap) => ({
+  flexWrap: wrap,
+}))
+const flexJustify = responsiveStyle<ResponsiveFlexStyleProps>(
+  'justify',
+  (justify: FlexJustify) => ({ flexJustify: justify }),
+)
+const flexDirection = responsiveStyle<ResponsiveFlexStyleProps>(
+  'direction',
+  (direction: FlexDirection) => ({ flexDirection: direction }),
+)
 
-  return responsive(media, getResponsiveProp(props.align), (align) => {
-    return {alignItems: align}
-  })
-}
+// export function responsiveFlexAlignStyle(
+//   props: ResponsiveFlexStyleProps & ThemeProps
+// ): CSSObject[] {
+//   const {theme} = props
+//   const {media} = theme
 
-export function responsiveFlexWrapStyle(props: ResponsiveFlexStyleProps & ThemeProps): CSSObject[] {
-  const {theme} = props
-  const {media} = theme.sanity
+//   return responsive(media, getResponsiveProp(props.align), (align) => {
+//     return {alignItems: align}
+//   })
+// }
 
-  return responsive(media, getResponsiveProp(props.wrap), (wrap) => {
-    return {flexWrap: wrap}
-  })
-}
+// export function responsiveFlexWrapStyle(props: ResponsiveFlexStyleProps & ThemeProps): CSSObject[] {
+//   const {theme} = props
+//   const {media} = theme
 
-export function responsiveFlexJustifyStyle(
-  props: ResponsiveFlexStyleProps & ThemeProps
-): CSSObject[] {
-  const {theme} = props
-  const {media} = theme.sanity
+//   return responsive(media, getResponsiveProp(props.wrap), (wrap) => {
+//     return {flexWrap: wrap}
+//   })
+// }
 
-  return responsive(media, getResponsiveProp(props.justify), (justify) => {
-    return {justifyContent: justify}
-  })
-}
+// export function responsiveFlexJustifyStyle(
+//   props: ResponsiveFlexStyleProps & ThemeProps
+// ): CSSObject[] {
+//   const {theme} = props
+//   const {media} = theme
 
-export function responsiveFlexDirectionStyle(
-  props: ResponsiveFlexStyleProps & ThemeProps
-): CSSObject[] {
-  const {theme} = props
-  const {media} = theme.sanity
+//   return responsive(media, getResponsiveProp(props.justify), (justify) => {
+//     return {justifyContent: justify}
+//   })
+// }
 
-  return responsive(media, getResponsiveProp(props.direction), (direction) => {
-    return {flexDirection: direction}
-  })
-}
+// export function responsiveFlexDirectionStyle(
+//   props: ResponsiveFlexStyleProps & ThemeProps
+// ): CSSObject[] {
+//   const {theme} = props
+//   const {media} = theme
+
+//   return responsive(media, getResponsiveProp(props.direction), (direction) => {
+//     return {flexDirection: direction}
+//   })
+// }
