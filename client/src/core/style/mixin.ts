@@ -1,17 +1,18 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+import { CSSProperties } from 'react'
 import { css, FlattenSimpleInterpolation } from 'styled-components'
-import { DARK, GRID_BREAKPOINTS, LINK_COLOR, SPACERS, VARIANTS, WHITE } from '../constants'
-import { camelize, Color, get, isNil, isNumber, isPlainObject, typeOf } from '../utils'
-import { maybeApplyUnit, toEM, toREM } from './units'
-import { buttonVariant } from './buttons'
-import { dropShadowMixin, shadow, shadowMixin, ShadowFactoryParams } from './shadows'
-import { animationMixin, transitionMixin } from './transition'
-import { generateSpacer, spacers, spacerMixin } from './spacers'
-import { radiusMixin } from './radius'
-import { zIndexes } from './zindex'
+
+import { camelize, Color, get, isNil, isNumber, isPlainObject } from '../utils'
+import { DARK, GRID_BREAKPOINTS, LINK_COLOR, VARIANTS, WHITE } from '../constants'
+
 import { font } from './text'
 import { color } from './colors'
-import { CSSProperties } from 'react'
+import { zIndexes } from './zindex'
+import { radiusMixin } from './radius'
+import { buttonVariant } from './buttons'
+import { maybeApplyUnit, toEM, toREM } from './units'
+import { animationMixin, transitionMixin } from './transition'
+import { generateSpacer, spacers, spacerMixin } from './spacers'
+import { dropShadowMixin, shadow, shadowMixin, ShadowFactoryParams } from './shadows'
 
 type CSSUnit = 'px' | 'em' | 'rem' | '%' | 'vh' | 'vw'
 
@@ -60,7 +61,7 @@ export const cssTextToParams = (cssString: string | FlattenSimpleInterpolation):
 export const mixin = {
   darken: (colorValue: string, amount: number) => Color(colorValue).darken(amount).string(),
   lighten: (colorValue: string, amount: number) => Color(colorValue).lighten(amount).string(),
-  rgba: (colorValue: string, opacity: number) => Color(colorValue).alpha(opacity).string(),
+  alpha: (colorValue: string, opacity: number) => Color(colorValue).alpha(opacity).string(),
   invert: (hue: string) => (Color(hue).isDark() ? WHITE : DARK),
   buttonVariant,
   animation: animationMixin,
@@ -165,12 +166,14 @@ export const mixin = {
     center,
     align,
     justify,
+    wrap,
   }: {
     direction?: string
     inline?: boolean
     center?: boolean
     align?: string
     justify?: string
+    wrap?: boolean
   }) => {
     const normalizeProp = (str: string) =>
       str.startsWith('flex-') ? str : str === 'start' || str === 'end' ? `flex-${str}` : str
@@ -178,18 +181,15 @@ export const mixin = {
     align = align ? normalizeProp(align) : center ? 'center' : 'flex-start'
     justify = justify ? normalizeProp(justify) : center ? 'center' : 'flex-start'
 
-    return css`
-      display: ${inline ? 'inline-' : ''}flex;
-      align-items: ${align};
-      justify-content: ${justify};
-      ${() => {
-        if (direction) {
-          return css`
-            flex-direction: ${direction};
-          `
-        }
-      }}
-    `
+    const obj = {
+      display: `${inline ? 'inline-' : ''}flex`,
+      alignItems: align,
+      justifyContent: justify,
+    }
+    if (direction) obj['flexDirection'] = direction
+    if (!isNil(wrap)) obj['flexWrap'] = wrap ? 'wrap' : 'nowrap'
+
+    return css(obj)
   },
   flexCenter: css`
     display: flex;

@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useCallback, useState, useLayoutEffect } from 'react'
-import { isPlainObject, typeOf } from '../../core/utils'
+import { isPlainObject } from '../../core/utils'
 import { useEnsuredRef } from '../../hooks'
 
 export function useCallbackRef(context: any = null): [any, (node: any) => void] {

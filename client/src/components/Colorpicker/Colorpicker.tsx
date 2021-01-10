@@ -208,7 +208,7 @@ const Colorpicker: Avail.RefForwardingComponent<'div', Avail.Control> = forwardR
         // do nothing
       }
 
-      if (props.onKeyUp) props.onKeyUp(event)
+      props?.onKeyUp?.(event)
     }
 
     const htmlProps = containerProps(props)

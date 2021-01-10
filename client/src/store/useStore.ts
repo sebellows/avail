@@ -54,11 +54,19 @@ const getUpdateItem = (state: any, name: string) => {
  * OR
  * paths: `colorSchemes.fields.colors.items.0.name`
  */
-export function update<T = Avail.StateType>(config: T, set): (state: Avail.StateConfig) => void {
+export function update<T = Avail.StateType>(
+  config: T,
+  set,
+  get,
+): (state: Avail.StateConfig) => void {
   return function ({ name, value }) {
     set((state) => {
       const [key, item] = getUpdateItem(state[config], name)
       item[key] = value
+
+      if (name.includes('sizingUnit')) {
+        console.log('useStore->update', name, value, key, get().utilities)
+      }
     })
   }
 }
@@ -123,12 +131,12 @@ const store = (set, get, api) => {
   const state = {
     settings,
     initializeSettings: initialize('settings', set),
-    updateSettings: update('settings', set),
+    updateSettings: update('settings', set, get),
     addSetting: add('settings', set),
     removeSetting: remove('settings', set, get),
     utilities: {},
     initializeUtilities: initialize('utilities', set),
-    updateUtilities: update('utilities', set),
+    updateUtilities: update('utilities', set, get),
     addUtility: add('utilities', set),
     removeUtility: remove('utilities', set, get),
   }

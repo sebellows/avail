@@ -32,14 +32,12 @@ const StyledItem = styled(motion.button)<TabItemProps>`
   ${({ theme }) => mixin.bgColor(theme.bg)}
   ${mixin.padding.all(2, 3)}
   ${mixin.transition({ property: 'background-color', duration: 'easeIn', timing: 'easeIn' })}
-
   &:hover,
   &[aria-selected='true'] {
     text-decoration: none;
     ${({ theme }) => mixin.color(theme.hover.fg)}
     ${({ theme }) => mixin.bgColor(theme.hover.bg)}
   }
-
   &:focus {
     outline: none;
   }
@@ -49,7 +47,15 @@ const TabItem: Avail.RefForwardingComponent<'button', TabItemProps> = forwardRef
   (props: TabItemProps, ref) => {
     const { theme } = useTheme()
 
-    return <StyledItem ref={ref} {...props} theme={theme} />
+    return (
+      <StyledItem
+        ref={ref}
+        {...props}
+        type="button"
+        theme={theme}
+        aria-selected={!!props?.active}
+      />
+    )
   },
 )
 

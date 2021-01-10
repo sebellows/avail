@@ -29,10 +29,10 @@ import { isEqual } from 'isEqual'
 
 isEqual(1, 1) //=> true
 isEqual({}, {}) //=> true
-isEqual('foo', 'foo') //=> true
+isEqual('a', 'a') //=> true
 isEqual([1, 2, 3], [1, 2, 3]) //=> true
 isEqual(isEqual, isEqual) //=> true
-isEqual(/foo/, /foo/) //=> true
+isEqual(/a/, /a/) //=> true
 isEqual(null, null) //=> true
 isEqual(NaN, NaN) //=> true
 isEqual([], []) //=> true
@@ -44,92 +44,66 @@ isEqual(
 isEqual(1, '1') //=> false
 isEqual(null, undefined) //=> false
 isEqual({ a:1, b:[2,3] }, { a:1, b:[2,5] }) //=> false
-isEqual(/foo/i, /bar/g) //=> false
+isEqual(/a/i, /b/g) //=> false
 ```
  */
 
-import { hasOwn } from './common'
+import { hasOwn, typeOf } from './common'
 
-type KeyIterator<T> = { keys: () => any } & T
+export function isEqual(a: any, b: any) {
+  let ctor = typeOf(a),
+    len: number,
+    i: number
 
-function find<T>(iter: KeyIterator<T>, tar: any, key?: any) {
-  for (key of iter.keys()) {
-    if (isEqual(key, tar)) return key
-  }
-}
+  if (a === b) return true
 
-export function isEqual(foo, bar) {
-  let ctor, len, tmp
+  if (a && b && ctor === typeOf(b)) {
+    if (ctor === 'date') return a.getTime() === b.getTime()
+    if (ctor === 'regexp') return a.toString() === b.toString()
 
-  if (foo === bar) return true
-
-  if (foo && bar && (ctor = foo.constructor) === bar.constructor) {
-    if (ctor === Date) return foo.getTime() === bar.getTime()
-    if (ctor === RegExp) return foo.toString() === bar.toString()
-
-    if (ctor === Array) {
-      if ((len = foo.length) === bar.length) {
-        while (len-- && isEqual(foo[len], bar[len])) {}
+    if (ctor === 'array') {
+      if ((len = a.length) === b.length) {
+        while (len-- && isEqual(a[len], b[len])) {}
       }
       return len === -1
     }
 
-    if (ctor === Set) {
-      if (foo.size !== bar.size) {
-        return false
-      }
-      for (len of foo) {
-        tmp = len
-        if (tmp && typeof tmp === 'object') {
-          tmp = find(bar, tmp)
-          if (!tmp) return false
-        }
-        if (!bar.has(tmp)) return false
+    if (ctor === 'map' || ctor === 'set') {
+      if (a.size !== b.size) return false
+      let entries = a.entries(),
+        e: any
+      while (!(e = entries.next()).done) if (!b.has(e.value[0])) return false
+      if (ctor === 'map') {
+        while (!(e = entries.next()).done) if (!isEqual(e.value[1], b.get(e.value[0]))) return false
       }
       return true
     }
 
-    if (ctor === Map) {
-      if (foo.size !== bar.size) {
-        return false
-      }
-      for (len of foo) {
-        tmp = len[0]
-        if (tmp && typeof tmp === 'object') {
-          tmp = find(bar, tmp)
-          if (!tmp) return false
-        }
-        if (!isEqual(len[1], bar.get(tmp))) {
-          return false
-        }
-      }
-      return true
-    }
-
-    if (ctor === ArrayBuffer) {
-      foo = new Uint8Array(foo)
-      bar = new Uint8Array(bar)
-    } else if (ctor === DataView) {
-      if ((len = foo.byteLength) === bar.byteLength) {
-        while (len-- && foo.getInt8(len) === bar.getInt8(len)) {}
+    if (ctor === 'arraybuffer') {
+      a = new Uint8Array(a)
+      b = new Uint8Array(b)
+    } else if (ctor === 'dataview') {
+      if ((len = a.byteLength) === b.byteLength) {
+        while (len-- && a.getInt8(len) === b.getInt8(len)) {}
       }
       return len === -1
     }
 
-    if (ArrayBuffer.isView(foo)) {
-      if ((len = foo.byteLength) === bar.byteLength) {
-        while (len-- && foo[len] === bar[len]) {}
+    if (ArrayBuffer.isView(a)) {
+      if ((len = a.byteLength) === b.byteLength) {
+        while (len-- && a[len] === b[len]) {}
       }
       return len === -1
     }
 
-    if (!ctor || typeof foo === 'object') {
-      len = 0
-      for (ctor in foo) {
-        if (hasOwn(foo, ctor) && ++len && !hasOwn(bar, ctor)) return false
-        if (!(ctor in bar) || !isEqual(foo[ctor], bar[ctor])) return false
+    if (ctor === 'object') {
+      let keys = Object.keys(a)
+      len = Object.keys(a).length
+      for (i = len; i-- !== 0; ) {
+        if (!hasOwn(b, keys[i])) return false
+        if (!isEqual(a[keys[i]], b[keys[i]])) return false
       }
-      return Object.keys(bar).length === len
+      return Object.keys(b).length === len
     }
   }
 
@@ -140,30 +114,33 @@ export function isEqual(foo, bar) {
  * Dequal-Lite
  */
 
-export function isFastEqual(foo, bar) {
-  if (foo === bar) return true
+export function isFastEqual(a: any, b: any) {
+  if (a === b) return true
 
-  let ctor = foo.constructor,
-    len
+  let ctor = typeOf(a),
+    keys: string[],
+    len: number,
+    i: number
 
-  if (foo && bar && ctor === bar.constructor) {
-    if (ctor === Date) return foo.getTime() === bar.getTime()
-    if (ctor === RegExp) return foo.toString() === bar.toString()
+  if (a && b && ctor === b.constructor) {
+    if (ctor === 'date') return a.getTime() === b.getTime()
+    if (ctor === 'regexp') return a.toString() === b.toString()
 
-    if (ctor === Array) {
-      if ((len = foo.length) === bar.length) {
-        while (len-- && isFastEqual(foo[len], bar[len])) {}
+    if (ctor === 'array') {
+      if ((len = a.length) === b.length) {
+        while (len-- && isFastEqual(a[len], b[len])) {}
       }
       return len === -1
     }
 
-    if (!ctor || typeof foo === 'object') {
-      len = 0
-      for (ctor in foo) {
-        if (hasOwn(foo, ctor) && ++len && !hasOwn(bar, ctor)) return false
-        if (!(ctor in bar) || !isFastEqual(foo[ctor], bar[ctor])) return false
+    if (ctor === 'object') {
+      keys = Object.keys(a)
+      len = Object.keys(a).length
+      for (i = len; i-- !== 0; ) {
+        if (!hasOwn(b, keys[i])) return false
+        if (!isFastEqual(a[keys[i]], b[keys[i]])) return false
       }
-      return Object.keys(bar).length === len
+      return Object.keys(b).length === len
     }
   }
 

@@ -20,8 +20,8 @@ import {
 } from './constants'
 import { toOptions } from './models/Option'
 import { toREM, toPX, toEM } from './style'
-import { CSS_VALUE_PRESETS } from './presets'
-import { get } from './utils'
+import { CSS_VALUE_PRESETS, GLOBAL_CSS_VALUES } from './presets'
+import { get, hyphenate } from './utils'
 
 const createSpacers = (prefix = '', unitFn = toREM) =>
   Object.entries(SPACERS).reduce((acc, [k, v]) => {
@@ -42,6 +42,42 @@ function getSettingValues(
   )
 }
 
+function generateItems(key: string) {
+  return toOptions(CSS_VALUE_PRESETS[key].filter((preset) => !GLOBAL_CSS_VALUES.includes(preset)))
+}
+
+const defaultConfig = () => ({
+  className: '',
+  enabled: true,
+  modifiers: {
+    responsive: true,
+  },
+  items: [],
+})
+
+type ConfigProps = ReturnType<typeof defaultConfig>
+
+function presetBuilder(prefix = '') {
+  return (key: string, options: Partial<ConfigProps> = {}) => {
+    const { className, enabled, modifiers, items } = { ...defaultConfig(), ...options }
+
+    return {
+      enabled,
+      modifiers,
+      property: hyphenate(key),
+      class: `${prefix}${className}`,
+      inputType: 'select',
+      options: CSS_VALUE_PRESETS[key],
+      items: [
+        ...toOptions(
+          CSS_VALUE_PRESETS[key].filter((preset) => !GLOBAL_CSS_VALUES.includes(preset)),
+        ),
+        ...items,
+      ],
+    }
+  }
+}
+
 const Config = (
   settings: Avail.Config<Avail.Setting> = {},
   utils: Avail.Config<Avail.Utility> = {},
@@ -51,6 +87,8 @@ const Config = (
   const variants = get(settings, 'colorSchemes.fields.variants.items', [])
   const globals = getSettingValues(settings, 'global.fields')
   const borderSettings = getSettingValues(settings, 'border.fields')
+
+  const generatePresetConfig = presetBuilder(prefix)
   // const breakpoints = get(settings, 'mediaQuery.fields.breakpoints.items', {});
   // const directions = get(settings, 'nameGeneration.fields.directions.items', []);
 
@@ -61,25 +99,29 @@ const Config = (
   return {
     backgroundColor: {
       enabled: true,
-      responsive: false,
+      modifiers: {
+        responsive: false,
+      },
       property: 'background-color',
       class: `${prefix}bg`,
       inputType: 'colorpicker',
       items: [
         ...variants,
         {
-          name: 'body',
+          label: 'body',
           value: BODY_COLOR,
         },
         {
-          name: 'transparent',
-          value: '#cc0000',
+          label: 'transparent',
+          value: 'transparent',
         },
       ],
     },
     color: {
       enabled: true,
-      responsive: false,
+      modifiers: {
+        responsive: false,
+      },
       property: 'color',
       class: `${prefix}text`,
       inputType: 'colorpicker',
@@ -91,55 +133,12 @@ const Config = (
         },
       ],
     },
-    display: {
-      enabled: true,
-      responsive: true,
-      property: 'display',
-      class: `${prefix}d`,
-      inputType: 'select',
-      options: CSS_VALUE_PRESETS.display,
-      items: [
-        {
-          name: 'none',
-          value: 'none',
-        },
-        {
-          name: 'inline',
-          value: 'inline',
-        },
-        {
-          name: 'inline-block',
-          value: 'inline-block',
-        },
-        {
-          name: 'block',
-          value: 'block',
-        },
-        {
-          name: 'table',
-          value: 'table',
-        },
-        {
-          name: 'table-row',
-          value: 'table-row',
-        },
-        {
-          name: 'table-cell',
-          value: 'table-cell',
-        },
-        {
-          name: 'flex',
-          value: 'flex',
-        },
-        {
-          name: 'inline-flex',
-          value: 'inline-flex',
-        },
-      ],
-    },
+    display: generatePresetConfig('display', { className: 'd' }),
     float: {
       enabled: true,
-      responsive: true,
+      modifiers: {
+        responsive: true,
+      },
       property: 'float',
       class: `${prefix}float`,
       inputType: 'select',
@@ -161,7 +160,9 @@ const Config = (
     },
     fontFamily: {
       enabled: true,
-      responsive: false,
+      modifiers: {
+        responsive: false,
+      },
       property: 'font-family',
       class: `${prefix}font-family`,
       inputType: 'text',
@@ -182,7 +183,9 @@ const Config = (
     },
     lineHeight: {
       enabled: true,
-      responsive: false,
+      modifiers: {
+        responsive: false,
+      },
       property: 'line-height',
       class: `${prefix}lh`,
       inputType: 'number',
@@ -207,12 +210,14 @@ const Config = (
     },
     border: {
       enabled: true,
-      responsive: false,
+      // responsive: false,
       property: 'border',
       class: `${prefix}border`,
       inputType: 'text',
-      subproperties: {
+      modifiers: {
+        responsive: false,
         directions: true,
+        abbreviate: false,
         variants: true,
       },
       items: [
@@ -229,7 +234,9 @@ const Config = (
     // Sizing utilities
     width: {
       enabled: true,
-      responsive: false,
+      modifiers: {
+        responsive: false,
+      },
       property: 'width',
       class: `${prefix}w`,
       inputType: 'text',
@@ -258,7 +265,9 @@ const Config = (
     },
     maxWidth: {
       enabled: true,
-      responsive: false,
+      modifiers: {
+        responsive: false,
+      },
       property: 'max-width',
       class: `${prefix}mw`,
       inputType: 'text',
@@ -266,7 +275,9 @@ const Config = (
     },
     height: {
       enabled: true,
-      responsive: false,
+      modifiers: {
+        responsive: false,
+      },
       property: 'height',
       class: `${prefix}h`,
       inputType: 'text',
@@ -295,7 +306,9 @@ const Config = (
     },
     maxHeight: {
       enabled: true,
-      responsive: false,
+      modifiers: {
+        responsive: false,
+      },
       property: 'max-height',
       class: `${prefix}mh`,
       inputType: 'text',
@@ -304,7 +317,9 @@ const Config = (
     // Flex utilities
     flex: {
       enabled: true,
-      responsive: true,
+      modifiers: {
+        responsive: true,
+      },
       property: 'flex',
       class: `${prefix}flex`,
       inputType: 'text',
@@ -312,7 +327,9 @@ const Config = (
     },
     flexDirection: {
       enabled: true,
-      responsive: true,
+      modifiers: {
+        responsive: true,
+      },
       property: 'flex-direction',
       class: `${prefix}flex`,
       inputType: 'select',
@@ -338,7 +355,9 @@ const Config = (
     },
     flexGrow: {
       enabled: true,
-      responsive: true,
+      modifiers: {
+        responsive: true,
+      },
       property: 'flex-grow',
       class: `${prefix}flex`,
       inputType: 'number',
@@ -355,7 +374,9 @@ const Config = (
     },
     flexShrink: {
       enabled: true,
-      responsive: true,
+      modifiers: {
+        responsive: true,
+      },
       property: 'flex-shrink',
       class: `${prefix}flex`,
       inputType: 'number',
@@ -372,7 +393,9 @@ const Config = (
     },
     flexWrap: {
       enabled: true,
-      responsive: true,
+      modifiers: {
+        responsive: true,
+      },
       property: 'flex-wrap',
       class: `${prefix}flex`,
       inputType: 'select',
@@ -394,7 +417,9 @@ const Config = (
     },
     justifyContent: {
       enabled: true,
-      responsive: true,
+      modifiers: {
+        responsive: true,
+      },
       property: 'justify-content',
       class: `${prefix}justify-content`,
       inputType: 'select',
@@ -424,7 +449,9 @@ const Config = (
     },
     alignItems: {
       enabled: true,
-      responsive: true,
+      modifiers: {
+        responsive: true,
+      },
       property: 'align-items',
       class: `${prefix}align-items`,
       inputType: 'select',
@@ -454,7 +481,9 @@ const Config = (
     },
     alignContent: {
       enabled: true,
-      responsive: true,
+      modifiers: {
+        responsive: true,
+      },
       property: 'align-content',
       class: `${prefix}align-content`,
       inputType: 'select',
@@ -488,7 +517,9 @@ const Config = (
     },
     alignSelf: {
       enabled: true,
-      responsive: true,
+      modifiers: {
+        responsive: true,
+      },
       property: 'align-self',
       class: `${prefix}align-self`,
       inputType: 'select',
@@ -522,7 +553,9 @@ const Config = (
     },
     order: {
       enabled: true,
-      responsive: true,
+      modifiers: {
+        responsive: true,
+      },
       property: 'order',
       class: `${prefix}order`,
       inputType: 'number',
@@ -564,44 +597,50 @@ const Config = (
     // Margin utilities
     margin: {
       enabled: true,
-      responsive: true,
+      // responsive: true,
       property: 'margin',
       class: `${prefix}m`,
       inputType: 'text',
-      subproperties: {
+      modifiers: {
+        responsive: true,
         directions: true,
+        abbreviate: true,
         negativeUnits: true,
       },
       items: [...spacerUnits],
     },
     // Negative margin utilities
-    negativeMargin: {
-      enabled: true,
-      responsive: true,
-      property: 'margin',
-      class: `${prefix}m`,
-      inputType: 'text',
-      subproperties: {
-        directions: true,
-      },
-      items: [...negativeSpacerUnits],
-    },
+    // negativeMargin: {
+    //   enabled: true,
+    //   responsive: true,
+    //   property: 'margin',
+    //   class: `${prefix}m`,
+    //   inputType: 'text',
+    //   subproperties: {
+    //     directions: true,
+    //   },
+    //   items: [...negativeSpacerUnits],
+    // },
     // Padding utilities
     padding: {
       enabled: true,
-      responsive: true,
+      // responsive: true,
       property: 'padding',
       class: `${prefix}p`,
       inputType: 'text',
-      subproperties: {
+      modifiers: {
+        responsive: true,
         directions: true,
+        abbreviate: true,
       },
       items: [...spacerUnits],
     },
     // Text
     fontStyle: {
       enabled: true,
-      responsive: false,
+      modifiers: {
+        responsive: false,
+      },
       property: 'font-style',
       class: `${prefix}font-style`,
       inputType: 'select',
@@ -619,7 +658,9 @@ const Config = (
     },
     fontWeight: {
       enabled: true,
-      responsive: false,
+      modifiers: {
+        responsive: false,
+      },
       property: 'font-weight',
       class: `${prefix}font-weight`,
       inputType: 'select',
@@ -649,7 +690,9 @@ const Config = (
     },
     textTransform: {
       enabled: true,
-      responsive: false,
+      modifiers: {
+        responsive: false,
+      },
       property: 'text-transform',
       class: `${prefix}text`,
       inputType: 'select',
@@ -671,7 +714,9 @@ const Config = (
     },
     textAlign: {
       enabled: true,
-      responsive: true,
+      modifiers: {
+        responsive: true,
+      },
       property: 'text-align',
       class: `${prefix}text`,
       inputType: 'select',
@@ -693,7 +738,9 @@ const Config = (
     },
     textDecoration: {
       enabled: true,
-      responsive: false,
+      modifiers: {
+        responsive: false,
+      },
       property: 'text-decoration',
       class: `${prefix}text-decoration`,
       inputType: 'text',
@@ -714,7 +761,9 @@ const Config = (
     },
     whiteSpace: {
       enabled: true,
-      responsive: false,
+      modifiers: {
+        responsive: false,
+      },
       property: 'white-space',
       class: `${prefix}text`,
       inputType: 'select',
@@ -732,7 +781,9 @@ const Config = (
     },
     overflow: {
       enabled: true,
-      responsive: false,
+      modifiers: {
+        responsive: false,
+      },
       property: 'overflow',
       class: `${prefix}overflow`,
       inputType: 'select',
@@ -750,7 +801,9 @@ const Config = (
     },
     position: {
       enabled: true,
-      responsive: false,
+      modifiers: {
+        responsive: false,
+      },
       property: 'position',
       class: `${prefix}position`,
       inputType: 'select',
@@ -780,7 +833,9 @@ const Config = (
     },
     shadow: {
       enabled: true,
-      responsive: false,
+      modifiers: {
+        responsive: false,
+      },
       property: 'box-shadow',
       class: `${prefix}shadow`,
       inputType: 'text',
@@ -805,7 +860,9 @@ const Config = (
     },
     pointerEvents: {
       enabled: true,
-      responsive: false,
+      modifiers: {
+        responsive: false,
+      },
       property: 'pointer-events',
       class: `${prefix}pointer-events`,
       inputType: 'select',
@@ -823,12 +880,14 @@ const Config = (
     },
     borderRadius: {
       enabled: true,
-      responsive: false,
+      // responsive: false,
       property: 'border-radius',
       class: `${prefix}rounded`,
       inputType: 'text',
-      subproperties: {
-        corners: true,
+      modifiers: {
+        responsive: false,
+        directions: true,
+        abbreviate: false,
       },
       items: [
         {
@@ -859,29 +918,20 @@ const Config = (
     },
     userSelect: {
       enabled: true,
-      responsive: false,
+      modifiers: {
+        responsive: false,
+      },
       property: 'user-select',
       class: `${prefix}user-select`,
       inputType: 'select',
       options: CSS_VALUE_PRESETS.userSelect,
-      items: [
-        {
-          name: 'all',
-          value: 'all',
-        },
-        {
-          name: 'auto',
-          value: 'auto',
-        },
-        {
-          name: 'none',
-          value: 'none',
-        },
-      ],
+      items: generateItems('userSelect'),
     },
     verticalAlign: {
       enabled: true,
-      responsive: false,
+      modifiers: {
+        responsive: false,
+      },
       property: 'vertical-align',
       class: `${prefix}align`,
       inputType: 'select',
@@ -915,7 +965,9 @@ const Config = (
     },
     visibility: {
       enabled: true,
-      responsive: false,
+      modifiers: {
+        responsive: false,
+      },
       property: 'visibility',
       class: '',
       inputType: 'select',
@@ -933,7 +985,9 @@ const Config = (
     },
     wordWrap: {
       enabled: true,
-      responsive: false,
+      modifiers: {
+        responsive: false,
+      },
       property: 'word-wrap',
       class: `${prefix}text`,
       inputType: 'text',

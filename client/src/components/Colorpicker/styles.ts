@@ -93,7 +93,7 @@ export const Styled = {
     ${({ value }) => mixin.bgColor(value as string)}
     border: 1px solid ${({ theme }) => theme.control.borderColor};
     ${mixin.borderRadius('sm', 0, 0, 'sm')}
-    box-shadow: ${({ theme }) => `inset 0 0 0 5px ${theme.bg}, inset 0 0 0 6px ${mixin.rgba(
+    box-shadow: ${({ theme }) => `inset 0 0 0 5px ${theme.bg}, inset 0 0 0 6px ${mixin.alpha(
       theme.fg,
       0.2,
     )},

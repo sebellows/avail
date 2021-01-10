@@ -72,7 +72,7 @@ const Repeater: Avail.RefForwardingComponent<'fieldset', Avail.ControlGroup> = f
     }
 
     function handleChange(event: any) {
-      event.preventDefault()
+      // event.preventDefault()
       onChange?.(event)
     }
 
@@ -134,9 +134,7 @@ const Repeater: Avail.RefForwardingComponent<'fieldset', Avail.ControlGroup> = f
                 onRemove={handleRemove}
               >
                 <Styled.Field>
-                  <Styled.Label first={i === 0} htmlFor={nameID}>
-                    {keyLabel}
-                  </Styled.Label>
+                  <Styled.Label htmlFor={nameID}>{keyLabel}</Styled.Label>
                   <Control
                     id={nameID}
                     name={nameID}
@@ -154,9 +152,7 @@ const Repeater: Avail.RefForwardingComponent<'fieldset', Avail.ControlGroup> = f
                 </Styled.Separator>
 
                 <Styled.Field>
-                  <Styled.Label first={i === 0} htmlFor={valueID}>
-                    {valueLabel}
-                  </Styled.Label>
+                  <Styled.Label htmlFor={valueID}>{valueLabel}</Styled.Label>
                   <FormControlResolver
                     type={inputType}
                     id={valueID}

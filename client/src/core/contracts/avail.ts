@@ -55,7 +55,7 @@ export interface AvailUtility extends AvailConfigRecord {
   responsive?: boolean
   options?: string[] | Avail.OptionProps[]
   subitems?: Avail.OptionProps[]
-  subproperties?: Record<string, any>
+  modifiers?: Record<string, any>
   items?: Avail.OptionProps[] // used on repeater fields
 }
 

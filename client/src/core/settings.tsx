@@ -239,6 +239,13 @@ export const Settings = (settings: Avail.Config<Avail.Setting>): Avail.Config<Av
           description:
             'Used to generate spacing classes for all directions (e.g., `margin-top: 1rem;`).',
         },
+        negativeUnits: {
+          type: 'text',
+          id: 'spacing_fields_negativeUnits_value',
+          label: 'Negative unit prefix',
+          value: 'n',
+          description: `Used to generate negative unit margin classes (e.g., <code>.nm-3 { margin: -1rem; }</code>).`,
+        },
       },
     },
   }

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useRef, useState } from 'react'
 import styled from 'styled-components'
 import { motion } from 'framer-motion'
@@ -8,7 +7,7 @@ import { classNames } from '../../core/utils'
 import { useTheme } from '../../ThemeContext'
 import { useMeasure } from './useMeasure'
 
-const List = styled.div`
+const List = styled.nav`
   ${mixin.flex({ align: 'center', justify: 'space-between' })}
   position: relative;
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
@@ -63,20 +62,19 @@ export const TabsList: Avail.RefForwardingComponent<'nav', TabsNavProps> = React
     })
 
     React.useEffect(() => {
-      if (listRef?.current?.nodeName && rect) {
+      if (listRef?.current?.nodeName) {
         const target = listRef?.current?.querySelector(`#${activeTab}`)
 
         if (target) {
-          if (rect.width === 0) return
-
           if (!paddingOffset.current) {
             const targetStyles = window.getComputedStyle(target)
             paddingOffset.current = parseInt(targetStyles.getPropertyValue('padding-left'), 10)
           }
-
           const { x: targetX } = target.getBoundingClientRect()
+          const parentX = rect.x === 0 ? listRef?.current.getBoundingClientRect().x : rect.x
+          const x = parentX ? targetX - parentX : targetX
 
-          setInkBarPosition(targetX - paddingOffset.current)
+          setInkBarPosition(x)
         }
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps

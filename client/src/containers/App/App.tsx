@@ -8,7 +8,7 @@ import { Tabs, Tab } from '../../components/Tabs'
 import { Button, Dropdown, Spinner, Toast, Icon } from '../../components'
 
 import { Logo } from '../../Logo'
-import { mixin } from '../../core/style'
+import { mixin, toEM } from '../../core/style'
 import { capitalize, classNames, hyphenate } from '../../core/utils'
 import { AVAIL_THEME, ThemeProvider, useTheme } from '../../ThemeContext'
 
@@ -17,12 +17,18 @@ import 'react-toastify/dist/ReactToastify.css'
 import { Draggable } from '../../components/Draggable'
 import { AppHeader } from './AppHeader'
 import { Layout } from './Layout'
+import { responsiveBorderRadiusStyle } from '../../core/style/border'
 
 const SubmitButton = styled(Button)`
   position: fixed;
   top: 90vh;
   left: calc(100vw - 5.5rem);
   ${mixin.zIndex('submitBtn')}
+`
+
+const MainContent = styled.div`
+  margin: 1em auto;
+  max-width: ${toEM(1040)};
 `
 
 export default function App() {
@@ -39,6 +45,12 @@ export default function App() {
       }, 2000)
       return () => clearTimeout(fadeSpinner)
     }
+    // console.log(
+    //   'borderStyle',
+    //   responsiveBorderRadiusStyle()[0]({
+    //     mixin: { media: [560, 768, 920, 1200], radius: [4, 8, 12, 16] },
+    //   }),
+    // )
   }, [loading])
 
   function handleLoad(event: AnimationEvent) {
@@ -50,11 +62,12 @@ export default function App() {
   function handleSubmit(event: SyntheticEvent) {
     event.preventDefault()
     event.persist()
+    console.log('handleSubmit', event.target)
     const values = Object.values(formRef.current).reduce((obj, field: any) => {
       obj[field.name] = field.value
       return obj
     }, {})
-    console.log('submitted', values)
+    // console.log('submitted', values)
   }
 
   return (
@@ -62,20 +75,21 @@ export default function App() {
       <Layout>
         {loading && <Spinner exit={addExitClass} onAnimationEnd={handleLoad} />}
 
-        {/* <Store> */}
         <form ref={formRef} onSubmit={handleSubmit}>
-          <Tabs
-            id="avail-config"
-            defaultActiveTab={activeTab}
-            onSelect={(e?: any) => setActiveTab(e)}
-          >
-            <Tab id="settings" title="Global Settings">
-              <SettingsForm />
-            </Tab>
-            <Tab id="utilities" title="Utility Class Configuration">
-              <UtilitiesForm id="avail-utilities" />
-            </Tab>
-          </Tabs>
+          <MainContent>
+            <Tabs
+              id="avail-config"
+              defaultActiveTab={activeTab}
+              onSelect={(e?: any) => setActiveTab(e)}
+            >
+              <Tab id="settings" title="Global Settings">
+                <SettingsForm />
+              </Tab>
+              <Tab id="utilities" title="Utility Class Configuration">
+                <UtilitiesForm id="avail-utilities" />
+              </Tab>
+            </Tabs>
+          </MainContent>
           <Draggable>
             <SubmitButton fab type="submit" variant="primary">
               <span className="sr-only">Submit</span>

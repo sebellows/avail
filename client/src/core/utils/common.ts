@@ -223,6 +223,11 @@ export const uuid = (limit = 9, prefix = '') =>
   prefix + Math.random().toString(36).substring(2, limit)
 
 /**
+ * Ensure that a value is an array.
+ */
+export const variadic = (items: any) => (Array.isArray(items) ? items : [items])
+
+/**
  * `throttle`
  *
  * A throttle function implementing requestAnimationFrame that only invokes the

@@ -23,9 +23,6 @@ const Collapse = forwardRef<HTMLDivElement, CollapseProps>(
     },
     ref,
   ) => {
-    React.useEffect(() => {
-      console.log('Collapse=>open', open)
-    }, [open])
     // By using `AnimatePresence` to mount and unmount the contents, we can animate
     // them in and out while also only rendering the contents of open accordions
     return (

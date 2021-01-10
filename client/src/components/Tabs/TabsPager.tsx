@@ -1,10 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react'
 import { motion } from 'framer-motion'
 import styled from 'styled-components'
 import { TabPanel } from './TabPanel'
 import { toPercent, transitions } from '../../core/style'
-import { usePrevious } from '../../hooks'
 
 const Styled = {
   Pager: styled.div`
@@ -42,12 +40,6 @@ export interface TabsPagerProps extends Avail.ComponentProps {
     friction?: number
     mass?: number
   }
-}
-
-const defaultTransition = {
-  tension: 190,
-  friction: 70,
-  mass: 0.4,
 }
 
 const TabsPager: Avail.RefForwardingComponent<'div', TabsPagerProps> = React.forwardRef(

@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components'
 import { useTheme } from '../ThemeContext'
 import { classNames } from '../core/utils'
 import { control, radius, mixin } from '../core/style'
+import { useEnsuredRef } from '../hooks'
 
 function isToggle(type: string) {
   return type === 'checkbox' || type === 'radio'
@@ -39,21 +40,25 @@ const BaseControl: Control = forwardRef(
 
     const type = Component !== 'input' ? null : props?.type ?? 'text'
 
+    const inputRef = useEnsuredRef<HTMLInputElement>(ref)
+
     function handleChange(event: ChangeEvent<HTMLInputElement>) {
-      event.persist()
       setValue(event.target.value)
       onChange?.(event)
     }
 
     function handleBlur(event: any) {
-      event.persist()
       props?.onBlur?.(event)
+    }
+
+    function handleKeyUp(event: any) {
+      props?.onKeyUp?.(event)
     }
 
     return (
       <Component
         {...props}
-        ref={ref}
+        ref={inputRef}
         type={type}
         id={id ?? name}
         name={name ?? id}
@@ -62,19 +67,11 @@ const BaseControl: Control = forwardRef(
         className={classNames('control', { 'is-invalid': !!isInvalid }, className)}
         onChange={handleChange}
         onBlur={handleBlur}
+        onKeyUp={handleKeyUp}
       />
     )
   },
 )
-
-// border-color: ${({ disabled, isInvalid, theme }: ControlProps) => {
-//   return isInvalid
-//     ? theme.invalid.borderColor
-//     : disabled
-//     ? theme.disabled.borderColor
-//     : theme.control.borderColor
-// }};
-// border-color: ${({ theme }) => theme.control.borderColor};
 
 const StyledControl = styled(BaseControl)<ControlProps>`
   background-color: ${({ isInvalid, disabled, theme }: ControlProps) => {
@@ -121,7 +118,7 @@ const StyledControl = styled(BaseControl)<ControlProps>`
     `}
 `
 
-const Control: Control = forwardRef((props: ControlProps, ref) => {
+const Control: Control = forwardRef((props: ControlProps = {}, ref) => {
   const { theme } = useTheme()
 
   return <StyledControl eventStates={true} {...props} ref={ref} theme={theme} />

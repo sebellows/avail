@@ -70,16 +70,13 @@ const SelectControl: Avail.RefForwardingComponent<'select', Avail.ControlGroup> 
     }, [initialOptions])
 
     function handleChange(event: any) {
-      if (props.onChange) {
-        props.onChange(event)
-      }
+      props?.onChange(event)
     }
 
     const { controlClass = '' } = props
     delete props.type
     const htmlProps = containerProps(props, { exclude: ['controlClass', 'label'] })
     const formProps = validFormProps(props, { exclude: ['type'] })
-    console.log('formProps', formProps)
 
     return (
       <Styled.Wrapper

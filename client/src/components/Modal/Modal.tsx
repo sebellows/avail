@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { forwardRef, useEffect, useRef } from 'react'
-import { ESCAPE, listen, noScroll } from '../../core/utils'
+import { ESCAPE, isNil, listen, noScroll } from '../../core/utils'
 import {
   useEnsuredRef,
   useEventCallback,
@@ -10,7 +10,6 @@ import {
 } from '../../hooks'
 import { ModalTrigger } from './ModalTrigger'
 import { ModalContent } from './ModalContent'
-// import { IntrinsicElementDef } from '../../baseTypes'
 
 function ignoreSiblings(siblings: NodeList | string[], fn: (el: HTMLElement) => void) {
   if (siblings && siblings.length) {
@@ -56,8 +55,8 @@ const Modal: Avail.RefForwardingComponent<'div', ModalProps> = forwardRef(
 
     const modalRef = useEnsuredRef<HTMLDivElement>(ref)
 
-    const focalRef = useRef(null)
     const prevShow = usePrevious(show)
+
     const removeKeyDownListenerRef = useRef(null)
 
     const handleShow = useEventCallback(() => {
@@ -99,10 +98,11 @@ const Modal: Avail.RefForwardingComponent<'div', ModalProps> = forwardRef(
     )
 
     useEffect(() => {
-      if (!isFirstMount) {
-        console.log('Modal->useEffect->show', show)
+      if (!isFirstMount && !isNil(prevShow) && prevShow !== show) {
+        // console.log('Modal->useEffect->show', show)
         show ? handleShow() : handleClose()
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isFirstMount, show, handleClose, handleShow])
 
     const handleKeyUp = (event: any) => {

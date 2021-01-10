@@ -1,22 +1,59 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect, useRef, Fragment, FC, useContext, useCallback } from 'react'
 import Prism from 'prismjs'
+import styled from 'styled-components'
+
+import { mixin } from '../core/style'
+import { classNames } from '../core/utils'
+import { useStore } from '../store/useStore'
+import { generateConfig } from '../core/config'
+import { generateUtility, generateResponsiveUtility } from '../core/build'
 
 import { useClickOutside } from '../hooks/useClickOutside'
-import { generateUtility, generateResponsiveUtility } from '../core/build'
-import { classNames } from '../core/utils'
-
 import { Control, Dialog, Field, Modal, PillTab, PillTabs, Repeater, Switch } from '../components'
 
 import '../styles/prism.css'
-import { useStore } from '../store/useStore'
-import { generateConfig } from '../core/config'
 
-const DialogTitle = ({ children }) => (
-  <h3 className="font-size-lg font-weight-bold mb-0">
-    <code>{children}</code>
-  </h3>
-)
+const SwitchRow = styled.div`
+  ${mixin.flex({ align: 'center', wrap: true })}
+  ${mixin.grid.row}
+
+  .field {
+    ${mixin.grid.col}
+  }
+`
+
+const DialogTitle = styled.h3`
+  ${mixin.font.size('h3')}
+  ${mixin.font.weight('bold')}
+  ${mixin.margin.bottom(0)}
+`
+
+const ModifierLabel = ({ text, ...props }: { text: string } & Avail.ComponentProps) => {
+  const [label, dispatch] = React.useReducer((labelText: string) => {
+    console.log('ModifierLabel', text, labelText)
+    switch (labelText) {
+      case 'responsive':
+        return 'Make responsive utility classes?'
+      case 'directions':
+        return 'Make utility classes for each direction/side?'
+      case 'abbreviate':
+        return 'Abbreviate direction/side to first letter?'
+      case 'negativeUnits':
+        return 'Make utility classes for negative margins?'
+      case 'variants':
+        return 'Make utility classes for color variants?'
+      default:
+        return `❀ ${labelText}`
+    }
+  }, text)
+
+  React.useEffect(() => {
+    dispatch()
+  }, [])
+
+  return <>{!!label && <span {...props}>{label}</span>}</>
+}
 
 export interface UtilitiesFormProps extends Avail.ComponentProps {
   id?: string
@@ -34,7 +71,7 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
   } = useStore()
 
   const [activeModelID, setActiveModelID] = useState(null)
-  // const lastActiveModelID = usePrevious(activeModelID);
+
   const [open, setOpen] = useState(false)
   const [output, setOutput] = useState('// No styles were generated') // TODO: remove default here
 
@@ -143,7 +180,9 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
           <Dialog
             ref={dialogRef}
             title={
-              <DialogTitle>{(utilities[activeModelID] as Avail.Utility).property}</DialogTitle>
+              <DialogTitle>
+                <code>{(utilities[activeModelID] as Avail.Utility).property}</code>
+              </DialogTitle>
             }
             onClose={handleClose}
           >
@@ -164,35 +203,26 @@ const UtilitiesForm: FC<UtilitiesFormProps> = React.memo(({ id, ...props }) => {
                     required
                   />
                 </Field>
-                <Switch
-                  name={`${activeModelID}_responsive`}
-                  className="mb-3"
-                  value={`${activeModelID}-responsive`}
-                  checked={!!(utilities[activeModelID] as Avail.Utility).responsive}
-                  onChange={({ target: { name, checked: value } }) => {
-                    updateUtilities({ name, value })
-                  }}
-                >
-                  <span>Make responsive classes?</span>
-                </Switch>
-                {(utilities[activeModelID] as Avail.Utility).subproperties && (
-                  <div className="d-flex align-items-center mb-3">
-                    {Object.entries((utilities[activeModelID] as Avail.Utility).subproperties).map(
+                {(utilities[activeModelID] as Avail.Utility).modifiers && (
+                  <SwitchRow>
+                    {Object.entries((utilities[activeModelID] as Avail.Utility).modifiers).map(
                       ([prop, val]) => (
-                        <Switch
-                          key={`${activeModelID}-${prop}`}
-                          name={`${activeModelID}_subproperties_${prop}`}
-                          value={prop}
-                          checked={val}
-                          onChange={({ target: { name, checked } }) => {
-                            updateUtilities({ name, value: checked })
-                          }}
-                        >
-                          <span>Make utility classes for {prop}?</span>
-                        </Switch>
+                        <Field className="mb-3">
+                          <Switch
+                            key={`${activeModelID}-${prop}`}
+                            name={`${activeModelID}_modifiers_${prop}`}
+                            value={prop}
+                            checked={val}
+                            onChange={({ target: { name, checked } }) => {
+                              updateUtilities({ name, value: checked })
+                            }}
+                          >
+                            <ModifierLabel text={prop}></ModifierLabel>
+                          </Switch>
+                        </Field>
                       ),
                     )}
-                  </div>
+                  </SwitchRow>
                 )}
                 <Repeater
                   {...utilities[activeModelID]}

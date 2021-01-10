@@ -8,7 +8,6 @@ import { transitions } from '../../core/style'
 
 const StyledPanel = styled(motion.section)`
   visibility: hidden;
-
   &.active {
     visibility: visible;
   }

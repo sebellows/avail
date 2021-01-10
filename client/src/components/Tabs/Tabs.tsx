@@ -1,13 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useRef, useState } from 'react'
-import { useMeasure } from './useMeasure'
 import styled from 'styled-components'
-import { motion } from 'framer-motion'
-import { mixin } from '../../core/style'
 import { TabsPager } from './TabsPager'
-import { classNames, isNil } from '../../core/utils'
+import { classNames } from '../../core/utils'
 import { useTheme } from '../../ThemeContext'
-import { useEnsuredRef } from '../../hooks'
 import { BaseTabProps } from './shared'
 import { TabsList } from './TabList'
 import { TabItem } from './TabItem'
@@ -31,12 +26,11 @@ const TabsContainer = styled.div`
 interface TabsProps extends Avail.ComponentProps {
   defaultActiveTab?: string
   id?: string
-  sliderOffset?: number
   onSelect?: (tabID: string, event?: any) => void
 }
 
 const Tabs: Avail.RefForwardingComponent<'div', TabsProps> = React.forwardRef(
-  ({ children, defaultActiveTab, onSelect, sliderOffset = 8, ...props }: TabsProps, ref) => {
+  ({ children, defaultActiveTab, onSelect, ...props }: TabsProps, ref) => {
     const { theme } = useTheme()
     const [activeTab, setActiveTab] = useState(defaultActiveTab)
     const [activeTabIndex, setActiveTabIndex] = useState(0)

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { INDENT_LEVEL } from './constants'
+import { CORNERS, INDENT_LEVEL } from './constants'
 import { toEM } from './style'
-import { get } from './utils'
+import { get, hyphenate } from './utils'
 
 function indentBy(level: number): string {
   const tab = '  '
@@ -65,14 +65,76 @@ interface FormattingOptions {
   isImportant: boolean
   prefix?: string
   sizingUnit?: 'px' | 'em' | 'rem'
+  negativeUnits?: string
 }
 
 const defaultFormattingOptions: FormattingOptions = {
+  directions: null,
   indentLevel: INDENT_LEVEL,
   infix: '',
   isImportant: true,
   prefix: '',
   sizingUnit: 'rem',
+  negativeUnits: '',
+}
+
+function resolveDirections(settings: Avail.Config<Avail.Setting>, abbreviate?: boolean) {
+  const dirs = get(settings, 'nameGeneration.fields.directions.items', [])
+  if (abbreviate) {
+    return dirs.map((dir: Avail.OptionProps) => ({
+      label: dir.label.slice(0, 1),
+      value: dir.value,
+    }))
+  }
+  return dirs
+}
+
+type ModifierProps = {
+  settingPath: string
+  utility: Avail.Utility
+  settings: Avail.Config<Avail.Setting>
+  options: Partial<FormattingOptions>
+}
+
+/**
+ * If a utility is configured to set direction-based modifiers (i.e., `margin-left`, etc.)
+ * generate declaration blocks for those properties.
+ */
+// function generateModifiers({ settingPath = 'nameGeneration.fields.directions.items', utility, settings, options = {} }: ModifierProps) {
+//   const setting = get(settings, settingPath, [])
+
+//   const indentLevel = INDENT_LEVEL
+//   const { infix, isImportant, prefix, negativeUnits } = getSettingsValues('export', settings)
+//   let { class: className, items, property, modifiers: { directions, abbreviate, variants } } = utility
+
+//   let subclasses: Record<string, any> = {}
+
+//   if (directions) {
+//     subclasses.directions = resolveDirections(settings, abbreviate)
+//   }
+//   if (variants) {
+//     subclasses.variants = get(settings, 'colorSchemes.fields.variants.items', [])
+//   }
+
+//   const itemsCSS = []
+
+//   setting.forEach(({ label, value }) => {
+//     const subprops = (label as string).split(' ').map((dir: string) => `${property}-${dir}`)
+
+//     items.forEach((item: Avail.OptionProps) => {
+//       const classParts = [prefix, (className || property) + label, infix, item.label] as string[]
+//       console.log('classParts', classParts)
+//       const dirItem = { label: generateClassName(classParts), value: item.value }
+//       itemsCSS.push(generateDeclarationBlock(dirItem, subprops, indentLevel, isImportant))
+//     })
+//   })
+
+//   return itemsCSS.reduce((css, itemCSS) => (css += itemCSS), '')
+// }
+
+type ModifierOptions = {
+  indentLevel?: number
+  infix?: string
 }
 
 /**
@@ -80,22 +142,31 @@ const defaultFormattingOptions: FormattingOptions = {
  * generate declaration blocks for those properties.
  */
 function generateDirectionModifiers(
-  directions: Avail.OptionProps[],
   utility: Avail.Utility,
-  options = {},
+  settings: Avail.Config<Avail.Setting>,
+  options: ModifierOptions = {},
 ): string {
-  const { indentLevel, infix, isImportant, prefix } = { ...defaultFormattingOptions, ...options }
-  let { class: className, items, property } = utility
+  let {
+    class: className,
+    items,
+    property,
+    modifiers: { abbreviate },
+  } = utility
+  const { indentLevel = INDENT_LEVEL, infix = '' } = options
+  const { isImportant, prefix } = getSettingsValues('export', settings)
+  const directions = resolveDirections(settings, abbreviate)
 
   const itemsCSS = []
 
   directions.forEach((option) => {
     const { label: dirName, value: dirValue } = option
-    const subprops = (dirValue as string).split(' ').map((dir: string) => `${property}-${dir}`)
+    const subprops = (dirValue as string).split('-').map((dir: string) => `${property}-${dir}`)
 
-    items.forEach(({ label, value }) => {
-      const classParts = [prefix, className || property, dirName, infix, label] as string[]
-      const dirItem = { label: generateClassName(classParts), value }
+    items.forEach((item: Avail.OptionProps) => {
+      const classParts = [prefix, (className || property) + dirName, infix, item.label] as string[]
+
+      // console.log('classParts', classParts)
+      const dirItem = { label: generateClassName(classParts), value: item.value }
       itemsCSS.push(generateDeclarationBlock(dirItem, subprops, indentLevel, isImportant))
     })
   })
@@ -103,21 +174,62 @@ function generateDirectionModifiers(
   return itemsCSS.reduce((css, itemCSS) => (css += itemCSS), '')
 }
 
+function generateNegativeUnitModifiers(
+  utility: Avail.Utility,
+  settings: Avail.Config<Avail.Setting>,
+  options: ModifierOptions = {},
+): string {
+  const {
+    class: className,
+    items,
+    property,
+    modifiers: { abbreviate },
+  } = utility
+  const { indentLevel = INDENT_LEVEL, infix = '' } = options
+  const { negativeUnits } = getSettingsValues('nameGeneration', settings)
+  const { isImportant, prefix } = getSettingsValues('export', settings)
+
+  const directions = resolveDirections(settings, abbreviate)
+
+  return directions
+    .reduce((itemsCSS, option) => {
+      const { label: dirName, value: dirValue } = option
+      const subprops = (dirValue as string).split('-').map((dir: string) => `${property}-${dir}`)
+
+      items
+        .filter((item) => !['0', 'auto', 'none'].includes(item.label))
+        .forEach(({ label, value }) => {
+          const classParts = [
+            prefix,
+            (className || property) + dirName,
+            infix,
+            negativeUnits + label,
+          ] as string[]
+          const dirItem = { label: generateClassName(classParts), value: `-${value}` }
+          itemsCSS.push(generateDeclarationBlock(dirItem, subprops, indentLevel, isImportant))
+        })
+      return itemsCSS
+    }, [])
+    .join('')
+}
+
 /**
  * If a utility is configured to set color variant-based modifiers (i.e., `border-primary`, etc.)
  * generate declaration blocks for those properties.
  */
 function generateVariantModifiers(
-  variants: Avail.OptionProps[],
   utility: Avail.Utility,
-  options: Partial<FormattingOptions> = {},
+  settings: Avail.Config<Avail.Setting>,
+  options: ModifierOptions = {},
 ): string {
-  let { class: className, property } = utility
-  const { directions, indentLevel, infix, isImportant, prefix } = {
-    directions: null,
-    ...defaultFormattingOptions,
-    ...options,
-  }
+  let {
+    class: className,
+    property,
+    modifiers: { directions },
+  } = utility
+  const { indentLevel = INDENT_LEVEL, infix = '' } = options
+  const variants = get(settings, 'colorSchemes.fields.variants.items', [])
+  const { isImportant, prefix } = getSettingsValues('export', settings)
 
   const itemsCSS = []
 
@@ -136,6 +248,8 @@ function generateVariantModifiers(
 
     // TODO: this is probably only used for `border-color`. Possibly refactor?
     if (directions) {
+      const directions = resolveDirections(settings)
+
       directions.forEach((dir) => {
         const { label: dirName, value: dirValue } = dir
         const dirValues = (dirValue as string).split(' ')
@@ -153,12 +267,23 @@ function generateVariantModifiers(
   return itemsCSS.reduce((css, itemCSS) => (css += itemCSS), '')
 }
 
-function getExportSettings(settings: Avail.Config<Avail.Setting>): Record<string, any> {
-  return Object.entries(settings.export.fields).reduce((acc, [k, def]) => {
+/**
+ * Get the boolean or string values set on the nested fields of our current settings.
+ * @param settingName - A `settings` key
+ * @param settings - The current Avail `settings` object
+ * @return {Avail.Setting} -
+ */
+function getSettingsValues(
+  settingName: keyof Avail.Config<Avail.Setting>,
+  settings: Avail.Config<Avail.Setting>,
+): Avail.SettingsValues {
+  return Object.entries(settings[settingName].fields).reduce((acc, [k, def]) => {
     acc[k] = def.checked || def.value
     return acc
   }, {})
 }
+
+let _prefix = ''
 
 /**
  * Generates utility classes as formatted string.
@@ -169,38 +294,29 @@ export function generateUtility(
   indentLevel = INDENT_LEVEL,
   infix = '',
 ): string {
-  let { class: className, items, property, subproperties } = utility
-  const { isImportant, prefix, sizingUnit } = getExportSettings(settings)
-  // const isImportant = get(settings, 'export.fields.isImportant.checked', []);
+  let { class: className, items, property, modifiers } = utility
+  const { isImportant, prefix, sizingUnit } = getSettingsValues('export', settings)
+
+  console.log('prefix change: ', prefix, getSettingsValues('export', settings))
 
   if (items == null || property == null) return ''
 
   let subpropertyStyles = ''
-  if (subproperties) {
-    const { directions: hasDirections, variants: hasVariants } = subproperties
+  if (modifiers) {
+    const {
+      directions: hasDirections,
+      negativeUnits: hasNegativeUnits,
+      variants: hasVariants,
+    } = modifiers
 
     if (hasDirections) {
-      const directions = get(settings, 'nameGeneration.fields.directions.items', [])
-      subpropertyStyles += generateDirectionModifiers(directions, utility, {
-        indentLevel,
-        infix,
-        isImportant,
-        prefix,
-        sizingUnit,
-      })
+      subpropertyStyles += generateDirectionModifiers(utility, settings)
+      if (hasNegativeUnits) {
+        subpropertyStyles += generateNegativeUnitModifiers(utility, settings)
+      }
     }
     if (hasVariants) {
-      const variants = get(settings, 'colorSchemes.fields.variants.items', [])
-      subpropertyStyles += generateVariantModifiers(variants, utility, {
-        indentLevel,
-        infix,
-        isImportant,
-        prefix,
-        sizingUnit,
-        directions: hasDirections
-          ? get(settings, 'nameGeneration.fields.directions.items', [])
-          : null,
-      })
+      subpropertyStyles += generateVariantModifiers(utility, settings)
     }
   }
 

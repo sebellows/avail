@@ -20,10 +20,10 @@ export const BORDER_STYLES = {
 }
 
 export const DIRECTIONS = {
-  top: 'top',
-  bottom: 'bottom',
-  left: 'left',
-  right: 'right',
+  t: 'top',
+  b: 'bottom',
+  l: 'left',
+  r: 'right',
   y: 'top bottom',
   x: 'left right',
 }
@@ -33,10 +33,10 @@ export const CORNERS = {
   bottom: 'bottom-left bottom-right',
   left: 'top-left bottom-left',
   right: 'top-right bottom-right',
-  topLeft: 'top-left',
-  topRight: 'top-right',
-  bottomLeft: 'bottom-left',
-  bottomRight: 'bottom-right',
+  // topLeft: 'top-left',
+  // topRight: 'top-right',
+  // bottomLeft: 'bottom-left',
+  // bottomRight: 'bottom-right',
 }
 
 const BLACK_100 = '#000000'

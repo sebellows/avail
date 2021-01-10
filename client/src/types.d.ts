@@ -1,5 +1,6 @@
 import {
   Booleanish,
+  valueof,
   // IntrinsicElementDef,
   // valueof
 } from './baseTypes'
@@ -191,11 +192,23 @@ declare namespace Avail {
     readOnly?: boolean
     validators?: Record<string, any>
     value?: string | number
+    onChange?: (e?: any) => void
   }
 
+  // interface Settings {
+  //   [key: string]: Setting
+  // }
+
   interface Settings {
-    [key: string]: Setting
+    export: Setting
+    colorSchemes: Setting
+    global: Setting
+    border: Setting
+    mediaQuery: Setting
+    nameGeneration: Setting
   }
+
+  type SettingsValues = { [key in valueof<Settings>]: valueof<valueof<Settings>> }
 
   interface Utility extends ConfigRecord {
     id?: string
@@ -207,8 +220,9 @@ declare namespace Avail {
     responsive?: boolean
     options?: string[] | OptionProps[]
     subitems?: OptionProps[]
-    subproperties?: Record<string, any>
+    modifiers?: Record<string, any>
     items?: OptionProps[] // used on repeater fields
+    onChange?: (e?: any) => void
   }
 
   interface Utilities {

@@ -2,7 +2,7 @@ import React, { useState, useEffect, forwardRef, useMemo } from 'react'
 import styled, { css } from 'styled-components'
 
 import { mixin } from '../../core/style'
-import { classNames, isPlainObject } from '../../core/utils'
+import { classNames, DOWN, ENTER, isPlainObject, TAB, UP } from '../../core/utils'
 import { useClickOutside, useEnsuredRef, useFocused, useLifecycles } from '../../hooks'
 
 import { Collapse } from '../Collapse'
@@ -92,12 +92,12 @@ const Dropdown: Avail.RefForwardingComponent<'div', DropdownProps> = forwardRef(
 
     useLifecycles(
       () => {
-        document.addEventListener('keypress', onKeypress)
-        document.addEventListener('keydown', onKeydown)
+        containerRef.current.addEventListener('keypress', onKeypress)
+        containerRef.current.addEventListener('keydown', onKeydown)
       },
       () => {
-        document.removeEventListener('keypress', onKeypress)
-        document.removeEventListener('keydown', onKeydown)
+        containerRef.current.removeEventListener('keypress', onKeypress)
+        containerRef.current.removeEventListener('keydown', onKeydown)
       },
     )
 
@@ -124,7 +124,7 @@ const Dropdown: Avail.RefForwardingComponent<'div', DropdownProps> = forwardRef(
     }
 
     const onKeypress = (e: any) => {
-      if (e.keyCode === 13) {
+      if (e.keyCode === ENTER) {
         e.preventDefault()
         handleSelect(items[activeIndex], e)
       }
@@ -132,12 +132,12 @@ const Dropdown: Avail.RefForwardingComponent<'div', DropdownProps> = forwardRef(
 
     const onKeydown = (e: any) => {
       // Down arrowkey or tab is pressed
-      if (e.keyCode === 40 || e.keyCode === 9) {
+      if (e.keyCode === DOWN || e.keyCode === TAB) {
         e.preventDefault()
         if (activeIndex + 1 < items.length) setActiveIndex(activeIndex + 1)
         else setActiveIndex(0)
         // Up arrowkey is pressed
-      } else if (e.keyCode === 38) {
+      } else if (e.keyCode === UP) {
         if (activeIndex - 1 > -1) setActiveIndex(activeIndex - 1)
         else setActiveIndex(computedItems.length - 1)
       }

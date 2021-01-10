@@ -21,7 +21,7 @@ type PossibleEvent = {
  *
  * See {@link https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#Improving_scrolling_performance_with_passive_listeners}
  */
-export const getOptions = (event: HandledEvent) => {
+const getOptions = (event: HandledEvent) => {
   if (event !== HandledEvent.TOUCHSTART) {
     return
   }
