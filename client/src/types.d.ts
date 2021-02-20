@@ -1,9 +1,123 @@
-import {
-  Booleanish,
+declare type Constructor<T> = new (args: any) => T
+declare type Func = (...args: any[]) => any
+
+declare type valueof<T> = typeof T[keyof typeof T] | T[keyof T]
+
+declare type Primitive = string | boolean | number | symbol | null | undefined
+
+declare type LiteralToPrimitive<T extends any> = T extends string
+  ? string
+  : T extends number
+  ? number
+  : T extends boolean
+  ? boolean
+  : T
+
+declare type Booleanish = boolean | 'true' | 'false'
+
+/** Avoid type "any object" */
+declare type AnyObject<T = any> = Record<string, T>
+declare type CollectionObj<T = unknown> = Record<string, T>
+declare type Collection<T = any> = CollectionObj<T>[]
+
+/**
+ * Get function or non-function properties from defined types.
+ * @see {@link https://stackoverflow.com/a/58210459}
+ */
+declare type FunctionPropertyNames<T> = {
+  [K in keyof T]: T[K] extends Function ? K : never
+}[keyof T]
+declare type FunctionProperties<T> = Pick<T, FunctionPropertyNames<T>>
+declare type NonFunctionPropertyNames<T> = {
+  [K in keyof T]: T[K] extends Function ? never : K
+}[keyof T]
+declare type NonFunctionProperties<T> = Pick<T, NonFunctionPropertyNames<T>>
+
+/**
+ * Replace property Target in T with Replacement
+ * @example
+ * type Example = Replace<{foo: string}, 'foo', number>
+ */
+declare type Replace<T, Target extends keyof T, Replacement> = Omit<T, Target> &
+  { [key in Target]: Replacement }
+
+declare type RenameKey<T, K extends keyof T, R extends PropertyKey> = {
+  [P in keyof T as P extends K ? R : P]: T[P]
+}
+
+declare type MakeOptional<T, K extends keyof T> = Omit<T, K> &
+  { [key in K]+?: Exclude<T[key], null | undefined> }
+
+/**
+ * @type {CSSObject}
+ * @example
+ * [
+ *   {
+ *     borderRadius: "0.1875rem"
+ *   }, {
+ *     "@media screen and (min-width: 35.9375em)": {
+ *       borderRadius: "0.3125rem"
+ *     }
+ *   }, {
+ *     "@media screen and (min-width: 61.8125em)": {
+ *       borderRadius: "0.5625rem"
+ *     }
+ *   }
+ * ]
+ */
+// declare type CSSObject<T = Primitive> = AnyObject<T> | AnyObject<AnyObject<T>>
+declare type CSSObject<T = Primitive> = StyledCSSObject & (AnyObject<T> | AnyObject<AnyObject<T>>)
+
+// interface ThemeProps {
+//   bg?: string
+//   fg?: string
+//   borderColor?: string
+//   boxShadow?: string
+//   hoverColor?: string
+//   checked?: string
+// }
+
+// interface Theme {
+//   name: string
+//   bg: string
+//   fg: string
+//   primary: string
+//   accent: string
+//   link: ThemeProps
+//   borderColor: string
+//   control: ThemeProps
+//   disabled: ThemeProps
+//   focus: ThemeProps
+//   hover: ThemeProps
+//   invalid: ThemeProps
+//   muted: string
+// }
+declare type Theme = AnyObject
+
+export type EventWithTarget<T> = React.SyntheticEvent<T> & { target: T }
+export type FormEventWithTarget<T = HTMLInputElement> = React.FormEvent<T> & { target: T }
+
+export {
+  Constructor,
+  CSSObject,
+  Func,
   valueof,
-  // IntrinsicElementDef,
-  // valueof
-} from './baseTypes'
+  Primitive,
+  LiteralToPrimitive,
+  Booleanish,
+  AnyObject,
+  Collection,
+  FunctionPropertyNames,
+  FunctionProperties,
+  MakeOptional,
+  NonFunctionPropertyNames,
+  NonFunctionProperties,
+  Replace,
+  RenameKey,
+  Theme,
+  EventWithTarget,
+  FormEventWithTarget,
+}
 
 declare namespace Avail {
   type ReplaceProps<Inner extends React.ElementType, P> = Omit<
@@ -134,31 +248,6 @@ declare namespace Avail {
 
   type Listener = (this: HTMLElement, ev: TransitionEvent) => any
 
-  interface ThemeProps {
-    bg?: string
-    fg?: string
-    borderColor?: string
-    boxShadow?: string
-    hoverColor?: string
-    checked?: string
-  }
-
-  interface Theme {
-    name: string
-    bg: string
-    fg: string
-    primary: string
-    accent: string
-    link: ThemeProps
-    borderColor: string
-    control: ThemeProps
-    disabled: ThemeProps
-    focus: ThemeProps
-    hover: ThemeProps
-    invalid: ThemeProps
-    muted: string
-  }
-
   interface ClassMap {
     control?: string
     container?: string
@@ -214,7 +303,7 @@ declare namespace Avail {
     id?: string
     class?: string
     description?: string
-    enabled?: boolean
+    active?: boolean
     inputType?: string
     property?: string
     responsive?: boolean

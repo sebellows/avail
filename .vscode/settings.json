@@ -1,8 +1,9 @@
 {
+  "editor.tabSize": 2,
+  "eslint.packageManager": "yarn",
+  "eslint.nodePath": "./node_modules/.bin/eslint",
   "prettier.arrowParens": "always",
   "prettier.printWidth": 100,
   "prettier.tabWidth": 2,
-  "prettier.trailingComma": "all",
-  "eslint.packageManager": "yarn",
-  "editor.tabSize": 2,
+  "prettier.trailingComma": "all"
 }

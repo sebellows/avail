@@ -1,27 +1,17 @@
 {
+  "extends": "../tsconfig",
   "compilerOptions": {
-    "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "outDir": "./dist/",
     "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "noImplicitAny": false,
-    "strictNullChecks": false,
-    "jsx": "react"
+    "jsx": "react-jsx",
+    "paths": {
+      "$storybook/*": ["./ui/storybook/*"]
+    }
   },
   "include": [
-    "src"
+    "./src",
+    "./scripts",
+    "./storybook",
+    "./typings/*.d.ts"
   ]
 }

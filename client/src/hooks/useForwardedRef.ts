@@ -1,0 +1,20 @@
+import React, { useRef } from 'react'
+import { useIsomorphicEffect } from './useIsomorphicEffect'
+
+export function useForwardedRef<T>(
+  ref: React.MutableRefObject<T> | T,
+): React.MutableRefObject<T | null> {
+  const innerRef = useRef<T | null>(null)
+
+  useIsomorphicEffect(() => {
+    if (!ref) return
+
+    if (typeof ref === 'function') {
+      ref(innerRef.current)
+    } else {
+      ;(ref as React.MutableRefObject<T>).current = innerRef.current
+    }
+  })
+
+  return innerRef
+}

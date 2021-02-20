@@ -1,0 +1,9 @@
+{
+  "extends": "../tsconfig.build",
+  "include": ["./typings/*.d.ts"],
+  "files": ["./src/index.tsx"],
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "jsx": "react-jsx"
+  }
+}
