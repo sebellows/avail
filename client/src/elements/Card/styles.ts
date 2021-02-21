@@ -46,6 +46,7 @@ function vars(base: ThemeColorBase, color: ThemeColorCardStyle) {
 
 export function cardColorStyle(props: CardStyleProps & ThemeProps) {
   const { theme } = props
+  console.log('cardColorStyle', theme, props)
   const { base, card } = theme.color as ThemeColor
   const styles = (theme as Theme).styles as ThemeStyles
 

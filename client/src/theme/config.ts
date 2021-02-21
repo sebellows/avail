@@ -2,7 +2,7 @@ import { color } from './colors'
 import { fonts } from './fonts'
 import { RootTheme, ThemeFontWeightKey } from './types'
 
-export const zOffsets = {
+const zOffsets = {
   dropdown: 700,
   tooltip: 800,
   fixedActionButton: 900,
@@ -14,7 +14,7 @@ export const zOffsets = {
 
 const BORDER_COLOR = 'rgba(0, 0, 0, 0.12)'
 
-export const rootTheme: RootTheme = {
+const rootTheme: RootTheme = {
   border: {
     none: 0,
     base: `1px solid ${BORDER_COLOR}`,
@@ -79,3 +79,6 @@ export const rootTheme: RootTheme = {
   },
   zOffsets,
 }
+
+export default rootTheme
+export { rootTheme, zOffsets }

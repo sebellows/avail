@@ -8,11 +8,7 @@ export function textBaseStyle({ $accent, $muted, theme }: TextBaseStyleProps) {
 
   return css`
     color: var(--card-fg-color);
-    &:before {
-      content: '';
-      display: block;
-      height: 0;
-    }
+    &:before,
     &:after {
       content: '';
       display: block;

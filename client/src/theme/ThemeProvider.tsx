@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext } from 'react'
 import { ThemeProvider as StyledThemeProvider, useTheme as useStyledTheme } from 'styled-components'
 import { MakeOptional } from '../types'
-import { rootTheme } from './config'
+// import { rootTheme } from './config'
 import { Theme, RootTheme } from './types'
 import { ThemeColorVariant, ThemeColorSchemeKey } from './colors/types'
 import { ls } from '../utils'
@@ -11,6 +11,7 @@ export interface ThemeContextValue {
   theme?: RootTheme
   variant?: ThemeColorVariant
   themeLoaded?: boolean
+  version?: number
   setScheme?: React.Dispatch<React.SetStateAction<ThemeColorSchemeKey>>
   setVariant?: React.Dispatch<React.SetStateAction<ThemeColorVariant>>
 }
@@ -23,38 +24,58 @@ export const ThemeContext = createContext<ThemeContextValue | null>(null)
 
 export const ThemeProvider = ({
   children,
-  scheme: currentScheme = 'light',
-  theme: schemes = rootTheme,
-  variant: initialVariant = 'default',
+  scheme = 'light',
+  theme: rootTheme,
+  variant = 'default',
 }: ThemeProviderProps) => {
-  const [scheme, setScheme] = useState(currentScheme)
-  const [variant, setVariant] = useState(initialVariant)
-  const [theme, setTheme] = useState({
-    ...schemes,
-    scheme,
-    color: schemes.color[currentScheme][initialVariant],
-  })
-  const [themeLoaded, setThemeLoaded] = useState<boolean>(false)
+  // const { children, scheme = 'light', theme: rootTheme, tone = 'default' } = props
+  // const [themeLoaded, setThemeLoaded] = useState<boolean>(false)
 
-  const prevScheme = React.useRef<string>(scheme)
+  const theme: Theme = React.useMemo(() => {
+    const { color: rootColor, ...restTheme } = rootTheme
+    const colorScheme = rootColor[scheme] || rootColor.light
+    const color = colorScheme[variant] || colorScheme.default
 
-  React.useEffect(() => {
-    if (!prevScheme && scheme && !themeLoaded) {
-      setThemeLoaded(true)
+    return { ...restTheme, color }
+  }, [rootTheme, scheme, variant])
+
+  const value: ThemeContextValue = React.useMemo(() => {
+    const currentTheme = {
+      version: 0.0,
+      theme: rootTheme,
+      scheme,
+      variant,
     }
-    if (prevScheme && prevScheme.current !== scheme) {
-      // setVariantConfig(rootTheme[scheme][variant])
-      const newScheme = { ...schemes, scheme, color: schemes.color[scheme][variant] }
-      setTheme(newScheme)
-      ls.set('theme', newScheme)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scheme])
+    ls.set('theme', currentTheme)
+    return currentTheme
+  }, [rootTheme, scheme, variant])
 
+  // const [scheme, setScheme] = useState(currentScheme)
+  // const [variant, setVariant] = useState(initialVariant)
+  // const [theme, setTheme] = useState({
+  //   ...schemes,
+  //   scheme,
+  //   color: schemes.color[currentScheme][initialVariant],
+  // })
+
+  // const prevScheme = React.useRef<string>(scheme)
+
+  // React.useEffect(() => {
+  //   if (!prevScheme && scheme && !themeLoaded) {
+  //     setThemeLoaded(true)
+  //   }
+  //   if (prevScheme && prevScheme.current !== scheme) {
+  //     // setVariantConfig(rootTheme[scheme][variant])
+  //     const newScheme = { ...currentTheme, scheme, color: currentTheme.color[scheme][variant] }
+  //     // setTheme(newScheme)
+  //     ls.set('theme', newScheme)
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [scheme])
+
+  // { theme: schemes, scheme, themeLoaded, variant, setScheme, setVariant }
   return (
-    <ThemeContext.Provider
-      value={{ theme: schemes, scheme, themeLoaded, variant, setScheme, setVariant }}
-    >
+    <ThemeContext.Provider value={value}>
       <StyledThemeProvider theme={theme}>{children}</StyledThemeProvider>
     </ThemeContext.Provider>
   )

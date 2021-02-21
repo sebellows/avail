@@ -19,12 +19,17 @@ import { Spinner } from '../Spinner'
 import { IconName } from '../Icon/IconMap'
 import { buttonBaseStyles, buttonColorStyles } from './styles'
 
-export interface ButtonProps extends PaddingProps, BorderRadiusProps, FontSizeProps, SpaceProps {
-  as?: React.ElementType | keyof JSX.IntrinsicElements
+export interface ButtonProps
+  extends Avail.ComponentProps,
+    PaddingProps,
+    BorderRadiusProps,
+    FontSizeProps,
+    SpaceProps {
+  // as?: React.ElementType | keyof JSX.IntrinsicElements
   mode?: ThemeColorButtonModeKey
   icon?: IconName | React.ComponentType | React.ReactNode
   // icon?: IconName
-  iconRight?: React.ComponentType | React.ReactNode
+  iconRight?: IconName | React.ComponentType | React.ReactNode
   justify?: FlexJustify | FlexJustify[]
   /**
    * @beta Do not use in production, as this might change.
@@ -32,7 +37,7 @@ export interface ButtonProps extends PaddingProps, BorderRadiusProps, FontSizePr
   loading?: boolean
   selected?: boolean
   // space?: number | number[]
-  text?: React.ReactNode
+  label?: React.ReactNode
   variant?: ThemeColorVariantKey
   type?: 'button' | 'reset' | 'submit'
 }
@@ -80,7 +85,7 @@ const Button = forwardRef<
       radius = 'sm',
       selected,
       space = 8,
-      text,
+      label,
       variant = 'default',
       type = 'button',
       ...restProps
@@ -121,45 +126,44 @@ const Button = forwardRef<
           </LoadingBox>
         )}
 
-        {(icon || text || iconRight) && (
-          <Box as="span" {...boxProps}>
-            <Flex as="span" align="center" justify={justify}>
-              {icon && (
-                <Text as="span" data-icon={true} size={size}>
-                  {typeof icon === 'string' ? (
-                    <Icon name={icon} />
-                  ) : isValidElement(icon) ? (
-                    icon
-                  ) : (
-                    isValidElementType(icon) && createElement(icon)
-                  )}
-                </Text>
-              )}
+        <Box as="span" {...boxProps}>
+          <Flex as="span" align="center" justify={justify}>
+            {icon && (
+              <Text as="span" data-icon={true} size={size}>
+                {typeof icon === 'string' ? (
+                  <Icon name={icon} />
+                ) : isValidElement(icon) ? (
+                  icon
+                ) : (
+                  isValidElementType(icon) && createElement(icon)
+                )}
+              </Text>
+            )}
 
-              {text && (
-                <Box
-                  as="span"
-                  flex={iconRight ? 1 : undefined}
-                  marginLeft={icon ? space : undefined}
-                  marginRight={iconRight ? space : undefined}
-                >
-                  <Text size={size} fontWeight={theme.button.textWeight}>
-                    {text}
-                  </Text>
-                </Box>
-              )}
+            <Box
+              as="span"
+              flex={iconRight ? 1 : undefined}
+              marginLeft={icon ? space : undefined}
+              marginRight={iconRight ? space : undefined}
+            >
+              <Text size={size} fontWeight={theme.button.textWeight}>
+                {label ?? children}
+              </Text>
+            </Box>
 
-              {iconRight && (
-                <Text as="span" data-icon={true} size={size}>
-                  {isValidElement(iconRight) && iconRight}
-                  {isValidElementType(iconRight) && createElement(iconRight)}
-                </Text>
-              )}
-            </Flex>
-          </Box>
-        )}
-
-        {children && <span>{children}</span>}
+            {iconRight && (
+              <Text as="span" data-icon={true} size={size}>
+                {typeof iconRight === 'string' ? (
+                  <Icon name={iconRight} />
+                ) : isValidElement(iconRight) ? (
+                  iconRight
+                ) : (
+                  isValidElementType(iconRight) && createElement(iconRight)
+                )}
+              </Text>
+            )}
+          </Flex>
+        </Box>
       </Root>
     )
   },

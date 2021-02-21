@@ -89,6 +89,7 @@ function fontSize(size: ThemeFontSize): CSSObject {
     size.lineHeight > 10 ? toRatio(size.lineHeight, size.fontSize) : size.lineHeight
   const verticalSpace = (lineHeight - 1) / 2
   const topOffset = Number(((verticalSpace + descenderScale) * size.fontSize).toFixed(4))
+  console.log('fonts->fontSize', topOffset, verticalSpace, descenderScale, size.fontSize)
 
   return {
     fontSize: toREM(size.fontSize),
@@ -96,17 +97,11 @@ function fontSize(size: ThemeFontSize): CSSObject {
     letterSpacing: toREM(size.letterSpacing),
     transform: `translateY(${toREM(typeOffset)})`,
 
-    '&:before': {
-      content: '',
-      display: 'block',
-      height: 0,
-      marginTop: `calc(${toREM(0 - topOffset)} - 1px)`,
+    '&::before': {
+      marginTop: `calc(-${toREM(topOffset)} - 1px)`,
     },
 
-    '&:after': {
-      content: '',
-      display: 'block',
-      height: 0,
+    '&::after': {
       marginBottom: `-${toREM(1)}`,
     },
 
