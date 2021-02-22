@@ -5,12 +5,10 @@ import { action } from '@storybook/addon-actions'
 import React from 'react'
 import styled from 'styled-components'
 import { withCentered } from '../../../storybook/decorators'
-import { ICON_MAP } from '../Icon/IconMap'
+import { ICON_MAP, IconSymbol } from '../Icon/IconMap'
 import { Container } from '../Container'
 import { Card } from '../Card'
 import { ComponentWithStaticMethod } from 'client/storybook/types'
-
-type IconSymbol = keyof typeof ICON_MAP
 
 type BasicButtonProps = ButtonProps & Partial<Omit<HTMLButtonElement, 'size'>>
 type BasicArgs = Pick<
@@ -31,7 +29,7 @@ type BasicArgs = Pick<
   | 'variant'
 >
 
-const iconOptions = Object.keys(ICON_MAP)
+const iconOptions: IconSymbol[] = Object.keys(ICON_MAP)
 const justifyOptions = {
   Start: 'flex-start',
   End: 'flex-end',

@@ -9,7 +9,7 @@ export type IconConfig = { title: string; aliases?: string[]; children: React.Re
  * @license MIT {@link https://github.com/colebemis/feather/blob/master/LICENSE}
  */
 
-export type IconName = keyof typeof ICON_MAP
+export type IconSymbol = keyof typeof ICON_MAP
 
 export const ICON_MAP: Record<string, IconConfig> = {
   add: {

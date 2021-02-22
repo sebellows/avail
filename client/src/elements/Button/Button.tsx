@@ -13,10 +13,9 @@ import {
 } from '../../styles/types'
 import { Box } from '../Box'
 import { Flex } from '../Flex'
-import { Icon } from '../Icon'
+import { Icon, IconSymbol } from '../Icon'
 import { Text } from '../Text'
 import { Spinner } from '../Spinner'
-import { IconName } from '../Icon/IconMap'
 import { buttonBaseStyles, buttonColorStyles } from './styles'
 
 export interface ButtonProps
@@ -27,9 +26,9 @@ export interface ButtonProps
     SpaceProps {
   // as?: React.ElementType | keyof JSX.IntrinsicElements
   mode?: ThemeColorButtonModeKey
-  icon?: IconName | React.ComponentType | React.ReactNode
-  // icon?: IconName
-  iconRight?: IconName | React.ComponentType | React.ReactNode
+  icon?: IconSymbol | React.ComponentType | React.ReactNode
+  // icon?: IconSymbol
+  iconRight?: IconSymbol | React.ComponentType | React.ReactNode
   justify?: FlexJustify | FlexJustify[]
   /**
    * @beta Do not use in production, as this might change.
