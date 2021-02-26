@@ -74,13 +74,20 @@ const Button = forwardRef<
       justify = 'center',
       loading,
       mode = 'default',
-      padding,
-      paddingX,
-      paddingY,
-      paddingTop = 8,
-      paddingBottom = 8,
-      paddingLeft = 16,
-      paddingRight = 16,
+      p,
+      px,
+      py,
+      pt = 8,
+      pb = 8,
+      pl = 16,
+      pr = 16,
+      // padding,
+      // paddingX,
+      // paddingY,
+      // paddingTop = 8,
+      // paddingBottom = 8,
+      // paddingLeft = 16,
+      // paddingRight = 16,
       radius = 'sm',
       selected,
       space = 8,
@@ -96,14 +103,14 @@ const Button = forwardRef<
     const { space: spaces } = theme
 
     const boxProps = {
-      padding,
-      paddingX,
-      paddingY,
-      paddingTop,
-      paddingBottom,
-      paddingLeft: icon && paddingLeft ? spaces[spaces.indexOf(paddingLeft) - 1] : paddingLeft,
-      paddingRight:
-        iconRight && paddingRight ? spaces[spaces.indexOf(paddingRight) - 1] : paddingRight,
+      p,
+      px,
+      py,
+      pt,
+      pb,
+      pl: icon && pl ? spaces[spaces.indexOf(pl) - 1] : pl,
+      pr:
+        iconRight && pr ? spaces[spaces.indexOf(pr) - 1] : pr,
     }
 
     return (
@@ -142,8 +149,8 @@ const Button = forwardRef<
             <Box
               as="span"
               flex={iconRight ? 1 : undefined}
-              marginLeft={icon ? space : undefined}
-              marginRight={iconRight ? space : undefined}
+              ml={icon ? space : undefined}
+              mr={iconRight ? space : undefined}
             >
               <Text size={size} fontWeight={theme.button.textWeight}>
                 {label ?? children}

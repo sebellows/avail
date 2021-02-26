@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { CSSObject, Primitive } from '../types'
+import { CSSObject, Primitive, valueof } from '../types'
 import { Theme, ThemeProps, ThemeSizeKey } from '../theme'
 import { PROP_ALIAS_MAP } from './constants'
 
@@ -119,7 +119,27 @@ export interface BorderStyleProps {
   $borderLeft?: PropValueType<string>
 }
 
+// type StyleProps<Props, ValueType> = Partial<Record<keyof Props, PropValueType<ValueType>>>
+// type IntStyleProps<Props, ValueType, K extends keyof Props = keyof Props> = Partial<
+//   Record<K, PropValueType<ValueType>>
+// >
+
+// const _MarginProps = pickPropsByKey('margin')
+// export type MarginProps = StyleProps<typeof _MarginProps, number>
+// export type MarginStyleProps = IntStyleProps<typeof _MarginProps, number>
+
+// const _PaddingProps = pickPropsByKey('padding')
+// export type PaddingProps = StyleProps<typeof _PaddingProps, number>
+// export type PaddingStyleProps = IntStyleProps<typeof _PaddingProps, number>
+
 export interface MarginProps {
+  m?: PropValueType<number>
+  mx?: PropValueType<number>
+  my?: PropValueType<number>
+  mt?: PropValueType<number>
+  mr?: PropValueType<number>
+  mb?: PropValueType<number>
+  ml?: PropValueType<number>
   margin?: PropValueType<number>
   marginX?: PropValueType<number>
   marginY?: PropValueType<number>
@@ -140,6 +160,13 @@ export interface MarginStyleProps {
 }
 
 export interface PaddingProps {
+  p?: PropValueType<number>
+  px?: PropValueType<number>
+  py?: PropValueType<number>
+  pt?: PropValueType<number>
+  pr?: PropValueType<number>
+  pb?: PropValueType<number>
+  pl?: PropValueType<number>
   padding?: PropValueType<number>
   paddingX?: PropValueType<number>
   paddingY?: PropValueType<number>

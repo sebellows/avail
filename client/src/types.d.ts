@@ -1,7 +1,8 @@
 declare type Constructor<T> = new (args: any) => T
 declare type Func = (...args: any[]) => any
 
-declare type valueof<T> = typeof T[keyof typeof T] | T[keyof T]
+// declare type valueof<T> = typeof T[keyof typeof T] | T[keyof T]
+declare type valueof<T> = T[keyof T]
 
 declare type Primitive = string | boolean | number | symbol | null | undefined
 
@@ -15,10 +16,32 @@ declare type LiteralToPrimitive<T extends any> = T extends string
 
 declare type Booleanish = boolean | 'true' | 'false'
 
+declare type ConditionalKeys<Base, Condition> = NonNullable<
+  // Wrap in `NonNullable` to strip away the `undefined` type from the produced union.
+  {
+    // Map through all the keys of the given base type.
+    [Key in keyof Base]: // Pick only keys with types extending the given `Condition` type.
+    Base[Key] extends Condition
+      ? // Retain this key since the condition passes.
+        Key
+      : // Discard this key since the condition fails.
+        never
+
+    // Convert the produced object into a union type of the keys which passed the conditional test.
+  }[keyof Base]
+>
+declare type ConditionalPick<Base, Condition> = Pick<Base, ConditionalKeys<Base, Condition>>
+
 /** Avoid type "any object" */
 declare type AnyObject<T = any> = Record<string, T>
 declare type CollectionObj<T = unknown> = Record<string, T>
 declare type Collection<T = any> = CollectionObj<T>[]
+declare type CollectionItem<T extends object = object> = Record<keyof T, valueof<T>>
+declare type CollectionIter<Item extends CollectionItem = CollectionItem, V = any> = (
+  v: valueof<Item>,
+  i?: number,
+  o?: Item,
+) => V
 
 /**
  * Get function or non-function properties from defined types.
@@ -102,11 +125,16 @@ export {
   CSSObject,
   Func,
   valueof,
+  ValueType,
   Primitive,
   LiteralToPrimitive,
   Booleanish,
+  ConditionalKeys,
+  ConditionalPick,
   AnyObject,
   Collection,
+  CollectionItem,
+  CollectionIter,
   FunctionPropertyNames,
   FunctionProperties,
   MakeOptional,

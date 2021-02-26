@@ -19,8 +19,8 @@ type BasicArgs = Pick<
   | 'label'
   | 'loading'
   | 'mode'
-  | 'paddingX'
-  | 'paddingY'
+  | 'px'
+  | 'py'
   | 'selected'
   | 'size'
   | 'space'
@@ -66,6 +66,7 @@ export default {
     label: {
       name: 'label',
       defaultValue: 'Click Me!',
+      description: '',
       type: { name: 'string' },
       table: {
         type: { summary: 'string' },
@@ -75,6 +76,7 @@ export default {
     disabled: {
       name: 'disabled',
       defaultValue: false,
+      description: '',
       table: {
         type: { summary: 'boolean' },
         defaultValue: { summary: false },
@@ -84,7 +86,7 @@ export default {
     icon: {
       name: 'icon',
       defaultValue: '',
-      description: 'A list of available icons are listed in the IconMap.tsx file',
+      description: 'A list of available icons are listed in the `IconMap.tsx` file',
       table: {
         type: { summary: 'enum' },
       },
@@ -102,6 +104,7 @@ export default {
     justify: {
       name: 'justify',
       defaultValue: 'center',
+      description: '',
       table: {
         type: { summary: 'enum' },
         defaultValue: { summary: '"center"' },
@@ -121,15 +124,17 @@ export default {
     mode: {
       name: 'mode',
       defaultValue: 'default',
+      description: '',
       table: {
         type: { summary: 'enum' },
         defaultValue: { summary: '"default"' },
       },
       control: { type: 'select', options: modeOptions },
     },
-    paddingX: {
+    px: {
       name: 'paddingX',
       defaultValue: 8,
+      description: '',
       table: {
         type: {
           summary: 'number of pixels',
@@ -139,9 +144,10 @@ export default {
       },
       control: { type: 'range', min: 0, max: 24, step: 4 },
     },
-    paddingY: {
+    py: {
       name: 'paddingY',
       defaultValue: 8,
+      description: '',
       table: {
         type: {
           summary: 'number of pixels',
@@ -175,6 +181,7 @@ export default {
     space: {
       name: 'space',
       defaultValue: 4,
+      description: '',
       table: {
         type: {
           summary: 'number of pixels',
@@ -187,6 +194,7 @@ export default {
     variant: {
       name: 'variant',
       defaultValue: 'primary',
+      description: '',
       table: {
         type: { summary: 'enum' },
         defaultValue: { summary: '"primary"' },
@@ -205,8 +213,8 @@ export const BasicButton: ComponentWithStaticMethod<BasicArgs> = (args: BasicArg
     label,
     loading,
     mode,
-    paddingX,
-    paddingY,
+    px,
+    py,
     selected,
     size,
     space,
@@ -227,8 +235,8 @@ export const BasicButton: ComponentWithStaticMethod<BasicArgs> = (args: BasicArg
           loading={loading}
           mode={mode}
           onClick={action('onClick')}
-          paddingX={paddingX}
-          paddingY={paddingY}
+          px={px}
+          py={py}
           selected={selected}
           space={space}
           label={label as string}

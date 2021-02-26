@@ -40,6 +40,13 @@ const Box = forwardRef<HTMLDivElement, BoxProps & Omit<React.HTMLProps<HTMLDivEl
       display = 'block',
       flex,
       height,
+      m = 0,
+      mx,
+      my,
+      mt,
+      mr,
+      mb,
+      ml,
       margin = 0,
       marginX,
       marginY,
@@ -48,6 +55,13 @@ const Box = forwardRef<HTMLDivElement, BoxProps & Omit<React.HTMLProps<HTMLDivEl
       marginBottom,
       marginLeft,
       overflow,
+      p = 0,
+      px,
+      py,
+      pt,
+      pr,
+      pb,
+      pl,
       padding = 0,
       paddingX,
       paddingY,
@@ -67,26 +81,26 @@ const Box = forwardRef<HTMLDivElement, BoxProps & Omit<React.HTMLProps<HTMLDivEl
       <Root
         data-ui="Box"
         {...restProps}
-        $padding={padding}
-        $paddingX={paddingX}
-        $paddingY={paddingY}
-        $paddingTop={paddingTop}
-        $paddingRight={paddingRight}
-        $paddingBottom={paddingBottom}
-        $paddingLeft={paddingLeft}
+        $padding={p ?? padding}
+        $paddingX={px ?? paddingX}
+        $paddingY={py ?? paddingY}
+        $paddingTop={pt ?? paddingTop}
+        $paddingRight={pr ?? paddingRight}
+        $paddingBottom={pb ?? paddingBottom}
+        $paddingLeft={pl ?? paddingLeft}
         $column={column}
         $columnStart={columnStart}
         $columnEnd={columnEnd}
         $display={display}
         $flex={flex}
         $height={height}
-        $margin={margin}
-        $marginX={marginX}
-        $marginY={marginY}
-        $marginTop={marginTop}
-        $marginRight={marginRight}
-        $marginBottom={marginBottom}
-        $marginLeft={marginLeft}
+        $margin={m ?? margin}
+        $marginX={mx ?? marginX}
+        $marginY={my ?? marginY}
+        $marginTop={mt ?? marginTop}
+        $marginRight={mr ?? marginRight}
+        $marginBottom={mb ?? marginBottom}
+        $marginLeft={ml ?? marginLeft}
         $overflow={overflow}
         $row={row}
         $rowStart={rowStart}

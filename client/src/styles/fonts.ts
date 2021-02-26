@@ -23,7 +23,7 @@ export interface FontSettingStyleProps extends FontSizeStyleProps, FontWeightSty
 export function fontStyle(fontKey: ThemeFontKey) {
   return (props: FontSettingStyleProps & ThemeProps) => {
     const _fontSizeStyle = generateStyles('size', (value: number, i, props) => {
-      console.log('fontStyle', fontKey, value, props)
+      // console.log('fontStyle', fontKey, value, props)
       return fontSize(get(props.theme, `fonts.${fontKey}.sizes.${value}`))
     })(props)
     const _fontWeightStyle = generateStyles('fontWeight', (value: FontWeightKey, i, props) => {
@@ -77,7 +77,7 @@ function computedDescenderScale(size: ThemeFontSize) {
 }
 
 function fontSize(size: ThemeFontSize): CSSObject {
-  console.log('fontSize', size)
+  // console.log('fontSize', size)
   const descenderScale = computedDescenderScale(size)
   const capHeight = Number((size.fontSize * (1 - descenderScale)).toFixed(4))
   const iconSize =
@@ -89,7 +89,7 @@ function fontSize(size: ThemeFontSize): CSSObject {
     size.lineHeight > 10 ? toRatio(size.lineHeight, size.fontSize) : size.lineHeight
   const verticalSpace = (lineHeight - 1) / 2
   const topOffset = Number(((verticalSpace + descenderScale) * size.fontSize).toFixed(4))
-  console.log('fonts->fontSize', topOffset, verticalSpace, descenderScale, size.fontSize)
+  // console.log('fonts->fontSize', topOffset, verticalSpace, descenderScale, size.fontSize)
 
   return {
     fontSize: toREM(size.fontSize),

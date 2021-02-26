@@ -1,6 +1,7 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable no-useless-escape */
 
+import { CollectionItem, CollectionIter, valueof } from '../types'
 import {
   isBoolean,
   isIterable,
@@ -385,10 +386,34 @@ export function pick<T extends object = object>(obj: T, ...keys: (string | numbe
   }, {})
 }
 
+export function pickBy<T, K extends keyof T>(obj: T, cb: CollectionIter<T, boolean>) {
+  const keys = Object.keys(obj).filter((key) => cb(obj[key])) as K[]
+  const props = keys.reduce((acc, k: keyof T) => {
+    acc[k as string] = obj[k]
+    return acc
+  }, {} as Record<K, T[K]>)
+  return props
+  // return Object.entries(obj).reduce((o, [k, v]) => {
+  //   if (cb(v)) {
+  //     o[k] = v
+  //   }
+  //   return o as Partial<T> & { [prop in typeof k]: typeof v }
+  // }, {} as Partial<T>)
+}
+
 export function omit<T extends object = object>(obj: T, ...keys: (string | number)[]) {
   return Object.keys(obj).reduce((o, key) => {
     if (!keys.includes(key)) {
       o[key] = obj[key]
+    }
+    return o
+  }, {})
+}
+
+export function omitBy<T extends object = object>(obj: T, cb: CollectionIter<T, boolean>) {
+  return Object.entries(obj).reduce((o, [k, v]) => {
+    if (!cb(v)) {
+      o[k] = v
     }
     return o
   }, {})
