@@ -2,13 +2,13 @@ import React, { forwardRef } from 'react'
 import styled from 'styled-components/macro'
 import { Label } from '../Label'
 import { Box, BoxProps } from '../Box'
-import { BorderRadiusProps, radiusStyle, RadiusStyleProps } from '../../styles'
+import { BorderRadiusProps, FontSizeProps, radiusStyle, RadiusStyleProps } from '../../styles'
 import { badgeStyle } from './styles'
 import { BadgeStyleProps, BadgeMode, BadgeVariant } from './types'
 
-export interface BadgeProps extends BoxProps, BorderRadiusProps {
+export interface BadgeProps extends BoxProps, BorderRadiusProps, FontSizeProps {
   as?: React.ElementType | keyof JSX.IntrinsicElements
-  fontSize?: string | string[]
+  // fontSize?: string | string[]
   mode?: BadgeMode
   variant?: BadgeVariant
 }
@@ -18,9 +18,9 @@ const Root = styled(Box)<BadgeStyleProps & RadiusStyleProps>(radiusStyle, badgeS
 export const Badge = forwardRef((props: BadgeProps & React.HTMLProps<HTMLDivElement>, ref) => {
   const {
     children,
-    fontSize,
+    size = 'sm',
     mode = 'default',
-    padding = 4,
+    p = 4,
     radius = 'sm',
     variant = 'default',
     ...restProps
@@ -33,10 +33,10 @@ export const Badge = forwardRef((props: BadgeProps & React.HTMLProps<HTMLDivElem
       $mode={mode}
       $variant={variant}
       $radius={radius}
-      padding={padding}
+      $p={p}
       ref={ref}
     >
-      <Label size={fontSize}>{children}</Label>
+      <Label size={size}>{children}</Label>
     </Root>
   )
 })

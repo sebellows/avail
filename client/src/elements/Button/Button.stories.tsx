@@ -1,12 +1,12 @@
-import { Button, ButtonProps } from './Button'
 import { action } from '@storybook/addon-actions'
 import React from 'react'
 import styled from 'styled-components'
 import { withCentered } from '../../../storybook/decorators'
+import { ComponentWithStaticMethod } from '../../../storybook/types'
 import { ICON_MAP, IconSymbol } from '../Icon/IconMap'
 import { Container } from '../Container'
 import { Card } from '../Card'
-import { ComponentWithStaticMethod } from 'client/storybook/types'
+import { Button, ButtonProps } from './Button'
 
 type BasicButtonProps = ButtonProps & Partial<Omit<HTMLButtonElement, 'size'>>
 type BasicArgs = Pick<
@@ -67,7 +67,6 @@ export default {
       name: 'label',
       defaultValue: 'Click Me!',
       description: '',
-      type: { name: 'string' },
       table: {
         type: { summary: 'string' },
       },

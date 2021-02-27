@@ -1,7 +1,7 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable no-useless-escape */
 
-import { CollectionItem, CollectionIter, valueof } from '../types'
+import { CollectionIter } from '../types'
 import {
   isBoolean,
   isIterable,
@@ -15,6 +15,8 @@ import {
   isObject,
   toNumber,
 } from './common'
+import { isFastEqual } from './isEqual'
+import { range } from './range'
 
 export const getNestedProp = (obj: any, key: string) => {
   try {
@@ -417,4 +419,60 @@ export function omitBy<T extends object = object>(obj: T, cb: CollectionIter<T, 
     }
     return o
   }, {})
+}
+
+function unequalObjs(v1, v2) {
+  return isPlainObject(v1) && isPlainObject(v2) && !isFastEqual(v1, v2)
+}
+
+export function deepMerge(objA: Record<string, unknown>, objB: Record<string, unknown>) {
+  if (isFastEqual(objA, objB)) return objB
+  if (!Object.keys(objB).length) return objA
+
+  function merge(v1, v2) {
+    let remainder = []
+    if (unequalObjs(v1, v2)) {
+      let newObj = {}
+      const v1Keys = Object.keys(v1)
+      const v2Keys = Object.keys(v2)
+      let diffA = v1Keys.filter((k) => !v2Keys.includes(k))
+      let diffB = v2Keys.filter((k) => !v1Keys.includes(k))
+      diffA.forEach((k) => {
+        newObj[k] = v1[k]
+      })
+      diffB.forEach((k) => {
+        newObj[k] = v2[k]
+      })
+      diffA = []
+      diffB = []
+
+      const result = Object.entries(v1).reduce((o, [k, v], i) => {
+        o[k] = merge(v, v2[k])
+        return o
+      }, newObj)
+      newObj = {}
+      return result
+    } else if (Array.isArray(v1) && Array.isArray(v2)) {
+      const newArr = v1.length ? range(v1.length) : []
+      if (v1.length < v2.length) {
+        remainder = v2.splice(v1.length)
+      }
+      const arr2 = v1.reduce((arr, v, i) => {
+        if (unequalObjs(v, v2[i])) {
+          const item = merge(v, v2[i])
+          arr[i] = item
+        } else if (typeof v2[i] !== 'undefined' && v !== v2[i]) {
+          arr[i] = v2[i]
+        } else {
+          arr[i] = v
+        }
+        return arr
+      }, newArr)
+      return arr2.concat(remainder)
+    } else if (typeof v2 !== 'undefined' && v1 !== v2) {
+      return v2
+    }
+    return v1
+  }
+  return merge(objA, objB)
 }

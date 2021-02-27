@@ -1,5 +1,3 @@
-import { valueof, ConditionalPick } from '../types'
-import { pickBy } from '../utils'
 import { symbols } from './glossary'
 import { DirectionKey } from './typings/styles'
 
