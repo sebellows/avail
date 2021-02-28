@@ -1,4 +1,24 @@
 import React from 'react'
+import { ArgType as SbArgType } from '@storybook/api'
+
+/**
+ * Extend Storybook's `ArgType` interface which only defines `name`, `defaultValue`, & `description`,
+ * but leaves the rest open-ended (`[key: string]: any`).
+ * @see {@link https://github.com/storybookjs/storybook/blob/master/lib/api/src/index.tsx#L111}
+ */
+export interface ArgType extends SbArgType {
+  table?: {
+    type?: {
+      summary?: string
+      detail?: string
+    }
+    defaultValue?: string
+  }
+  control?: {
+    type?: string
+    [key: string]: any
+  }
+}
 
 /** No operation */
 export type Noop = (...args: any[]) => any

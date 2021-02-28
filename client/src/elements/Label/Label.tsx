@@ -1,23 +1,30 @@
 import React, { forwardRef } from 'react'
 import styled from 'styled-components/macro'
-import { labelFontStyle, textAlignStyle, FontWeightKey, TextAlignKey } from '../../styles'
+import {
+  labelFontStyle,
+  textAlignStyle,
+  FontSizeProps,
+  FontWeightProps,
+  TextAlignProps,
+  FontSizeStyleProps,
+  FontWeightStyleProps,
+  TextAlignStyleProps,
+} from '../../styles'
 import { labelBaseStyle } from './styles'
 
-interface LabelProps {
+interface LabelProps extends Avail.ComponentProps, FontSizeProps, FontWeightProps, TextAlignProps {
   accent?: boolean
-  textAlign?: TextAlignKey | TextAlignKey[]
-  as?: React.ElementType | keyof JSX.IntrinsicElements
   muted?: boolean
-  size?: string | string[]
-  fontWeight?: FontWeightKey
 }
 
-const Root = styled.div<{
-  $accent?: boolean
-  $textAlign?: TextAlignKey | TextAlignKey[]
-  $muted: boolean
-  $size: string[]
-}>(labelFontStyle, textAlignStyle, labelBaseStyle)
+const Root = styled.div<
+  {
+    $accent?: boolean
+    $muted: boolean
+  } & FontSizeStyleProps &
+    FontWeightStyleProps &
+    TextAlignStyleProps
+>(labelFontStyle, textAlignStyle, labelBaseStyle)
 
 const Label = forwardRef<
   HTMLDivElement,

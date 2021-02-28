@@ -7,7 +7,7 @@ export const PROPS_PREFIX = '$'
 /** Global values almost all CSS properties can have applied. */
 export const GLOBAL_PROP_VALUES = ['inherit', 'initial', 'unset']
 
-export const PROP_DIRECTIONS: DirectionKey[] = ['Top', 'Right', 'Bottom', 'Left']
+export const PROP_DIRECTIONS: DirectionKey[] = [null, 'Top', 'Right', 'Bottom', 'Left']
 export const PROP_DIRECTIONS_WITH_XY: DirectionKey[] = PROP_DIRECTIONS.concat(['X', 'Y'])
 
 // export type PropSymbol<P extends Partial<typeof symbols> = Partial<typeof symbols>> = keyof P
@@ -95,6 +95,7 @@ export const PROP_ALIAS_MAP: Map<string, string[]> = new Map(
 
     // Box
     vAlign: ['verticalAlign'],
+    sizing: ['boxSizing'],
     boxSizing: ['boxSizing'],
     display: ['display'],
     overflow: ['overflow'],

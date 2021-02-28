@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react'
 import { action } from '@storybook/addon-actions'
 import { withCentered } from '../../../storybook/decorators'
 import { ComponentWithStaticMethod } from '../../../storybook/types'
-import { pick } from '../../utils'
 import { modeArgs, paddingArgs, radiusArgs, sizeArgs, variantArgs } from '../../stories/options'
 import { Stack } from '../Stack'
 import { Badge, BadgeProps } from './Badge'
+import { LABEL_FONT_SIZES } from '../../theme'
 
 type BasicArgs = Pick<
   BadgeProps & React.HTMLProps<HTMLDivElement>,
@@ -17,14 +16,13 @@ type BasicArgs = Pick<
 export default {
   title: 'Atoms/Badge',
   decorators: [withCentered],
-  // argTypes: pick(ARGS, 'mode', 'px', 'py', 'radius', 'size', 'variant'),
   argTypes: {
-    mode: modeArgs(),
-    px: paddingArgs('px', { defaultValue: 4 }),
-    py: paddingArgs('py', { defaultValue: 4 }),
-    radius: radiusArgs(),
-    size: sizeArgs({ defaultValue: 'sm' }),
-    variant: variantArgs({ defaultValue: 'default' }),
+    ...modeArgs({}, ['Link']),
+    ...paddingArgs('px', { defaultValue: 4 }),
+    ...paddingArgs('py', { defaultValue: 4 }),
+    ...radiusArgs(),
+    ...sizeArgs({ defaultValue: 'sm' }, LABEL_FONT_SIZES),
+    ...variantArgs({ defaultValue: 'default' }),
   },
 }
 

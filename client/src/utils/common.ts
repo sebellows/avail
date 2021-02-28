@@ -92,6 +92,27 @@ export const toNumber = (val: any): number | any => {
   return isNaN(num) ? val : num
 }
 
+export const toObject = (obj: any, callback = (x: any, i?: number, obj?: any) => x) => {
+  switch (typeOf(obj)) {
+    case 'array': {
+      return obj.reduce((acc, k: string, i: number) => {
+        acc[k] = callback(k, i, obj)
+        return acc
+      }, {})
+    }
+    case 'map':
+    case 'set': {
+      return Array.from(obj.entries()).reduce((acc, entry, i: number) => {
+        const [key, value] = callback(entry, i, obj)
+        acc[key] = value
+        return acc
+      }, {})
+    }
+    default:
+      return obj
+  }
+}
+
 export const toMap = <T>(obj: any, keyBy?: string): Map<string, T> => {
   if (!isObject(obj) || isNil(obj)) {
     throw new Error(

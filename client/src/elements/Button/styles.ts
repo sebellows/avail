@@ -56,7 +56,6 @@ export function buttonColorStyles(
   const mode = theme.color.button[$mode] || theme.color.button.default
   const color = mode[props.$variant] || mode.default
   const border = { width: buttonTheme.border.width, color: 'var(--card-border-color)' }
-  console.log('buttonColorVarsStyle', mode, '$mode:', $mode)
 
   return [
     buttonColorVarsStyle(color.active),

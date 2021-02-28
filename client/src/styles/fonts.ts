@@ -79,6 +79,7 @@ function computedDescenderScale(size: ThemeFontSize) {
 function fontSize(size: ThemeFontSize): CSSObject {
   // console.log('fontSize', size)
   const descenderScale = computedDescenderScale(size)
+  console.log('fontSize', size)
   const capHeight = Number((size.fontSize * (1 - descenderScale)).toFixed(4))
   const iconSize =
     size.iconSize ?? Number((size.fontSize * GLOBAL_FONT_SETTINGS.iconScale).toFixed(4))

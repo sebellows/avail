@@ -6,7 +6,9 @@ import { DirectionKey } from './typings/styles'
 
 export function toPropsObject<T = unknown>(propKeys: string[], value: T): CSSObject<T> {
   return propKeys.reduce((obj, propKey) => {
-    obj[propKey] = value
+    if (!(propKey in obj)) {
+      obj[propKey] = value
+    }
     return obj
   }, {})
 }
@@ -55,7 +57,6 @@ export function generateResponsiveStyles<T = Primitive>(
   values: CSSObject<T> | T[],
   callback: (value: T, index?: number, context?: Theme) => CSSObject<T>,
 ): CSSObject<T>[] {
-  // console.log('generateStyles', isPlainObject(values), media)
   return isPlainObject(values)
     ? Obj(theme, values as CSSObject<T>, callback)
     : Arr(theme, values as T[], callback)
@@ -82,7 +83,6 @@ export function generateStyles<P = {}>(
 
     return generateResponsiveStyles(theme, variadic(props?.[$propName]), (value, i) => {
       const propValue = callback(value, i, props)
-      // console.log('generateStyles', propName, value)
       return isPlainObject(propValue) ? propValue : toPropsObject(propertyKeys, propValue)
     })
   }
@@ -94,7 +94,6 @@ export function generateDirectionalStyles<P = {}>(
   withXY = false,
 ) {
   const dirs = withXY ? PROP_DIRECTIONS_WITH_XY : PROP_DIRECTIONS
-  dirs.unshift(null)
 
   return (props: P & ThemeProps) => {
     const { theme } = props

@@ -151,7 +151,7 @@ export const color = createColorTheme({
       default:
         return {
           bg: mix(base.bg, tints[dark ? 400 : 600].hex).string(),
-          border: mix(base.bg, tints[dark ? 400 : 500].hex).string(),
+          border: mix(base.bg, tints[dark ? 400 : 600].hex).string(),
           fg: mix(base.bg, dark ? BLACK : WHITE).string(),
         }
     }

@@ -1,8 +1,6 @@
 import { useRef, useEffect } from 'react'
 
-export default function useEnsuredForwardedRef<T>(
-  ...refs: any[]
-): React.MutableRefObject<T> | undefined {
+export function useEnsuredForwardedRef<T>(...refs: any[]): React.MutableRefObject<T> | undefined {
   const defaultRef = useRef(null)
 
   useEffect(() => {

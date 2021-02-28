@@ -7,15 +7,14 @@ export function badgeStyle(props: BadgeStyleProps & ThemeProps): CSSObject {
   const palette = theme.color[$mode === 'outline' ? 'muted' : 'solid']
   const color = palette[$variant] || palette.default
 
-  // console.log('badgeStyle', $mode, $variant, color, color.active.bg)
-
   return {
-    backgroundColor: color.active.bg,
+    backgroundColor: $mode === 'outline' ? 'transparent' : color.active.bg,
     color: color.active.fg,
-    boxShadow: `inset 0 0 0 1px ${color.active.border}`,
+    boxShadow: `inset 0 0 0 1px ${$mode === 'outline' ? color.active.fg : color.active.border}`,
 
     '&:not([hidden])': {
-      display: 'inline-block',
+      display: 'inline-flex',
+      alignItems: 'center',
     },
   }
 }

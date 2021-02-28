@@ -6,7 +6,7 @@ const DEFAULT_FONT_FAMILY =
 const DEFAULT_FONT_FAMILY_CODE =
   "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace"
 
-const SIZE_KEYS = {
+export const FONT_SIZE_KEYS = {
   fine: 10,
   xs: 12,
   sm: 14,
@@ -20,6 +20,10 @@ const SIZE_KEYS = {
   h2: 36,
   h1: 48,
 }
+export const FONT_SIZES = Object.keys(FONT_SIZE_KEYS)
+export const CODE_FONT_SIZES = ['xs', 'sm', 'md', 'lg']
+export const HEADING_FONT_SIZES = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']
+export const LABEL_FONT_SIZES = ['fine', 'xs', 'sm', 'md']
 
 export const GLOBAL_FONT_SETTINGS = {
   // Global font size and line-height for `:root`. Will be converted to `rem` units.
@@ -40,7 +44,7 @@ export const GLOBAL_FONT_SETTINGS = {
   },
 
   // Font Sizes
-  sizes: new Map(Object.entries(SIZE_KEYS)),
+  sizes: new Map(Object.entries(FONT_SIZE_KEYS)),
 
   // Font Weights
   weights: {
@@ -119,7 +123,7 @@ export const fonts = {
   text: {
     family: GLOBAL_FONT_SETTINGS.family.base,
     weights: GLOBAL_FONT_SETTINGS.weights,
-    sizes: assignSizes(Object.keys(SIZE_KEYS), GLOBAL_FONT_SETTINGS.lineHeightScale),
+    sizes: assignSizes(Object.keys(FONT_SIZE_KEYS), GLOBAL_FONT_SETTINGS.lineHeightScale),
   },
 }
 
