@@ -1,3 +1,9 @@
+/**
+ * An object map of public property keys and their corresponding internal internal keys
+ * (prefixed with `$`). The purpose of the internal keys is to denote semi-private properties
+ * applied internally in core components and to differentiate from public properties that
+ * are passed to a component instance.
+ */
 export const symbols = {
   vAlign: '$vAlign',
   background: '$background',

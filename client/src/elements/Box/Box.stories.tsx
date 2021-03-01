@@ -22,7 +22,6 @@ export default {
     ...paddingArgs('px', { defaultValue: null }),
     ...paddingArgs('py', { defaultValue: null }),
     sizing: {
-      // Storybook seems to cast "0" to `undefined` so ranges get set as `undefined/24` instead of `0/24`
       defaultValue: 'border',
       description: '',
       table: {

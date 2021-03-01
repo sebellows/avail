@@ -17,12 +17,3 @@ export function useEnsuredForwardedRef<T>(...refs: any[]): React.MutableRefObjec
 
   return defaultRef
 }
-
-// export function ensuredForwardRef<T extends React.ElementType = React.ElementType, P = {}>(
-//   Component: ForwardRefRenderFunction<T, P>
-// ): ForwardRefExoticComponent<PropsWithoutRef<P> & RefAttributes<T>> {
-//   return forwardRef((props: PropsWithChildren<P>, ref: MutableRefObject<T>) => {
-//     const ensuredRef = useEnsuredForwardedRef(ref as MutableRefObject<T>)
-//     return Component(props, ensuredRef)
-//   })
-// }

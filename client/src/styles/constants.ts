@@ -7,38 +7,30 @@ export const PROPS_PREFIX = '$'
 /** Global values almost all CSS properties can have applied. */
 export const GLOBAL_PROP_VALUES = ['inherit', 'initial', 'unset']
 
+/**
+ * Directions used for generating alternate properties that apply to sides/directions
+ * (i.e., `padding`, `margin`, `border-width`, `border-radius`, etc.).
+ * `null` for the first is necessary during interation as it allows generating of
+ * non-direction/default properties, such as `padding` instead of `padding-*`.
+ */
 export const PROP_DIRECTIONS: DirectionKey[] = [null, 'Top', 'Right', 'Bottom', 'Left']
+
+/**
+ * Adds support for generating shorthand utility properties for supplying horizontal &
+ * vertical values such as `padding-left: 1rem; padding-right: 1rem;`.
+ */
 export const PROP_DIRECTIONS_WITH_XY: DirectionKey[] = PROP_DIRECTIONS.concat(['X', 'Y'])
 
-// export type PropSymbol<P extends Partial<typeof symbols> = Partial<typeof symbols>> = keyof P
-// export type IntPropSymbol<P extends Partial<typeof symbols> = Partial<typeof symbols>> = valueof<P>
-// export type PropSymbols<P> = ConditionalPick<P, typeof symbols>
-
-// /**
-//  * Used for grabbing a selection of our defined symbol properties by a common string in their value.
-//  * @example
-//  * const marginProps = pickPropsByKey('margin')
-//  * \//=> { m: '$margin', mx: '$marginX', ... }
-//  */
-// export const pickPropsByKey = (key: string): Pick<typeof symbols, keyof typeof symbols> => {
-//   return pickBy(symbols, (v) => v.includes(key))
-//   // return picked as Record<keyof typeof picked, valueof<typeof picked>>
-//   // return picked
-// }
-// export const pickPropKeys = (key: string) => {
-//   const picked = pickPropsByKey(key)
-//   return Object.keys(picked) as PropSymbol<typeof picked>[]
-// }
-// export const pickIntPropKeys = (key: string) => {
-//   const picked = pickPropsByKey(key)
-//   return Object.values(picked) as IntPropSymbol<typeof picked>[]
-// }
-
+/** A map of public property keys and their corresponding internal internal keys, containing `$` prefix. */
 export const PROPS_MAP: Map<string, string> = new Map(Object.entries(symbols))
 
+/** A map of internal `$` keys with corresponding public property keys. */
 const reversedSymbols = Object.entries(symbols).reverse()
 export const $PROPS_MAP: Map<string, string> = new Map(reversedSymbols)
 
+/**
+ * Map for accessing CSS properties by keys in our `symbols` glossary.
+ */
 export const PROP_ALIAS_MAP: Map<string, string[]> = new Map(
   Object.entries({
     // Style/Appearance
