@@ -5,7 +5,6 @@
  * are passed to a component instance.
  */
 export const symbols = {
-  vAlign: '$vAlign',
   background: '$background',
   border: '$border',
   borderX: '$borderX',
@@ -17,7 +16,6 @@ export const symbols = {
   color: '$color',
   display: '$display',
   boxSizing: '$boxSizing',
-  sizing: '$sizing',
   flex: '$flex',
   direction: '$direction',
   wrap: '$wrap',
@@ -86,11 +84,13 @@ export const symbols = {
   width: '$width',
   minWidth: '$minWidth',
   maxWidth: '$maxWidth',
+  vAlign: '$vAlign',
 
   /**
    * Non-CSS Property constants
    */
   size: '$size',
+  sizing: '$sizing',
   space: '$space',
   truncate: '$truncate',
 }

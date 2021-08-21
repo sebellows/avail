@@ -4,10 +4,11 @@ import * as hues from './hues'
 import { BLACK, WHITE } from './config'
 import { createColorTheme } from './build'
 import { multiply, screen } from './blendFns'
-import { ColorTints, ThemeColorVariant } from './types'
+import { ThemeColorTints, ThemeColorVariantKey } from './types'
 
-const variants: { [key in ThemeColorVariant]: ColorTints } = {
+const variants: Record<ThemeColorVariantKey, ThemeColorTints> = {
   default: hues.gray,
+  inverted: hues.gray,
   transparent: hues.gray,
   accent: hues.magenta,
   primary: hues.blue,
@@ -233,7 +234,7 @@ export const color = createColorTheme({
     return res
   },
 
-  input: ({ base, dark, mode, state }) => {
+  form: ({ base, dark, mode, state }) => {
     const mix = dark ? screen : multiply
     const tints = mode === 'invalid' ? variants.danger : hues.gray
 
@@ -277,19 +278,11 @@ export const color = createColorTheme({
       case 'disabled':
         return {
           ...muted.disabled,
-          muted: {
-            fg: muted.disabled.fg,
-          },
-          accent: {
-            fg: muted.disabled.fg,
-          },
-          link: {
-            fg: muted.disabled.fg,
-          },
-          code: {
-            bg: 'transparent',
-            fg: muted.disabled.fg,
-          },
+          muted: muted.disabled.fg,
+          accent: muted.disabled.fg,
+          link: muted.disabled.fg,
+          code: muted.disabled.fg,
+          output: muted.disabled.bg,
         }
       case 'hovered':
         const hoverBg = muted.hovered.bg
@@ -297,37 +290,21 @@ export const color = createColorTheme({
         return {
           ...muted.hovered,
           border: mix(hoverBg, base.border).string(),
-          muted: {
-            fg: mix(hoverBg, hues.gray[dark ? 400 : 700].hex).string(),
-          },
-          accent: {
-            fg: mix(hoverBg, hues.red[dark ? 500 : 500].hex).string(),
-          },
-          link: {
-            fg: mix(hoverBg, hues.blue[dark ? 400 : 700].hex).string(),
-          },
-          code: {
-            bg: mix(hoverBg, hues.gray[dark ? 950 : 50].hex).string(),
-            fg: hues.gray[dark ? 400 : 600].hex,
-          },
+          muted: mix(hoverBg, hues.gray[dark ? 400 : 700].hex).string(),
+          accent: mix(hoverBg, variants.accent[dark ? 500 : 500].hex).string(),
+          link: mix(hoverBg, variants.primary[dark ? 400 : 700].hex).string(),
+          code: hues.gray[dark ? 400 : 700].hex,
+          output: mix(base.bg, hues.gray[dark ? 950 : 50].hex).string(),
         }
       case 'pressed':
         return {
           ...muted.pressed,
           fg: base.fg,
-          muted: {
-            fg: mix(muted.pressed.bg, hues.gray[dark ? 400 : 700].hex).string(),
-          },
-          accent: {
-            fg: mix(muted.pressed.bg, hues.red[dark ? 500 : 500].hex).string(),
-          },
-          link: {
-            fg: mix(muted.pressed.bg, hues.blue[dark ? 400 : 700].hex).string(),
-          },
-          code: {
-            bg: mix(muted.pressed.bg, hues.gray[dark ? 950 : 50].hex).string(),
-            fg: hues.gray[dark ? 400 : 700].hex,
-          },
+          muted: mix(muted.pressed.bg, hues.gray[dark ? 400 : 700].hex).string(),
+          accent: mix(muted.pressed.bg, variants.accent[dark ? 500 : 500].hex).string(),
+          link: mix(muted.pressed.bg, variants.primary[dark ? 400 : 700].hex).string(),
+          code: hues.gray[dark ? 400 : 700].hex,
+          output: mix(base.bg, hues.gray[dark ? 950 : 50].hex).string(),
         }
       case 'selected':
         mix = dark ? multiply : screen
@@ -338,38 +315,27 @@ export const color = createColorTheme({
           bg,
           fg: dark ? BLACK : WHITE,
           border: tint[dark ? 300 : 400].hex,
-          muted: {
-            fg: mix(bg, hues.gray[dark ? 600 : 300].hex).string(),
-          },
-          accent: {
-            fg: mix(bg, hues.red[dark ? 600 : 500].hex).string(),
-          },
-          link: {
-            fg: mix(bg, hues.blue[dark ? 600 : 300].hex).string(),
-          },
-          code: {
-            bg: mix(bg, hues.gray[dark ? 50 : 950].hex).string(),
-            fg: mix(bg, hues.gray[dark ? 600 : 300].hex).string(),
-          },
+          muted: mix(bg, hues.gray[dark ? 600 : 300].hex).string(),
+          accent: mix(bg, variants.accent[dark ? 600 : 500].hex).string(),
+          link: mix(bg, variants.primary[dark ? 600 : 300].hex).string(),
+          code: hues.gray[dark ? 400 : 700].hex,
+          output: mix(base.bg, hues.gray[dark ? 950 : 50].hex).string(),
         }
       default:
         return {
           bg: base.bg,
           fg: base.fg,
           border: base.border,
-          muted: {
-            fg: mix(base.bg, hues.gray[dark ? 400 : 700].hex).string(),
-          },
-          accent: {
-            fg: mix(base.bg, hues.red[dark ? 500 : 500].hex).string(),
-          },
-          link: {
-            fg: mix(base.bg, hues.blue[dark ? 400 : 700].hex).string(),
-          },
-          code: {
-            bg: mix(base.bg, hues.gray[dark ? 950 : 50].hex).string(),
-            fg: hues.gray[dark ? 400 : 700].hex,
-          },
+          // "muted" text color
+          muted: mix(base.bg, hues.gray[dark ? 400 : 700].hex).string(),
+          // "accent" (a.k.a., highlighted or accented/emphasized) text color
+          accent: mix(base.bg, variants.accent[dark ? 500 : 500].hex).string(),
+          // "link" text color
+          link: mix(base.bg, variants.primary[dark ? 400 : 700].hex).string(),
+          // "code" text color
+          code: hues.gray[dark ? 400 : 700].hex,
+          // background color for a `pre` element or `output` container
+          output: mix(base.bg, hues.gray[dark ? 950 : 50].hex).string(),
         }
     }
   },

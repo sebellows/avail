@@ -1,0 +1,26 @@
+{
+  "native": true,
+  "typescript": true,
+  "plugins": ["@svgr/plugin-svgo", "@svgr/plugin-jsx", "@svgr/plugin-prettier"],
+  "svgoConfig": {
+    "plugins": [
+      {
+        "inlineStyles": {
+          "onlyMatchedOnce": false
+        }
+      },
+      {
+        "removeXMLNS": true
+      },
+      {
+        "removeViewBox": false
+      },
+      {
+        "removeUnknownsAndDefaults": false
+      },
+      {
+        "convertColors": false
+      }
+    ]
+  }
+}

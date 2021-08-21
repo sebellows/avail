@@ -1,0 +1,15 @@
+{
+  "extends": "../tsconfig.settings",
+  "include": ["./src", "./typings"],
+  "exclude": [
+    "./src/**/*.test.ts",
+    "./src/**/*.test.tsx"
+  ],
+  "compilerOptions": {
+    "composite": true,
+    "rootDir": "../",
+    "outDir": "./lib/typescript/",
+    "jsx": "react"
+  },
+  "references": [{"path": "../core/tsconfig.lib.json"}]
+}

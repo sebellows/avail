@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig.settings",
+  "include": ["./src"],
+  "exclude": ["./src/**/*.test.ts"],
+  "compilerOptions": {
+    "composite": true,
+    "rootDir": "../",
+    "outDir": "./lib/typescript/"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "base": {
+    "black": "#000000",
+    "white": "#FFFFFF",
+    "darkest": "#101112",
+    "lightest": "#FFFFFF"
+  },
+  "palette": {
+    "blue": { "hex": "#007BFF", "midPoint": 500 },
+    "cyan": { "hex": "#22DAF4", "midPoint": 500 },
+    "gray": { "hex": "#8D8D8D", "midPoint": 500 },
+    "green": { "hex": "#47D147", "midPoint": 500 },
+    "indigo": { "hex": "#6610F2", "midPoint": 500 },
+    "magenta": { "hex": "#E5389E", "midPoint": 500 },
+    "orange": { "hex": "#FD7E14", "midPoint": 450 },
+    "purple": { "hex": "#C123FC", "midPoint": 500 },
+    "red": { "hex": "#DC3545", "midPoint": 500 },
+    "teal": { "hex": "#317396", "midPoint": 500 },
+    "yellow": { "hex": "#FFC107", "midPoint": 500 }
+  },
+  "variants": {
+    "default": "gray",
+    "inverted": "gray",
+    "primary": "magenta",
+    "accent": "orange",
+    "danger": "red",
+    "success": "green",
+    "warning": "yellow"
+  },
+  "states": ["active", "disabled", "focused", "hovered", "selected"],
+  "tints": [
+    50,
+    100,
+    200,
+    300,
+    400,
+    500,
+    600,
+    700,
+    800,
+    900,
+    950
+  ]
+}

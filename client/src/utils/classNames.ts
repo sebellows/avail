@@ -1,8 +1,8 @@
-import { AnyObject, Primitive } from '../types'
-import { hasOwn, isNil, typeOf } from './common'
+import { Primitive } from 'type-fest'
+import { hasOwn, isNil, ObjectType, typeOf } from '@avail/core'
 
-type ClassArray = (Primitive | AnyObject)[]
-export type ClassValue = Primitive | AnyObject | ClassArray
+type ClassArray = (Primitive | ObjectType)[]
+export type ClassValue = Primitive | ObjectType | ClassArray
 
 export function classNames(...args: ClassValue[]): string {
   const classes: any[] = []
@@ -24,7 +24,7 @@ export function classNames(...args: ClassValue[]): string {
         }
         break
       case 'object':
-        for (const key in arg as AnyObject) {
+        for (const key in arg as ObjectType) {
           if (hasOwn(arg, key) && arg[key]) {
             classes.push(key)
           }

@@ -1,0 +1,151 @@
+{
+  "border": {
+    "color": "rgba(0, 0, 0, 0.12)",
+    "style": "solid",
+    "width": 1
+  },
+  "breakpoints": {
+    "sm": 576,
+    "md": 768,
+    "lg": 990,
+    "xl": 1200
+  },
+  "containers": {
+    "sm": 544,
+    "md": 736,
+    "lg": 958,
+    "xl": 1168
+  },
+  "focusRing": {
+    "offset": 1,
+    "width": 2
+  },
+  "fonts": {
+    "code": {
+      "family": "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
+      "defaults": {
+        "size": 14,
+        "weight": 500,
+        "lineHeight": null
+      },
+      "ascenderScale": 0.1875,
+      "descenderScale": 0.1875,
+      "iconScale": 1.25,
+      "letterSpacing": 0,
+      "lineHeightScale": 1.3125
+    },
+    "heading": {
+      "family": "system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+      "defaults": {
+        "size": "inherit",
+        "weight": 700,
+        "lineHeight": null
+      },
+      "ascenderScale": 0.1875,
+      "descenderScale": 0.1875,
+      "iconScale": 1.25,
+      "letterSpacing": 0,
+      "lineHeightScale": 1.1
+    },
+    "label": {
+      "family": "system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+      "defaults": {
+        "size": 14,
+        "weight": 500,
+        "lineHeight": null
+      },
+      "ascenderScale": 0.1875,
+      "descenderScale": 0.1875,
+      "iconScale": 1.25,
+      "letterSpacing": 0,
+      "lineHeightScale": 1.3125
+    },
+    "normal": {
+      "family": "system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'",
+      "defaults": {
+        "size": 16,
+        "weight": 400,
+        "lineHeight": null
+      },
+      "ascenderScale": 0.1875,
+      "descenderScale": 0.1875,
+      "iconScale": 1.25,
+      "letterSpacing": 0,
+      "lineHeightScale": 1.3125
+    }
+  },
+  "fontSizes": {
+    "fine": 10,
+    "xs": 12,
+    "sm": 14,
+    "md": 16,
+    "lg": 18,
+    "xl": 20,
+    "h6": 16,
+    "h5": 18,
+    "h4": 20,
+    "h3": 28,
+    "h2": 36,
+    "h1": 48
+  },
+  "radii": {
+    "none": 0,
+    "sm": 3,
+    "md": 5,
+    "lg": 9,
+    "pill": 800,
+    "circle": "50%"
+  },
+  "shadows": [
+    null,
+    { "umbra": [0, 0, 0, 0], "penumbra": [0, 0, 0, 0], "ambient": [0, 0, 0, 0] },
+    { "umbra": [0, 2, 1, -1], "penumbra": [0, 1, 1, 0], "ambient": [0, 1, 3, 0] },
+    { "umbra": [0, 3, 1, -2], "penumbra": [0, 2, 3, 0], "ambient": [0, 1, 5, 0] },
+    { "umbra": [0, 3, 3, -2], "penumbra": [0, 3, 4, 0], "ambient": [0, 1, 8, 0] },
+    { "umbra": [0, 2, 4, -1], "penumbra": [0, 4, 5, 0], "ambient": [0, 1, 10, 0] }
+  ],
+  "spacing": {
+    "none": 0,
+    "2xs": 2,
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 24,
+    "2xl": 32,
+    "3xl": 64,
+    "-2xs": -2,
+    "-xs": -4,
+    "-sm": -8,
+    "-md": -12,
+    "-lg": -16,
+    "-xl": -24,
+    "-2xl": -32,
+    "-3xl": -64
+  },
+  "form": {
+    "checkbox": {
+      "size": 24
+    },
+    "radio": {
+      "size": 24,
+      "markSize": 16
+    },
+    "switch": {
+      "width": 36,
+      "height": 24,
+      "padding": 4,
+      "transitionDurationMs": 150,
+      "transitionTimingFunction": "ease-out"
+    }
+  },
+  "zIndices": {
+    "dropdown": 700,
+    "tooltip": 800,
+    "fixedActionButton": 900,
+    "navDrawer": 1000,
+    "modal": 1100,
+    "dialog": 1110,
+    "toast": 1200
+  }
+}

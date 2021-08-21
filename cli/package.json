@@ -1,39 +1,58 @@
 {
-    "name": "avail",
-    "version": "0.1.0",
-    "description": "Generate a customized CSS utility library",
-    "main": "build/cjs/index.js",
-    "module": "build/esm/index.js",
-    "types": "build/esm/index.d.ts",
-    "files": [
-        "build"
-    ],
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "clean": "rm -rf build test-build",
-        "build": "rollup -c",
-        "build:dev": "rollup -cw",
-        "start": "node build/cjs/index.js"
-    },
-    "keywords": [
-        "utility css",
-        "oocss"
-    ],
-    "author": "Sean Bellows",
-    "license": "ISC",
-    "devDependencies": {
-        "@types/chai": "^4.2.5",
-        "@types/mocha": "^5.2.7",
-        "chai": "^4.2.0",
-        "chalk": "^3.0.0",
-        "mocha": "^6.2.2",
-        "prettier": "^1.19.1",
-        "rollup": "^1.27.0",
-        "rollup-plugin-commonjs": "^10.1.0",
-        "rollup-plugin-copy": "^3.1.0",
-        "rollup-plugin-node-resolve": "^5.2.0",
-        "rollup-plugin-terser": "^5.1.2",
-        "rollup-plugin-typescript2": "^0.25.2",
-        "typescript": "^3.7.2"
-    }
+  "name": "@avail/cli",
+  "version": "0.1.0",
+  "description": "CLI for Avail",
+  "main": "lib/cjs/index.js",
+  "module": "lib/esm/index.js",
+  "types": "lib/typescript/index.d.ts",
+  "source": "src/index",
+  "files": [
+    "src",
+    "lib"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node lib/cjs/index.js",
+    "clean": "rimraf lib",
+    "build": "run-s clean:bin esbuild:scripts",
+    "esbuild": "node -r esbuild-register scripts/index.ts",
+    "clean:bin": "rimraf bin/lib",
+    "generate:color": "node bin/cli.js colors",
+    "generate:icons": "node bin/cli.js icons",
+    "generate:styles": "node bin/cli.js styles"
+  },
+  "author": "Sean Bellows",
+  "license": "ISC",
+  "dependencies": {
+    "color": "^4.0.0",
+    "color-convert": "^2.0.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.14.8",
+    "@babel/eslint-parser": "^7.14.7",
+    "@svgr/core": "^5.5.0",
+    "@svgr/plugin-jsx": "^5.5.0",
+    "@svgr/plugin-prettier": "^5.5.0",
+    "@svgr/plugin-svgo": "^5.5.0",
+    "@types/color": "^3.0.2",
+    "@types/figlet": "^1.5.4",
+    "@types/inquirer": "^7.3.3",
+    "@types/jest": "^26.0.24",
+    "@types/node": "^16.4.2",
+    "@types/react": "^17.0.15",
+    "@types/react-dom": "^17.0.9",
+    "@types/which": "^2.0.1",
+    "chalk": "^4.1.1",
+    "esbuild": "^0.12.15",
+    "esbuild-loader": "^2.13.1",
+    "esbuild-register": "^2.6.0",
+    "figlet": "^1.5.0",
+    "globby": "^12.0.0",
+    "inquirer": "^8.1.2",
+    "jest": "^27.0.6",
+    "prettier": "^2.3.2",
+    "rimraf": "^3.0.2",
+    "which": "^2.0.2",
+    "yargs": "^17.0.1"
+  }
 }

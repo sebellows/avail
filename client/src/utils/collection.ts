@@ -1,22 +1,22 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable no-useless-escape */
 
-import { CollectionIter } from '../types'
 import {
+  CollectionIter,
   isBoolean,
+  isFastEqual,
   isIterable,
+  isNil,
+  isNumber,
+  isObject,
   isPlainObject,
+  isPresent,
   isSymbol,
   memoize,
-  isNumber,
-  toString,
-  isNil,
-  isDefined,
-  isObject,
+  range,
   toNumber,
-} from './common'
-import { isFastEqual } from './isEqual'
-import { range } from './range'
+  toString,
+} from '../../../core/src'
 
 export const getNestedProp = (obj: any, key: string) => {
   try {
@@ -116,7 +116,8 @@ const escapeCharRE = /\\(\\)?/g
 /** Used to match property names within property paths. */
 const deepPropRE = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/
 const plainPropRE = /^\w*$/
-const propNameRE = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g
+const propNameRE =
+  /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g
 
 /**
  * Converts `value` to a property path array.
@@ -191,7 +192,7 @@ export function get<T>(obj: T, path: string | string[], defaultValue: any = unde
   let index = 0
 
   for (const path of paths) {
-    if (isDefined(obj)) {
+    if (isPresent(obj)) {
       obj = obj[path]
       index++
     }
@@ -244,21 +245,21 @@ export function set<T>(
   value: any,
   customizer?: Function,
 ): T {
-  if (!isObject(obj) || !isDefined(obj)) return obj
+  if (!isObject(obj) || !isPresent(obj)) return obj
 
   const paths = castPath(path, obj)
 
   let i = -1
   let nested = clone(obj)
 
-  while (isDefined(nested) && ++i < paths.length) {
+  while (isPresent(nested) && ++i < paths.length) {
     let key = toKey(String(paths[i])) as string
     let newValue = value
 
     if (i !== paths.length - 1) {
       const objValue = nested[key]
       newValue = customizer ? customizer(objValue, key, nested) : undefined
-      if (!isDefined(newValue)) {
+      if (!isPresent(newValue)) {
         newValue = isObject(objValue) ? objValue : isNumber(paths[i + 1]) ? [] : {}
       }
     }

@@ -133,11 +133,6 @@ export const defaultOpts: ThemeColorBuilderOptions = {
       }
     }
 
-    // Variants:
-    // - primary
-    // - success
-    // - warning
-    // - danger
     return {
       bg: variants[name].bg[dark ? 0 : 1],
       fg: variants[name].fg[dark ? 0 : 1],
@@ -220,26 +215,24 @@ export const defaultOpts: ThemeColorBuilderOptions = {
 
   card: () => {
     return {
-      bg: black,
+      bg: white,
       fg: black,
       border: black,
-      muted: {
-        fg: black,
-      },
-      accent: {
-        fg: black,
-      },
-      link: {
-        fg: black,
-      },
-      code: {
-        bg: black,
-        fg: black,
-      },
+      muted: black,
+      accent: black,
+      link: black,
     }
   },
 
-  input: () => {
+  link: () => {
+    return {
+      bg: black,
+      fg: black,
+      border: black,
+    }
+  },
+
+  form: () => {
     return {
       bg: black,
       fg: black,
@@ -251,43 +244,4 @@ export const defaultOpts: ThemeColorBuilderOptions = {
   spot: ({ key }) => {
     return spots[key]
   },
-
-  syntax: () => ({
-    atrule: black,
-    attrName: black,
-    attrValue: black,
-    attribute: black,
-    boolean: black,
-    builtin: black,
-    cdata: black,
-    char: black,
-    class: black,
-    className: black,
-    comment: black,
-    constant: black,
-    deleted: black,
-    doctype: black,
-    entity: black,
-    function: black,
-    hexcode: black,
-    id: black,
-    important: black,
-    inserted: black,
-    keyword: black,
-    number: black,
-    operator: black,
-    prolog: black,
-    property: black,
-    pseudoClass: black,
-    pseudoElement: black,
-    punctuation: black,
-    regex: black,
-    selector: black,
-    string: black,
-    symbol: black,
-    tag: black,
-    unit: black,
-    url: black,
-    variable: black,
-  }),
 }
