@@ -21,3 +21,6 @@ test-build
 
 # Misc.
 .DS_Store
+
+# Build directories
+build/

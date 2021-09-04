@@ -13,7 +13,7 @@ const SCRIPT_CONFIGS: BinFileParams[] = [
   },
 ]
 
-const BUILD_ERROR_MSG = chalk.bold('[Secretariat] ESBuild of script files failed.')
+const BUILD_ERROR_MSG = chalk.bold('[Avail] ESBuild of script files failed.')
 
 const handleScriptBuildError = (reason: unknown) => handleBuildError(BUILD_ERROR_MSG, reason)
 

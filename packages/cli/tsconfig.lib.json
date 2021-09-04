@@ -8,7 +8,6 @@
   "compilerOptions": {
     "composite": true,
     "rootDir": "../",
-    "outDir": "./lib/typescript/",
     "jsx": "react"
   },
   "references": [{"path": "../core/tsconfig.lib.json"}]
